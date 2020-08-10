@@ -7,6 +7,6 @@ import { Link, useHistory } from "react-router-dom";
 //	Exporting resource to routes.js
 export default function Login() {
 	return (
-		<div>Teste</div>
+		<div>Login</div>
 	);
 }
