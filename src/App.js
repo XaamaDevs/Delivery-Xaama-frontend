@@ -1,16 +1,15 @@
+//	Importing React main module
 import React from 'react';
 
-function App() {
-  return (
-    <div className="card" style={{width: "18rem"}}>
-      <img className="card-img-top" src="..." alt="Card cap" />
-      <div className="card-body">
-        <h5 className="card-title">Card title</h5>
-        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="/" className="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
-  );
-}
+//	Importing global styles
+import "./global.css";
 
-export default App;
+//	Importing Routes feature to navigate through website pages
+import Routes from "./routes";
+
+//	Exporting App to index.js
+export default function App() {
+	return (
+		<Routes />
+	);
+}
