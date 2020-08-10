@@ -8,9 +8,12 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomePage from "./pages/Website/Home";
 import NotFoundPage from "./pages/Website/NotFound";
 import Navbar from "./pages/Website/Navbar";
+import Footer from "./pages/Website/Footer";
 import User from "./pages/User";
 import Login from "./pages/User/Login";
 import Signup from "./pages/User/Signup";
+import Products from "./pages/Products";
+import Order from "./pages/Order";
 
 //	Exporting Routes do App.js
 export default function Routes() {
@@ -19,12 +22,14 @@ export default function Routes() {
 			<Navbar />
 			<Switch>
 				<Route exact path="/" component={HomePage} />
-				<Route exact path="/404" component={NotFoundPage} />
 				<Route exact path="/user" component={User} />
-				<Route exact path="/user/login" component={Login} />
-				<Route exact path="/user/signup" component={Signup} />
+				<Route exact path="/login" component={Login} />
+				<Route exact path="/signup" component={Signup} />
+				<Route exact path="/products" component={Products} />
+				<Route exact path="/order" component={Order} />
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
+      <Footer />
 		</BrowserRouter>
 	);
 }
