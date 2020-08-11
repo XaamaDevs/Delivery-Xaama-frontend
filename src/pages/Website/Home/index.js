@@ -7,26 +7,26 @@ import { Link, useHistory } from "react-router-dom";
 //	Exporting resource to routes.js
 export default function Home() {
 	return (
-		<div className="website-container">
-			<div className="jumbotron col-6">
-				<h1 className="display-4">Hello, world!</h1>
-				<p className="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-				<hr className="my-4"/>
-				<p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+		<div className="website-container d-flex flex-row  align-items-center h-100">
+			<div className="jumbotron col-6 ml-5 mt-5 p-3 pl-5 bg-transparent">
+				<h1 className="display-5 font-italic text-white">Está com fome?</h1>
+				<h1 className="display-1 text-white">Não espere!</h1>
+				<p className="font-italic text-warning">Faça seu pedido agora</p>
+				<hr class="my-3"></hr>
 				<p className="lead">
-					<a className="btn btn-primary btn-lg" href="/" role="button">Learn more</a>
+					<a className="btn btn-outline-light btn-sm bg-transparent p-1" href="/" role="button">Veja o Cardápio</a>
 				</p>
 			</div>
-			<div id="carouselExampleControls" className="carousel slide w-25" data-ride="carousel">
+			<div id="carouselExampleControls" className="carousel slide m-auto" data-ride="carousel">
 				<div className="carousel-inner">
 					<div className="carousel-item active">
-						<img className="d-block w-100" src="https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png" alt="First slide"/>
+						<img className="w-100" src="https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png" alt="First slide"/>
 					</div>
 					<div className="carousel-item">
-						<img className="d-block w-100" src="https://images.rappi.com.br/restaurants_background/fichips-home1-1568066123184.png?d=200x200" alt="Second slide"/>
+						<img className="w-100" src="https://gormansfamilyfood.com/files/2020/04/003-drink.png" alt="Second slide"/>
 					</div>
 					<div className="carousel-item">
-						<img className="d-block w-100" src="https://images.rappi.com.br/products/ab0b2948-e2c3-4069-b91f-5ac06326edec-1571417391656.png?d=128x90" alt="Third slide"/>
+						<img className="w-100" src="https://plazaoaxacallc.com/files/2019/06/001_taco.png" alt="Third slide"/>
 					</div>
 				</div>
 				<a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
