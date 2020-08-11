@@ -12,8 +12,8 @@ import "./styles.css";
 //	Exporting resource to routes.js
 export default function Navbar() {
 	return (
-		<div className="website-container">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+		<div className="navbar transparent navbar-inverse">
+      <nav className="navbar-inner">
         <NavLink to="/" className="navbar-brand" >Xaama</NavLink>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
