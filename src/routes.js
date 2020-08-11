@@ -29,7 +29,6 @@ export default function Routes() {
 				<Route exact path="/order" component={Order} />
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
-      <Footer />
 		</BrowserRouter>
 	);
 }
