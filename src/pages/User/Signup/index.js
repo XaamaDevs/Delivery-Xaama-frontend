@@ -5,7 +5,10 @@ import React, { useState, useMemo} from "react";
 import api from '../../../services/api';
 
 //	Importing React Router features
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
+//	Importing React features
+import { Modal } from "react-bootstrap";
 
 // Importing styles
 import "./styles.css";
@@ -48,12 +51,14 @@ export default function Signup() {
       alert(error);
     }
   }
-  
-	return (
-    <div className="container d-flex h-100">
-      <div className="col-md-4 px-0 mt-5">
+
+  if(!sessionStorage.getItem("userId")) {
+    return (
+      <div className="container">
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="group">
+          <div className="divA">
+            <span>Foto de perfil</span>
             <label
               id="thumbnail"
               style={{ backgroundImage: `url(${preview})` }}
@@ -67,36 +72,53 @@ export default function Signup() {
             </label>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="name">Nome</label>
-            <input 
-              type="text"
-              className="form-control" 
-              id="name" 
-              placeholder="Seu nome"
-              value={name} 
-              onChange={event => setName(event.target.value)}
-              required
-            />
+          <div className="divLateral" >
+            <div className="form-group">
+              <label htmlFor="name">Nome</label>
+              <input 
+                type="text"
+                className="form-control" 
+                id="name" 
+                placeholder="Seu nome"
+                value={name} 
+                onChange={event => setName(event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input type="email" className="form-control" id="email" placeholder="Seu email" 
+                required value={email} onChange={event => setEmail(event.target.value)}/>
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Senha</label>
+              <input type="password" className="form-control" id="password" placeholder="Senha" 
+                required value={password} onChange={event => setPassword(event.target.value)}/>
+            </div>
+            <div className="form-group">
+              <label htmlFor="passwordC">Confirmar Senha</label>
+              <input type="password" className="form-control" id="passwordC" placeholder="Confirme sua senha"
+                required value={passwordC} onChange={event => setPasswordC(event.target.value)}/>
+            </div>
+            <button type="submit" className="btn mt-2">Cadastrar</button>
           </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" className="form-control" id="email" placeholder="Seu email" 
-              required value={email} onChange={event => setEmail(event.target.value)}/>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Senha</label>
-            <input type="password" className="form-control" id="password" placeholder="Senha" 
-              required value={password} onChange={event => setPassword(event.target.value)}/>
-          </div>
-          <div className="form-group">
-            <label htmlFor="passwordC">Confirmar Senha</label>
-            <input type="password" className="form-control" id="passwordC" placeholder="Confirme sua senha"
-              required value={passwordC} onChange={event => setPasswordC(event.target.value)}/>
-          </div>
-          <button type="submit" className="btn mt-2">Cadastrar</button>
         </form>
       </div>
-    </div>
-	);
+    );
+  } else {
+    return (
+			<Modal show={true}>
+				<Modal.Header>
+					<Modal.Title>Aviso</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>Você já está logado!</Modal.Body>
+				<Modal.Footer>
+					<Link className="btn btn-primary" to="/">
+						<small>Fechar</small>
+					</Link>
+				</Modal.Footer>
+			</Modal>
+		);
+  }
 }
