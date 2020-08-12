@@ -59,6 +59,9 @@ export default function Navbar() {
             :
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
+                <NavLink style={{color: "#ffbf00"}} activeClassName="activeRoute" activeStyle={{ color: 'white' }} to="/user" className="nav-link">Perfil</NavLink>
+              </li>
+              <li className="nav-item">
                 <a href="/" onClick={handleLogout} className="nav-link text-warning">Logout</a>
               </li>
             </ul>

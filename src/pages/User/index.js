@@ -7,6 +7,6 @@ import { Link, useHistory } from "react-router-dom";
 //	Exporting resource to routes.js
 export default function User() {
 	return (
-		<div>Teste</div>
+		<div>User</div>
 	);
 }
