@@ -29,8 +29,9 @@ export default function Login () {
 			const response = await api.post("session", { email, password });
 
 			sessionStorage.setItem("userId", response.data._id);
-
+			
 			history.push("/menu");
+			history.go();
 		} catch(error) {
 			alert(error);
 		}

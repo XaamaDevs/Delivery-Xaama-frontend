@@ -12,7 +12,7 @@ export default function Home() {
 				<h1 className="display-5 font-italic text-white">Está com fome?</h1>
 				<h1 className="display-1 text-white">Não espere!</h1>
 				<p className="font-italic text-warning">Faça seu pedido agora</p>
-				<hr class="my-3"/>
+				<hr className="my-3"/>
 				<p className="lead">
 					<Link 
 						to="/menu" 
