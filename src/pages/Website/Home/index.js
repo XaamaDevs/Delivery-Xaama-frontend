@@ -7,8 +7,8 @@ import { Link, useHistory } from "react-router-dom";
 //	Exporting resource to routes.js
 export default function Home() {
 	return (
-		<div className="website-container d-flex flex-row align-items-center m-0 p-0 h-100">
-			<div className="jumbotron col-6 ml-5 mt-5 p-3 pl-5 bg-transparent">
+		<div className="website-container d-flex flex-row flex-wrap align-items-center m-0 p-0 h-100">
+			<div className="jumbotron col-sm-6 m-auto p-3 pl-5 bg-transparent">
 				<h1 className="display-5 font-italic text-white">Está com fome?</h1>
 				<h1 className="display-1 text-white">Não espere!</h1>
 				<p className="font-italic text-warning">Faça seu pedido agora</p>
@@ -16,11 +16,12 @@ export default function Home() {
 				<p className="lead">
 					<Link 
 						to="/menu" 
-						className="btn btn-outline-light btn-sm bg-transparent p-1">
+						className="btn btn-outline-light btn-sm p-1">
 						Veja o Cardápio
 					</Link>
 				</p>
 			</div>
+
 			<div id="carouselExampleControls" className="carousel slide m-auto" data-ride="carousel">
 				<div className="carousel-inner">
 					<div className="carousel-item active">

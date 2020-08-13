@@ -1,46 +1,4 @@
-.container button.btn {
-  background-color: #ffbf00;
-}
-
-.container label, span {
-  color: #f0d890;
-}
-
-label#thumbnail {
-  margin-bottom: 20px;
-  margin-top: 8px;
+#thumbnail {
   border: 1px dashed #ddd;
-  background-size: cover;
   cursor: pointer;
-  height: 300px;
-  width: 400px;
-  
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-label#thumbnail input {
-  display: none;
-}
-
-label#thumbnail.has-thumbnail {
-  border: 0;
-}
-
-label#thumbnail.has-thumbnail img {
-  display: none;
-}
-
-#DivLateral {
-  width: 50%;
-  display: flex;
-}
-  
-#DivA {
-  width: 50%;
-  display: flex;
-}
-.group {
-  display:flex;
 }

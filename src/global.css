@@ -33,3 +33,57 @@ body {
 	width: 30%;
 	max-height: 100%;
 }
+
+label, span {
+	color: #f0d890;
+}
+
+/*	Typography sizes	*/
+
+@media (min-width: 0) {
+	.display-1 { 
+		font-size: 300%;
+	}
+}
+
+@media (min-width: 320px) {
+	.display-1 { 
+		font-size: 280%;
+	}
+}
+
+@media (min-width: 375px) {
+	.display-1 { 
+		font-size: 340%;
+	}
+}
+
+@media (min-width: 425px) {
+	.display-1 { 
+		font-size: 370%;
+	}
+}
+
+@media (min-width: 768px) {
+	.display-1 { 
+		font-size: 351%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.display-1 { 
+		font-size: 490%;
+	}
+}
+
+@media (min-width: 1440px) {
+	.display-1 { 
+		font-size: 720%;
+	}
+}
+
+@media (min-width: 2560px) {
+	.display-1 { 
+		font-size: 1300%;
+	}
+}

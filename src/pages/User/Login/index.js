@@ -10,11 +10,8 @@ import { Modal } from "react-bootstrap";
 //	Importing api to communicate to backend
 import api from "../../../services/api";
 
-// Importing styles
-//import "./styles.css";
-
 //	Exporting resource to routes.js
-export default function Login () {
+export default function Login() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	
@@ -22,8 +19,8 @@ export default function Login () {
 	const history = useHistory();
 
 	//	Function to handle user login
-	async function handleSubmit(e) {
-		e.preventDefault();
+	async function handleSubmit(event) {
+		event.preventDefault();
 
 		try {
 			const response = await api.post("session", { email, password });
@@ -33,14 +30,18 @@ export default function Login () {
 			history.push("/menu");
 			history.go();
 		} catch(error) {
-			alert(error);
+			if (error.response) {
+				alert(error.response.data);
+			} else {
+				alert(error);
+			}
 		}
 	}
 
 	if(!sessionStorage.getItem("userId")) {
 		return (
 			<div className="user-container d-flex h-100">
-				<div className="col-md-3 py-3 m-auto text-white">
+				<div className="col-sm-3 py-3 m-auto text-white">
 					<form onSubmit={handleSubmit}>
 						<div className="row my-1">
 							<div className="col my-1">

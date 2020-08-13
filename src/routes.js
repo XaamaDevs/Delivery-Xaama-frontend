@@ -8,7 +8,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomePage from "./pages/Website/Home";
 import NotFoundPage from "./pages/Website/NotFound";
 import Navbar from "./pages/Website/Navbar";
-import Footer from "./pages/Website/Footer";
 import User from "./pages/User";
 import Login from "./pages/User/Login";
 import Signup from "./pages/User/Signup";
