@@ -1,5 +1,5 @@
 //	Importing React main module
-import React from 'react';
+import React from "react";
 
 //	Importing global styles
 import "./global.css";

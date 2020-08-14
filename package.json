@@ -21,21 +21,12 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "rules": {
-      "indent": [
-        "error",
-        "tab"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ],
-      "quotes": [
-        "error",
-        "double"
-      ]
-    }
+    "plugins": [
+      "react"
+    ],
+    "extends": [
+      "plugin:react/recommended"
+    ]
   },
   "browserslist": {
     "production": [
