@@ -78,7 +78,7 @@ export default function Signup() {
 						/>
 						<img 
 							id="thumbnail"
-							className={thumbnail ? "has-thumbnail border-0 m-auto" : "h-100 w-100 m-auto"}
+							className={thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
 							src={preview ? preview : camera} alt="Selecione sua imagem"
 							onClick={inputImage}
 						/>
