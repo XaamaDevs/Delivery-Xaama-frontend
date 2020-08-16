@@ -32,31 +32,35 @@ export default function User() {
 	}, []);
 
 	const preview = useMemo(() => {
-		return user.thumbnail ? URL.createObjectURL(user.thumbnail) : thumbnail ? URL.createObjectURL(thumbnail) : null;
-	}, [user.thumbnail,thumbnail]);
+		return thumbnail ? URL.createObjectURL(thumbnail) : null;
+	}, [thumbnail]);
 
 	//	Function to handle input image profile
 	async function inputImage(event) {
 		event.preventDefault();
 	
 		const input = document.getElementsByTagName("input")[0].click();
-  }
-  
-  const history = useHistory();
+	}
+	
+	const history = useHistory();
 
 	//	Function to handle add image profile
 	async function handleSubmit(event) {
 		event.preventDefault();
 
+		const data = new FormData();
+
+		data.append("name", user.name);
+		data.append("email", user.email);
+		data.append("thumbnail", thumbnail);
 
 		try {
-			const response = await api.put("/user", {name: user.name, email: user.email, thumbnail: thumbnail }, {
+			const response = await api.put("/user", data , {
 				headers : { 
-          authorization: user._id
-        }
-      });
-      alert(response.data);
-			history.go();
+					authorization: user._id
+				}
+			});
+			alert(response.data);
 		} catch(error) {
 			if (error.response) {
 				alert(error.response.data);
@@ -71,27 +75,27 @@ export default function User() {
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
 				<div className="col-sm-4 m-auto p-3">
-          {user.thumbnail ?
-            <>
-              <Image src={user.thumbnail_url} fluid/>
-              <br/> <br/>
-              <Button variant="outline-warning">Trocar foto</Button>{" "}
-              <Button variant="outline-danger">Apagar foto</Button>
-            </>
+					{user.thumbnail ?
+						<>
+							<Image src={user.thumbnail_url} rounded fluid/>
+							<br/> <br/>
+							<Button variant="outline-warning">Trocar foto</Button>{" "}
+							<Button variant="outline-danger">Apagar foto</Button>
+						</>
 						:
 						<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
 							<input
 								type="file"
-                className="d-none"
+								className="d-none"
 								onChange={event => setThumbnail(event.target.files[0])}
 							/>
 							<img 
 								id="thumbnail"
 								className={thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
-                src={preview ? preview : camera} alt="Selecione sua imagem"
+								src={preview ? preview : camera} alt="Selecione sua imagem"
 								onClick={inputImage}
 							/>
-              <Button className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
+							<Button className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
 						</form>
 					}
 				</div>
