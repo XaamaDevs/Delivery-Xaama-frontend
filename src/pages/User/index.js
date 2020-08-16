@@ -61,6 +61,7 @@ export default function User() {
 				}
 			});
 			alert(response.data);
+			history.go();
 		} catch(error) {
 			if (error.response) {
 				alert(error.response.data);
@@ -77,10 +78,12 @@ export default function User() {
 				<div className="col-sm-4 m-auto p-3">
 					{user.thumbnail ?
 						<>
-							<Image src={user.thumbnail_url} rounded fluid/>
-							<br/> <br/>
-							<Button variant="outline-warning">Trocar foto</Button>{" "}
-							<Button variant="outline-danger">Apagar foto</Button>
+							<form onSubmit={handleSubmit}>
+								<Image src={user.thumbnail_url} rounded fluid/>
+								<br/> <br/>
+								<Button type="submit" variant="outline-warning">Trocar foto</Button>{" "}
+								<Button type="submit" variant="outline-danger">Apagar foto</Button>
+							</form>
 						</>
 						:
 						<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
@@ -95,7 +98,7 @@ export default function User() {
 								src={preview ? preview : camera} alt="Selecione sua imagem"
 								onClick={inputImage}
 							/>
-							<Button className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
+							<Button style={{position:"absolute", top:"95%", left:"30%"}} className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
 						</form>
 					}
 				</div>
