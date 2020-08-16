@@ -6,7 +6,7 @@ import { Link, useHistory } from "react-router-dom";
 
 //	Importing React features
 import Image from "react-bootstrap/Image";
-import { Container, Card, ListGroup, Button } from "react-bootstrap";
+import { Card, ListGroup, Button } from "react-bootstrap";
 
 // Importing backend api
 import api from "../../services/api";
@@ -33,14 +33,16 @@ export default function User() {
 
 	const preview = useMemo(() => {
 		return user.thumbnail ? URL.createObjectURL(user.thumbnail) : thumbnail ? URL.createObjectURL(thumbnail) : null;
-	}, [thumbnail]);
+	}, [user.thumbnail,thumbnail]);
 
 	//	Function to handle input image profile
 	async function inputImage(event) {
 		event.preventDefault();
 	
 		const input = document.getElementsByTagName("input")[0].click();
-	}
+  }
+  
+  const history = useHistory();
 
 	//	Function to handle add image profile
 	async function handleSubmit(event) {
@@ -48,10 +50,13 @@ export default function User() {
 
 
 		try {
-			const response = await api.put("/user", {thumbnail: thumbnail, name: user.name, email: user.email }, {
-				headers : user._id
-			});
-			
+			const response = await api.put("/user", {name: user.name, email: user.email, thumbnail: thumbnail }, {
+				headers : { 
+          authorization: user._id
+        }
+      });
+      alert(response.data);
+			history.go();
 		} catch(error) {
 			if (error.response) {
 				alert(error.response.data);
@@ -66,32 +71,27 @@ export default function User() {
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
 				<div className="col-sm-4 m-auto p-3">
-					{user.thumbnail ?
-						<Image src={user.thumbnail_url} fluid/>
+          {user.thumbnail ?
+            <>
+              <Image src={user.thumbnail_url} fluid/>
+              <br/> <br/>
+              <Button variant="outline-warning">Trocar foto</Button>{" "}
+              <Button variant="outline-danger">Apagar foto</Button>
+            </>
 						:
-						<form className="d-flex flex-row flex-wrap h-100">
+						<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
 							<input
 								type="file"
-								className="d-none"
+                className="d-none"
 								onChange={event => setThumbnail(event.target.files[0])}
 							/>
 							<img 
 								id="thumbnail"
-								className={user.thumbnail || thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
-								src={preview ? preview : camera} alt="Selecione sua imagem"
+								className={thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
+                src={preview ? preview : camera} alt="Selecione sua imagem"
 								onClick={inputImage}
 							/>
-						</form>
-					}
-					<br/> <br/>
-					{user.thumbnail ?
-						<>
-							<Button variant="outline-warning">Trocar foto</Button>{" "}
-							<Button variant="outline-danger">Apagar foto</Button>
-						</>
-						:
-						<form onSubmit={handleSubmit} >
-							<Button type="submit" variant="outline-warning" >Adicionar foto</Button>
+              <Button className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
 						</form>
 					}
 				</div>
