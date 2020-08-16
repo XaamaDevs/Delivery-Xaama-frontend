@@ -11,6 +11,9 @@ import { Card, ListGroup, Button } from "react-bootstrap";
 // Importing backend api
 import api from "../../services/api";
 
+// Importing styles
+import "./styles.css";
+
 // Importing image from camera
 import camera from "../../assets/camera.svg";
 
@@ -108,14 +111,14 @@ export default function User() {
 						<ListGroup variant="flush">
 							<ListGroup.Item>{user.email}</ListGroup.Item>
 							<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
-							<ListGroup.Item>{user.address ? user.address: "Endreço:"}</ListGroup.Item>
+							<ListGroup.Item>{user.address ? user.address.join(", "): "Endreço:"}</ListGroup.Item>
 						</ListGroup>
 					</Card>
 					<br/>
 					{user.userType != 2 ?
 						<>
 							<Button variant="outline-warning">Editar perfil</Button> {" "}
-							<Button variant="outline-danger">Trocar senha</Button> {" "}
+							<button className="btn" id="btn-password">Trocar senha</button> {" "}
 							<Button variant="outline-danger">Apagar perfil</Button>
 						</>
 						:
