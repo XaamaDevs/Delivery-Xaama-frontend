@@ -20,7 +20,6 @@ export default function User() {
 	const [user, setUser] = useState([]);
 	const [thumbnail, setThumbnail] = useState(null);
 
-
 	const userId = sessionStorage.getItem("userId");
 
 	useEffect(() => {
@@ -33,7 +32,7 @@ export default function User() {
 	}, []);
 
 	const preview = useMemo(() => {
-		return user.thumbnail ? URL.createObjectURL(user.thumbnail) : null;
+		return user.thumbnail ? URL.createObjectURL(user.thumbnail) : thumbnail ? URL.createObjectURL(thumbnail) : null;
 	}, [thumbnail]);
 
 	//	Function to handle input image profile
@@ -41,6 +40,25 @@ export default function User() {
 		event.preventDefault();
 	
 		const input = document.getElementsByTagName("input")[0].click();
+	}
+
+	//	Function to handle add image profile
+	async function handleSubmit(event) {
+		event.preventDefault();
+
+
+		try {
+			const response = await api.put("/user", {thumbnail: thumbnail, name: user.name, email: user.email }, {
+				headers : user._id
+			});
+			
+		} catch(error) {
+			if (error.response) {
+				alert(error.response.data);
+			} else {
+				alert(error);
+			}
+		}
 	}
 
 
@@ -59,15 +77,23 @@ export default function User() {
 							/>
 							<img 
 								id="thumbnail"
-								className={user.thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
+								className={user.thumbnail || thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
 								src={preview ? preview : camera} alt="Selecione sua imagem"
 								onClick={inputImage}
 							/>
 						</form>
 					}
 					<br/> <br/>
-					<Button variant="outline-warning">Trocar foto</Button>{" "}
-					<Button variant="outline-danger">Apagar foto</Button>
+					{user.thumbnail ?
+						<>
+							<Button variant="outline-warning">Trocar foto</Button>{" "}
+							<Button variant="outline-danger">Apagar foto</Button>
+						</>
+						:
+						<form onSubmit={handleSubmit} >
+							<Button type="submit" variant="outline-warning" >Adicionar foto</Button>
+						</form>
+					}
 				</div>
 				<div className="col-sm-4 m-auto p-3">
 					<Card style={{ width: "23rem" }}>
@@ -79,9 +105,18 @@ export default function User() {
 						</ListGroup>
 					</Card>
 					<br/>
-					<Button variant="outline-warning">Editar perfil</Button> {" "}
-					<Button variant="outline-danger">Trocar senha</Button> {" "}
-					<Button variant="outline-danger">Apagar perfil</Button>
+					{user.userType != 2 ?
+						<>
+							<Button variant="outline-warning">Editar perfil</Button> {" "}
+							<Button variant="outline-danger">Trocar senha</Button> {" "}
+							<Button variant="outline-danger">Apagar perfil</Button>
+						</>
+						:
+						<>
+							<Button variant="outline-warning">Editar perfil</Button> {" "}
+							<Button variant="outline-danger">Trocar senha</Button> {" "}
+						</>
+					}
 				</div>
 			</div>
 		</div>
