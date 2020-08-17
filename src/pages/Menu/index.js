@@ -1,14 +1,17 @@
 //	Importing React main module and its features
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 //	Importing React Router features
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Nav, Card, Button, CardColumns, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Nav, Card, Button, CardGroup, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
+
+// Importing image from camera
+import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function Menu() {
@@ -19,10 +22,11 @@ export default function Menu() {
 	const [user, setUser] = useState("");
 	const [productId, setProductId] = useState("");
 	const [productName, setProductName] = useState("");
-	const [productIngredients, setProductIngredients] = useState([]);
-	const [productPrices, setProductPrices] = useState([]);
+	const [productIngredients, setProductIngredients] = useState("");
+	const [productPrices, setProductPrices] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState("");
+	const [productThumbnail, setProductThumbnail] = useState(null);
 
 	//	Modal settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -82,13 +86,25 @@ export default function Menu() {
 			});
 	}, [history, userId]);
 
-	async function handleProduct(event, product) {
-		event.preventDefault();
+	const preview = useMemo(() => {
+		return productThumbnail ? URL.createObjectURL(productThumbnail) : null;
+	}, [productThumbnail]);
 
-		setProducts(productsByType[product]);
+	//	Function to handle input product thumbnail
+	async function inputImage(event) {
+		event.preventDefault();
+	
+		const input = document.getElementById("inputImage").click();
 	}
 
-	async function handleProductUpdate(event, product) {
+	//	Return a list of products given type
+	async function handleProductsList(event, type) {
+		event.preventDefault();
+
+		setProducts(productsByType[type]);
+	}
+
+	async function handleProductUpdate(event) {
 		event.preventDefault();
 
 		const data = new FormData();
@@ -97,7 +113,12 @@ export default function Menu() {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
-		data.append("thumbnail_url", productThumbnail_url);
+		if(productThumbnail) {
+			data.append("thumbnail", productThumbnail);
+		} else {
+			const blob = await fetch(productThumbnail_url).then(r => r.blob());
+			data.append("thumbnail", new File([blob], "thumbnail.jpg"));
+		}
 
 		api.put("product/" + productId, data,  {
 			headers : { 
@@ -121,8 +142,8 @@ export default function Menu() {
 		if(action === "open") {
 			setProductId(product._id);
 			setProductName(product.name);
-			setProductIngredients(product.ingredients);
-			setProductPrices(product.prices);
+			setProductIngredients(product.ingredients.join(", "));
+			setProductPrices(product.prices.join(", "));
 			setProductType(product.type);
 			setProductThumbnail_url(product.thumbnail_url);
 		}
@@ -136,28 +157,32 @@ export default function Menu() {
 		}
 	}
 
+	const header = (
+		<Card.Header className="pb-3">
+			<Nav fill variant="tabs" defaultActiveKey={Object.keys(productsByType)[0]}>
+				{Object.keys(productsByType).map((type, index) => (
+					productsByType[type].length ?
+						<Nav.Item key={index}>
+							<Nav.Link 
+								className="btn-outline-warning rounded"
+								href={type} 
+								onClick={e => handleProductsList(e, type)}>
+								{type[0].toUpperCase() + type.slice(1)}
+							</Nav.Link>
+						</Nav.Item>
+						:
+						null
+				))}
+			</Nav>
+		</Card.Header>
+	);
+
 	return (
 		<div className="product-container container mt-5 w-100">
 			<Card className="px-3" bg="dark">
-				<Card.Header className="pb-3">
-					<Nav fill variant="tabs" defaultActiveKey={Object.keys(productsByType)[0]}>
-						{Object.keys(productsByType).map((type, index) => (
-							productsByType[type].length ?
-								<Nav.Item key={index}>
-									<Nav.Link 
-										className="btn-outline-warning rounded"
-										href={type} 
-										onClick={e => handleProduct(e, type)}>
-										{type[0].toUpperCase() + type.slice(1)}
-									</Nav.Link>
-								</Nav.Item>
-								:
-								null
-						))}
-					</Nav>
-				</Card.Header>
+				{header}
 				{products.length ?
-					<CardColumns>
+					<CardGroup>
 						{products.map((product) => (
 							<Card bg="secondary" key={product._id}>
 								<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
@@ -205,7 +230,7 @@ export default function Menu() {
 								</Card.Footer>
 							</Card>
 						))}
-					</CardColumns>
+					</CardGroup>
 					:
 					null
 				}
@@ -218,8 +243,20 @@ export default function Menu() {
 				<Modal.Body>
 					<Form>
 						<Row>
-							<Col>
-								<Image src={productThumbnail_url} fluid="true"/>
+							<Col className="d-flex m-auto">
+								<Form.Control
+									id="inputImage"
+									className="d-none"
+									type="file"
+									onChange={event => setProductThumbnail(event.target.files[0])}
+								/>
+								<Image 
+									id="thumbnail" 
+									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+									alt="Selecione sua imagem"
+									onClick={inputImage}
+									fluid="true"
+								/>
 							</Col>
 							<Col>
 								<Form.Group controlId="productName">
@@ -233,16 +270,10 @@ export default function Menu() {
 								</Form.Group>
 								<Form.Group controlId="productPrices">
 									<Form.Label>
-										{productPrices.length == 1 ? "Preço" : "Preços"}
+										{productPrices && productPrices.split(",").length == 1 ? "Preço" : "Preços"}
 									</Form.Label>
 									<Form.Control 
-										value={productPrices ? 
-											productPrices.map((price, index) => (
-												index === 0 ? price : " " + price
-											))
-											:
-											null
-										}
+										value={productPrices}
 										onChange={e => setProductPrices(e.target.value)} 
 										type="text"
 									/>
@@ -268,13 +299,7 @@ export default function Menu() {
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
-										value={productIngredients ? 
-											productIngredients.map((ingredients, index) => (
-												index === 0 ? ingredients : " " + ingredients
-											))
-											:
-											null
-										}
+										value={productIngredients}
 										onChange={e => setProductIngredients(e.target.value)} 
 										as="textarea"
 										rows="2"
@@ -312,14 +337,14 @@ export default function Menu() {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal3Show} onHide={e => setModal3Show(false)}>
+			<Modal show={modal3Show} onHide={e => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>Alterações produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setModal3Show(false)}>
-						Close
+					<Button variant="secondary" onClick={e => history.go()}>
+						Fechar
 					</Button>
 				</Modal.Footer>
 			</Modal>
