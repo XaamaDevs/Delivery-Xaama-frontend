@@ -29,9 +29,11 @@ export default function Menu() {
 	const [productThumbnail, setProductThumbnail] = useState(null);
 
 	//	Modal settings
-	const [modal1Show, setModal1Show] = useState(false);
-	const [modal2Show, setModal2Show] = useState(false);
-	const [modal3Show, setModal3Show] = useState(false);
+	const [productAddModal, setProductAddModal] = useState(false);
+	const [productUpdateModal, setProductUpdateModal] = useState(false);
+	const [productDeleteModal, setProductDeleteModal] = useState(false);
+	const [productOrderModal, setProductOrderModal] = useState(false);
+	const [modalWarningShow, setModalWarningShow] = useState(false);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -104,6 +106,42 @@ export default function Menu() {
 		setProducts(productsByType[type]);
 	}
 
+	async function handleProductAdd(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("name", productName);
+		data.append("ingredients", productIngredients);
+		data.append("prices", productPrices);
+		data.append("type", productType);
+		if(productThumbnail) {
+			data.append("thumbnail", productThumbnail);
+			console.log(productThumbnail);
+		} else {
+			const blob = await fetch(productThumbnail_url).then(r => r.blob());
+			const token = productThumbnail_url.split(".");
+			const extension = token[token.length-1];
+			data.append("thumbnail", new File([blob], "thumbnail." + extension));
+		}
+
+		api.post("product/" + productId, data, {
+			headers : { 
+				authorization: user._id
+			}})
+			.then((response) => {
+				setProductAddModal(false);
+				setModalWarningShow(true);
+			})
+			.catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
+	}
+
 	async function handleProductUpdate(event) {
 		event.preventDefault();
 
@@ -123,14 +161,15 @@ export default function Menu() {
 			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
-		api.put("product/" + productId, data,  {
+		api.put("product/" + productId, data, {
 			headers : { 
 				authorization: user._id
 			}})
 			.then((response) => {
-				setModal3Show(true);
-				setModal1Show(false);
-			}).catch((error) => {
+				setProductUpdateModal(false);
+				setModalWarningShow(true);
+			})
+			.catch((error) => {
 				if(error.response) {
 					alert(error.response.data);
 				} else {
@@ -139,24 +178,47 @@ export default function Menu() {
 			});
 	}
 
-	async function handleModal(event, modal, action, product = null) {
+	async function handleProductDelete(event) {
+		event.preventDefault();
+		
+		api.delete("product/" + productId, {
+			headers : { 
+				authorization: user._id
+			}})
+			
+			.then((response) => {
+				setProductDeleteModal(false);
+				setModalWarningShow(true);
+			})
+			.catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
+	}
+
+	async function handleProductModal(event, modal, product) {
 		event.preventDefault();
 
-		if(action === "open") {
-			setProductId(product._id);
-			setProductName(product.name);
-			setProductIngredients(product.ingredients.join(", "));
-			setProductPrices(product.prices.join(", "));
-			setProductType(product.type);
-			setProductThumbnail_url(product.thumbnail_url);
-		}
+		setProductId(product._id);
+		setProductName(product.name);
+		setProductIngredients(product.ingredients.join(", "));
+		setProductPrices(product.prices.join(", "));
+		setProductType(product.type);
+		setProductThumbnail_url(product.thumbnail_url);
 
-		if(modal === 1) {
-			setModal1Show((action === "open") ? true : false);
-		} else if(modal === 1) {
-			setModal2Show((action === "open") ? true : false);
-		} else {
-			setModal3Show((action === "open") ? true : false);
+		switch(modal) {
+		case 0:
+			setProductUpdateModal(true);
+			break;
+		case 1:
+			setProductOrderModal(true);
+			break;
+		case 2:
+			setProductDeleteModal(true);
+			break;
 		}
 	}
 
@@ -176,13 +238,24 @@ export default function Menu() {
 						:
 						null
 				))}
+				{user.userType == 1 || user.userType == 2 ?
+					<Nav.Item>
+						<Nav.Link 
+							className="btn-outline-warning rounded"
+							onClick={e => setProductAddModal(true)}>
+							Adicionar novo produto
+						</Nav.Link>
+					</Nav.Item>
+					:
+					null
+				}
 			</Nav>
 		</Card.Header>
 	);
 
 	const productCard = (product) => {
 		return (
-			<Card className="col-sm-3 my-1" bg="secondary" key={product._id}>
+			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
 				<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
 				<Card.Body key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
@@ -196,14 +269,21 @@ export default function Menu() {
 					</Card.Text>
 					{user ? 
 						user.userType === 1 || user.userType === 2 ?
-							<Button 
-								onClick ={e => handleModal(e, 1, "open", product)} 
-								variant="warning">
-									Modificar produto
-							</Button>
+							<div className="d-flex  justify-content-between">
+								<Button 
+									onClick ={e => handleProductModal(e, 0, product)} 
+									variant="warning">
+										Modificar produto
+								</Button>
+								<Button 
+									variant="danger" 
+									onClick={e => handleProductModal(e, 2, product)}>
+									Remover
+								</Button>
+							</div>
 							:
 							<Button 
-								onClick ={e => handleModal(e, 2, "open", product)} 
+								onClick ={e => handleProductModal(e, 1, product)} 
 								variant="warning">
 									Adicionar aos pedidos
 							</Button>
@@ -238,12 +318,9 @@ export default function Menu() {
 					<CardDeck className="p-2">
 						{Array(products.length).fill(null).map((value, i) => (
 							i%3 == 0 ?
-								<Row className="d-flex justify-content-around" key={i/3}>
+								<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
 									{Array(3).fill(null).map((value, j) => (
-										i+j < products.length ? 
-											productCard(products[i+j])
-											:
-											null
+										i+j < products.length ? productCard(products[i+j]) : null
 									))}
 								</Row>
 								:
@@ -254,8 +331,95 @@ export default function Menu() {
 					null
 				}
 			</Card>
-			
-			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
+
+			<Modal show={productAddModal} onHide={e => setProductAddModal(false)} size="lg" centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Adicionar produto</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Row>
+							<Col className="d-flex m-auto">
+								<Form.Control
+									id="inputImage"
+									className="d-none"
+									type="file"
+									onChange={event => setProductThumbnail(event.target.files[0])}
+								/>
+								<Image 
+									id="thumbnail" 
+									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+									alt="Selecione sua imagem"
+									onClick={inputImage}
+									fluid="true"
+								/>
+							</Col>
+							<Col>
+								<Form.Group controlId="productName">
+									<Form.Label>Nome</Form.Label>
+									<Form.Control 
+										value={productName}
+										onChange={e => setProductName(e.target.value)} 
+										type="text" 
+										placeholder="Nome do produto"
+									/>
+								</Form.Group>
+								<Form.Group controlId="productPrices">
+									<Form.Label>
+										Preço
+									</Form.Label>
+									<Form.Control 
+										value={productPrices}
+										onChange={e => setProductPrices(e.target.value)} 
+										type="text"
+									/>
+									<Form.Text className="text-muted">
+										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
+									</Form.Text>
+								</Form.Group>
+								<Form.Group controlId="productType">
+									<Form.Label>Tipo</Form.Label>
+									<Form.Control 
+										value={productType} 
+										onChange={e => setProductType(e.target.value)} 
+										as="select">
+										<option></option>
+										{productTypes.map((type, index) => (
+											<option key={index}>{type}</option>
+										))}
+									</Form.Control>
+								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<Form.Group controlId="productIngredients">
+									<Form.Label>Ingredientes</Form.Label>
+									<Form.Control 
+										value={productIngredients}
+										onChange={e => setProductIngredients(e.target.value)} 
+										as="textarea"
+										rows="2"
+									/>
+									<Form.Text className="text-muted">
+										Para múltiplos ingredientes, separe-os entre vírgulas
+									</Form.Text>
+								</Form.Group>
+							</Col>
+						</Row>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={e => setProductAddModal(false)}>
+						Fechar
+					</Button>
+					<Button variant="primary" type="submit" onClick={handleProductAdd}>
+						Adicionar
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={productUpdateModal} onHide={e => setProductUpdateModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
@@ -332,7 +496,7 @@ export default function Menu() {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setModal1Show(false)}>
+					<Button variant="secondary" onClick={e => setProductUpdateModal(false)}>
 						Fechar
 					</Button>
 					<Button variant="primary" type="submit" onClick={handleProductUpdate}>
@@ -341,22 +505,46 @@ export default function Menu() {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal2Show} onHide={e => setModal2Show(false)} size="lg" centered>
+			<Modal show={productDeleteModal} onHide={e => setProductDeleteModal(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Alterações produto</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<h3>
+						{productName && productType ? 
+							productType[0].toUpperCase() + productType.slice(1) + " " + productName
+							:
+							null
+						}
+					</h3>
+					Você tem certeza que deseja remover este produto?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={e => setProductDeleteModal(false)}>
+						Voltar
+					</Button>
+					<Button variant="danger" onClick={handleProductDelete}>
+						Remover
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={productOrderModal} onHide={e => setProductOrderModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar ao pedido</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setModal2Show(false)}>
+					<Button variant="secondary" onClick={e => setProductOrderModal(false)}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={e => setModal2Show(false)}>
+					<Button variant="primary" onClick={e => setProductOrderModal(false)}>
 						Save Changes
 					</Button>
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal3Show} onHide={e => history.go()}>
+			<Modal show={modalWarningShow} onHide={e => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>Alterações produto</Modal.Title>
 				</Modal.Header>
