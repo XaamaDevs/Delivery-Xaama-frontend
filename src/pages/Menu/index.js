@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Nav, Card, Button, CardGroup, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -177,60 +177,77 @@ export default function Menu() {
 		</Card.Header>
 	);
 
+	const productCard = (product) => {
+		if(product) {
+			return (
+				<Card className="col-sm my-1" bg="secondary" key={product._id}>
+					<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
+					<Card.Body key={product._id}>
+						<Card.Title>{product.name}</Card.Title>
+						<Card.Text>
+							{product.ingredients.map((ingredient, index) => (
+								index === product.ingredients.length-1 ?
+									ingredient
+									:
+									ingredient + ", "
+							))}
+						</Card.Text>
+						{user ? 
+							user.userType === 1 || user.userType === 2 ?
+								<Button 
+									onClick ={e => handleModal(e, 1, "open", product)} 
+									variant="warning">
+										Modificar produto
+								</Button>
+								:
+								<Button 
+									onClick ={e => handleModal(e, 2, "open", product)} 
+									variant="warning">
+										Adicionar aos pedidos
+								</Button>
+							:
+							null
+						}
+					</Card.Body>
+					<Card.Footer>
+						<small>
+							{product.prices.length === 1 ?
+								"Preço: "
+								:
+								"Preços por tamanho: "
+							}
+							{product.prices.map((price, index) => (
+								index === product.prices.length-1 ?
+									"R$" + price
+									:
+									"R$" + price + ", "
+							))}
+						</small>
+					</Card.Footer>
+				</Card>
+			);
+		} else {
+			return null;
+		}
+	};
+
 	return (
 		<div className="product-container container mt-5 w-100">
 			<Card className="px-3" bg="dark">
 				{header}
 				{products.length ?
-					<CardGroup>
-						{products.map((product) => (
-							<Card bg="secondary" key={product._id}>
-								<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
-								<Card.Body key={product._id}>
-									<Card.Title>{product.name}</Card.Title>
-									<Card.Text>
-										{product.ingredients.map((ingredient, index) => (
-											index === product.ingredients.length-1 ?
-												ingredient
-												:
-												ingredient + ", "
-										))}
-									</Card.Text>
-									{user ? 
-										user.userType === 1 || user.userType === 2 ?
-											<Button 
-												onClick ={e => handleModal(e, 1, "open", product)} 
-												variant="warning">
-													Modificar produto
-											</Button>
-											:
-											<Button 
-												onClick ={e => handleModal(e, 2, "open", product)} 
-												variant="warning">
-													Adicionar aos pedidos
-											</Button>
-										:
-										null
-									}
-								</Card.Body>
-								<Card.Footer>
-									<small>
-										{product.prices.length === 1 ?
-											"Preço: "
-											:
-											"Preços por tamanho: "
-										}
-										{product.prices.map((price, index) => (
-											index === product.prices.length-1 ?
-												"R$" + price
-												:
-												"R$" + price + ", "
-										))}
-									</small>
-								</Card.Footer>
-							</Card>
+					<CardDeck className="p-2">
+						{Array(products.length).fill(null).map((value, i) => (
+							i%3 == 0 ?
+								<Row className="d-flex justify-content-around" key={i/3}>
+									{Array(3).fill(null).map((value, j) => (
+										productCard(products[i+j])
+									))}
+								</Row>
+								:
+								null
 						))}
-					</CardGroup>
+					</CardDeck>
 					:
 					null
 				}
