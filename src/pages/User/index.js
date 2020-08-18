@@ -6,7 +6,7 @@ import { Link, useHistory } from "react-router-dom";
 
 //	Importing React features
 import Image from "react-bootstrap/Image";
-import { Card, ListGroup, Button } from "react-bootstrap";
+import { Card, ListGroup, Button, Form, Col, Row, Modal } from "react-bootstrap";
 
 // Importing backend api
 import api from "../../services/api";
@@ -21,7 +21,16 @@ import camera from "../../assets/camera.svg";
 //	Exporting resource to routes.js
 export default function User() {
 	const [user, setUser] = useState([]);
-	const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [userAddress, setUserAddress] = useState([]);
+  
+  //	Modal settings
+  const [modal1Show, setModal1Show] = useState(false);
+  const [modal2Show, setModal2Show] = useState(false);
+	const [modal3Show, setModal3Show] = useState(false);
 
 	const userId = sessionStorage.getItem("userId");
 
@@ -72,6 +81,49 @@ export default function User() {
 				alert(error);
 			}
 		}
+  }
+
+  async function handleUserUpdate(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("name", userName);
+		data.append("email", userEmail);
+		data.append("address", userAddress);
+		data.append("phone", userPhone);
+		
+		api.put("user/" + userId, data,  {
+			headers : { 
+				authorization: userId
+			}})
+			.then((response) => {
+				setModal3Show(true);
+				setModal1Show(false);
+			}).catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
+	}
+  
+  async function handleModal(event, modal, action, user = null) {
+		event.preventDefault();
+
+		if(action === "open") {
+      setUserName(user.name);
+      setUserEmail(user.email);
+      setUserPhone(user.phone);
+      setUserAddress(user.address.join(", "));
+		}
+
+		if(modal === 1) {
+			setModal1Show((action === "open") ? true : false);
+		} else if(modal === 1) {
+      setModal3Show((action === "open") ? true : false);
+    }
 	}
 
 
@@ -111,24 +163,108 @@ export default function User() {
 						<ListGroup variant="flush">
 							<ListGroup.Item>{user.email}</ListGroup.Item>
 							<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
-							<ListGroup.Item>{user.address ? user.address.join(", "): "Endreço:"}</ListGroup.Item>
+							<ListGroup.Item>{user.address ? `Bairro: ${user.address[0]} Rua: ${user.address[1]} Número: ${user.address[2]}` : "Endereço:"}</ListGroup.Item>
 						</ListGroup>
 					</Card>
 					<br/>
 					{user.userType != 2 ?
 						<>
-							<Button variant="outline-warning">Editar perfil</Button> {" "}
+              <Button 
+                variant="outline-warning"
+                onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
+              </Button> {" "}
 							<button className="btn" id="btn-password">Trocar senha</button> {" "}
 							<Button variant="outline-danger">Apagar perfil</Button>
 						</>
 						:
 						<>
-							<Button variant="outline-warning">Editar perfil</Button> {" "}
+              <Button 
+                variant="outline-warning" 
+                onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
+              </Button> {" "}
 							<Button variant="outline-danger">Trocar senha</Button> {" "}
 						</>
 					}
 				</div>
 			</div>
+      <Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Modificar produto</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Row>
+							<Col>
+								<Form.Group controlId="userName">
+									<Form.Label>Nome</Form.Label>
+									<Form.Control 
+										value={userName}
+										onChange={e => setUserName(e.target.value)} 
+										type="text" 
+										placeholder="Nome de usuário"
+									/>
+								</Form.Group>
+							</Col>
+              <Col>
+								<Form.Group controlId="userEmail">
+									<Form.Label>Email</Form.Label>
+									<Form.Control 
+										value={userEmail}
+										onChange={e => setUserEmail(e.target.value)} 
+										type="text" 
+										placeholder="Seu email"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+            <Row>
+							<Col>
+								<Form.Group controlId="userPhone">
+									<Form.Label>Telefone</Form.Label>
+									<Form.Control 
+										value={userPhone}
+										onChange={e => setUserPhone(e.target.value)} 
+										type="text" 
+										placeholder="(__) _ ____-____"
+									/>
+								</Form.Group>
+							</Col>
+              <Col>
+								<Form.Group controlId="userAddress">
+									<Form.Label>Endereço</Form.Label>
+									<Form.Control 
+										value={userAddress}
+										onChange={e => setUserAddress(e.target.value)} 
+										type="text" 
+										placeholder="Bairro, Rua, Número"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+						
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={e => setModal1Show(false)}>
+						Fechar
+					</Button>
+					<Button variant="primary" type="submit" onClick={handleUserUpdate}>
+						Salvar alterações
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+      <Modal show={modal3Show} onHide={e => history.go()}>
+				<Modal.Header closeButton>
+					<Modal.Title>Alterações usuário</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={e => history.go()}>
+						Fechar
+					</Button>
+				</Modal.Footer>
+			</Modal>
 		</div>
 	);
 }
