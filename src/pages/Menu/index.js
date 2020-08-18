@@ -115,9 +115,12 @@ export default function Menu() {
 		data.append("type", productType);
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
+			console.log(productThumbnail);
 		} else {
 			const blob = await fetch(productThumbnail_url).then(r => r.blob());
-			data.append("thumbnail", new File([blob], "thumbnail.jpg"));
+			const token = productThumbnail_url.split(".");
+			const extension = token[token.length-1];
+			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
 		api.put("product/" + productId, data,  {
@@ -178,57 +181,53 @@ export default function Menu() {
 	);
 
 	const productCard = (product) => {
-		if(product) {
-			return (
-				<Card className="col-sm my-1" bg="secondary" key={product._id}>
-					<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
-					<Card.Body key={product._id}>
-						<Card.Title>{product.name}</Card.Title>
-						<Card.Text>
-							{product.ingredients.map((ingredient, index) => (
-								index === product.ingredients.length-1 ?
-									ingredient
-									:
-									ingredient + ", "
-							))}
-						</Card.Text>
-						{user ? 
-							user.userType === 1 || user.userType === 2 ?
-								<Button 
-									onClick ={e => handleModal(e, 1, "open", product)} 
-									variant="warning">
-										Modificar produto
-								</Button>
+		return (
+			<Card className="col-sm-3 my-1" bg="secondary" key={product._id}>
+				<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
+				<Card.Body key={product._id}>
+					<Card.Title>{product.name}</Card.Title>
+					<Card.Text>
+						{product.ingredients.map((ingredient, index) => (
+							index === product.ingredients.length-1 ?
+								ingredient
 								:
-								<Button 
-									onClick ={e => handleModal(e, 2, "open", product)} 
-									variant="warning">
-										Adicionar aos pedidos
-								</Button>
+								ingredient + ", "
+						))}
+					</Card.Text>
+					{user ? 
+						user.userType === 1 || user.userType === 2 ?
+							<Button 
+								onClick ={e => handleModal(e, 1, "open", product)} 
+								variant="warning">
+									Modificar produto
+							</Button>
 							:
-							null
+							<Button 
+								onClick ={e => handleModal(e, 2, "open", product)} 
+								variant="warning">
+									Adicionar aos pedidos
+							</Button>
+						:
+						null
+					}
+				</Card.Body>
+				<Card.Footer>
+					<small>
+						{product.prices.length === 1 ?
+							"Preço: "
+							:
+							"Preços por tamanho: "
 						}
-					</Card.Body>
-					<Card.Footer>
-						<small>
-							{product.prices.length === 1 ?
-								"Preço: "
+						{product.prices.map((price, index) => (
+							index === product.prices.length-1 ?
+								"R$" + price
 								:
-								"Preços por tamanho: "
-							}
-							{product.prices.map((price, index) => (
-								index === product.prices.length-1 ?
-									"R$" + price
-									:
-									"R$" + price + ", "
-							))}
-						</small>
-					</Card.Footer>
-				</Card>
-			);
-		} else {
-			return null;
-		}
+								"R$" + price + ", "
+						))}
+					</small>
+				</Card.Footer>
+			</Card>
+		);
 	};
 
 	return (
@@ -241,7 +240,10 @@ export default function Menu() {
 							i%3 == 0 ?
 								<Row className="d-flex justify-content-around" key={i/3}>
 									{Array(3).fill(null).map((value, j) => (
-										productCard(products[i+j])
+										i+j < products.length ? 
+											productCard(products[i+j])
+											:
+											null
 									))}
 								</Row>
 								:
