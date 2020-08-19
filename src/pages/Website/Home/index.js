@@ -1,8 +1,8 @@
 //	Importing React main module and its features
-import React, { useState } from "react";
+import React from "react";
 
 //	Importing React Router features
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 //	Exporting resource to routes.js
 export default function Home() {

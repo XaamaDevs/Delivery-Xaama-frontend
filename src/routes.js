@@ -1,5 +1,5 @@
 //	Importing React main module
-import React, { useState } from "react";
+import React from "react";
 
 //	Importing Route features to manage app routes
 import { BrowserRouter, Route, Switch } from "react-router-dom";

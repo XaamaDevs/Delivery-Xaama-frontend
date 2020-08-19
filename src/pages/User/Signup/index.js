@@ -62,7 +62,7 @@ export default function Signup() {
 	async function inputImage(event) {
 		event.preventDefault();
 
-		const input = document.getElementsByTagName("input")[0].click();
+		document.getElementsByTagName("input")[0].click();
 	}
 
 	if(!sessionStorage.getItem("userId")) {

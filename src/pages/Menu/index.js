@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 //	Importing React Router features
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 //	Importing React features
 import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
@@ -96,7 +96,7 @@ export default function Menu() {
 	async function inputImage(event) {
 		event.preventDefault();
 	
-		const input = document.getElementById("inputImage").click();
+		document.getElementById("inputImage").click();
 	}
 
 	//	Return a list of products given type
@@ -219,6 +219,8 @@ export default function Menu() {
 		case 2:
 			setProductDeleteModal(true);
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -238,7 +240,7 @@ export default function Menu() {
 						:
 						null
 				))}
-				{user.userType == 1 || user.userType == 2 ?
+				{user.userType === 1 || user.userType === 2 ?
 					<Nav.Item>
 						<Nav.Link 
 							className="btn-outline-warning rounded"
@@ -311,13 +313,13 @@ export default function Menu() {
 	};
 
 	return (
-		<div className="product-container container mt-5 w-100">
+		<div className="product-container container mt-3 w-100">
 			<Card className="px-3" bg="dark">
 				{header}
 				{products.length ?
 					<CardDeck className="p-2">
 						{Array(products.length).fill(null).map((value, i) => (
-							i%3 == 0 ?
+							i%3 === 0 ?
 								<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
 									{Array(3).fill(null).map((value, j) => (
 										i+j < products.length ? productCard(products[i+j]) : null
@@ -453,7 +455,7 @@ export default function Menu() {
 								</Form.Group>
 								<Form.Group controlId="productPrices">
 									<Form.Label>
-										{productPrices && productPrices.split(",").length == 1 ? "Preço" : "Preços"}
+										{productPrices && productPrices.split(",").length === 1 ? "Preço" : "Preços"}
 									</Form.Label>
 									<Form.Control 
 										value={productPrices}
