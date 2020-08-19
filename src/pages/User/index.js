@@ -21,16 +21,20 @@ import camera from "../../assets/camera.svg";
 //	Exporting resource to routes.js
 export default function User() {
 	const [user, setUser] = useState([]);
-  const [thumbnail, setThumbnail] = useState(null);
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userPhone, setUserPhone] = useState("");
-  const [userAddress, setUserAddress] = useState([]);
-  
-  //	Modal settings
-  const [modal1Show, setModal1Show] = useState(false);
-  const [modal2Show, setModal2Show] = useState(false);
+	const [thumbnail, setThumbnail] = useState(null);
+	const [userName, setUserName] = useState("");
+	const [userEmail, setUserEmail] = useState("");
+	const [userPhone, setUserPhone] = useState("");
+	const [userAddress, setUserAddress] = useState([]);
+	const [userPassword, setUserPassword] = useState("");
+	const [userPasswordO, setUserPasswordO] = useState("");
+	const [userPasswordN, setUserPasswordN] = useState("");
+	
+	//	Modal settings
+	const [modal1Show, setModal1Show] = useState(false);
+	const [modal2Show, setModal2Show] = useState(false);
 	const [modal3Show, setModal3Show] = useState(false);
+	const [modal4Show, setModal4Show] = useState(false);
 
 	const userId = sessionStorage.getItem("userId");
 
@@ -81,9 +85,9 @@ export default function User() {
 				alert(error);
 			}
 		}
-  }
+	}
 
-  async function handleUserUpdate(event) {
+	async function handleUserUpdate(event) {
 		event.preventDefault();
 
 		const data = new FormData();
@@ -92,8 +96,9 @@ export default function User() {
 		data.append("email", userEmail);
 		data.append("address", userAddress);
 		data.append("phone", userPhone);
+
 		
-		api.put("user/" + userId, data,  {
+		const response = await api.put("/user/" , data,  {
 			headers : { 
 				authorization: userId
 			}})
@@ -108,22 +113,97 @@ export default function User() {
 				}
 			});
 	}
-  
-  async function handleModal(event, modal, action, user = null) {
+
+	async function handlePasswordUpdate(event) {
+		event.preventDefault();
+
+		if(userPasswordO && userPasswordO.length && userPasswordN && userPasswordN.length) {
+
+			const data = new FormData();
+
+			data.append("name", userName);
+			data.append("email", userEmail);
+			data.append("address", userAddress);
+			data.append("phone", userPhone);
+			data.append("passwordN", userPasswordN);
+			data.append("passwordO", userPasswordO);
+
+			const response = await api.put("/user/" , data,  {
+				headers : { 
+					authorization: userId
+				}})
+				.then((response) => {
+					setModal3Show(true);
+					setModal2Show(false);
+				}).catch((error) => {
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}
+				});
+		} else {
+		
+			alert("Atençao! Sua senha atual ou senha nova está vazia!");
+		}
+		
+	}
+
+	async function handleUserDelete(event) {
+		event.preventDefault();
+
+		console.log(userPassword);
+		console.log(userId);
+
+		if(userPassword && userPassword.length) {
+
+			const response = await api.delete("/user" , {password: userPassword}, {
+				headers : { 
+					authorization: userId
+				}})
+				.then((response) => {
+					setModal4Show(false);
+					history.push("/");
+					history.go();
+					alert(response.data);
+				}).catch((error) => {
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}
+				});
+		} else {
+		
+			alert("Atençao! Sua senha está vazia!");
+		}
+		
+	}
+	
+	async function handleModal(event, modal, action, user = null) {
 		event.preventDefault();
 
 		if(action === "open") {
-      setUserName(user.name);
-      setUserEmail(user.email);
-      setUserPhone(user.phone);
-      setUserAddress(user.address.join(", "));
+			setUserName(user.name);
+			setUserEmail(user.email);
+			setUserPhone(user.phone);
+			setUserAddress(user.address.join(", "));
 		}
 
-		if(modal === 1) {
-			setModal1Show((action === "open") ? true : false);
-		} else if(modal === 1) {
-      setModal3Show((action === "open") ? true : false);
-    }
+		switch(modal){
+			case 1:
+				setModal1Show((action === "open") ? true : false);
+				break;
+			case 2:
+				setModal2Show((action === "open") ? true : false);
+				break;
+			case 3:
+				setModal3Show((action === "open") ? true : false);
+				break;
+			case 4:
+				setModal4Show((action === "open") ? true : false);
+				break;
+		}
 	}
 
 
@@ -153,7 +233,12 @@ export default function User() {
 								src={preview ? preview : camera} alt="Selecione sua imagem"
 								onClick={inputImage}
 							/>
-							<Button style={{position:"absolute", top:"95%", left:"30%"}} className="mt-4" type="submit" variant="outline-warning" >Adicionar foto</Button>
+							<Button 
+								style={{position:"absolute", top:"95%", left:"30%"}} 
+								className="mt-4" 
+								type="submit" 
+								variant="outline-warning" >Adicionar foto
+							</Button>
 						</form>
 					}
 				</div>
@@ -163,33 +248,43 @@ export default function User() {
 						<ListGroup variant="flush">
 							<ListGroup.Item>{user.email}</ListGroup.Item>
 							<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
-							<ListGroup.Item>{user.address ? `Bairro: ${user.address[0]} Rua: ${user.address[1]} Número: ${user.address[2]}` : "Endereço:"}</ListGroup.Item>
+							<ListGroup.Item>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</ListGroup.Item>
 						</ListGroup>
 					</Card>
 					<br/>
 					{user.userType != 2 ?
 						<>
-              <Button 
-                variant="outline-warning"
-                onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
-              </Button> {" "}
-							<button className="btn" id="btn-password">Trocar senha</button> {" "}
-							<Button variant="outline-danger">Apagar perfil</Button>
+							<Button 
+								variant="outline-warning"
+								onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
+							</Button> {" "}
+							<button 
+								onClick ={event => handleModal(event, 2, "open", user)}
+								className="btn" 
+								id="btn-password" >Trocar senha
+							</button> {" "}
+							<Button
+								onClick = {event => handleModal(event, 4, "open", user)}
+								variant="outline-danger">Apagar perfil
+							</Button>
 						</>
 						:
 						<>
-              <Button 
-                variant="outline-warning" 
-                onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
-              </Button> {" "}
-							<Button variant="outline-danger">Trocar senha</Button> {" "}
+							<Button 
+								variant="outline-warning" 
+								onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
+							</Button> {" "}
+							<Button 
+								variant="outline-danger"
+								onClick ={event => handleModal(event, 2, "open", user)}>Trocar senha
+							</Button> {" "}
 						</>
 					}
 				</div>
 			</div>
-      <Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
+			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
 				<Modal.Header closeButton>
-					<Modal.Title>Modificar produto</Modal.Title>
+					<Modal.Title>Modificar usuário</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
@@ -205,7 +300,7 @@ export default function User() {
 									/>
 								</Form.Group>
 							</Col>
-              <Col>
+							<Col>
 								<Form.Group controlId="userEmail">
 									<Form.Label>Email</Form.Label>
 									<Form.Control 
@@ -217,7 +312,7 @@ export default function User() {
 								</Form.Group>
 							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col>
 								<Form.Group controlId="userPhone">
 									<Form.Label>Telefone</Form.Label>
@@ -229,7 +324,7 @@ export default function User() {
 									/>
 								</Form.Group>
 							</Col>
-              <Col>
+							<Col>
 								<Form.Group controlId="userAddress">
 									<Form.Label>Endereço</Form.Label>
 									<Form.Control 
@@ -239,22 +334,66 @@ export default function User() {
 										placeholder="Bairro, Rua, Número"
 									/>
 								</Form.Group>
+								<Form.Text className="text-muted">Separe o bairro, rua e o número por vírgula
+								</Form.Text>
 							</Col>
 						</Row>
 						
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setModal1Show(false)}>
+					<Button variant="danger" onClick={e => setModal1Show(false)}>
 						Fechar
 					</Button>
-					<Button variant="primary" type="submit" onClick={handleUserUpdate}>
+					<Button variant="warning" type="submit" onClick={handleUserUpdate}>
 						Salvar alterações
 					</Button>
 				</Modal.Footer>
 			</Modal>
 
-      <Modal show={modal3Show} onHide={e => history.go()}>
+			<Modal show={modal2Show} onHide={e => setModal2Show(false)} size="lg" centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Modificar senha</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Row>
+							<Col>
+								<Form.Group controlId="userPasswordO">
+									<Form.Label>Senha atual</Form.Label>
+									<Form.Control 
+										value={userPasswordO}
+										onChange={e => setUserPasswordO(e.target.value)} 
+										type="password" 
+										placeholder="Senha atual"
+									/>
+								</Form.Group>
+							</Col>
+							<Col>
+								<Form.Group controlId="userPasswordN">
+									<Form.Label>Senha nova</Form.Label>
+									<Form.Control 
+										value={userPasswordN}
+										onChange={e => setUserPasswordN(e.target.value)} 
+										type="password" 
+										placeholder="Senha nova"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={e => setModal2Show(false)}>
+						Fechar
+					</Button>
+					<Button variant="warning" type="submit" onClick={handlePasswordUpdate}>
+						Salvar alterações
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modal3Show} onHide={e => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>Alterações usuário</Modal.Title>
 				</Modal.Header>
@@ -262,6 +401,37 @@ export default function User() {
 				<Modal.Footer>
 					<Button variant="secondary" onClick={e => history.go()}>
 						Fechar
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modal4Show} onHide={e => setModal4Show(false)} size="sm" centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Apagar perfil</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Row>
+							<Col>
+								<Form.Group controlId="userPassword">
+									<Form.Label>Senha atual</Form.Label>
+									<Form.Control 
+										value={userPassword}
+										onChange={e => setUserPassword(e.target.value)} 
+										type="password" 
+										placeholder="Senha atual"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={e => setModal4Show(false)}>
+						Fechar
+					</Button>
+					<Button variant="warning" type="submit" onClick={handleUserDelete}>
+						Salvar alterações
 					</Button>
 				</Modal.Footer>
 			</Modal>

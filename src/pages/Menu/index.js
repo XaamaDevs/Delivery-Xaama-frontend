@@ -153,7 +153,7 @@ export default function Menu() {
 
 		if(modal === 1) {
 			setModal1Show((action === "open") ? true : false);
-		} else if(modal === 1) {
+		} else if(modal === 2) {
 			setModal2Show((action === "open") ? true : false);
 		} else {
 			setModal3Show((action === "open") ? true : false);
