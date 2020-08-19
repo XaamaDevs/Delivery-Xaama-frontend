@@ -34,10 +34,6 @@ body {
 	max-height: 100%;
 }
 
-label, span {
-	color: #f0d890;
-}
-
 /*	Typography sizes	*/
 
 @media (min-width: 0) {

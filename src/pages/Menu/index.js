@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 //	Importing React Router features
 import { useHistory } from "react-router-dom";
 
-//	Importing React features
+//	Importing React Bootstrap features
 import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
@@ -15,11 +15,14 @@ import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function Menu() {
+	//	User variables
 	const userId = sessionStorage.getItem("userId");
+	const [user, setUser] = useState({});
+
+	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
 	const [products, setProducts] = useState([]);
-	const [user, setUser] = useState("");
 	const [productId, setProductId] = useState("");
 	const [productName, setProductName] = useState("");
 	const [productIngredients, setProductIngredients] = useState("");
@@ -38,20 +41,20 @@ export default function Menu() {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
-	//	Loading current user contacts
+	//	Loading current user info and products list by type
 	useEffect(() => {
 		api.get("product")
 			.then((response) => {
-				const products = response.data;
-
 				api.get("productTypes")
 					.then((types) => {
 						if(types.data && types.data.length) {
+							setProductTypes(types.data);
+
 							var prodsByType = {};
 							for(var type of types.data) {
 								var prods = [];
 
-								for(var product of products) {
+								for(var product of response.data) {
 									if(product.type === type) {
 										prods.push(product);
 									}
@@ -60,9 +63,8 @@ export default function Menu() {
 								prodsByType[type] = prods;
 							}
 
-							setProductTypes(types.data);
 							setProductsByType(prodsByType);
-							setProducts(prodsByType[Object.keys(prodsByType)[0]]);
+							setProducts(prodsByType[types.data[0]]);
 							api.get("user/" + userId)
 								.then((response) => {
 									setUser(response.data);
@@ -71,14 +73,14 @@ export default function Menu() {
 							alert("Não há tipos de produtos cadastrados");
 						}
 					}).catch((error) => {
-						if (error.response) {
+						if(error.response) {
 							alert(error.response.data);
 						} else {
 							alert(error);
 						}
 					});
 			}).catch((error) => {
-				if (error.response) {
+				if(error.response) {
 					alert(error.response.data);
 				} else {
 					alert(error);
@@ -88,6 +90,7 @@ export default function Menu() {
 			});
 	}, [history, userId]);
 
+	//	Product image preview
 	const preview = useMemo(() => {
 		return productThumbnail ? URL.createObjectURL(productThumbnail) : null;
 	}, [productThumbnail]);
@@ -115,9 +118,9 @@ export default function Menu() {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
+
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
-			console.log(productThumbnail);
 		} else {
 			const blob = await fetch(productThumbnail_url).then(r => r.blob());
 			const token = productThumbnail_url.split(".");
@@ -125,7 +128,7 @@ export default function Menu() {
 			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
-		api.post("product/" + productId, data, {
+		await api.post("product/" + productId, data, {
 			headers : { 
 				authorization: user._id
 			}})
@@ -151,9 +154,9 @@ export default function Menu() {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
+
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
-			console.log(productThumbnail);
 		} else {
 			const blob = await fetch(productThumbnail_url).then(r => r.blob());
 			const token = productThumbnail_url.split(".");
@@ -161,7 +164,7 @@ export default function Menu() {
 			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
-		api.put("product/" + productId, data, {
+		await api.put("product/" + productId, data, {
 			headers : { 
 				authorization: user._id
 			}})
@@ -181,11 +184,10 @@ export default function Menu() {
 	async function handleProductDelete(event) {
 		event.preventDefault();
 		
-		api.delete("product/" + productId, {
+		await api.delete("product/" + productId, {
 			headers : { 
 				authorization: user._id
 			}})
-			
 			.then((response) => {
 				setProductDeleteModal(false);
 				setModalWarningShow(true);
@@ -197,6 +199,20 @@ export default function Menu() {
 					alert(error);
 				}
 			});
+	}
+
+	async function handleAddProductModal(event) {
+		event.preventDefault();
+
+		setProductId("");
+		setProductName("");
+		setProductIngredients("");
+		setProductPrices("");
+		setProductType("");
+		setProductThumbnail(null);
+		setProductThumbnail_url("");
+
+		setProductAddModal(true);
 	}
 
 	async function handleProductModal(event, modal, product) {
@@ -226,13 +242,13 @@ export default function Menu() {
 
 	const header = (
 		<Card.Header className="pb-3">
-			<Nav fill variant="tabs" defaultActiveKey={Object.keys(productsByType)[0]}>
+			<Nav fill variant="tabs" defaultActiveKey={"#" + productTypes[0]}>
 				{Object.keys(productsByType).map((type, index) => (
 					productsByType[type].length ?
 						<Nav.Item key={index}>
 							<Nav.Link 
 								className="btn-outline-warning rounded"
-								href={type} 
+								href={"#" + type} 
 								onClick={e => handleProductsList(e, type)}>
 								{type[0].toUpperCase() + type.slice(1)}
 							</Nav.Link>
@@ -244,7 +260,7 @@ export default function Menu() {
 					<Nav.Item>
 						<Nav.Link 
 							className="btn-outline-warning rounded"
-							onClick={e => setProductAddModal(true)}>
+							onClick={handleAddProductModal}>
 							Adicionar novo produto
 						</Nav.Link>
 					</Nav.Item>
@@ -269,7 +285,7 @@ export default function Menu() {
 								ingredient + ", "
 						))}
 					</Card.Text>
-					{user ? 
+					{userId && user ? 
 						user.userType === 1 || user.userType === 2 ?
 							<div className="d-flex  justify-content-between">
 								<Button 
@@ -350,10 +366,11 @@ export default function Menu() {
 								/>
 								<Image 
 									id="thumbnail" 
+									className={productThumbnail ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
-									fluid="true"
+									fluid
 								/>
 							</Col>
 							<Col>
@@ -364,6 +381,7 @@ export default function Menu() {
 										onChange={e => setProductName(e.target.value)} 
 										type="text" 
 										placeholder="Nome do produto"
+										required
 									/>
 								</Form.Group>
 								<Form.Group controlId="productPrices">
@@ -374,6 +392,7 @@ export default function Menu() {
 										value={productPrices}
 										onChange={e => setProductPrices(e.target.value)} 
 										type="text"
+										required
 									/>
 									<Form.Text className="text-muted">
 										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
@@ -384,7 +403,9 @@ export default function Menu() {
 									<Form.Control 
 										value={productType} 
 										onChange={e => setProductType(e.target.value)} 
-										as="select">
+										as="select"
+										required
+									>
 										<option></option>
 										{productTypes.map((type, index) => (
 											<option key={index}>{type}</option>
@@ -402,6 +423,7 @@ export default function Menu() {
 										onChange={e => setProductIngredients(e.target.value)} 
 										as="textarea"
 										rows="2"
+										required
 									/>
 									<Form.Text className="text-muted">
 										Para múltiplos ingredientes, separe-os entre vírgulas
@@ -437,10 +459,11 @@ export default function Menu() {
 								/>
 								<Image 
 									id="thumbnail" 
+									className={productThumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
-									fluid="true"
+									fluid
 								/>
 							</Col>
 							<Col>
@@ -451,6 +474,7 @@ export default function Menu() {
 										onChange={e => setProductName(e.target.value)} 
 										type="text" 
 										placeholder="Nome do produto"
+										required
 									/>
 								</Form.Group>
 								<Form.Group controlId="productPrices">
@@ -461,6 +485,7 @@ export default function Menu() {
 										value={productPrices}
 										onChange={e => setProductPrices(e.target.value)} 
 										type="text"
+										required
 									/>
 									<Form.Text className="text-muted">
 										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
@@ -471,7 +496,9 @@ export default function Menu() {
 									<Form.Control 
 										value={productType} 
 										onChange={e => setProductType(e.target.value)} 
-										as="select">
+										as="select"
+										required
+									>
 										{productTypes.map((type, index) => (
 											<option key={index}>{type}</option>
 										))}
@@ -488,6 +515,7 @@ export default function Menu() {
 										onChange={e => setProductIngredients(e.target.value)} 
 										as="textarea"
 										rows="2"
+										required
 									/>
 									<Form.Text className="text-muted">
 										Para múltiplos ingredientes, separe-os entre vírgulas
@@ -509,7 +537,7 @@ export default function Menu() {
 
 			<Modal show={productDeleteModal} onHide={e => setProductDeleteModal(false)}>
 				<Modal.Header closeButton>
-					<Modal.Title>Alterações produto</Modal.Title>
+					<Modal.Title>Remover produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<h3>

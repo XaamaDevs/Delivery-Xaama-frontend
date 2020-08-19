@@ -4,8 +4,8 @@ import React, { useState } from "react";
 //	Importing React Router features
 import { Link, useHistory } from "react-router-dom";
 
-//	Importing React features
-import { Modal } from "react-bootstrap";
+//	Importing React Bootstrap features
+import { Modal, Form, Button, Col, Row } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../../services/api";
@@ -19,78 +19,66 @@ export default function Login() {
 	const history = useHistory();
 
 	//	Function to handle user login
-	async function handleSubmit(event) {
+	async function handleUserLogin(event) {
 		event.preventDefault();
 
-		try {
-			const response = await api.post("session", { email, password });
-
-			sessionStorage.setItem("userId", response.data._id);
-			
-			history.push("/menu");
-			history.go();
-		} catch(error) {
-			if (error.response) {
-				alert(error.response.data);
-			} else {
-				alert(error);
-			}
-		}
+		await api.post("session", { email, password })
+			.then((response) => {
+				sessionStorage.setItem("userId", response.data._id);
+				
+				history.push("/menu");
+				history.go();
+			})
+			.catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
 	}
 
 	if(!sessionStorage.getItem("userId")) {
 		return (
 			<div className="user-container d-flex h-100">
-				<div className="col-sm-3 py-3 m-auto text-white">
-					<form onSubmit={handleSubmit}>
-						<div className="row my-1">
-							<div className="col my-1">
-								<label>Email: </label>
-								<input 
-									type="email" 
-									className="form-control" 
-									name="email" 
-									placeholder="email@provedor.com" 
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									required
-								/>
-							</div>
-						</div>
-						<div className="row my-1">
-							<div className="col my-1">
-								<label>Senha: </label>
-								<input 
-									type="password" 
-									className="form-control" 
-									name="password" 
-									placeholder="Senha" 
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									required
-								/>
-							</div>
-						</div>
-						<div className="row my-1">
-							<div className="col text-center">
-								<small>Não tem conta? </small>
-								<Link className="text-light" to="/signup">
-									<small>Clique aqui</small>
-								</Link>
-								<small> para se cadastrar</small>
-							</div>
-						</div>
-						<div className="row my-3">
-							<div className="col text-center">
-								<input 
-									type="submit" 
-									className="btn btn-warning btn-md" 
-									value="Acessar"
-								/>
-							</div>
-						</div>
-					</form>
-				</div>
+				<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>
+					<Form.Group controlId="email">
+						<Form.Label>Email</Form.Label>
+						<Form.Control 
+							value={email}
+							onChange={event => setEmail(event.target.value)} 
+							type="email" 
+							placeholder="email@provedor.com"
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="password">
+						<Form.Label>Senha</Form.Label>
+						<Form.Control 
+							value={password}
+							onChange={event => setPassword(event.target.value)} 
+							type="password" 
+							placeholder="Senha"
+							required
+						/>
+					</Form.Group>
+					<Row className="my-1">
+						<Col className="text-center">
+							<small>Não tem conta? </small>
+							<Link className="text-light" to="/signup">
+								<small>Clique aqui</small>
+							</Link>
+							<small> para se cadastrar</small>
+						</Col>
+					</Row>
+					<Row className="my-3">
+						<Col className="text-center">
+							<Button variant="warning" type="submit">
+								Acessar
+							</Button>
+						</Col>
+					</Row>
+				</Form>
 			</div>
 		);
 	} else {
