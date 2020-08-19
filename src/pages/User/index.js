@@ -157,7 +157,11 @@ export default function User() {
 
 		if(userPassword && userPassword.length) {
 
-			const response = await api.delete("/user" , {password: userPassword}, {
+			const data = new FormData();
+
+			data.append("password", userPassword);
+
+			const response = await api.delete("/user", data, {
 				headers : { 
 					authorization: userId
 				}})
