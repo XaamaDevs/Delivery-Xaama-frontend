@@ -128,7 +128,7 @@ export default function Menu() {
 			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
-		await api.post("product/" + productId, data, {
+		await api.post("product", data, {
 			headers : { 
 				authorization: user._id
 			}})
