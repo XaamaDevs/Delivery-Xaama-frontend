@@ -152,36 +152,23 @@ export default function User() {
 	async function handleUserDelete(event) {
 		event.preventDefault();
 
-		console.log(userPassword);
-		console.log(userId);
-
-		if(userPassword && userPassword.length) {
-
-			const data = new FormData();
-
-			data.append("password", userPassword);
-
-			const response = await api.delete("/user", data, {
-				headers : { 
-					authorization: userId
-				}})
-				.then((response) => {
-					setModal4Show(false);
-					history.push("/");
-					history.go();
-					alert(response.data);
-				}).catch((error) => {
-					if(error.response) {
-						alert(error.response.data);
-					} else {
-						alert(error);
-					}
-				});
-		} else {
-		
-			alert("Atençao! Sua senha está vazia!");
-		}
-		
+    const response = await api.delete("/user", {
+      headers : { 
+        authorization: userId
+      }})
+      .then((response) => {
+        sessionStorage.removeItem("userId");
+        setModal4Show(false);
+        history.push("/");
+        history.go();
+        alert(response.data);
+      }).catch((error) => {
+        if(error.response) {
+          alert(error.response.data);
+        } else {
+          alert(error);
+        }
+      });
 	}
 	
 	async function handleModal(event, modal, action, user = null) {
@@ -413,29 +400,13 @@ export default function User() {
 				<Modal.Header closeButton>
 					<Modal.Title>Apagar perfil</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<Row>
-							<Col>
-								<Form.Group controlId="userPassword">
-									<Form.Label>Senha atual</Form.Label>
-									<Form.Control 
-										value={userPassword}
-										onChange={e => setUserPassword(e.target.value)} 
-										type="password" 
-										placeholder="Senha atual"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-					</Form>
-				</Modal.Body>
+				<Modal.Body>Tem certeza que quer excluir seu perfil? :/</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={e => setModal4Show(false)}>
-						Fechar
+					<Button variant="warning" onClick={e => setModal4Show(false)}>
+						Cancelar
 					</Button>
-					<Button variant="warning" type="submit" onClick={handleUserDelete}>
-						Salvar alterações
+					<Button variant="danger" type="submit" onClick={handleUserDelete}>
+						Apagar Perfil
 					</Button>
 				</Modal.Footer>
 			</Modal>
