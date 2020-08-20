@@ -73,7 +73,7 @@ export default function Signup() {
 				<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
 					<Col sm="4" className="d-flex flex-column m-auto p-3">
 						<Form.Group controlId="inputThumbnail">
-							<Form.Label>Foto de perfil</Form.Label>
+							<Form.Label style={{color: "#ffffff" }}>Foto de perfil</Form.Label>
 							<Form.Control 
 								className="d-none"
 								onChange={event => setThumbnail(event.target.files[0])} 
