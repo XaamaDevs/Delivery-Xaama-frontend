@@ -315,6 +315,18 @@ export default function User() {
 									onClick = {event => handleModal(event, 4, "open", user)}
 									variant="outline-danger">Apagar perfil
 								</Button>
+
+                {user.userType == 1 ?
+                  <Row>
+									<button
+										onClick={() => history.push("/allorders")}
+										className="btn mt-4 ml-3" 
+										id="btn-password" >Listar todos pedidos
+									</button> {" "}
+								</Row>
+                :
+                  <></>
+                }
 							</>
 							:
 							<>
@@ -328,13 +340,13 @@ export default function User() {
 								</Button> {" "}
 
 								<Row>
-									<button 
-										onClick ={user}
+									<button
+                    onClick={() => history.push("/allusers")}
 										className="btn mt-4 ml-3" 
 										id="btn-password" >Listar todos usuários
 									</button> {" "}
 									<button 
-										onClick ={user}
+										onClick={() => history.push("/allorders")}
 										className="btn mt-4 ml-1" 
 										id="btn-password" >Listar todos pedidos
 									</button> {" "}
