@@ -24,17 +24,19 @@ export default function WebsiteNavbar() {
 
 	//	Loading user info
 	useEffect(() => {
-		api.get("/user/" + userId)
-			.then((response) => {
-				setUser(response.data);
-			})
-			.catch((error) => {
-				if(error.response) {
-					alert(error.response.data);
-				} else {
-					alert(error);
-				}
-			});
+		if(userId) {
+			api.get("/user/" + userId)
+				.then((response) => {
+					setUser(response.data);
+				})
+				.catch((error) => {
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}
+				});
+		}
 	}, [userId]);
 
 	//	Function to handle user logout
