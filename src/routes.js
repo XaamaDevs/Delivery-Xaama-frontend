@@ -11,7 +11,7 @@ import Navbar from "./pages/Website/Navbar";
 import User from "./pages/User";
 import Login from "./pages/User/Login";
 import Signup from "./pages/User/Signup";
-import Additionals from "./pages/Additionals";
+import Additions from "./pages/Additions";
 import Order from "./pages/Order";
 import Menu from "./pages/Menu";
 
@@ -27,7 +27,7 @@ export default function Routes() {
 				<Route exact path="/signup" component={Signup} />
 				<Route exact path="/order" component={Order} />
 				<Route exact path="/menu" component={Menu} />
-				<Route exact path="/additionals" component={Additionals} />
+				<Route exact path="/additionals" component={Additions} />
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
 		</BrowserRouter>
