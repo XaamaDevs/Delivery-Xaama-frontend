@@ -89,7 +89,7 @@ export default function Login() {
 				</Modal.Header>
 				<Modal.Body>Você já está logado!</Modal.Body>
 				<Modal.Footer>
-					<Link className="btn btn-primary" to="/">
+					<Link className="btn btn-warning" to="/">
 						<small>Fechar</small>
 					</Link>
 				</Modal.Footer>
