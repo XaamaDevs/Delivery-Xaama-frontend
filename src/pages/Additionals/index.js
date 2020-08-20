@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 //	Exporting resource to routes.js
-export default function Products() {
+export default function Additionals() {
 	return (
 		<div>Teste</div>
 	);
