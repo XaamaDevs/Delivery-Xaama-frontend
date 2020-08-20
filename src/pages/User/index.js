@@ -26,7 +26,6 @@ export default function User() {
 	const [userEmail, setUserEmail] = useState("");
 	const [userPhone, setUserPhone] = useState("");
 	const [userAddress, setUserAddress] = useState([]);
-	const [userPassword, setUserPassword] = useState("");
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	
@@ -48,7 +47,7 @@ export default function User() {
 	}, []);
 
 	const preview = useMemo(() => {
-		return thumbnail ? URL.createObjectURL(thumbnail) : null;
+		return thumbnail ? URL.createObjectURL(thumbnail): null;
 	}, [thumbnail]);
 
 	//	Function to handle input image profile
@@ -61,7 +60,7 @@ export default function User() {
 	const history = useHistory();
 
 	//	Function to handle add image profile
-	async function handleSubmit(event) {
+	async function handleThumbnailDelete(event) {
 		event.preventDefault();
 
 		const data = new FormData();
@@ -69,6 +68,44 @@ export default function User() {
 		data.append("name", user.name);
 		data.append("email", user.email);
 		data.append("thumbnail", thumbnail);
+	
+
+		try {
+			const response = await api.put("/user", data , {
+				headers : { 
+					authorization: user._id
+				}
+			});
+			alert(response.data);
+			history.go();
+		} catch(error) {
+			if (error.response) {
+				alert(error.response.data);
+			} else {
+				alert(error);
+			}
+		}
+	}
+
+	//	Function to handle add image profile
+	async function handleSubmit(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("name", user.name);
+		data.append("email", user.email);
+
+
+		if(thumbnail){
+			data.append("thumbnail", thumbnail);
+		} else {
+			const blob = await fetch(user.thumbnail_url).then(r => r.blob());
+			const token = user.thumbnail_url.split(".");
+			const extension = token[token.length-1];
+			setThumbnail(new File([blob], "thumbnail." + extension));
+			data.append("thumbnail", new File([blob], "thumbnail." + extension));
+		}
 
 		try {
 			const response = await api.put("/user", data , {
@@ -152,36 +189,23 @@ export default function User() {
 	async function handleUserDelete(event) {
 		event.preventDefault();
 
-		console.log(userPassword);
-		console.log(userId);
-
-		if(userPassword && userPassword.length) {
-
-			const data = new FormData();
-
-			data.append("password", userPassword);
-
-			const response = await api.delete("/user", data, {
-				headers : { 
-					authorization: userId
-				}})
-				.then((response) => {
-					setModal4Show(false);
-					history.push("/");
-					history.go();
-					alert(response.data);
-				}).catch((error) => {
-					if(error.response) {
-						alert(error.response.data);
-					} else {
-						alert(error);
-					}
-				});
-		} else {
-		
-			alert("Atençao! Sua senha está vazia!");
-		}
-		
+		const response = await api.delete("/user", {
+			headers : { 
+				authorization: userId
+			}})
+			.then((response) => {
+				sessionStorage.removeItem("userId");
+				setModal4Show(false);
+				history.push("/");
+				history.go();
+				alert(response.data);
+			}).catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
 	}
 	
 	async function handleModal(event, modal, action, user = null) {
@@ -191,7 +215,7 @@ export default function User() {
 			setUserName(user.name);
 			setUserEmail(user.email);
 			setUserPhone(user.phone);
-			setUserAddress(user.address.join(", "));
+			setUserAddress(user.address ? user.address.join(", ") : null);
 		}
 
 		switch(modal){
@@ -210,235 +234,262 @@ export default function User() {
 		}
 	}
 
+	if(sessionStorage.getItem("userId")) {
+		return (
+			<div className="user-container h-100">
+				<div className="d-flex flex-row flex-wrap h-100">
+					<div className="col-sm-4 m-auto p-3">
+						{user.thumbnail ?
+							<>
+								<form>
+									<input
+										type="file"
+										className="d-none"
+										onChange={event => setThumbnail(event.target.files[0])}
+									/>
+									<Image 
+										id="thumbnail"
+										className={preview || user.thumbnail_url ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
+										src={preview ? preview : (user.thumbnail_url ? user.thumbnail_url : camera)} rounded fluid alt="Selecione sua imagem"
+										style={{cursor: "pointer"}}
+										onClick={inputImage}
+									/>
 
-	return (
-		<div className="user-container h-100">
-			<div className="d-flex flex-row flex-wrap h-100">
-				<div className="col-sm-4 m-auto p-3">
-					{user.thumbnail ?
-						<>
-							<form onSubmit={handleSubmit}>
-								<Image src={user.thumbnail_url} rounded fluid/>
-								<br/> <br/>
-								<Button type="submit" variant="outline-warning">Trocar foto</Button>{" "}
-								<Button type="submit" variant="outline-danger">Apagar foto</Button>
+									<br/> <br/>
+									<Button onClick={handleSubmit} type="submit" variant="outline-warning" >Trocar foto
+									</Button>{" "}
+									<Button onClick={handleThumbnailDelete} type="submit" variant="outline-danger">Apagar foto</Button>
+								</form>
+								
+							</>
+							:
+							<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
+								<input
+									type="file"
+									className="d-none"
+									onChange={event => setThumbnail(event.target.files[0])}
+								/>
+								<Image
+									id="thumbnail"
+									className={preview ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
+									src={preview ? preview : camera} rounded fluid alt="Selecione sua imagem"
+									style={{cursor: "pointer"}}
+									onClick={inputImage}
+								/>
+								<Button 
+									style={{position:"absolute", top:"95%", left:"30%"}} 
+									className="mt-4" 
+									type="submit" 
+									variant="outline-warning" >Adicionar foto
+								</Button>
 							</form>
-						</>
-						:
-						<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
-							<input
-								type="file"
-								className="d-none"
-								onChange={event => setThumbnail(event.target.files[0])}
-							/>
-							<img 
-								id="thumbnail"
-								className={thumbnail ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
-								src={preview ? preview : camera} alt="Selecione sua imagem"
-								onClick={inputImage}
-							/>
-							<Button 
-								style={{position:"absolute", top:"95%", left:"30%"}} 
-								className="mt-4" 
-								type="submit" 
-								variant="outline-warning" >Adicionar foto
-							</Button>
-						</form>
-					}
+						}
+					</div>
+					<div className="col-sm-4 m-auto p-3">
+						<Card style={{ width: "23rem" }}>
+							<Card.Header>{user.name}</Card.Header>
+							<ListGroup variant="flush">
+								<ListGroup.Item>{user.email}</ListGroup.Item>
+								<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
+								<ListGroup.Item>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</ListGroup.Item>
+							</ListGroup>
+						</Card>
+						<br/>
+						{user.userType != 2 ?
+							<>
+								<Button 
+									variant="outline-warning"
+									onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
+								</Button> {" "}
+								<button 
+									onClick ={event => handleModal(event, 2, "open", user)}
+									className="btn" 
+									id="btn-password" >Trocar senha
+								</button> {" "}
+								<Button
+									onClick = {event => handleModal(event, 4, "open", user)}
+									variant="outline-danger">Apagar perfil
+								</Button>
+							</>
+							:
+							<>
+								<Button 
+									variant="outline-warning" 
+									onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
+								</Button> {" "}
+								<Button 
+									variant="outline-danger"
+									onClick ={event => handleModal(event, 2, "open", user)}>Trocar senha
+								</Button> {" "}
+
+								<Row>
+									<button 
+										onClick ={user}
+										className="btn mt-4 ml-3" 
+										id="btn-password" >Listar todos usuários
+									</button> {" "}
+									<button 
+										onClick ={user}
+										className="btn mt-4 ml-1" 
+										id="btn-password" >Listar todos pedidos
+									</button> {" "}
+								</Row>
+							</>
+						}
+					</div>
 				</div>
-				<div className="col-sm-4 m-auto p-3">
-					<Card style={{ width: "23rem" }}>
-						<Card.Header>{user.name}</Card.Header>
-						<ListGroup variant="flush">
-							<ListGroup.Item>{user.email}</ListGroup.Item>
-							<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
-							<ListGroup.Item>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</ListGroup.Item>
-						</ListGroup>
-					</Card>
-					<br/>
-					{user.userType != 2 ?
-						<>
-							<Button 
-								variant="outline-warning"
-								onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
-							</Button> {" "}
-							<button 
-								onClick ={event => handleModal(event, 2, "open", user)}
-								className="btn" 
-								id="btn-password" >Trocar senha
-							</button> {" "}
-							<Button
-								onClick = {event => handleModal(event, 4, "open", user)}
-								variant="outline-danger">Apagar perfil
-							</Button>
-						</>
-						:
-						<>
-							<Button 
-								variant="outline-warning" 
-								onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
-							</Button> {" "}
-							<Button 
-								variant="outline-danger"
-								onClick ={event => handleModal(event, 2, "open", user)}>Trocar senha
-							</Button> {" "}
-						</>
-					}
-				</div>
+				<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
+					<Modal.Header closeButton>
+						<Modal.Title>Modificar usuário</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<Row>
+								<Col>
+									<Form.Group controlId="userName">
+										<Form.Label>Nome</Form.Label>
+										<Form.Control 
+											value={userName}
+											onChange={e => setUserName(e.target.value)} 
+											type="text" 
+											placeholder="Nome de usuário"
+										/>
+									</Form.Group>
+								</Col>
+								<Col>
+									<Form.Group controlId="userEmail">
+										<Form.Label>Email</Form.Label>
+										<Form.Control 
+											value={userEmail}
+											onChange={e => setUserEmail(e.target.value)} 
+											type="text" 
+											placeholder="Seu email"
+										/>
+									</Form.Group>
+								</Col>
+							</Row>
+							<Row>
+								<Col>
+									<Form.Group controlId="userPhone">
+										<Form.Label>Telefone</Form.Label>
+										<Form.Control 
+											value={userPhone}
+											onChange={e => setUserPhone(e.target.value)} 
+											type="text" 
+											placeholder="(__) _ ____-____"
+										/>
+									</Form.Group>
+								</Col>
+								<Col>
+									<Form.Group controlId="userAddress">
+										<Form.Label>Endereço</Form.Label>
+										<Form.Control 
+											value={userAddress}
+											onChange={e => setUserAddress(e.target.value)} 
+											type="text" 
+											placeholder="Bairro, Rua, Número"
+										/>
+									</Form.Group>
+									<Form.Text className="text-muted">Separe o bairro, rua e o número por vírgula
+									</Form.Text>
+								</Col>
+							</Row>
+							
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="danger" onClick={e => setModal1Show(false)}>
+							Fechar
+						</Button>
+						<Button variant="warning" type="submit" onClick={handleUserUpdate}>
+							Salvar alterações
+						</Button>
+					</Modal.Footer>
+				</Modal>
+
+				<Modal show={modal2Show} onHide={e => setModal2Show(false)} size="lg" centered>
+					<Modal.Header closeButton>
+						<Modal.Title>Modificar senha</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<Row>
+								<Col>
+									<Form.Group controlId="userPasswordO">
+										<Form.Label>Senha atual</Form.Label>
+										<Form.Control 
+											value={userPasswordO}
+											onChange={e => setUserPasswordO(e.target.value)} 
+											type="password" 
+											placeholder="Senha atual"
+										/>
+									</Form.Group>
+								</Col>
+								<Col>
+									<Form.Group controlId="userPasswordN">
+										<Form.Label>Senha nova</Form.Label>
+										<Form.Control 
+											value={userPasswordN}
+											onChange={e => setUserPasswordN(e.target.value)} 
+											type="password" 
+											placeholder="Senha nova"
+										/>
+									</Form.Group>
+								</Col>
+							</Row>
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="danger" onClick={e => setModal2Show(false)}>
+							Fechar
+						</Button>
+						<Button variant="warning" type="submit" onClick={handlePasswordUpdate}>
+							Salvar alterações
+						</Button>
+					</Modal.Footer>
+				</Modal>
+
+				<Modal show={modal3Show} onHide={e => history.go()}>
+					<Modal.Header closeButton>
+						<Modal.Title>Alterações usuário</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={e => history.go()}>
+							Fechar
+						</Button>
+					</Modal.Footer>
+				</Modal>
+
+				<Modal show={modal4Show} onHide={e => setModal4Show(false)} size="sm" centered>
+					<Modal.Header closeButton>
+						<Modal.Title>Apagar perfil</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>Tem certeza que quer excluir seu perfil? :/</Modal.Body>
+					<Modal.Footer>
+						<Button variant="warning" onClick={e => setModal4Show(false)}>
+							Cancelar
+						</Button>
+						<Button variant="danger" type="submit" onClick={handleUserDelete}>
+							Apagar Perfil
+						</Button>
+					</Modal.Footer>
+				</Modal>
 			</div>
-			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="lg" centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Modificar usuário</Modal.Title>
+		);
+	} else {
+		return (
+			<Modal show={true}>
+				<Modal.Header>
+					<Modal.Title>Aviso</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<Row>
-							<Col>
-								<Form.Group controlId="userName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control 
-										value={userName}
-										onChange={e => setUserName(e.target.value)} 
-										type="text" 
-										placeholder="Nome de usuário"
-									/>
-								</Form.Group>
-							</Col>
-							<Col>
-								<Form.Group controlId="userEmail">
-									<Form.Label>Email</Form.Label>
-									<Form.Control 
-										value={userEmail}
-										onChange={e => setUserEmail(e.target.value)} 
-										type="text" 
-										placeholder="Seu email"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<Form.Group controlId="userPhone">
-									<Form.Label>Telefone</Form.Label>
-									<Form.Control 
-										value={userPhone}
-										onChange={e => setUserPhone(e.target.value)} 
-										type="text" 
-										placeholder="(__) _ ____-____"
-									/>
-								</Form.Group>
-							</Col>
-							<Col>
-								<Form.Group controlId="userAddress">
-									<Form.Label>Endereço</Form.Label>
-									<Form.Control 
-										value={userAddress}
-										onChange={e => setUserAddress(e.target.value)} 
-										type="text" 
-										placeholder="Bairro, Rua, Número"
-									/>
-								</Form.Group>
-								<Form.Text className="text-muted">Separe o bairro, rua e o número por vírgula
-								</Form.Text>
-							</Col>
-						</Row>
-						
-					</Form>
-				</Modal.Body>
+				<Modal.Body>Você precisa fazer login!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={e => setModal1Show(false)}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleUserUpdate}>
-						Salvar alterações
-					</Button>
+					<Link className="btn btn-warnig" to="/">
+						<small>Fechar</small>
+					</Link>
 				</Modal.Footer>
 			</Modal>
-
-			<Modal show={modal2Show} onHide={e => setModal2Show(false)} size="lg" centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Modificar senha</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<Row>
-							<Col>
-								<Form.Group controlId="userPasswordO">
-									<Form.Label>Senha atual</Form.Label>
-									<Form.Control 
-										value={userPasswordO}
-										onChange={e => setUserPasswordO(e.target.value)} 
-										type="password" 
-										placeholder="Senha atual"
-									/>
-								</Form.Group>
-							</Col>
-							<Col>
-								<Form.Group controlId="userPasswordN">
-									<Form.Label>Senha nova</Form.Label>
-									<Form.Control 
-										value={userPasswordN}
-										onChange={e => setUserPasswordN(e.target.value)} 
-										type="password" 
-										placeholder="Senha nova"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-					</Form>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={e => setModal2Show(false)}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handlePasswordUpdate}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
-			</Modal>
-
-			<Modal show={modal3Show} onHide={e => history.go()}>
-				<Modal.Header closeButton>
-					<Modal.Title>Alterações usuário</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={e => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
-
-			<Modal show={modal4Show} onHide={e => setModal4Show(false)} size="sm" centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Apagar perfil</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<Row>
-							<Col>
-								<Form.Group controlId="userPassword">
-									<Form.Label>Senha atual</Form.Label>
-									<Form.Control 
-										value={userPassword}
-										onChange={e => setUserPassword(e.target.value)} 
-										type="password" 
-										placeholder="Senha atual"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-					</Form>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={e => setModal4Show(false)}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleUserDelete}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		</div>
-	);
+		);
+	} 
 }
