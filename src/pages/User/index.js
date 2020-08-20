@@ -100,11 +100,14 @@ export default function User() {
 		if(thumbnail){
 			data.append("thumbnail", thumbnail);
 		} else {
-			const blob = await fetch(user.thumbnail_url).then(r => r.blob());
-			const token = user.thumbnail_url.split(".");
-			const extension = token[token.length-1];
-			setThumbnail(new File([blob], "thumbnail." + extension));
-			data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			if(user.thumbnail) {
+				const blob = await fetch(user.thumbnail_url).then(r => r.blob());
+				const token = user.thumbnail_url.split(".");
+				const extension = token[token.length-1];
+				setThumbnail(new File([blob], "thumbnail." + extension));
+				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			}
+				
 		}
 
 		try {
@@ -219,18 +222,20 @@ export default function User() {
 		}
 
 		switch(modal){
-			case 1:
-				setModal1Show((action === "open") ? true : false);
-				break;
-			case 2:
-				setModal2Show((action === "open") ? true : false);
-				break;
-			case 3:
-				setModal3Show((action === "open") ? true : false);
-				break;
-			case 4:
-				setModal4Show((action === "open") ? true : false);
-				break;
+		case 1:
+			setModal1Show((action === "open") ? true : false);
+			break;
+		case 2:
+			setModal2Show((action === "open") ? true : false);
+			break;
+		case 3:
+			setModal3Show((action === "open") ? true : false);
+			break;
+		case 4:
+			setModal4Show((action === "open") ? true : false);
+			break;
+		default:
+			break;
 		}
 	}
 
