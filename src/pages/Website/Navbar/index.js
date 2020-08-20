@@ -1,23 +1,45 @@
 //	Importing React main module and its features
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //	Importing React Router features
-import { NavLink, useHistory} from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
+
+//	Importing React Bootstrap features
+import { Navbar, Nav } from "react-bootstrap";
+
+// Importing backend api
+import api from "../../../services/api";
 
 // Importing styles
 import "./styles.css";
 
 //	Exporting resource to routes.js
-export default function Navbar() {
-	//  Defining userId varible
+export default function WebsiteNavbar() {
+	//  Defining user varibles
 	const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+	const [user, setUser] = useState({});
 
 	//	Defining history to jump through pages
 	const history = useHistory();
 
+	//	Loading user info
+	useEffect(() => {
+		api.get("/user/" + userId)
+			.then((response) => {
+				setUser(response.data);
+			})
+			.catch((error) => {
+				if(error.response) {
+					alert(error.response.data);
+				} else {
+					alert(error);
+				}
+			});
+	}, [userId]);
+
 	//	Function to handle user logout
-	async function handleLogout(e) {
-		e.preventDefault();
+	async function handleLogout(event) {
+		event.preventDefault();
 
 		try {
 			sessionStorage.removeItem("userId");
@@ -31,74 +53,100 @@ export default function Navbar() {
 	}
 
 	return (
-		<div className="website-container">
-			<nav className="navbar navbar-expand-lg navbar-light bg-transparent pt-5 px-3">
-				<NavLink to="/" className="navbar-brand text-warning">Xaama</NavLink>
-				<button
-					className="navbar-toggler bg-warning"
-					type="button"
-					data-toggle="collapse"
-					data-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent"
-					aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span className="navbar-toggler-icon"></span>
-				</button>
-
-				<div className="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul className="navbar-nav mr-auto">
-						<li className="nav-item active">
-							<NavLink
+		<Navbar className="text-warning pt-5 px-3" bg="transparent" expand="lg">
+			<NavLink to="/" className="navbar-brand text-warning">Xaama</NavLink>
+			<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
+			<Navbar.Collapse id="basic-navbar-nav">
+				<Nav className="mr-auto">
+					<Nav.Item>
+						<NavLink
+							style={{color: "#ffbf00"}}
+							exact activeClassName="activeRoute"
+							activeStyle={{ color: "white" }}
+							to="/"
+							className="nav-link mx-2"
+						>
+							Início
+						</NavLink>
+					</Nav.Item>
+					<Nav.Item>
+						<NavLink 
+							style={{color: "#ffbf00"}}
+							activeClassName="activeRoute"
+							activeStyle={{ color: "white" }}
+							to="/menu"
+							className="nav-link mx-2"
+						>
+							Cardápio
+						</NavLink>
+					</Nav.Item>
+					{user.userType === 1 || user.userType === 2 ?
+						<Nav.Item>
+							<NavLink 
 								style={{color: "#ffbf00"}}
-								exact activeClassName="activeRoute"
-								activeStyle={{ color: "white" }}
-								to="/"
-								className="nav-link">Home</NavLink>
-						</li>
-						<li className="nav-item">
-							<NavLink style={{color: "#ffbf00"}}
 								activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
-								to="/menu"
-								className="nav-link">Menu</NavLink>
-						</li>
-					</ul>
-					{!userId ?
-						<ul className="navbar-nav ml-auto">
-							<li className="nav-item">
-								<NavLink
-									style={{color: "#ffbf00"}}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
-									to="/login"
-									className="nav-link">Login</NavLink>
-							</li>
-							<li className="nav-item">
-								<NavLink
-									style={{color: "#ffbf00"}}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
-									to="/signup"
-									className="nav-link">Signup</NavLink>
-							</li>
-						</ul>
+								to="/additionals"
+								className="nav-link mx-2"
+							>
+								Adicionais
+							</NavLink>
+						</Nav.Item>
 						:
-						<ul className="navbar-nav ml-auto">
-							<li className="nav-item">
-								<NavLink
-									style={{color: "#ffbf00"}}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
-									to="/user"
-									className="nav-link">Perfil</NavLink>
-							</li>
-							<li className="nav-item">
-								<a href="/" onClick={handleLogout} className="nav-link text-warning">Logout</a>
-							</li>
-						</ul>
+						null
 					}
-				</div>
-			</nav>
-		</div>
+				</Nav>
+				{!userId ?
+					<Nav className="ml-auto">
+						<Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
+								activeClassName="activeRoute"
+								activeStyle={{ color: "white" }}
+								to="/login"
+								className="nav-link mx-2"
+							>
+								Entrar
+							</NavLink>
+						</Nav.Item>
+						<Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
+								activeClassName="activeRoute"
+								activeStyle={{ color: "white" }}
+								to="/signup"
+								className="nav-link mx-2"
+							>
+								Cadastrar
+							</NavLink>
+						</Nav.Item>
+					</Nav>
+					:
+					<Nav className="ml-auto">
+						<Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
+								activeClassName="activeRoute"
+								activeStyle={{ color: "white" }}
+								to="/user"
+								className="nav-link mx-2"
+							>
+								Perfil
+							</NavLink>
+						</Nav.Item>
+						<Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
+								to="#"
+								onClick={handleLogout}
+								className="nav-link mx-2"
+							>
+								Sair
+							</NavLink>
+						</Nav.Item>
+					</Nav>
+				}
+			</Navbar.Collapse>
+		</Navbar>
 	);
 }
