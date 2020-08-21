@@ -10,9 +10,6 @@ import { Navbar, Nav } from "react-bootstrap";
 // Importing backend api
 import api from "../../../services/api";
 
-// Importing styles
-import "./styles.css";
-
 //	Exporting resource to routes.js
 export default function WebsiteNavbar() {
 	//  Defining user varibles
@@ -56,7 +53,7 @@ export default function WebsiteNavbar() {
 
 	return (
 		<Navbar className="text-warning pt-5 px-3" bg="transparent" expand="lg">
-			<NavLink to="/" className="navbar-brand text-warning">Xaama</NavLink>
+			<NavLink to="/" className="navbar-brand text-warning mx-5">Xaama</NavLink>
 			<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
 			<Navbar.Collapse id="basic-navbar-nav">
 				<Nav className="mr-auto">
@@ -82,13 +79,13 @@ export default function WebsiteNavbar() {
 							Cardápio
 						</NavLink>
 					</Nav.Item>
-					{user.userType === 1 || user.userType === 2 ?
+					{userId && (user.userType === 1 || user.userType === 2) ?
 						<Nav.Item>
 							<NavLink 
 								style={{color: "#ffbf00"}}
 								activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
-								to="/additionals"
+								to="/additions"
 								className="nav-link mx-2"
 							>
 								Adicionais

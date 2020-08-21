@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 //	Importing React Router features
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
 import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
@@ -40,37 +40,35 @@ export default function Additions() {
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
-		api.get("addition")
-			.then((response) => {
-				setAdditions(response.data);
+		async function loadResources() {
+			await api.get("user/" + userId)
+				.then((response) => {
+					setUser(response.data);
+				});
 
-				api.get("productTypes")
-					.then((types) => {
-						if(types.data && types.data.length) {
-							setProductTypes(types.data);
-
-							api.get("user/" + userId)
-								.then((response) => {
-									setUser(response.data);
-								});
-						} else {
-							alert("Não há tipos de produtos cadastrados");
-						}
-					}).catch((error) => {
-						if(error.response) {
-							alert(error.response.data);
-						} else {
-							alert(error);
-						}
-					});
-			}).catch((error) => {
-				if(error.response) {
-					alert(error.response.data);
-				} else {
-					alert(error);
-				}
-			});
-	}, [history, userId]);
+			await api.get("productTypes")
+				.then((response) => {
+					if(response.data && response.data.length) {
+						setProductTypes(response.data);
+					} else {
+						alert("Não há tipos de produtos cadastrados");
+					}
+				}).catch((error) => {
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}
+				});
+			
+			api.get("addition")
+				.then((response) => {
+					setAdditions(response.data);
+				});
+		}
+		
+		loadResources();
+	}, [userId]);
 
 	//	Product image preview
 	const preview = useMemo(() => {
@@ -111,7 +109,6 @@ export default function Additions() {
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
-				console.log(error.response);
 				if(error.response) {
 					alert(typeof(error.response.data) === "object" ? error : error.response.data);
 				} else {

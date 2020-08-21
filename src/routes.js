@@ -16,6 +16,11 @@ import Additions from "./pages/Additions";
 import Order from "./pages/Order";
 import AllOrders from "./pages/Order/All";
 import Menu from "./pages/Menu";
+import Auth from "./pages/Website/Authentication";
+import Autho from "./pages/Website/Authentication/Authorization";
+
+//	Importing helper
+import auth from "./services/auth";
 
 //	Exporting Routes do App.js
 export default function Routes() {
@@ -24,14 +29,26 @@ export default function Routes() {
 			<Navbar />
 			<Switch>
 				<Route exact path="/" component={HomePage} />
-				<Route exact path="/user" component={User} />
-				<Route exact path="/allusers" component={AllUsers} />
 				<Route exact path="/login" component={Login} />
 				<Route exact path="/signup" component={Signup} />
 				<Route exact path="/order" component={Order} />
 				<Route exact path="/menu" component={Menu} />
-				<Route exact path="/allorders" component={AllOrders} />
-				<Route exact path="/additionals" component={Additions} />
+				<Route 
+					exact path="/user" 
+					render={() => auth.auth() ? <User /> : <Auth />}
+				/>
+				<Route 
+					exact path="/additions" 
+					render={() => auth.auth() ? <Additions /> : <Auth />}
+				/>
+				<Route 
+					exact path="/allorders" 
+					render={() => auth.auth() ? <AllOrders /> : <Auth />}
+				/>
+				<Route 
+					exact path="/allusers" 
+					render={() => auth.auth() ? <AllUsers /> : <Auth />}
+				/>
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
 		</BrowserRouter>
