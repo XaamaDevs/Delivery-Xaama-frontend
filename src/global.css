@@ -62,24 +62,24 @@ body {
 
 @media (min-width: 768px) {
 	.display-1 { 
-		font-size: 351%;
+		font-size: 439%;
 	}
 }
 
 @media (min-width: 1024px) {
 	.display-1 { 
-		font-size: 490%;
+		font-size: 603%;
 	}
 }
 
 @media (min-width: 1440px) {
 	.display-1 { 
-		font-size: 720%;
+		font-size: 869%;
 	}
 }
 
 @media (min-width: 2560px) {
 	.display-1 { 
-		font-size: 1300%;
+		font-size: 1587%;
 	}
 }
