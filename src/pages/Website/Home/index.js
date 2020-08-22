@@ -24,7 +24,7 @@ export default function Home() {
 					</Link>
 				</p>
 			</Jumbotron>
-			<Carousel className="col-sm-5 m-auto p-5">
+			<Carousel className="col-sm-5 m-auto px-5">
 				<Carousel.Item>
 					<Image 
 						className="w-100" 

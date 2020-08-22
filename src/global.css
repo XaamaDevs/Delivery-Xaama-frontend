@@ -1,5 +1,7 @@
+/*	Website font	*/
 @import url("https://fonts.googleapis.com/css2?family=Istok+Web:wght@700&display=swap");
 
+/*	Setting up website layout	*/
 * {
 	margin: 0;
 	padding: 0;
@@ -27,11 +29,6 @@ body {
 
 	display: flex;
 	flex-direction: column;
-}
-
-#carouselExampleControls {
-	width: 30%;
-	max-height: 100%;
 }
 
 /*	Typography sizes	*/

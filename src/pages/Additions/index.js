@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 //	Importing React Router features
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
 import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
@@ -40,7 +40,7 @@ export default function Additions() {
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
-		async function loadResources() {
+		async function fetchData() {
 			await api.get("user/" + userId)
 				.then((response) => {
 					setUser(response.data);
@@ -67,7 +67,7 @@ export default function Additions() {
 				});
 		}
 		
-		loadResources();
+		fetchData();
 	}, [userId]);
 
 	//	Product image preview
@@ -279,7 +279,7 @@ export default function Additions() {
 				<Modal.Body>
 					<Form>
 						<Row>
-							<Col className="d-flex m-auto">
+							<Col className="d-flex m-auto" sm>
 								<Form.Control
 									id="inputImage"
 									className="d-none"
@@ -295,7 +295,7 @@ export default function Additions() {
 									fluid
 								/>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="additionName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control 
@@ -327,7 +327,7 @@ export default function Additions() {
 										</Form.Check>
 									))}
 									<Form.Text className="text-muted">
-										Você pode permitir que uma adição possa ser pedida em mais de um tipo de produto
+										Você pode permitir que uma adição seja pedida em mais de um tipo de produto
 									</Form.Text>
 								</Form.Group>
 							</Col>
@@ -401,7 +401,7 @@ export default function Additions() {
 										</Form.Check>
 									))}
 									<Form.Text className="text-muted">
-										Você pode permitir que uma adição possa ser pedida em mais de um tipo de produto
+										Você pode permitir que uma adição seja pedida em mais de um tipo de produto
 									</Form.Text>
 								</Form.Group>
 							</Col>

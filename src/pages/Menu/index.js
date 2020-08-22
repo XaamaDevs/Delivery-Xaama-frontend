@@ -43,51 +43,56 @@ export default function Menu() {
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
-		api.get("product")
-			.then((response) => {
-				api.get("productTypes")
-					.then((types) => {
-						if(types.data && types.data.length) {
-							setProductTypes(types.data);
+		async function fetchData() {
+			await api.get("user/" + userId)
+				.then((response) => {
+					setUser(response.data);
+				});
 
-							var prodsByType = {};
-							for(var type of types.data) {
-								var prods = [];
+			await api.get("product")
+				.then((response) => {
+					api.get("productTypes")
+						.then((types) => {
+							if(types.data && types.data.length) {
+								setProductTypes(types.data);
 
-								for(var product of response.data) {
-									if(product.type === type) {
-										prods.push(product);
+								var prodsByType = {};
+								for(var type of types.data) {
+									var prods = [];
+
+									for(var product of response.data) {
+										if(product.type === type) {
+											prods.push(product);
+										}
 									}
+									
+									prodsByType[type] = prods;
 								}
-								
-								prodsByType[type] = prods;
+
+								setProductsByType(prodsByType);
+								setProducts(prodsByType[types.data[0]]);
+							} else {
+								alert("Não há tipos de produtos cadastrados");
 							}
+						}).catch((error) => {
+							if(error.response) {
+								alert(error.response.data);
+							} else {
+								alert(error);
+							}
+						});
+				}).catch((error) => {
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}
 
-							setProductsByType(prodsByType);
-							setProducts(prodsByType[types.data[0]]);
-							api.get("user/" + userId)
-								.then((response) => {
-									setUser(response.data);
-								});
-						} else {
-							alert("Não há tipos de produtos cadastrados");
-						}
-					}).catch((error) => {
-						if(error.response) {
-							alert(error.response.data);
-						} else {
-							alert(error);
-						}
-					});
-			}).catch((error) => {
-				if(error.response) {
-					alert(error.response.data);
-				} else {
-					alert(error);
-				}
+					history.push("/");
+				});
+		}
 
-				history.push("/");
-			});
+		fetchData();
 	}, [history, userId]);
 
 	//	Product image preview
@@ -242,13 +247,13 @@ export default function Menu() {
 
 	const header = (
 		<Card.Header className="pb-3">
-			<Nav fill variant="tabs" defaultActiveKey={"#" + productTypes[0]}>
+			<Nav fill variant="tabs" defaultActiveKey={"#0"}>
 				{Object.keys(productsByType).map((type, index) => (
 					productsByType[type].length ?
 						<Nav.Item key={index}>
 							<Nav.Link 
 								className="btn-outline-warning rounded"
-								href={"#" + type} 
+								href={"#" + index} 
 								onClick={e => handleProductsList(e, type)}>
 								{type[0].toUpperCase() + type.slice(1)}
 							</Nav.Link>
@@ -275,7 +280,7 @@ export default function Menu() {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
 				<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
-				<Card.Body key={product._id}>
+				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
 					<Card.Text>
 						{product.ingredients.map((ingredient, index) => (
@@ -287,22 +292,29 @@ export default function Menu() {
 					</Card.Text>
 					{userId && user ? 
 						user.userType === 1 || user.userType === 2 ?
-							<div className="d-flex  justify-content-between">
-								<Button 
-									onClick ={e => handleProductModal(e, 0, product)} 
-									variant="warning">
-										Modificar produto
+							<div className="d-flex justify-content-between flex-wrap my-auto">
+								<Button  
+									variant="warning"
+									size="sm"
+									onClick ={e => handleProductModal(e, 0, product)}
+								>
+										Modificar
 								</Button>
 								<Button 
 									variant="danger" 
-									onClick={e => handleProductModal(e, 2, product)}>
+									size="sm"
+									onClick={e => handleProductModal(e, 2, product)}
+								>
 									Remover
 								</Button>
 							</div>
 							:
-							<Button 
+							<Button
+								className="my-auto" 
+								variant="warning"
+								size="sm"
 								onClick ={e => handleProductModal(e, 1, product)} 
-								variant="warning">
+							>
 									Adicionar aos pedidos
 							</Button>
 						:
@@ -329,7 +341,7 @@ export default function Menu() {
 	};
 
 	return (
-		<div className="product-container container mt-3 w-100">
+		<div className="product-container container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
 				{products.length ?
@@ -357,7 +369,7 @@ export default function Menu() {
 				<Modal.Body>
 					<Form>
 						<Row>
-							<Col className="d-flex m-auto">
+							<Col className="d-flex m-auto" sm>
 								<Form.Control
 									id="inputImage"
 									className="d-none"
@@ -373,7 +385,7 @@ export default function Menu() {
 									fluid
 								/>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="productName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control 
@@ -415,7 +427,7 @@ export default function Menu() {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
@@ -450,7 +462,7 @@ export default function Menu() {
 				<Modal.Body>
 					<Form>
 						<Row>
-							<Col className="d-flex m-auto">
+							<Col className="d-flex m-auto" sm>
 								<Form.Control
 									id="inputImage"
 									className="d-none"
@@ -466,7 +478,7 @@ export default function Menu() {
 									fluid
 								/>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="productName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control 
@@ -507,7 +519,7 @@ export default function Menu() {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 

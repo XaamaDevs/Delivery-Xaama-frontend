@@ -52,7 +52,7 @@ export default function WebsiteNavbar() {
 	}
 
 	return (
-		<Navbar className="text-warning pt-5 px-3" bg="transparent" expand="lg">
+		<Navbar className="text-warning py-5 px-3" bg="transparent" expand="lg">
 			<NavLink to="/" className="navbar-brand text-warning mx-5">Xaama</NavLink>
 			<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
 			<Navbar.Collapse id="basic-navbar-nav">
