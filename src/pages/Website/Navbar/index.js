@@ -64,7 +64,7 @@ export default function WebsiteNavbar({ userId, setUserId, user }) {
 								to="/additions"
 								className="nav-link mx-2"
 							>
-								Adicionais
+								Adições
 							</NavLink>
 						</Nav.Item>
 						:
