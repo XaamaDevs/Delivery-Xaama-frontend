@@ -14,14 +14,14 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Additions({ userId, user }) {
+export default function Additions({ userId }) {
 	//	Product variables
 	const [productTypes, setProductTypes] = useState([]);
 	const [additions, setAdditions] = useState([]);
 	const [additionId, setAdditionId] = useState("");
 	const [additionName, setAdditionName] = useState("");
 	const [additionPrice, setAdditionPrice] = useState("");
-	const [additionType, setAdditionType] = useState("");
+	const [additionType, setAdditionType] = useState([]);
 	const [additionThumbnail_url, setAdditionThumbnail_url] = useState("");
 	const [additionThumbnail, setAdditionThumbnail] = useState(null);
 
@@ -40,12 +40,9 @@ export default function Additions({ userId, user }) {
 		async function fetchData() {
 			await api.get("productTypes")
 				.then((response) => {
-					if(response.data && response.data.length) {
-						setProductTypes(response.data);
-					} else {
-						alert("Não há tipos de produtos cadastrados");
-					}
-				}).catch((error) => {
+					setProductTypes(response.data);
+				})
+				.catch((error) => {
 					if(error.response) {
 						alert(error.response.data);
 					} else {
@@ -53,9 +50,15 @@ export default function Additions({ userId, user }) {
 					}
 				});
 			
-			api.get("addition")
+			await api.get("addition")
 				.then((response) => {
 					setAdditions(response.data);
+				}).catch((error) => {/*
+					if(error.response) {
+						alert(error.response.data);
+					} else {
+						alert(error);
+					}*/
 				});
 
 			setLoading(false);
@@ -83,7 +86,19 @@ export default function Additions({ userId, user }) {
 
 		data.append("name", additionName);
 		data.append("price", additionPrice);
-		data.append("type", additionType);
+
+		const addTypesElem = document.getElementsByClassName("form-check");
+		var addTypes = "";
+
+		for(const type of addTypesElem) {
+			if(type.children[0].checked === true) {
+				addTypes += type.children[0].id + ", ";
+			}
+		}
+
+		console.log(addTypes);
+
+		data.append("type", addTypes);
 
 		if(additionThumbnail) {
 			data.append("thumbnail", additionThumbnail);
@@ -96,15 +111,15 @@ export default function Additions({ userId, user }) {
 
 		await api.post("addition", data, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setAdditionAddModal(false);
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
 				if(error.response) {
-					alert(typeof(error.response.data) === "object" ? error : error.response.data);
+					alert(error.response.data);
 				} else {
 					alert(error);
 				}
@@ -118,7 +133,17 @@ export default function Additions({ userId, user }) {
 
 		data.append("name", additionName);
 		data.append("price", additionPrice);
-		data.append("type", additionType);
+
+		const addTypesElem = document.getElementsByClassName("form-check");
+		var addTypes = "";
+
+		for(const type of addTypesElem) {
+			if(type.children[0].checked === true) {
+				addTypes += type.children[0].id + ", ";
+			}
+		}
+
+		data.append("type", addTypes);
 
 		if(additionThumbnail) {
 			data.append("thumbnail", additionThumbnail);
@@ -131,15 +156,15 @@ export default function Additions({ userId, user }) {
 
 		await api.put("addition/" + additionId, data, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setAdditionUpdateModal(false);
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
 				if(error.response) {
-					alert(typeof(error.response.data) === "string" ? error.response.data : error);
+					alert(error.response.data);
 				} else {
 					alert(error);
 				}
@@ -151,9 +176,9 @@ export default function Additions({ userId, user }) {
 		
 		await api.delete("addition/" + additionId, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setAdditionDeleteModal(false);
 				setModalWarningShow(true);
 			})
@@ -224,13 +249,17 @@ export default function Additions({ userId, user }) {
 					<Card.Title>{addition.name}</Card.Title>
 					<div className="d-flex  justify-content-between">
 						<Button 
+							variant="warning"
+							size="sm"
 							onClick ={e => handleAdditionModal(e, 0, addition)} 
-							variant="warning">
+						>
 								Modificar adição
 						</Button>
 						<Button 
 							variant="danger" 
-							onClick={e => handleAdditionModal(e, 1, addition)}>
+							size="sm"
+							onClick={e => handleAdditionModal(e, 1, addition)}
+						>
 							Remover
 						</Button>
 					</div>
@@ -274,7 +303,7 @@ export default function Additions({ userId, user }) {
 				}
 			</Card>
 
-			<Modal show={additionAddModal} onHide={e => setAdditionAddModal(false)} size="lg" centered>
+			<Modal show={additionAddModal} onHide={() => setAdditionAddModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Nova adição</Modal.Title>
 				</Modal.Header>
@@ -337,7 +366,7 @@ export default function Additions({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setAdditionAddModal(false)}>
+					<Button variant="secondary" onClick={() => setAdditionAddModal(false)}>
 						Fechar
 					</Button>
 					<Button variant="primary" type="submit" onClick={handleAdditionAdd}>
@@ -346,7 +375,7 @@ export default function Additions({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={additionUpdateModal} onHide={e => setAdditionUpdateModal(false)} size="lg" centered>
+			<Modal show={additionUpdateModal} onHide={() => setAdditionUpdateModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
@@ -411,7 +440,7 @@ export default function Additions({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setAdditionUpdateModal(false)}>
+					<Button variant="secondary" onClick={() => setAdditionUpdateModal(false)}>
 						Fechar
 					</Button>
 					<Button variant="primary" type="submit" onClick={handleAdditionUpdate}>
@@ -420,7 +449,7 @@ export default function Additions({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={additionDeleteModal} onHide={e => setAdditionDeleteModal(false)}>
+			<Modal show={additionDeleteModal} onHide={() => setAdditionDeleteModal(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>Remover adição</Modal.Title>
 				</Modal.Header>
@@ -429,7 +458,7 @@ export default function Additions({ userId, user }) {
 					Você tem certeza que deseja remover esta adição?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setAdditionDeleteModal(false)}>
+					<Button variant="secondary" onClick={() => setAdditionDeleteModal(false)}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleAdditionDelete}>
@@ -438,13 +467,13 @@ export default function Additions({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalWarningShow} onHide={e => history.go()}>
+			<Modal show={modalWarningShow} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>Alterações de adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => history.go()}>
+					<Button variant="secondary" onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>

@@ -79,8 +79,6 @@ export default function Menu({ userId, user }) {
 					} else {
 						alert(error);
 					}
-
-					history.push("/");
 				});
 
 			setLoading(false);
@@ -129,9 +127,9 @@ export default function Menu({ userId, user }) {
 
 		await api.post("product", data, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setProductAddModal(false);
 				setModalWarningShow(true);
 			})
@@ -165,9 +163,9 @@ export default function Menu({ userId, user }) {
 
 		await api.put("product/" + productId, data, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setProductUpdateModal(false);
 				setModalWarningShow(true);
 			})
@@ -185,9 +183,9 @@ export default function Menu({ userId, user }) {
 		
 		await api.delete("product/" + productId, {
 			headers : { 
-				authorization: user._id
+				authorization: userId
 			}})
-			.then((response) => {
+			.then(() => {
 				setProductDeleteModal(false);
 				setModalWarningShow(true);
 			})
@@ -364,7 +362,7 @@ export default function Menu({ userId, user }) {
 				}
 			</Card>
 
-			<Modal show={productAddModal} onHide={e => setProductAddModal(false)} size="lg" centered>
+			<Modal show={productAddModal} onHide={() => setProductAddModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar produto</Modal.Title>
 				</Modal.Header>
@@ -448,7 +446,7 @@ export default function Menu({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setProductAddModal(false)}>
+					<Button variant="secondary" onClick={() => setProductAddModal(false)}>
 						Fechar
 					</Button>
 					<Button variant="primary" type="submit" onClick={handleProductAdd}>
@@ -457,7 +455,7 @@ export default function Menu({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productUpdateModal} onHide={e => setProductUpdateModal(false)} size="lg" centered>
+			<Modal show={productUpdateModal} onHide={() => setProductUpdateModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
@@ -540,7 +538,7 @@ export default function Menu({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setProductUpdateModal(false)}>
+					<Button variant="secondary" onClick={() => setProductUpdateModal(false)}>
 						Fechar
 					</Button>
 					<Button variant="primary" type="submit" onClick={handleProductUpdate}>
@@ -549,7 +547,7 @@ export default function Menu({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productDeleteModal} onHide={e => setProductDeleteModal(false)}>
+			<Modal show={productDeleteModal} onHide={() => setProductDeleteModal(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>Remover produto</Modal.Title>
 				</Modal.Header>
@@ -564,7 +562,7 @@ export default function Menu({ userId, user }) {
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setProductDeleteModal(false)}>
+					<Button variant="secondary" onClick={() => setProductDeleteModal(false)}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleProductDelete}>
@@ -573,28 +571,28 @@ export default function Menu({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productOrderModal} onHide={e => setProductOrderModal(false)} size="lg" centered>
+			<Modal show={productOrderModal} onHide={() => setProductOrderModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar ao pedido</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+				<Modal.Body>Woohoo, youre reading this text in a modal!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => setProductOrderModal(false)}>
+					<Button variant="secondary" onClick={() => setProductOrderModal(false)}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={e => setProductOrderModal(false)}>
+					<Button variant="primary" onClick={() => setProductOrderModal(false)}>
 						Save Changes
 					</Button>
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalWarningShow} onHide={e => history.go()}>
+			<Modal show={modalWarningShow} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>Alterações produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={e => history.go()}>
+					<Button variant="secondary" onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>

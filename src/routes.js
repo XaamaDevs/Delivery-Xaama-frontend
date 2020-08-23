@@ -84,7 +84,7 @@ export default function Routes() {
 				<Route 
 					exact path="/additions" 
 					render={() => {
-						return userId ? (managerAuth() ? <Additions userId={userId} user={user} /> : <Autho />) : <Auth />;
+						return userId ? (managerAuth() ? <Additions userId={userId} /> : <Autho />) : <Auth />;
 					}}
 				/>
 				<Route 
