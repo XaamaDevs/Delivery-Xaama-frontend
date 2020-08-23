@@ -1,8 +1,17 @@
+ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 li.user-item {
-  background: #FFF;
-  box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.02);
-  border-radius: 2px;
+  background: #343A40;
+  border-radius: 4px;
   padding: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  
 }
 
 li.user-item header {
@@ -24,18 +33,32 @@ li.user-item header .user-info {
 .user-info strong {
   display: block;
   font-size: 16px;
-  color: #333;
+  color: #FFF;
 }
 
 .user-info span {
   font-size: 13px;
-  color: #999;
+  color: #FFF;
   margin-top: 2px;
 }
 
 li.user-item p {
-  color: #666;
+  color: #FFF;
   font-size: 14px;
   line-height: 20px;
   margin: 10px 0;
+}
+
+#btn-user {
+  background-color: transparent;
+  color: #f0d890;
+  outline-color: #f0d890;
+  border-width: 1px ;
+  border-color: #f0d890;
+}
+
+#btn-user:hover {
+  background-color: #f0d890;
+  border-color: #f0d890;
+  color: #000000;
 }

@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col } from "react-bootstrap";
+import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
 
 
 //	Exporting resource to routes.js
@@ -92,7 +92,7 @@ export default function AllUsers() {
 
 	return (
 		<div id="all-container">
-			<main>
+			<Container>
 				<ul>
 					{users.map(user => (
 						<li key={user._id} className="user-item">
@@ -106,7 +106,17 @@ export default function AllUsers() {
 							<p>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</p>
 							<p>{user.address && user.address.length ? user.address.join(", ") : "Endereço não informado" }</p>
 							<p>Mude o tipo de cada usuário. <strong>Cuidado ao promover um usuário a ADM!</strong></p>
-							{(user.userType != 2) ?
+							
+							{ (userId == user._id) ?
+								<Button
+									onClick={() => history.push("/user")}
+									variant="outline-warning ml-2">Perfil
+								</Button>
+								:
+								<></>
+							}
+
+							{((userId != user._id) && (user.userType != 2)) ?
 								<Button
 									onClick={event => handleModal(event, 1, "open", user._id, 2)}
 									variant="outline-danger ml-2">ADM
@@ -115,7 +125,7 @@ export default function AllUsers() {
 								<></>
 							}
 
-							{(user.userType != 1)?
+							{((userId != user._id) && (user.userType != 1))?
 								<Button
 									onClick={event => handleModal(event, 1, "open", user._id, 1)}
 									variant="outline-warning ml-2">Gerente
@@ -124,18 +134,20 @@ export default function AllUsers() {
 								<></>
 							}
 
-							{(user.userType != 0) ?
-								<Button
-									onClick={event => handleModal(event, 1, "open", user._id, 0)}
-									variant="outline-warning ml-2">Usuário
-								</Button>
+							{((userId != user._id) && (user.userType != 0)) ?
+								<button 
+									onClick ={event => handleModal(event, 1, "open", user._id, 0)}
+									className="btn ml-2" 
+									id="btn-user" >Usuário
+								</button>
+								
 								:
 								<></>
 							}
 						</li>
 					))}
 				</ul>
-			</main>
+			</Container>
 		
 			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="sm" centered>
 				<Modal.Header closeButton>
