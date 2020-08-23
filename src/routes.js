@@ -52,7 +52,7 @@ export default function Routes() {
 	}, [userId]);
 
 	function adminAuth() {
-		return (user && (user.userType === 1));
+		return (user && (user.userType === 2));
 	}
 
 	function managerAuth() {

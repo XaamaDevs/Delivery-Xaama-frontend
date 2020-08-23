@@ -36,8 +36,32 @@ export default function AllUsers() {
 		loadUser();
 	}, []);
 
-	async function handleTypeUser(event,type) {
-		//
+	async function handleTypeUser(event, userUpdateId, newType) {
+    event.preventDefault();
+    
+    const data = new FormData();
+
+    data.append("userUpdateId", userUpdateId);
+    data.append("type", newType);
+
+    console.log(userUpdateId, newType);
+
+    try {
+			const response = await api.put("/company", data , {
+				headers : { 
+					authorization: userId
+				}
+			});
+			alert(response.data);
+			//history.go();
+		} catch(error) {
+			if (error.response) {
+				alert(error.response.data);
+			} else {
+				alert(error);
+			}
+		}
+
 	}
 
 
@@ -58,17 +82,17 @@ export default function AllUsers() {
 						<p>{user.address && user.address.length ? user.address.join(", ") : "Endereço não informado" }</p>
 						<p>Mude o tipo de cada usuário. Cuidado ao promover um usuário a ADM!</p>
 						<Button
-							onClick={event => handleTypeUser(event,2)}
+							onClick={event => handleTypeUser(event, user._id, 2)}
 							variant="outline-danger ml-2">ADM
 						</Button>
 
 						<Button
-							onClick={event => handleTypeUser(event,2)}
+							onClick={event => handleTypeUser(event, user._id, 1)}
 							variant="outline-warning ml-2">Gerente
 						</Button>
 
 						<Button
-							onClick={event => handleTypeUser(event,2)}
+							onClick={event => handleTypeUser(event, user._id, 0)}
 							variant="outline-primary ml-2">Usuário
 						</Button>
 					</li>
