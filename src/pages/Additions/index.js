@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, Spinner, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -14,11 +14,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Additions() {
-	//	User variables
-	const userId = sessionStorage.getItem("userId");
-	const [user, setUser] = useState({});
-
+export default function Additions({ userId, user }) {
 	//	Product variables
 	const [productTypes, setProductTypes] = useState([]);
 	const [additions, setAdditions] = useState([]);
@@ -34,6 +30,7 @@ export default function Additions() {
 	const [additionUpdateModal, setAdditionUpdateModal] = useState(false);
 	const [additionDeleteModal, setAdditionDeleteModal] = useState(false);
 	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -41,11 +38,6 @@ export default function Additions() {
 	//	Loading current user info and products list by type
 	useEffect(() => {
 		async function fetchData() {
-			await api.get("user/" + userId)
-				.then((response) => {
-					setUser(response.data);
-				});
-
 			await api.get("productTypes")
 				.then((response) => {
 					if(response.data && response.data.length) {
@@ -65,6 +57,8 @@ export default function Additions() {
 				.then((response) => {
 					setAdditions(response.data);
 				});
+
+			setLoading(false);
 		}
 		
 		fetchData();
@@ -251,24 +245,32 @@ export default function Additions() {
 	};
 
 	return (
-		<div className="product-container container mt-3 w-100">
+		<Container className="product-container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
-				{additions.length ?
-					<CardDeck className="p-2">
-						{Array(additions.length).fill(null).map((value, i) => (
-							i%3 === 0 ?
-								<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-									{Array(3).fill(null).map((value, j) => (
-										i+j < additions.length ? additionCard(additions[i+j]) : null
-									))}
-								</Row>
-								:
-								null
-						))}
-					</CardDeck>
+				{isLoading ? 
+					<Spinner 
+						className="my-5 mx-auto" 
+						style={{width: "5rem", height: "5rem"}} 
+						animation="grow" 
+						variant="warning"
+					/>
 					:
-					null
+					additions.length ?
+						<CardDeck className="p-2">
+							{Array(additions.length).fill(null).map((value, i) => (
+								i%3 === 0 ?
+									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
+										{Array(3).fill(null).map((value, j) => (
+											i+j < additions.length ? additionCard(additions[i+j]) : null
+										))}
+									</Row>
+									:
+									null
+							))}
+						</CardDeck>
+						:
+						null
 				}
 			</Card>
 
@@ -447,6 +449,6 @@ export default function Additions() {
 					</Button>
 				</Modal.Footer>
 			</Modal>
-		</div>
+		</Container>
 	);
 }

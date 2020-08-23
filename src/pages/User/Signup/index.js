@@ -17,7 +17,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Signup() {
+export default function Signup({ userId, setUserId }) {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -47,9 +47,10 @@ export default function Signup() {
 		await api.post("/user", data)
 			.then((response) => {
 				sessionStorage.setItem("userId", response.data._id);
+
+				setUserId(sessionStorage.getItem("userId"));
 	
 				history.push("/menu");
-				history.go();
 			})
 			.catch((error) => {
 				if(error.response) {
@@ -67,7 +68,7 @@ export default function Signup() {
 		document.getElementById("inputThumbnail").click();
 	}
 
-	if(!sessionStorage.getItem("userId")) {
+	if(!userId) {
 		return (
 			<div className="user-container h-100">
 				<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>

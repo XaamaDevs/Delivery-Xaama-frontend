@@ -11,7 +11,7 @@ import { Modal, Form, Button, Col, Row } from "react-bootstrap";
 import api from "../../../services/api";
 
 //	Exporting resource to routes.js
-export default function Login() {
+export default function Login({ userId, setUserId }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	
@@ -25,9 +25,10 @@ export default function Login() {
 		await api.post("session", { email, password })
 			.then((response) => {
 				sessionStorage.setItem("userId", response.data._id);
+
+				setUserId(sessionStorage.getItem("userId"));
 				
 				history.push("/menu");
-				history.go();
 			})
 			.catch((error) => {
 				if(error.response) {
@@ -38,7 +39,7 @@ export default function Login() {
 			});
 	}
 
-	if(!sessionStorage.getItem("userId")) {
+	if(!userId) {
 		return (
 			<div className="user-container d-flex h-100">
 				<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>

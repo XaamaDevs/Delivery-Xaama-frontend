@@ -26,7 +26,7 @@ import api from "./services/api";
 //	Exporting Routes do App.js
 export default function Routes() {
 	//	User state variables
-	const userId = sessionStorage.getItem("userId");
+	const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
 	const [user, setUser] = useState({});
 
 	//	Loading state variable
@@ -36,7 +36,7 @@ export default function Routes() {
 	useEffect(() => {
 		async function fetchData() {
 			if(userId) {
-				api.get("user/" + userId)
+				await api.get("user/" + userId)
 					.then((response) => {
 						if(response && response.data) {
 							setUser(response.data);
@@ -65,20 +65,27 @@ export default function Routes() {
 
 	return (
 		<BrowserRouter>
-			<Navbar />
+			<Navbar userId={userId} setUserId={setUserId} user={user} />
 			<Switch>
 				<Route exact path="/" component={HomePage} />
-				<Route exact path="/login" component={Login} />
-				<Route exact path="/signup" component={Signup} />
+				<Route exact path="/login" render={() => <Login userId={userId} setUserId={setUserId} />} />
+				<Route exact path="/signup" render={() => <Signup userId={userId} setUserId={setUserId} />} />
 				<Route exact path="/order" component={Order} />
-				<Route exact path="/menu" component={Menu} />
+				<Route 
+					exact path="/menu" 
+					render={() => <Menu userId={userId} user={user} />} 
+				/>
 				<Route 
 					exact path="/user" 
-					render={() => userId ? <User /> : <Auth />}
+					render={() => {
+						return userId ? <User userId={userId} setUserId={setUserId} user={user} /> : <Auth />;
+					}}
 				/>
 				<Route 
 					exact path="/additions" 
-					render={() => userId ? (managerAuth() ? <Additions /> : <Autho />) : <Auth />}
+					render={() => {
+						return userId ? (managerAuth() ? <Additions userId={userId} user={user} /> : <Autho />) : <Auth />;
+					}}
 				/>
 				<Route 
 					exact path="/allorders" 

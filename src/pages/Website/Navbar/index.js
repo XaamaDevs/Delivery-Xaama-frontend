@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 //	Importing React Router features
 import { NavLink, useHistory } from "react-router-dom";
@@ -7,34 +7,10 @@ import { NavLink, useHistory } from "react-router-dom";
 //	Importing React Bootstrap features
 import { Navbar, Nav } from "react-bootstrap";
 
-// Importing backend api
-import api from "../../../services/api";
-
 //	Exporting resource to routes.js
-export default function WebsiteNavbar() {
-	//  Defining user varibles
-	const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
-	const [user, setUser] = useState({});
-
+export default function WebsiteNavbar({ userId, setUserId, user }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
-
-	//	Loading user info
-	useEffect(() => {
-		if(userId) {
-			api.get("/user/" + userId)
-				.then((response) => {
-					setUser(response.data);
-				})
-				.catch((error) => {
-					if(error.response) {
-						alert(error.response.data);
-					} else {
-						alert(error);
-					}
-				});
-		}
-	}, [userId]);
 
 	//	Function to handle user logout
 	async function handleLogout(event) {
@@ -79,7 +55,7 @@ export default function WebsiteNavbar() {
 							Cardápio
 						</NavLink>
 					</Nav.Item>
-					{userId && (user.userType === 1 || user.userType === 2) ?
+					{user && (user.userType === 1 || user.userType === 2) ?
 						<Nav.Item>
 							<NavLink 
 								style={{color: "#ffbf00"}}

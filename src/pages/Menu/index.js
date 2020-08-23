@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, Spinner, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -14,11 +14,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu() {
-	//	User variables
-	const userId = sessionStorage.getItem("userId");
-	const [user, setUser] = useState({});
-
+export default function Menu({ userId, user }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
@@ -37,6 +33,7 @@ export default function Menu() {
 	const [productDeleteModal, setProductDeleteModal] = useState(false);
 	const [productOrderModal, setProductOrderModal] = useState(false);
 	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -44,11 +41,6 @@ export default function Menu() {
 	//	Loading current user info and products list by type
 	useEffect(() => {
 		async function fetchData() {
-			await api.get("user/" + userId)
-				.then((response) => {
-					setUser(response.data);
-				});
-
 			await api.get("product")
 				.then((response) => {
 					api.get("productTypes")
@@ -90,6 +82,8 @@ export default function Menu() {
 
 					history.push("/");
 				});
+
+			setLoading(false);
 		}
 
 		fetchData();
@@ -341,24 +335,32 @@ export default function Menu() {
 	};
 
 	return (
-		<div className="product-container container w-100">
+		<Container className="product-container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
-				{products.length ?
-					<CardDeck className="p-2">
-						{Array(products.length).fill(null).map((value, i) => (
-							i%3 === 0 ?
-								<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-									{Array(3).fill(null).map((value, j) => (
-										i+j < products.length ? productCard(products[i+j]) : null
-									))}
-								</Row>
-								:
-								null
-						))}
-					</CardDeck>
+				{isLoading ? 
+					<Spinner 
+						className="my-5 mx-auto" 
+						style={{width: "5rem", height: "5rem"}} 
+						animation="grow" 
+						variant="warning"
+					/>
 					:
-					null
+					products.length ?
+						<CardDeck className="p-2">
+							{Array(products.length).fill(null).map((value, i) => (
+								i%3 === 0 ?
+									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
+										{Array(3).fill(null).map((value, j) => (
+											i+j < products.length ? productCard(products[i+j]) : null
+										))}
+									</Row>
+									:
+									null
+							))}
+						</CardDeck>
+						:
+						null
 				}
 			</Card>
 
@@ -597,6 +599,6 @@ export default function Menu() {
 					</Button>
 				</Modal.Footer>
 			</Modal>
-		</div>
+		</Container>
 	);
 }
