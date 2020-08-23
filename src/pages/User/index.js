@@ -187,6 +187,8 @@ export default function User() {
 			alert("Atençao! Sua senha atual ou senha nova está vazia!");
 		}
 		
+		setUserPasswordO("");
+		setUserPasswordN("");
 	}
 
 	async function handleUserDelete(event) {
@@ -316,17 +318,17 @@ export default function User() {
 									variant="outline-danger">Apagar perfil
 								</Button>
 
-                {user.userType == 1 ?
-                  <Row>
-									<button
-										onClick={() => history.push("/allorders")}
-										className="btn mt-4 ml-3" 
-										id="btn-password" >Listar todos pedidos
-									</button> {" "}
-								</Row>
-                :
-                  <></>
-                }
+								{user.userType == 1 ?
+									<Row>
+										<button
+											onClick={() => history.push("/allorders")}
+											className="btn mt-4 ml-3" 
+											id="btn-password" >Listar todos pedidos
+										</button> {" "}
+									</Row>
+									:
+									<></>
+								}
 							</>
 							:
 							<>
@@ -340,8 +342,8 @@ export default function User() {
 								</Button> {" "}
 
 								<Row>
-									<button
-                    onClick={() => history.push("/allusers")}
+									<button 
+										onClick={() => history.push("/allusers")}
 										className="btn mt-4 ml-3" 
 										id="btn-password" >Listar todos usuários
 									</button> {" "}
@@ -472,7 +474,7 @@ export default function User() {
 					</Modal.Header>
 					<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
 					<Modal.Footer>
-						<Button variant="secondary" onClick={e => history.go()}>
+						<Button variant="warning" onClick={e => history.go()}>
 							Fechar
 						</Button>
 					</Modal.Footer>

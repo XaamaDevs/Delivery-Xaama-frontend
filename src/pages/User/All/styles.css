@@ -39,13 +39,3 @@ li.user-item p {
   line-height: 20px;
   margin: 10px 0;
 }
-
-li.user-item a {
-  color: #8e4dff;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-li.user-item a:hover {
-  color: #5a2ea6;
-}
