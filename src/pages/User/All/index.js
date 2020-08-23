@@ -36,6 +36,8 @@ export default function AllUsers() {
 		loadUser();
 	}, []);
 
+  // nao esta enviando o userUpdateId
+  // lembrar de colcoar senha para trocar de typo
 	async function handleTypeUser(event, userUpdateId, newType) {
     event.preventDefault();
     
