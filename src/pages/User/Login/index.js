@@ -14,6 +14,12 @@ import api from "../../../services/api";
 export default function Login({ userId, setUserId }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
+
+	//	Modal settings
+	const [modalAlert, setModalAlert] = useState(false);
 	
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -31,11 +37,16 @@ export default function Login({ userId, setUserId }) {
 				history.push("/menu");
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+			
+				setModalAlert(true);
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalAlert(true);
 			});
 	}
 
@@ -80,6 +91,17 @@ export default function Login({ userId, setUserId }) {
 						</Col>
 					</Row>
 				</Form>
+				<Modal show={modalAlert} onClick={e => setModalAlert(false)}>
+					<Modal.Header closeButton>
+						<Modal.Title>{title}</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>{message}</Modal.Body>
+					<Modal.Footer>
+						<Button variant={color} onClick={e => setModalAlert(false)}>
+							Fechar
+						</Button>
+					</Modal.Footer>
+				</Modal>
 			</div>
 		);
 	} else {

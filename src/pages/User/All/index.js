@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
+
 // Importing styles
 import "./styles.css";
 
@@ -14,7 +15,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Spinner, Container } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Spinner, Container, Alert } from "react-bootstrap";
 
 
 //	Exporting resource to routes.js
@@ -23,10 +24,13 @@ export default function AllUsers({ userId }) {
 	const [userUpdateId, setUserUpdateId] = useState("");
 	const [newType, setNewType] = useState("");
 	const [userPassword, setUserPassword] = useState("");
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 
 	//	Modal settings
 	const [modal1Show, setModal1Show] = useState(false);
-	const [modal2Show, setModal2Show] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	const history = useHistory();
@@ -57,15 +61,22 @@ export default function AllUsers({ userId }) {
 					authorization: userId
 				}
 			});
-			alert(response.data);
-			setModal2Show(true);
+			setTitle("Alterações usuário");
+			setMessage("Alterações feitas com sucesso!");
+			setColor("warning");
+			setModalAlert(true);
 			setModal1Show(false);
 		} catch(error) {
+			setTitle("Erro!");
+			setColor("danger");
+			
 			if (error.response) {
-				alert(error.response.data);
+				setMessage(error.response.data);
 			} else {
-				alert(error);
+				setMessage(error);
 			}
+			setModalAlert(true);
+			setModal1Show(false);
 		}
 
 		setUserPassword("");
@@ -84,7 +95,7 @@ export default function AllUsers({ userId }) {
 			setModal1Show((action === "open") ? true : false);
 			break;
 		case 2:
-			setModal2Show((action === "open") ? true : false);
+			setModalAlert((action === "open") ? true : false);
 			break;
 		default:
 			break;
@@ -190,13 +201,13 @@ export default function AllUsers({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal2Show} onHide={e => history.go()}>
+			<Modal show={modalAlert} onHide={e => history.go()}>
 				<Modal.Header closeButton>
-					<Modal.Title>Alterações usuário</Modal.Title>
+					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={e => history.go()}>
+					<Button variant={color} onClick={e => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>
