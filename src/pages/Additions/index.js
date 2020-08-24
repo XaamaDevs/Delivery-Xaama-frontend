@@ -225,6 +225,28 @@ export default function Additions({ userId }) {
 		}
 	}
 
+	async function changeAdditionType(e) {
+		e.preventDefault();
+
+		var newArrTypes = additionType;
+
+		const exist = (newArrTypes.indexOf(e.target.id) >= 0);
+
+		if(exist) {
+			newArrTypes.splice(newArrTypes.indexOf(e.target.id), 1);
+		} else {
+			newArrTypes.push(e.target.id);
+		}
+
+		e.target.checked = e.target.checked ? false : true;
+
+		console.log(e.target.checked);
+
+		setAdditionType(newArrTypes);
+
+		console.log(additionType);
+	}
+
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav variant="tabs" defaultActiveKey="#">
@@ -247,7 +269,7 @@ export default function Additions({ userId }) {
 				<Card.Img variant="top" src={addition.thumbnail_url} fluid="true" />
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
-					<div className="d-flex  justify-content-between">
+					<div className="d-flex justify-content-between flex-wrap my-auto">
 						<Button 
 							variant="warning"
 							size="sm"
@@ -427,7 +449,9 @@ export default function Additions({ userId }) {
 										<Form.Check key={index} type="checkbox" id={type}>
 											<Form.Check.Input 
 												type="checkbox" 
-												checked={additionType && additionType.find(element => element === type) ? true : false}/>
+												onChange={e => changeAdditionType(e)}
+												checked={additionType && additionType.indexOf(type) >= 0 ? true : false}
+											/>
 											<Form.Check.Label>{type}</Form.Check.Label>
 										</Form.Check>
 									))}
