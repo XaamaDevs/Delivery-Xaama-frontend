@@ -29,7 +29,6 @@ export default function AllUsers({ userId }) {
 	const [modal2Show, setModal2Show] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-	//const userId = sessionStorage.getItem("userId");
 	const history = useHistory();
 
 	useEffect(() => {
