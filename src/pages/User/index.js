@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 
 //	Importing React features
 import Image from "react-bootstrap/Image";
-import { Card, CardGroup, Button, Form, Col, Row, Modal } from "react-bootstrap";
+import { Card, Button, Form, Col, Row, Modal } from "react-bootstrap";
 
 // Importing backend api
 import api from "../../services/api";
@@ -27,11 +27,14 @@ export default function User({ userId, setUserId, user, setUser }) {
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 	
 	//	Modal settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
-	const [modal3Show, setModal3Show] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
 	
 	//	Defining history to jump through pages
@@ -63,14 +66,22 @@ export default function User({ userId, setUserId, user, setUser }) {
 				authorization: userId
 			}})
 			.then((response) => {
-				alert(response.data);
+				setTitle("Alterações usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+
+				setModalAlert(true);
 			});
 	}
 
@@ -101,14 +112,20 @@ export default function User({ userId, setUserId, user, setUser }) {
 				authorization: userId
 			}})
 			.then((response) => {
-				alert(response.data);
+				setTitle("Alterações usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalAlert(true);
 			});
 	}
 
@@ -127,14 +144,21 @@ export default function User({ userId, setUserId, user, setUser }) {
 				authorization: userId
 			}})
 			.then(() => {
-				setModal3Show(true);
+				setTitle("Alterações usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
 				setModal1Show(false);
 			}).catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalAlert(true);
+				setModal1Show(false);
 			});
 	}
 
@@ -156,17 +180,29 @@ export default function User({ userId, setUserId, user, setUser }) {
 					authorization: userId
 				}})
 				.then(() => {
-					setModal3Show(true);
+					setTitle("Alteração senha");
+					setMessage("Alteração feita com sucesso!");
+					setColor("warning");
+					setModalAlert(true);
 					setModal2Show(false);
 				}).catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
+
 					if(error.response) {
-						alert(error.response.data);
+						setMessage(error.response.data);
 					} else {
-						alert(error);
+						setMessage(error);
 					}
+					setModalAlert(true);
+					setModal1Show(false);
 				});
 		} else {
-			alert("Atençao! Sua senha atual ou senha nova está vazia!");
+			setTitle("Alteração senha");
+			setMessage("Atençao! Sua senha atual ou senha nova está vazia!");
+			setColor("warning");
+			setModalAlert(true);
+			setModal2Show(false);
 		}
 		
 		setUserPasswordO("");
@@ -187,14 +223,22 @@ export default function User({ userId, setUserId, user, setUser }) {
 				setUser({});
 
 				setModal4Show(false);
+				setTitle("Alteração usuário");
+				setMessage(response.data);
+				setColor("warning");
+				setModalAlert(true);
 				history.push("/");
-				alert(response.data);
+				
 			}).catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalAlert(true);
+				setModal4Show(false);
 			});
 	}
 	
@@ -216,7 +260,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 			setModal2Show((action === "open") ? true : false);
 			break;
 		case 3:
-			setModal3Show((action === "open") ? true : false);
+			setModalAlert((action === "open") ? true : false);
 			break;
 		case 4:
 			setModal4Show((action === "open") ? true : false);
@@ -276,7 +320,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 						</form>
 					}
 				</div>
-				<div className="col-sm-4 m-auto p-3">
+				<div id="user-i" className="col-sm-4 p-3">
 					<Card bg="dark" >
 						<Card.Header >{user.name}</Card.Header>
 						<Card.Body>
@@ -452,13 +496,13 @@ export default function User({ userId, setUserId, user, setUser }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal3Show} onHide={e => history.go()}>
+			<Modal show={modalAlert} onClick={e => history.go()}>
 				<Modal.Header closeButton>
-					<Modal.Title>Alterações usuário</Modal.Title>
+					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={e => history.go()}>
+					<Button variant={color} onClick={e => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>
@@ -468,7 +512,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 				<Modal.Header closeButton>
 					<Modal.Title>Apagar perfil</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Tem certeza que quer excluir seu perfil? :/</Modal.Body>
+				<Modal.Body>Tem certeza que deseja excluir seu perfil? :/</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={e => setModal4Show(false)}>
 						Cancelar

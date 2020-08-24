@@ -17,3 +17,33 @@ div.card {
   border-color: #f0d890;
   color: #000000;
 }
+
+@media (min-width: 425px) {
+	#user-i { 
+    margin-top: 40px;
+	}
+}
+
+@media (min-width: 778px) {
+	#user-i { 
+    margin: auto;
+	}
+}
+
+@media (min-width: 1024px) {
+	#user-i { 
+    margin: auto;
+	}
+}
+
+@media (min-width: 1440px) {
+	#user-i { 
+    margin: auto;
+	}
+}
+
+@media (min-width: 2560px) {
+	#user-i { 
+    margin: auto;
+	}
+}

@@ -23,6 +23,12 @@ export default function Signup({ userId, setUserId }) {
 	const [password, setPassword] = useState("");
 	const [passwordC, setPasswordC] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
+	
+	//	Modal settings
+	const [modalAlert, setModalAlert] = useState(false);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -53,11 +59,18 @@ export default function Signup({ userId, setUserId }) {
 				history.push("/menu");
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+
+				setModalAlert(true);
+				
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+
+				setModalAlert(true);
 			});
 	}
 
@@ -150,6 +163,17 @@ export default function Signup({ userId, setUserId }) {
 						</Row>
 					</Col>
 				</Form>
+				<Modal show={modalAlert} onClick={e => setModalAlert(false)}>
+					<Modal.Header closeButton>
+						<Modal.Title>{title}</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>{message}</Modal.Body>
+					<Modal.Footer>
+						<Button variant={color} onClick={e => setModalAlert(false)}>
+							Fechar
+						</Button>
+					</Modal.Footer>
+				</Modal>
 			</div>
 		);
 	} else {

@@ -26,6 +26,9 @@ export default function Menu({ userId, user }) {
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState("");
 	const [productThumbnail, setProductThumbnail] = useState(null);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 
 	//	Modal settings
 	const [productAddModal, setProductAddModal] = useState(false);
@@ -64,21 +67,30 @@ export default function Menu({ userId, user }) {
 								setProductsByType(prodsByType);
 								setProducts(prodsByType[types.data[0]]);
 							} else {
-								alert("Não há tipos de produtos cadastrados");
+								setTitle("Erro!");
+								setColor("danger");
+								setMessage("Não há tipos de produtos cadastrados");
+								setModalWarningShow(true);
 							}
 						}).catch((error) => {
+							setTitle("Erro!");
+							setColor("danger");
 							if(error.response) {
-								alert(error.response.data);
+								setMessage(error.response.data);
 							} else {
-								alert(error);
+								setMessage(error);
 							}
+							setModalWarningShow(true);
 						});
 				}).catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
 					if(error.response) {
-						alert(error.response.data);
+						setMessage(error.response.data);
 					} else {
-						alert(error);
+						setMessage(error);
 					}
+					setModalWarningShow(true);
 				});
 
 			setLoading(false);
@@ -119,10 +131,12 @@ export default function Menu({ userId, user }) {
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
 		} else {
-			const blob = await fetch(productThumbnail_url).then(r => r.blob());
-			const token = productThumbnail_url.split(".");
-			const extension = token[token.length-1];
-			data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			if(productThumbnail_url){
+				const blob = await fetch(productThumbnail_url).then(r => r.blob());
+				const token = productThumbnail_url.split(".");
+				const extension = token[token.length-1];
+				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			}
 		}
 
 		await api.post("product", data, {
@@ -131,14 +145,20 @@ export default function Menu({ userId, user }) {
 			}})
 			.then(() => {
 				setProductAddModal(false);
+				setTitle("Alterações produto!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalWarningShow(true);
 			});
 	}
 
@@ -155,10 +175,12 @@ export default function Menu({ userId, user }) {
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
 		} else {
-			const blob = await fetch(productThumbnail_url).then(r => r.blob());
-			const token = productThumbnail_url.split(".");
-			const extension = token[token.length-1];
-			data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			if(productThumbnail_url){
+				const blob = await fetch(productThumbnail_url).then(r => r.blob());
+				const token = productThumbnail_url.split(".");
+				const extension = token[token.length-1];
+				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			}
 		}
 
 		await api.put("product/" + productId, data, {
@@ -167,14 +189,20 @@ export default function Menu({ userId, user }) {
 			}})
 			.then(() => {
 				setProductUpdateModal(false);
+				setTitle("Alterações produto!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalWarningShow(true);
 			});
 	}
 
@@ -187,14 +215,20 @@ export default function Menu({ userId, user }) {
 			}})
 			.then(() => {
 				setProductDeleteModal(false);
+				setTitle("Alterações produto!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error);
 				}
+				setModalWarningShow(true);
 			});
 	}
 
@@ -269,9 +303,10 @@ export default function Menu({ userId, user }) {
 	);
 
 	const productCard = (product) => {
+		console.log(product.thumbnail);
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-				<Card.Img variant="top" src={product.thumbnail_url} fluid="true" />
+				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid="true" />
 				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
 					<Card.Text>
@@ -446,10 +481,10 @@ export default function Menu({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setProductAddModal(false)}>
+					<Button variant="danger" onClick={() => setProductAddModal(false)}>
 						Fechar
 					</Button>
-					<Button variant="primary" type="submit" onClick={handleProductAdd}>
+					<Button variant="warning" type="submit" onClick={handleProductAdd}>
 						Adicionar
 					</Button>
 				</Modal.Footer>
@@ -538,10 +573,10 @@ export default function Menu({ userId, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setProductUpdateModal(false)}>
+					<Button variant="danger" onClick={() => setProductUpdateModal(false)}>
 						Fechar
 					</Button>
-					<Button variant="primary" type="submit" onClick={handleProductUpdate}>
+					<Button variant="warning" type="submit" onClick={handleProductUpdate}>
 						Salvar alterações
 					</Button>
 				</Modal.Footer>
@@ -562,7 +597,7 @@ export default function Menu({ userId, user }) {
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setProductDeleteModal(false)}>
+					<Button variant="warning" onClick={() => setProductDeleteModal(false)}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleProductDelete}>
@@ -577,10 +612,10 @@ export default function Menu({ userId, user }) {
 				</Modal.Header>
 				<Modal.Body>Woohoo, youre reading this text in a modal!</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setProductOrderModal(false)}>
+					<Button variant="danger" onClick={() => setProductOrderModal(false)}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={() => setProductOrderModal(false)}>
+					<Button variant="warning" onClick={() => setProductOrderModal(false)}>
 						Save Changes
 					</Button>
 				</Modal.Footer>
@@ -588,11 +623,11 @@ export default function Menu({ userId, user }) {
 
 			<Modal show={modalWarningShow} onHide={() => history.go()}>
 				<Modal.Header closeButton>
-					<Modal.Title>Alterações produto</Modal.Title>
+					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => history.go()}>
+					<Button variant={color} onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>
