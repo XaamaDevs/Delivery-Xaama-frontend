@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 
 //	Importing React features
 import Image from "react-bootstrap/Image";
-import { Card, ListGroup, Button, Form, Col, Row, Modal } from "react-bootstrap";
+import { Card, CardGroup, Button, Form, Col, Row, Modal } from "react-bootstrap";
 
 // Importing backend api
 import api from "../../services/api";
@@ -276,13 +276,13 @@ export default function User({ userId, setUserId, user }) {
 					}
 				</div>
 				<div className="col-sm-4 m-auto p-3">
-					<Card style={{ width: "23rem" }}>
-						<Card.Header>{user.name}</Card.Header>
-						<ListGroup variant="flush">
-							<ListGroup.Item>{user.email}</ListGroup.Item>
-							<ListGroup.Item>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</ListGroup.Item>
-							<ListGroup.Item>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</ListGroup.Item>
-						</ListGroup>
+					<Card bg="dark" >
+						<Card.Header >{user.name}</Card.Header>
+						<Card.Body>
+							<Card.Text>{user.email}</Card.Text>
+							<Card.Text>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</Card.Text>
+							<Card.Text>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</Card.Text>
+						</Card.Body>
 					</Card>
 					<br/>
 					{user.userType !== 2 ?

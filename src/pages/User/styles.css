@@ -1,3 +1,9 @@
+div.card {
+  width: "23rem";
+  background-color: #343A40;
+  color: #fff;
+}
+
 #btn-password {
   background-color: transparent;
   color: #f0d890;

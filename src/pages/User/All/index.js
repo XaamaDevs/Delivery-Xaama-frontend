@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 //	Importing React Router features
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 // Importing backend api
 import api from "../../../services/api";
@@ -14,11 +14,11 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Spinner, Container } from "react-bootstrap";
 
 
 //	Exporting resource to routes.js
-export default function AllUsers() {
+export default function AllUsers({ userId }) {
 	const [users, setUsers] = useState([]);
 	const [userUpdateId, setUserUpdateId] = useState("");
 	const [newType, setNewType] = useState("");
@@ -27,8 +27,9 @@ export default function AllUsers() {
 	//	Modal settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 
-	const userId = sessionStorage.getItem("userId");
+	//const userId = sessionStorage.getItem("userId");
 	const history = useHistory();
 
 	useEffect(() => {
@@ -39,6 +40,7 @@ export default function AllUsers() {
 				}
 			});
 			setUsers(response.data);
+			setLoading(false);
 		}
 
 		loadUser();
@@ -91,11 +93,20 @@ export default function AllUsers() {
 	}
 
 	return (
-		<div id="all-container">
-			<Container>
-				<ul>
+		<div className="all-container w-100">
+			{isLoading ?
+				<Container className="d-flex h-100">
+					<Spinner 
+						className="my-5 mx-auto"
+						style={{width: "5rem", height: "5rem"}} 
+						animation="grow" 
+						variant="warning"
+					/>
+				</Container>
+				:
+				<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
 					{users.map(user => (
-						<li key={user._id} className="user-item">
+						<Col key={user._id} className="user-item">
 							<header>
 								<img src={user.thumbnail ? user.thumbnail_url: camera } />
 								<div className="user-info">
@@ -105,7 +116,7 @@ export default function AllUsers() {
 							</header>
 							<p>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</p>
 							<p>{user.address && user.address.length ? user.address.join(", ") : "Endereço não informado" }</p>
-							<p>Mude o tipo de cada usuário. <strong>Cuidado ao promover um usuário a ADM!</strong></p>
+							<p>Mude o tipo do usuário. <strong>Cuidado ao promover um usuário a ADM!</strong></p>
 							
 							{ (userId == user._id) ?
 								<Button
@@ -144,11 +155,11 @@ export default function AllUsers() {
 								:
 								<></>
 							}
-						</li>
+						</Col>
 					))}
-				</ul>
-			</Container>
-		
+				</Row>
+			}
+			
 			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="sm" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar tipo</Modal.Title>

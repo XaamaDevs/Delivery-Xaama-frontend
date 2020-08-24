@@ -89,11 +89,11 @@ export default function Routes() {
 				/>
 				<Route 
 					exact path="/allorders" 
-					render={() => userId ? (managerAuth() ? <AllOrders /> : <Autho />) : <Auth />}
+					render={() => userId ? (managerAuth() ? <AllOrders userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route 
 					exact path="/allusers" 
-					render={() => userId ? (adminAuth() ? <AllUsers /> : <Autho />) : <Auth />}
+					render={() => userId ? (adminAuth() ? <AllUsers userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
