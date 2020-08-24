@@ -8,7 +8,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
@@ -20,6 +20,7 @@ export default function WebsiteNavbar({ userId, setUserId, user }) {
 			sessionStorage.removeItem("userId");
 
 			setUserId(sessionStorage.getItem("userId"));
+			setUser({});
 
 			history.push("/");
 		} catch (error) {

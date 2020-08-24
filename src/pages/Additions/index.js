@@ -87,17 +87,17 @@ export default function Additions({ userId }) {
 		data.append("name", additionName);
 		data.append("price", additionPrice);
 
-		const addTypesElem = document.getElementsByClassName("form-check");
+		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
-
+	
 		for(const type of addTypesElem) {
-			if(type.children[0].checked === true) {
-				addTypes += type.children[0].id + ", ";
+			if(type.selected === true) {
+				addTypes += type.value + ", ";
 			}
 		}
 
-		console.log(addTypes);
-
+		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
+		
 		data.append("type", addTypes);
 
 		if(additionThumbnail) {
@@ -134,15 +134,17 @@ export default function Additions({ userId }) {
 		data.append("name", additionName);
 		data.append("price", additionPrice);
 
-		const addTypesElem = document.getElementsByClassName("form-check");
+		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
-
+	
 		for(const type of addTypesElem) {
-			if(type.children[0].checked === true) {
-				addTypes += type.children[0].id + ", ";
+			if(type.selected === true) {
+				addTypes += type.value + ", ";
 			}
 		}
 
+		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
+		
 		data.append("type", addTypes);
 
 		if(additionThumbnail) {
@@ -223,28 +225,6 @@ export default function Additions({ userId }) {
 		default:
 			break;
 		}
-	}
-
-	async function changeAdditionType(e) {
-		e.preventDefault();
-
-		var newArrTypes = additionType;
-
-		const exist = (newArrTypes.indexOf(e.target.id) >= 0);
-
-		if(exist) {
-			newArrTypes.splice(newArrTypes.indexOf(e.target.id), 1);
-		} else {
-			newArrTypes.push(e.target.id);
-		}
-
-		e.target.checked = e.target.checked ? false : true;
-
-		console.log(e.target.checked);
-
-		setAdditionType(newArrTypes);
-
-		console.log(additionType);
 	}
 
 	const header = (
@@ -373,14 +353,13 @@ export default function Additions({ userId }) {
 								</Form.Group>
 								<Form.Group controlId="additionType">
 									<Form.Label>Tipo</Form.Label>
-									{productTypes.map((type, index) => (
-										<Form.Check key={index} type="checkbox" id={type}>
-											<Form.Check.Input type="checkbox" />
-											<Form.Check.Label>{type}</Form.Check.Label>
-										</Form.Check>
-									))}
+									<Form.Control as="select" htmlSize="2" multiple>
+										{productTypes.map((type, index) => (
+											<option key={index}>{type}</option>
+										))}
+									</Form.Control>
 									<Form.Text className="text-muted">
-										Você pode permitir que uma adição seja pedida em mais de um tipo de produto
+										Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
 									</Form.Text>
 								</Form.Group>
 							</Col>
@@ -445,18 +424,17 @@ export default function Additions({ userId }) {
 								</Form.Group>
 								<Form.Group controlId="additionType">
 									<Form.Label>Tipo</Form.Label>
-									{productTypes.map((type, index) => (
-										<Form.Check key={index} type="checkbox" id={type}>
-											<Form.Check.Input 
-												type="checkbox" 
-												onChange={e => changeAdditionType(e)}
-												checked={additionType && additionType.indexOf(type) >= 0 ? true : false}
-											/>
-											<Form.Check.Label>{type}</Form.Check.Label>
-										</Form.Check>
-									))}
+									<Form.Control as="select" htmlSize="2" multiple>
+										{productTypes.map((type, index) => (
+											<option 
+												key={index}
+												selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
+												{type}
+											</option>
+										))}
+									</Form.Control>
 									<Form.Text className="text-muted">
-										Você pode permitir que uma adição seja pedida em mais de um tipo de produto
+										Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
 									</Form.Text>
 								</Form.Group>
 							</Col>

@@ -19,7 +19,7 @@ import camera from "../../assets/camera.svg";
 
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user }) {
+export default function User({ userId, setUserId, user, setUser }) {
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
 	const [userPhone, setUserPhone] = useState("");
@@ -184,6 +184,7 @@ export default function User({ userId, setUserId, user }) {
 				sessionStorage.removeItem("userId");
 
 				setUserId(sessionStorage.getItem("userId"));
+				setUser({});
 
 				setModal4Show(false);
 				history.push("/");
