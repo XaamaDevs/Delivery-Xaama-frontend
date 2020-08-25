@@ -69,11 +69,10 @@ export default function AllUsers({ userId }) {
 		} catch(error) {
 			setTitle("Erro!");
 			setColor("danger");
-			
 			if (error.response) {
 				setMessage(error.response.data);
 			} else {
-				setMessage(error);
+				setMessage(error.message);
 			}
 			setModalAlert(true);
 			setModal1Show(false);

@@ -39,7 +39,7 @@ export default function Additions({ userId }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
-	//	Loading current user info and products list by type
+	//	Loading current user info and addition list
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("productTypes")
@@ -59,7 +59,7 @@ export default function Additions({ userId }) {
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
-						setMessage(error);
+						setMessage(error.message);
 					}
 					setToastShow(true);
 				});
@@ -73,7 +73,7 @@ export default function Additions({ userId }) {
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
-						setMessage(error);
+						setMessage(error.message);
 					}
 					setToastShow(true);
 				});
@@ -84,12 +84,12 @@ export default function Additions({ userId }) {
 		fetchData();
 	}, [userId]);
 
-	//	Product image preview
+	//	Addition image preview
 	const preview = useMemo(() => {
 		return additionThumbnail ? URL.createObjectURL(additionThumbnail) : null;
 	}, [additionThumbnail]);
 
-	//	Function to handle input product thumbnail
+	//	Function to handle input addition thumbnail
 	async function inputImage(event) {
 		event.preventDefault();
 	
@@ -143,7 +143,7 @@ export default function Additions({ userId }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
 				setToastShow(true);
 			});
@@ -196,7 +196,7 @@ export default function Additions({ userId }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
 				setToastShow(true);
 			});
@@ -222,7 +222,7 @@ export default function Additions({ userId }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
 				setToastShow(true);
 			});
@@ -241,14 +241,14 @@ export default function Additions({ userId }) {
 		setAdditionAddModal(true);
 	}
 
-	async function handleAdditionModal(event, modal, product) {
+	async function handleAdditionModal(event, modal, addition) {
 		event.preventDefault();
 
-		setAdditionId(product._id);
-		setAdditionName(product.name);
-		setAdditionPrice(product.price);
-		setAdditionType(product.type);
-		setAdditionThumbnail_url(product.thumbnail_url);
+		setAdditionId(addition._id);
+		setAdditionName(addition.name);
+		setAdditionPrice(addition.price);
+		setAdditionType(addition.type);
+		setAdditionThumbnail_url(addition.thumbnail_url);
 
 		switch(modal) {
 		case 0:
@@ -330,7 +330,7 @@ export default function Additions({ userId }) {
 	);
 
 	return (
-		<Container className="product-container w-100">
+		<Container className="addition-container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
 				{isLoading ? 

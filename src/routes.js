@@ -19,6 +19,7 @@ import AllOrders from "./pages/Order/All";
 import Menu from "./pages/Menu";
 import Auth from "./pages/Website/Authentication";
 import Autho from "./pages/Website/Authentication/Authorization";
+import Logged from "./pages/Website/Authentication/Logged";
 
 //	Importing api to communicate to backend
 import api from "./services/api";
@@ -68,9 +69,15 @@ export default function Routes() {
 			<Navbar userId={userId} setUserId={setUserId} user={user} setUser={setUser} />
 			<Switch>
 				<Route exact path="/" component={HomePage} />
-				<Route exact path="/login" render={() => <Login userId={userId} setUserId={setUserId} />} />
-				<Route exact path="/signup" render={() => <Signup userId={userId} setUserId={setUserId} />} />
 				<Route exact path="/order" component={Order} />
+				<Route 
+					exact path="/login" 
+					render={() => !userId ? <Login setUserId={setUserId} /> : <Logged />}
+				/>
+				<Route 
+					exact path="/signup" 
+					render={() => !userId ? <Signup setUserId={setUserId} setUser={setUser} /> : <Logged />}
+				/>
 				<Route 
 					exact path="/menu" 
 					render={() => <Menu userId={userId} user={user} />} 
