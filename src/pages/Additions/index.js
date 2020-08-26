@@ -396,7 +396,10 @@ export default function Additions({ userId }) {
 									</Form.Label>
 									<Form.Control 
 										value={additionPrice}
-										onChange={e => setAdditionPrice(e.target.value)} 
+										onChange={e => {
+											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
+											setAdditionPrice(e.target.value);
+										}} 
 										type="text"
 										placeholder="Preço"
 										required
@@ -472,9 +475,10 @@ export default function Additions({ userId }) {
 									</Form.Label>
 									<Form.Control 
 										value={additionPrice}
-										onChange={e => setAdditionPrice(e.target.value)} 
-										type="number"
-										min={0}
+										onChange={e => {
+											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
+											setAdditionPrice(e.target.value);
+										}} 
 										placeholder="Preço"
 										required
 									/>
