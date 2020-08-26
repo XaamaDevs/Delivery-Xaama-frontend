@@ -22,7 +22,7 @@ export default function Additions({ userId }) {
 	const [additionName, setAdditionName] = useState("");
 	const [additionPrice, setAdditionPrice] = useState("");
 	const [additionType, setAdditionType] = useState([]);
-	const [additionThumbnail_url, setAdditionThumbnail_url] = useState("");
+	const [additionThumbnail_url, setAdditionThumbnail_url] = useState(null);
 	const [additionThumbnail, setAdditionThumbnail] = useState(null);
 
 	//	Message settings
@@ -228,33 +228,24 @@ export default function Additions({ userId }) {
 			});
 	}
 
-	async function handleAddAdditionModal(event) {
+	async function handleAdditionModal(event, modal, addition = null) {
 		event.preventDefault();
 
-		setAdditionId("");
-		setAdditionName("");
-		setAdditionPrice("");
-		setAdditionType("");
+		setAdditionId(addition ? addition._id : "");
+		setAdditionName(addition ? addition.name : "");
+		setAdditionPrice(addition ? addition.price : "");
+		setAdditionType(addition ? addition.type : "");
 		setAdditionThumbnail(null);
-		setAdditionThumbnail_url("");
-
-		setAdditionAddModal(true);
-	}
-
-	async function handleAdditionModal(event, modal, addition) {
-		event.preventDefault();
-
-		setAdditionId(addition._id);
-		setAdditionName(addition.name);
-		setAdditionPrice(addition.price);
-		setAdditionType(addition.type);
-		setAdditionThumbnail_url(addition.thumbnail_url);
+		setAdditionThumbnail_url(addition ? addition.thumbnail_url : null);
 
 		switch(modal) {
 		case 0:
-			setAdditionUpdateModal(true);
+			setAdditionAddModal(true);
 			break;
 		case 1:
+			setAdditionUpdateModal(true);
+			break;
+		case 2:
 			setAdditionDeleteModal(true);
 			break;
 		default:
@@ -269,7 +260,7 @@ export default function Additions({ userId }) {
 					<Nav.Link 
 						href="#"
 						className="btn-outline-warning rounded"
-						onClick={handleAddAdditionModal}
+						onClick={e => handleAdditionModal(e, 0)}
 					>
 						Nova adição
 					</Nav.Link>
@@ -288,14 +279,14 @@ export default function Additions({ userId }) {
 						<Button 
 							variant="warning"
 							size="sm"
-							onClick ={e => handleAdditionModal(e, 0, addition)} 
+							onClick ={e => handleAdditionModal(e, 1, addition)} 
 						>
 								Modificar adição
 						</Button>
 						<Button 
 							variant="danger" 
 							size="sm"
-							onClick={e => handleAdditionModal(e, 1, addition)}
+							onClick={e => handleAdditionModal(e, 2, addition)}
 						>
 							Remover
 						</Button>
@@ -381,7 +372,7 @@ export default function Additions({ userId }) {
 								/>
 								<Image 
 									id="thumbnail" 
-									className={additionThumbnail ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
@@ -406,8 +397,7 @@ export default function Additions({ userId }) {
 									<Form.Control 
 										value={additionPrice}
 										onChange={e => setAdditionPrice(e.target.value)} 
-                    type="number"
-                    min={0}
+										type="text"
 										placeholder="Preço"
 										required
 									/>
@@ -458,7 +448,7 @@ export default function Additions({ userId }) {
 								/>
 								<Image 
 									id="thumbnail" 
-									className={additionThumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
@@ -483,8 +473,8 @@ export default function Additions({ userId }) {
 									<Form.Control 
 										value={additionPrice}
 										onChange={e => setAdditionPrice(e.target.value)} 
-                    type="number"
-                    min={0}
+										type="number"
+										min={0}
 										placeholder="Preço"
 										required
 									/>

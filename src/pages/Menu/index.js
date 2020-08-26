@@ -24,7 +24,7 @@ export default function Menu({ userId, user }) {
 	const [productIngredients, setProductIngredients] = useState("");
 	const [productPrices, setProductPrices] = useState("");
 	const [productType, setProductType] = useState("");
-	const [productThumbnail_url, setProductThumbnail_url] = useState("");
+	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
 	const [productThumbnail, setProductThumbnail] = useState(null);
 
 	//	Message settings
@@ -45,44 +45,44 @@ export default function Menu({ userId, user }) {
 	//	Loading current user info and products list by type
 	useEffect(() => {
 		async function fetchData() {
+			await api.get("productTypes")
+				.then((response) => {
+					if(response.data && response.data.length) {
+						setProductTypes(response.data);
+					} else {
+						setTitle("Erro!");
+						setColor("danger");
+						setMessage("Não há tipos de produtos cadastrados");
+						setToastShow(true);
+					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
+					if(error.response) {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+
 			await api.get("product")
 				.then((response) => {
-					api.get("productTypes")
-						.then((types) => {
-							if(types.data && types.data.length) {
-								setProductTypes(types.data);
+					var prodsByType = {};
 
-								var prodsByType = {};
-								for(var type of types.data) {
-									var prods = [];
+					for(var type of productTypes) {
+						var prods = [];
 
-									for(var product of response.data) {
-										if(product.type === type) {
-											prods.push(product);
-										}
-									}
-									
-									prodsByType[type] = prods;
-								}
-
-								setProductsByType(prodsByType);
-								setProducts(prodsByType[types.data[0]]);
-							} else {
-								setTitle("Erro!");
-								setColor("danger");
-								setMessage("Não há tipos de produtos cadastrados");
-								setToastShow(true);
+						for(var product of response.data) {
+							if(product.type === type) {
+								prods.push(product);
 							}
-						}).catch((error) => {
-							setTitle("Erro!");
-							setColor("danger");
-							if(error.response) {
-								setMessage(error.response.data);
-							} else {
-								setMessage(error.message);
-							}
-							setToastShow(true);
-						});
+						}
+						
+						prodsByType[type] = prods;
+					}
+
+					setProductsByType(prodsByType);
 				}).catch((error) => {
 					setTitle("Erro!");
 					setColor("danger");
@@ -98,7 +98,7 @@ export default function Menu({ userId, user }) {
 		}
 
 		fetchData();
-	}, [history, userId]);
+	}, [productTypes, history, userId]);
 
 	//	Product image preview
 	const preview = useMemo(() => {
@@ -233,39 +233,29 @@ export default function Menu({ userId, user }) {
 			});
 	}
 
-	async function handleAddProductModal(event) {
+	async function handleProductModal(event, modal, product = null) {
 		event.preventDefault();
-
-		setProductId("");
-		setProductName("");
-		setProductIngredients("");
-		setProductPrices("");
-		setProductType("");
+		
+		setProductId(product ? product._id : "");
+		setProductName(product ? product.name : "");
+		setProductIngredients(product ? product.ingredients.join(", ") : "");
+		setProductPrices(product ? product.prices.join(", ") : "");
+		setProductType(product ? product.type : "");
 		setProductThumbnail(null);
-		setProductThumbnail_url("");
-
-		setProductAddModal(true);
-	}
-
-	async function handleProductModal(event, modal, product) {
-		event.preventDefault();
-
-		setProductId(product._id);
-		setProductName(product.name);
-		setProductIngredients(product.ingredients.join(", "));
-		setProductPrices(product.prices.join(", "));
-		setProductType(product.type);
-		setProductThumbnail_url(product.thumbnail_url);
+		setProductThumbnail_url(product ? product.thumbnail_url : null);
 
 		switch(modal) {
 		case 0:
-			setProductUpdateModal(true);
+			setProductAddModal(true);
 			break;
 		case 1:
-			setProductOrderModal(true);
+			setProductUpdateModal(true);
 			break;
 		case 2:
 			setProductDeleteModal(true);
+			break;
+		case 3:
+			setProductOrderModal(true);
 			break;
 		default:
 			break;
@@ -274,9 +264,9 @@ export default function Menu({ userId, user }) {
 
 	const header = (
 		<Card.Header className="pb-3">
-			<Nav fill variant="tabs" defaultActiveKey={"#0"}>
+			<Nav fill variant="tabs">
 				{Object.keys(productsByType).map((type, index) => (
-					productsByType[type].length ?
+					productsByType[type] && productsByType[type].length ?
 						<Nav.Item key={index}>
 							<Nav.Link 
 								className="btn-outline-warning rounded"
@@ -292,7 +282,7 @@ export default function Menu({ userId, user }) {
 					<Nav.Item>
 						<Nav.Link 
 							className="btn-outline-warning rounded"
-							onClick={handleAddProductModal}>
+							onClick={e => handleProductModal(e, 0)}>
 							Adicionar novo produto
 						</Nav.Link>
 					</Nav.Item>
@@ -323,7 +313,7 @@ export default function Menu({ userId, user }) {
 								<Button  
 									variant="warning"
 									size="sm"
-									onClick ={e => handleProductModal(e, 0, product)}
+									onClick ={e => handleProductModal(e, 1, product)}
 								>
 									Modificar
 								</Button>
@@ -340,7 +330,7 @@ export default function Menu({ userId, user }) {
 								className="my-auto" 
 								variant="warning"
 								size="sm"
-								onClick ={e => handleProductModal(e, 1, product)} 
+								onClick ={e => handleProductModal(e, 3, product)} 
 							>
 								Adicionar aos pedidos
 							</Button>
@@ -398,7 +388,7 @@ export default function Menu({ userId, user }) {
 						variant="warning"
 					/>
 					:
-					products.length ?
+					products && products.length ?
 						<CardDeck className="p-2">
 							{Array(products.length).fill(null).map((value, i) => (
 								i%3 === 0 ?
@@ -412,7 +402,7 @@ export default function Menu({ userId, user }) {
 							))}
 						</CardDeck>
 						:
-						null
+						<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de produto desejado acima</h1>
 				}
 			</Card>
 
@@ -438,7 +428,7 @@ export default function Menu({ userId, user }) {
 								/>
 								<Image 
 									id="thumbnail" 
-									className={productThumbnail ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
@@ -537,7 +527,7 @@ export default function Menu({ userId, user }) {
 								/>
 								<Image 
 									id="thumbnail" 
-									className={productThumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
