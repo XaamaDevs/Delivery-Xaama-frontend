@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, Spinner, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -26,16 +26,17 @@ export default function Menu({ userId, user }) {
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState("");
 	const [productThumbnail, setProductThumbnail] = useState(null);
-	const [title, setTitle] = useState("");
-	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 
-	//	Modal settings
+	//	Message settings
 	const [productAddModal, setProductAddModal] = useState(false);
 	const [productUpdateModal, setProductUpdateModal] = useState(false);
 	const [productDeleteModal, setProductDeleteModal] = useState(false);
 	const [productOrderModal, setProductOrderModal] = useState(false);
 	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
@@ -70,7 +71,7 @@ export default function Menu({ userId, user }) {
 								setTitle("Erro!");
 								setColor("danger");
 								setMessage("Não há tipos de produtos cadastrados");
-								setModalWarningShow(true);
+								setToastShow(true);
 							}
 						}).catch((error) => {
 							setTitle("Erro!");
@@ -78,9 +79,9 @@ export default function Menu({ userId, user }) {
 							if(error.response) {
 								setMessage(error.response.data);
 							} else {
-								setMessage(error);
+								setMessage(error.message);
 							}
-							setModalWarningShow(true);
+							setToastShow(true);
 						});
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -88,9 +89,9 @@ export default function Menu({ userId, user }) {
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
-						setMessage(error);
+						setMessage(error.message);
 					}
-					setModalWarningShow(true);
+					setToastShow(true);
 				});
 
 			setLoading(false);
@@ -156,9 +157,9 @@ export default function Menu({ userId, user }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
-				setModalWarningShow(true);
+				setToastShow(true);
 			});
 	}
 
@@ -200,9 +201,9 @@ export default function Menu({ userId, user }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
-				setModalWarningShow(true);
+				setToastShow(true);
 			});
 	}
 
@@ -226,9 +227,9 @@ export default function Menu({ userId, user }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
-				setModalWarningShow(true);
+				setToastShow(true);
 			});
 	}
 
@@ -303,10 +304,9 @@ export default function Menu({ userId, user }) {
 	);
 
 	const productCard = (product) => {
-		console.log(product.thumbnail);
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid="true" />
+				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid />
 				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
 					<Card.Text>
@@ -325,7 +325,7 @@ export default function Menu({ userId, user }) {
 									size="sm"
 									onClick ={e => handleProductModal(e, 0, product)}
 								>
-										Modificar
+									Modificar
 								</Button>
 								<Button 
 									variant="danger" 
@@ -342,7 +342,7 @@ export default function Menu({ userId, user }) {
 								size="sm"
 								onClick ={e => handleProductModal(e, 1, product)} 
 							>
-									Adicionar aos pedidos
+								Adicionar aos pedidos
 							</Button>
 						:
 						null
@@ -366,6 +366,25 @@ export default function Menu({ userId, user }) {
 			</Card>
 		);
 	};
+
+	const toast = (
+		<div
+			aria-live="polite"
+			aria-atomic="true"
+			style={{
+				position: "fixed",
+				top: "inherit",
+				right: "3%"
+			}}
+		>
+			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
+				<Toast.Header>
+					<strong className="mr-auto">{title}</strong>
+				</Toast.Header>
+				<Toast.Body>{message}</Toast.Body>
+			</Toast>
+		</div>
+	);
 
 	return (
 		<Container className="product-container w-100">
@@ -397,12 +416,18 @@ export default function Menu({ userId, user }) {
 				}
 			</Card>
 
-			<Modal show={productAddModal} onHide={() => setProductAddModal(false)} size="lg" centered>
+			<Modal 
+				show={productAddModal} 
+				onHide={() => {setProductAddModal(false); setToastShow(false);}} 
+				size="lg" 
+				centered
+			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
+					<Form onSubmit={handleProductAdd}>
 						<Row>
 							<Col className="d-flex m-auto" sm>
 								<Form.Control
@@ -478,24 +503,30 @@ export default function Menu({ userId, user }) {
 								</Form.Group>
 							</Col>
 						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setProductAddModal(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Adicionar
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => setProductAddModal(false)}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleProductAdd}>
-						Adicionar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productUpdateModal} onHide={() => setProductUpdateModal(false)} size="lg" centered>
+			<Modal 
+				show={productUpdateModal} 
+				onHide={() => {setProductUpdateModal(false); setToastShow(false);}} 
+				size="lg" 
+				centered
+			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
+					<Form onSubmit={handleProductUpdate}>
 						<Row>
 							<Col className="d-flex m-auto" sm>
 								<Form.Control
@@ -570,19 +601,20 @@ export default function Menu({ userId, user }) {
 								</Form.Group>
 							</Col>
 						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => setProductUpdateModal(false)}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleProductUpdate}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productDeleteModal} onHide={() => setProductDeleteModal(false)}>
+			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Remover produto</Modal.Title>
 				</Modal.Header>
@@ -597,7 +629,7 @@ export default function Menu({ userId, user }) {
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => setProductDeleteModal(false)}>
+					<Button variant="warning" onClick={() => {setProductDeleteModal(false); setToastShow(false);}}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleProductDelete}>

@@ -5,8 +5,7 @@ import React, { useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import Image from "react-bootstrap/Image";
-import { Card, Button, Form, Col, Row, Modal } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal } from "react-bootstrap";
 
 // Importing backend api
 import api from "../../services/api";
@@ -20,6 +19,7 @@ import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function User({ userId, setUserId, user, setUser }) {
+	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
 	const [userPhone, setUserPhone] = useState("");
@@ -27,19 +27,20 @@ export default function User({ userId, setUserId, user, setUser }) {
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
-	const [title, setTitle] = useState("");
-	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 	
-	//	Modal settings
+	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 	
 	//	Defining history to jump through pages
 	const history = useHistory();
 
+	//	User image preview
 	const preview = useMemo(() => {
 		return thumbnail ? URL.createObjectURL(thumbnail): null;
 	}, [thumbnail]);
@@ -48,51 +49,19 @@ export default function User({ userId, setUserId, user, setUser }) {
 	async function inputImage(event) {
 		event.preventDefault();
 	
-		document.getElementsByTagName("input")[0].click();
+		document.getElementById("inputImage").click();
 	}
 
-	//	Function to handle add image profile
-	async function handleThumbnailDelete(event) {
+	//	Function to handle update image profile
+	async function handleThumbnailUpdate(event) {
 		event.preventDefault();
 
 		const data = new FormData();
 
 		data.append("name", user.name);
 		data.append("email", user.email);
-		data.append("thumbnail", thumbnail);
-
-		await api.put("user", data , {
-			headers : { 
-				authorization: userId
-			}})
-			.then((response) => {
-				setTitle("Alterações usuário");
-				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				setColor("danger");
-
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error);
-				}
-
-				setModalAlert(true);
-			});
-	}
-
-	//	Function to handle add image profile
-	async function handleSubmit(event) {
-		event.preventDefault();
-
-		const data = new FormData();
-
-		data.append("name", user.name);
-		data.append("email", user.email);
+		data.append("address", userAddress);
+		data.append("phone", userPhone);
 
 		if(thumbnail){
 			data.append("thumbnail", thumbnail);
@@ -123,7 +92,39 @@ export default function User({ userId, setUserId, user, setUser }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
+				}
+				setModalAlert(true);
+			});
+	}
+
+	//	Function to handle delete image profile
+	async function handleThumbnailDelete(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("name", user.name);
+		data.append("email", user.email);
+		data.append("thumbnail", thumbnail);
+
+		await api.put("user", data , {
+			headers : { 
+				authorization: userId
+			}})
+			.then(() => {
+				setTitle("Alterações usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
 				}
 				setModalAlert(true);
 			});
@@ -155,7 +156,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
 				setModalAlert(true);
 				setModal1Show(false);
@@ -192,7 +193,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
-						setMessage(error);
+						setMessage(error.message);
 					}
 					setModalAlert(true);
 					setModal1Show(false);
@@ -212,7 +213,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 	async function handleUserDelete(event) {
 		event.preventDefault();
 
-		await api.delete("/user", {
+		await api.delete("user", {
 			headers : { 
 				authorization: userId
 			}})
@@ -235,7 +236,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
 				setModalAlert(true);
 				setModal4Show(false);
@@ -274,51 +275,53 @@ export default function User({ userId, setUserId, user, setUser }) {
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
 				<div className="col-sm-4 m-auto p-3">
-					{user.thumbnail ?
-						<>
-							<form>
-								<input
-									type="file"
-									className="d-none"
-									onChange={event => setThumbnail(event.target.files[0])}
-								/>
-								<Image 
-									id="thumbnail"
-									className={preview || user.thumbnail_url ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
-									src={preview ? preview : (user.thumbnail_url ? user.thumbnail_url : camera)} rounded fluid alt="Selecione sua imagem"
-									style={{cursor: "pointer"}}
-									onClick={inputImage}
-								/>
-
-								<br/> <br/>
-								<Button onClick={handleSubmit} type="submit" variant="outline-warning" >Trocar foto
-								</Button>{" "}
-								<Button onClick={handleThumbnailDelete} type="submit" variant="outline-danger">Apagar foto</Button>
-							</form>
-							
-						</>
-						:
-						<form className="d-flex flex-row flex-wrap h-100" onSubmit={handleSubmit}>
-							<input
-								type="file"
-								className="d-none"
-								onChange={event => setThumbnail(event.target.files[0])}
-							/>
-							<Image
-								id="thumbnail"
-								className={preview ? "has-thumbnail img-fluid border-0 m-auto" : "h-100 w-100 m-auto"}
-								src={preview ? preview : camera} rounded fluid alt="Selecione sua imagem"
-								style={{cursor: "pointer"}}
-								onClick={inputImage}
-							/>
-							<Button 
-								style={{position:"absolute", top:"95%", left:"30%"}} 
-								className="mt-4" 
-								type="submit" 
-								variant="outline-warning" >Adicionar foto
-							</Button>
-						</form>
-					}
+					<Form className="d-flex flex-column" onSubmit={handleThumbnailUpdate}>
+						<Form.Control
+							id="inputImage"
+							className="d-none"
+							type="file"
+							onChange={event => setThumbnail(event.target.files[0])}
+							required
+						/>
+						<Image 
+							id="thumbnail"
+							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)} 
+							alt="Selecione sua imagem"
+							onClick={inputImage}
+							fluid 
+						/>
+						{user.thumbnail ?
+							<div className="d-flex justify-content-center flex-wrap my-auto">
+								<Button 
+									className="mx-2"
+									onClick={handleThumbnailUpdate} 
+									type="submit" 
+									variant="outline-warning" 
+								>
+									Trocar foto
+								</Button>
+								<Button 
+									className="mx-2"
+									onClick={handleThumbnailDelete} 
+									type="submit" 
+									variant="outline-danger"
+								>
+									Apagar foto
+								</Button>
+							</div>
+							:
+							<div className="d-flex">
+								<Button 
+									className="my-2 mx-auto" 
+									type="submit" 
+									variant="outline-warning"
+								>
+									Adicionar foto
+								</Button>
+							</div>
+						}
+					</Form>
 				</div>
 				<div id="user-i" className="col-sm-4 p-3">
 					<Card bg="dark" >
@@ -329,59 +332,50 @@ export default function User({ userId, setUserId, user, setUser }) {
 							<Card.Text>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</Card.Text>
 						</Card.Body>
 					</Card>
-					<br/>
-					{user.userType !== 2 ?
-						<>
-							<Button 
-								variant="outline-warning"
-								onClick ={event => handleModal(event, 1, "open", user)}>Editar perfil
-							</Button> {" "}
-							<button 
-								onClick ={event => handleModal(event, 2, "open", user)}
-								className="btn" 
-								id="btn-password" >Trocar senha
-							</button> {" "}
+					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
+						<Button 
+							variant="outline-warning"
+							onClick={event => handleModal(event, 1, "open", user)}
+						>
+							Editar perfil
+						</Button>
+						<Button 
+							onClick ={event => handleModal(event, 2, "open", user)}
+							className="btn" 
+							id="btn-password"
+						>
+							Trocar senha
+						</Button>
+						<Button
+							onClick = {event => handleModal(event, 4, "open", user)}
+							variant="outline-danger"
+						>
+							Apagar perfil
+						</Button>
+					</Row>
+					{user.userType === 1 || user.userType === 2 ?
+						<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
 							<Button
-								onClick = {event => handleModal(event, 4, "open", user)}
-								variant="outline-danger">Apagar perfil
+								onClick={() => history.push("/allorders")}
+								className="btn" 
+								id="btn-password"
+							>
+								Listar todos pedidos
 							</Button>
-
-							{user.userType === 1 ?
-								<Row>
-									<button
-										onClick={() => history.push("/allorders")}
-										className="btn mt-4 ml-3" 
-										id="btn-password" >Listar todos pedidos
-									</button> {" "}
-								</Row>
-								:
-								<></>
-							}
-						</>
-						:
-						<>
-							<Button 
-								variant="outline-warning" 
-								onClick ={event => handleModal(event, 1, "open", user)} >Editar perfil
-							</Button> {" "}
-							<Button 
-								variant="outline-danger"
-								onClick ={event => handleModal(event, 2, "open", user)}>Trocar senha
-							</Button> {" "}
-
-							<Row>
+							{user.userType === 2 ?
 								<button 
 									onClick={() => history.push("/allusers")}
-									className="btn mt-4 ml-3" 
-									id="btn-password" >Listar todos usuários
-								</button> {" "}
-								<button 
-									onClick={() => history.push("/allorders")}
-									className="btn mt-4 ml-1" 
-									id="btn-password" >Listar todos pedidos
-								</button> {" "}
-							</Row>
-						</>
+									className="btn" 
+									id="btn-password"
+								>
+									Listar todos usuários
+								</button>
+								:
+								null
+							}
+						</Row>
+						:
+						null
 					}
 				</div>
 			</div>

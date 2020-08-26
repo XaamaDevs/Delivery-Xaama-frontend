@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, Spinner, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -15,7 +15,7 @@ import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function Additions({ userId }) {
-	//	Product variables
+	//	Addition variables
 	const [productTypes, setProductTypes] = useState([]);
 	const [additions, setAdditions] = useState([]);
 	const [additionId, setAdditionId] = useState("");
@@ -25,40 +25,57 @@ export default function Additions({ userId }) {
 	const [additionThumbnail_url, setAdditionThumbnail_url] = useState("");
 	const [additionThumbnail, setAdditionThumbnail] = useState(null);
 
-	//	Modal settings
+	//	Message settings
 	const [additionAddModal, setAdditionAddModal] = useState(false);
 	const [additionUpdateModal, setAdditionUpdateModal] = useState(false);
 	const [additionDeleteModal, setAdditionDeleteModal] = useState(false);
 	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
 
-	//	Loading current user info and products list by type
+	//	Loading current user info and addition list
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("productTypes")
 				.then((response) => {
-					setProductTypes(response.data);
+					if(response.data) {
+						setProductTypes(response.data);
+					} else {
+						setTitle("Erro!");
+						setColor("danger");
+						setMessage("Não há tipos de produtos cadastrados");
+						setToastShow(true);
+					}
 				})
 				.catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
 					if(error.response) {
-						alert(error.response.data);
+						setMessage(error.response.data);
 					} else {
-						alert(error);
+						setMessage(error.message);
 					}
+					setToastShow(true);
 				});
 			
 			await api.get("addition")
 				.then((response) => {
 					setAdditions(response.data);
-				}).catch((error) => {/*
+				}).catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
 					if(error.response) {
-						alert(error.response.data);
+						setMessage(error.response.data);
 					} else {
-						alert(error);
-					}*/
+						setMessage(error.message);
+					}
+					setToastShow(true);
 				});
 
 			setLoading(false);
@@ -67,12 +84,12 @@ export default function Additions({ userId }) {
 		fetchData();
 	}, [userId]);
 
-	//	Product image preview
+	//	Addition image preview
 	const preview = useMemo(() => {
 		return additionThumbnail ? URL.createObjectURL(additionThumbnail) : null;
 	}, [additionThumbnail]);
 
-	//	Function to handle input product thumbnail
+	//	Function to handle input addition thumbnail
 	async function inputImage(event) {
 		event.preventDefault();
 	
@@ -102,7 +119,7 @@ export default function Additions({ userId }) {
 
 		if(additionThumbnail) {
 			data.append("thumbnail", additionThumbnail);
-		} else {
+		} else if(additionThumbnail_url) {
 			const blob = await fetch(additionThumbnail_url).then(r => r.blob());
 			const token = additionThumbnail_url.split(".");
 			const extension = token[token.length-1];
@@ -115,14 +132,20 @@ export default function Additions({ userId }) {
 			}})
 			.then(() => {
 				setAdditionAddModal(false);
+				setTitle("Nova adição!");
+				setMessage("Adição criada com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error.message);
 				}
+				setToastShow(true);
 			});
 	}
 
@@ -149,7 +172,7 @@ export default function Additions({ userId }) {
 
 		if(additionThumbnail) {
 			data.append("thumbnail", additionThumbnail);
-		} else {
+		} else if(additionThumbnail_url) {
 			const blob = await fetch(additionThumbnail_url).then(r => r.blob());
 			const token = additionThumbnail_url.split(".");
 			const extension = token[token.length-1];
@@ -162,14 +185,20 @@ export default function Additions({ userId }) {
 			}})
 			.then(() => {
 				setAdditionUpdateModal(false);
+				setTitle("Alterações de adição!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error.message);
 				}
+				setToastShow(true);
 			});
 	}
 
@@ -182,14 +211,20 @@ export default function Additions({ userId }) {
 			}})
 			.then(() => {
 				setAdditionDeleteModal(false);
+				setTitle("Remoção de adição!");
+				setMessage("Adição removida com sucesso!");
+				setColor("warning");
 				setModalWarningShow(true);
 			})
 			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
-					alert(error.response.data);
+					setMessage(error.response.data);
 				} else {
-					alert(error);
+					setMessage(error.message);
 				}
+				setToastShow(true);
 			});
 	}
 
@@ -206,14 +241,14 @@ export default function Additions({ userId }) {
 		setAdditionAddModal(true);
 	}
 
-	async function handleAdditionModal(event, modal, product) {
+	async function handleAdditionModal(event, modal, addition) {
 		event.preventDefault();
 
-		setAdditionId(product._id);
-		setAdditionName(product.name);
-		setAdditionPrice(product.price);
-		setAdditionType(product.type);
-		setAdditionThumbnail_url(product.thumbnail_url);
+		setAdditionId(addition._id);
+		setAdditionName(addition.name);
+		setAdditionPrice(addition.price);
+		setAdditionType(addition.type);
+		setAdditionThumbnail_url(addition.thumbnail_url);
 
 		switch(modal) {
 		case 0:
@@ -246,7 +281,7 @@ export default function Additions({ userId }) {
 	const additionCard = (addition) => {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={addition._id}>
-				<Card.Img variant="top" src={addition.thumbnail_url} fluid="true" />
+				<Card.Img variant="top" src={addition.thumbnail ? addition.thumbnail_url : camera} fluid />
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
 					<div className="d-flex justify-content-between flex-wrap my-auto">
@@ -275,8 +310,27 @@ export default function Additions({ userId }) {
 		);
 	};
 
+	const toast = (
+		<div
+			aria-live="polite"
+			aria-atomic="true"
+			style={{
+				position: "fixed",
+				top: "inherit",
+				right: "3%"
+			}}
+		>
+			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
+				<Toast.Header>
+					<strong className="mr-auto">{title}</strong>
+				</Toast.Header>
+				<Toast.Body>{message}</Toast.Body>
+			</Toast>
+		</div>
+	);
+
 	return (
-		<Container className="product-container w-100">
+		<Container className="addition-container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
 				{isLoading ? 
@@ -305,12 +359,18 @@ export default function Additions({ userId }) {
 				}
 			</Card>
 
-			<Modal show={additionAddModal} onHide={() => setAdditionAddModal(false)} size="lg" centered>
+			<Modal 
+				show={additionAddModal} 
+				onHide={() =>  {setAdditionAddModal(false); setToastShow(false);}} 
+				size="lg" 
+				centered
+			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Nova adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
+					<Form onSubmit={handleAdditionAdd}>
 						<Row>
 							<Col className="d-flex m-auto" sm>
 								<Form.Control
@@ -353,7 +413,7 @@ export default function Additions({ userId }) {
 								</Form.Group>
 								<Form.Group controlId="additionType">
 									<Form.Label>Tipo</Form.Label>
-									<Form.Control as="select" htmlSize="2" multiple>
+									<Form.Control as="select" htmlSize="2" multiple required>
 										{productTypes.map((type, index) => (
 											<option key={index}>{type}</option>
 										))}
@@ -364,24 +424,29 @@ export default function Additions({ userId }) {
 								</Form.Group>
 							</Col>
 						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setAdditionAddModal(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Adicionar
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setAdditionAddModal(false)}>
-						Fechar
-					</Button>
-					<Button variant="primary" type="submit" onClick={handleAdditionAdd}>
-						Adicionar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
-			<Modal show={additionUpdateModal} onHide={() => setAdditionUpdateModal(false)} size="lg" centered>
+			<Modal 
+				show={additionUpdateModal} 
+				onHide={() => {setAdditionUpdateModal(false); setToastShow(false);}} 
+				size="lg" centered
+			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
+					<Form onSubmit={handleAdditionUpdate}>
 						<Row>
 							<Col className="d-flex m-auto">
 								<Form.Control
@@ -424,7 +489,7 @@ export default function Additions({ userId }) {
 								</Form.Group>
 								<Form.Group controlId="additionType">
 									<Form.Label>Tipo</Form.Label>
-									<Form.Control as="select" htmlSize="2" multiple>
+									<Form.Control as="select" htmlSize="2" multiple required>
 										{productTypes.map((type, index) => (
 											<option 
 												key={index}
@@ -439,19 +504,20 @@ export default function Additions({ userId }) {
 								</Form.Group>
 							</Col>
 						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setAdditionUpdateModal(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setAdditionUpdateModal(false)}>
-						Fechar
-					</Button>
-					<Button variant="primary" type="submit" onClick={handleAdditionUpdate}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
-			<Modal show={additionDeleteModal} onHide={() => setAdditionDeleteModal(false)}>
+			<Modal show={additionDeleteModal} onHide={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Remover adição</Modal.Title>
 				</Modal.Header>
@@ -460,7 +526,7 @@ export default function Additions({ userId }) {
 					Você tem certeza que deseja remover esta adição?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => setAdditionDeleteModal(false)}>
+					<Button variant="warning" onClick={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleAdditionDelete}>
@@ -471,11 +537,11 @@ export default function Additions({ userId }) {
 
 			<Modal show={modalWarningShow} onHide={() => history.go()}>
 				<Modal.Header closeButton>
-					<Modal.Title>Alterações de adição</Modal.Title>
+					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Alterações salvas com sucesso!</Modal.Body>
+				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={() => history.go()}>
+					<Button variant={color} onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>

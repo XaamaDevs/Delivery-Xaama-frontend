@@ -17,7 +17,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Signup({ userId, setUserId }) {
+export default function Signup({ setUserId, setUser }) {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -55,21 +55,18 @@ export default function Signup({ userId, setUserId }) {
 				sessionStorage.setItem("userId", response.data._id);
 
 				setUserId(sessionStorage.getItem("userId"));
+				setUser(response.data);
 	
 				history.push("/menu");
 			})
 			.catch((error) => {
 				setTitle("Erro!");
 				setColor("danger");
-
-				setModalAlert(true);
-				
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
-					setMessage(error);
+					setMessage(error.message);
 				}
-
 				setModalAlert(true);
 			});
 	}
@@ -81,114 +78,99 @@ export default function Signup({ userId, setUserId }) {
 		document.getElementById("inputThumbnail").click();
 	}
 
-	if(!userId) {
-		return (
-			<div className="user-container h-100">
-				<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
-					<Col sm="4" className="d-flex flex-column m-auto p-3">
-						<Form.Group controlId="inputThumbnail">
-							<Form.Label style={{color: "#ffffff" }}>Foto de perfil</Form.Label>
-							<Form.Control 
-								className="d-none"
-								onChange={event => setThumbnail(event.target.files[0])} 
-								type="file" 
-								placeholder="email@provedor.com"
-							/>
-							<Image 
-								id="thumbnail"
-								className={thumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-								src={preview ? preview : camera}
-								alt="Selecione sua imagem"
-								onClick={inputImage}
-								fluid
-							/>
-						</Form.Group>
-					</Col>
-					<Col sm="4" className="text-white m-auto p-3">
-						<Form.Group controlId="name">
-							<Form.Label>Nome</Form.Label>
-							<Form.Control 
-								placeholder="Seu nome"
-								type="text"
-								value={name}
-								onChange={event => setName(event.target.value)}
-								required
-							/>
-						</Form.Group>
-						<Form.Group controlId="email">
-							<Form.Label>Email</Form.Label>
-							<Form.Control 
-								placeholder="Seu email"
-								type="email"
-								value={email}
-								onChange={event => setEmail(event.target.value)}
-								required
-							/>
-						</Form.Group>
-						<Form.Group controlId="password">
-							<Form.Label>Senha</Form.Label>
-							<Form.Control 
-								placeholder="Senha"
-								type="password"
-								value={password}
-								onChange={event => setPassword(event.target.value)}
-								required
-							/>
-						</Form.Group>
-						<Form.Group controlId="passwordC">
-							<Form.Label>Confirmar Senha</Form.Label>
-							<Form.Control 
-								placeholder="Confirme sua senha"
-								type="password"
-								value={passwordC}
-								onChange={event => setPasswordC(event.target.value)}
-								required
-							/>
-						</Form.Group>
-						<Row className="my-1">
-							<Col className="text-center">
-								<small>Já tem conta? </small>
-								<Link className="text-light" to="/login">
-									<small>Clique aqui</small>
-								</Link>
-								<small> para acessar</small>
-							</Col>
-						</Row>
-						<Row className="my-3">
-							<Col className="text-center">
-								<Button variant="warning" type="submit">
-									Cadastrar
-								</Button>
-							</Col>
-						</Row>
-					</Col>
-				</Form>
-				<Modal show={modalAlert} onClick={e => setModalAlert(false)}>
-					<Modal.Header closeButton>
-						<Modal.Title>{title}</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>{message}</Modal.Body>
-					<Modal.Footer>
-						<Button variant={color} onClick={e => setModalAlert(false)}>
-							Fechar
-						</Button>
-					</Modal.Footer>
-				</Modal>
-			</div>
-		);
-	} else {
-		return (
-			<Modal show={true}>
-				<Modal.Header>
-					<Modal.Title>Aviso</Modal.Title>
+	return (
+		<div className="user-container h-100">
+			<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
+				<Col sm="4" className="d-flex flex-column m-auto p-3">
+					<Form.Group controlId="inputThumbnail">
+						<Form.Label style={{color: "#ffffff" }}>Foto de perfil</Form.Label>
+						<Form.Control 
+							className="d-none"
+							onChange={event => setThumbnail(event.target.files[0])} 
+							type="file" 
+							placeholder="email@provedor.com"
+						/>
+						<Image 
+							id="thumbnail"
+							className={thumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							src={preview ? preview : camera}
+							alt="Selecione sua imagem"
+							onClick={inputImage}
+							fluid
+						/>
+					</Form.Group>
+				</Col>
+				<Col sm="4" className="text-white m-auto p-3">
+					<Form.Group controlId="name">
+						<Form.Label>Nome</Form.Label>
+						<Form.Control 
+							placeholder="Seu nome"
+							type="text"
+							value={name}
+							onChange={event => setName(event.target.value)}
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="email">
+						<Form.Label>Email</Form.Label>
+						<Form.Control 
+							placeholder="Seu email"
+							type="email"
+							value={email}
+							onChange={event => setEmail(event.target.value)}
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="password">
+						<Form.Label>Senha</Form.Label>
+						<Form.Control 
+							placeholder="Senha"
+							type="password"
+							value={password}
+							onChange={event => setPassword(event.target.value)}
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="passwordC">
+						<Form.Label>Confirmar Senha</Form.Label>
+						<Form.Control 
+							placeholder="Confirme sua senha"
+							type="password"
+							value={passwordC}
+							onChange={event => setPasswordC(event.target.value)}
+							required
+						/>
+					</Form.Group>
+					<Row className="my-1">
+						<Col className="text-center">
+							<small>Já tem conta? </small>
+							<Link className="text-light" to="/login">
+								<small>Clique aqui</small>
+							</Link>
+							<small> para acessar</small>
+						</Col>
+					</Row>
+					<Row className="my-3">
+						<Col className="text-center">
+							<Button variant="warning" type="submit">
+								Cadastrar
+							</Button>
+						</Col>
+					</Row>
+				</Col>
+			</Form>
+
+			<Modal show={modalAlert} onClick={e => setModalAlert(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Saia de sua conta para fazer um novo cadastro!</Modal.Body>
+				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Link className="btn btn-warning" to="/">
-						<small>Fechar</small>
-					</Link>
+					<Button variant={color} onClick={e => setModalAlert(false)}>
+						Fechar
+					</Button>
 				</Modal.Footer>
 			</Modal>
-		);
-	}
+		</div>
+	);
 }
