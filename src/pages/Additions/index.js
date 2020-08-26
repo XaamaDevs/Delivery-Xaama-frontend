@@ -406,7 +406,8 @@ export default function Additions({ userId }) {
 									<Form.Control 
 										value={additionPrice}
 										onChange={e => setAdditionPrice(e.target.value)} 
-										type="text"
+                    type="number"
+                    min={0}
 										placeholder="Preço"
 										required
 									/>
@@ -482,7 +483,8 @@ export default function Additions({ userId }) {
 									<Form.Control 
 										value={additionPrice}
 										onChange={e => setAdditionPrice(e.target.value)} 
-										type="text"
+                    type="number"
+                    min={0}
 										placeholder="Preço"
 										required
 									/>
