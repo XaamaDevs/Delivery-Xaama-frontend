@@ -7,7 +7,6 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
-
 // Importing styles
 import "./styles.css";
 
@@ -15,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Spinner, Container, Alert } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Spinner, Container } from "react-bootstrap";
 
 
 //	Exporting resource to routes.js
