@@ -280,7 +280,7 @@ export default function Menu({ userId, user }) {
 						<Nav.Item key={index}>
 							<Nav.Link 
 								className="btn-outline-warning rounded"
-								href={"#" + index} 
+								href={"#" + index}
 								onClick={e => handleProductsList(e, type)}>
 								{type[0].toUpperCase() + type.slice(1)}
 							</Nav.Link>
