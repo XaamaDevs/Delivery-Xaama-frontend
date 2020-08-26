@@ -20,7 +20,7 @@ div.card {
 
 @media (min-width: 425px) {
 	#user-i { 
-    margin-top: 40px;
+    margin-top: 0px;
 	}
 }
 

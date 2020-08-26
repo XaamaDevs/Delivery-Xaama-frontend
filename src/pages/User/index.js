@@ -285,16 +285,17 @@ export default function User({ userId, setUserId, user, setUser }) {
 						/>
 						<Image 
 							id="thumbnail"
-							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							className={user.thumbnail || preview ? "border-0 m-auto" : "w-100 m-auto"}
 							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)} 
 							alt="Selecione sua imagem"
 							onClick={inputImage}
-							fluid 
+							rounded
+							fluid
 						/>
 						{user.thumbnail ?
 							<div className="d-flex justify-content-center flex-wrap my-auto">
 								<Button 
-									className="mx-2"
+									className="mt-2 mx-2"
 									onClick={handleThumbnailUpdate} 
 									type="submit" 
 									variant="outline-warning" 
@@ -302,7 +303,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 									Trocar foto
 								</Button>
 								<Button 
-									className="mx-2"
+									className="mt-2 mx-2"
 									onClick={handleThumbnailDelete} 
 									type="submit" 
 									variant="outline-danger"
@@ -313,7 +314,7 @@ export default function User({ userId, setUserId, user, setUser }) {
 							:
 							<div className="d-flex">
 								<Button 
-									className="my-2 mx-auto" 
+									className="my-3 mx-auto" 
 									type="submit" 
 									variant="outline-warning"
 								>
