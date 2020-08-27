@@ -38,9 +38,25 @@ export default function AllOrders({ userId }) {
 				headers : {
 					authorization: userId
 				}
+			}).then((response) => {
+				if(response.data && response.data.length) {
+					setOrders(response.data);
+					setLoading(false);
+				} else {
+					setTitle("Erro!");
+					setColor("danger");
+					setMessage("Não há pedidos!");
+				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setLoading(true);
 			});
-			setOrders(response.data);
-			setLoading(false);
 		}
 
 		loadOrder();
@@ -154,6 +170,22 @@ export default function AllOrders({ userId }) {
 												}
 											</small>
 										</Card.Footer>
+										<Card.Text>
+											{product.additions ? (product.additions).map(addition => (
+												<>
+													<Card.Title key={(product.addition) ? (product.addition)._id : null }>{addition.name}</Card.Title>
+													<small>
+														{"Preço: R$" + addition.price}
+													</small>
+												</>
+											))
+											 :
+											 null
+									  	}
+										</Card.Text>
+										<Card.Text>
+											{"Total a pagar R$:" + product.total}
+										</Card.Text>
 									</Card>
 								</CardDeck>
 								:
