@@ -126,8 +126,8 @@ export default function Menu({ userId, user }) {
 
 		data.append("name", productName);
 		data.append("ingredients", productIngredients);
-		data.append("prices", productPrices);
 		data.append("type", productType);
+		data.append("prices", productPrices);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -260,6 +260,42 @@ export default function Menu({ userId, user }) {
 		default:
 			break;
 		}
+	}
+
+	async function validatePrices(event) {
+		const c = event.target.value.replace(productPrices, "");
+
+		if(!/^((^$)|(^\s$)|(^,$)|(^\.$))$/.test(c) && c.length <= 1) {
+			event.target.value = /^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$/.test(event.target.value) ? event.target.value : productPrices;
+		}
+
+		if(productPrices[productPrices.length-1] === c && /^((^\s$)|(^,$)|(^\.$))$/.test(c)) {
+			event.target.value = productPrices;
+		}
+
+		if(event.target.value.length === 1 && /^((^\s$)|(^,$)|(^\.$))$/.test(c)) {
+			event.target.value = productPrices;
+		}
+
+		setProductPrices(event.target.value);
+	}
+
+	async function validateIngredients(event) {
+		const c = event.target.value.replace(productIngredients, "");
+
+		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
+			event.target.value = /^[A-Za-z]+(,\s[A-Za-z]+)*$/.test(event.target.value) ? event.target.value : productIngredients;
+		}
+
+		if(productIngredients[productIngredients.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
+			event.target.value = productIngredients;
+		}
+
+		if(event.target.value.length === 1 && /^((^\s$)|(^,$))$/.test(c)) {
+			event.target.value = productIngredients;
+		}
+
+		setProductIngredients(event.target.value);
 	}
 
 	const header = (
@@ -452,7 +488,7 @@ export default function Menu({ userId, user }) {
 									</Form.Label>
 									<Form.Control 
 										value={productPrices}
-										onChange={e => setProductPrices(e.target.value)} 
+										onChange={validatePrices} 
 										type="text"
 										required
 									/>
@@ -482,7 +518,7 @@ export default function Menu({ userId, user }) {
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
 										value={productIngredients}
-										onChange={e => setProductIngredients(e.target.value)} 
+										onChange={validateIngredients} 
 										as="textarea"
 										rows="2"
 										required
@@ -551,7 +587,7 @@ export default function Menu({ userId, user }) {
 									</Form.Label>
 									<Form.Control 
 										value={productPrices}
-										onChange={e => setProductPrices(e.target.value)} 
+										onChange={validatePrices} 
 										type="text"
 										required
 									/>
@@ -580,7 +616,7 @@ export default function Menu({ userId, user }) {
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
 										value={productIngredients}
-										onChange={e => setProductIngredients(e.target.value)} 
+										onChange={validateIngredients} 
 										as="textarea"
 										rows="2"
 										required
