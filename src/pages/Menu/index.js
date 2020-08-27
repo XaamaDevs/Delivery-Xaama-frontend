@@ -332,7 +332,7 @@ export default function Menu({ userId, user }) {
 	const productCard = (product) => {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid />
+				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid="true" />
 				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
 					<Card.Text>
@@ -489,6 +489,7 @@ export default function Menu({ userId, user }) {
 									<Form.Control 
 										value={productPrices}
 										onChange={validatePrices} 
+										pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
 										type="text"
 										required
 									/>
@@ -519,6 +520,7 @@ export default function Menu({ userId, user }) {
 									<Form.Control 
 										value={productIngredients}
 										onChange={validateIngredients} 
+										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
 										as="textarea"
 										rows="2"
 										required
@@ -588,6 +590,7 @@ export default function Menu({ userId, user }) {
 									<Form.Control 
 										value={productPrices}
 										onChange={validatePrices} 
+										pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
 										type="text"
 										required
 									/>
@@ -617,6 +620,7 @@ export default function Menu({ userId, user }) {
 									<Form.Control 
 										value={productIngredients}
 										onChange={validateIngredients} 
+										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
 										as="textarea"
 										rows="2"
 										required

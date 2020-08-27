@@ -272,7 +272,7 @@ export default function Additions({ userId }) {
 	const additionCard = (addition) => {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={addition._id}>
-				<Card.Img variant="top" src={addition.thumbnail ? addition.thumbnail_url : camera} fluid />
+				<Card.Img variant="top" src={addition.thumbnail ? addition.thumbnail_url : camera} fluid="true" />
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
 					<div className="d-flex justify-content-between flex-wrap my-auto">
@@ -400,6 +400,7 @@ export default function Additions({ userId }) {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
 										}} 
+										pattern="^[0-9]+(\.[0-9])*"
 										type="text"
 										placeholder="Preço"
 										required
@@ -479,6 +480,7 @@ export default function Additions({ userId }) {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
 										}} 
+										pattern="^[0-9]+(\.[0-9])*"
 										placeholder="Preço"
 										required
 									/>
