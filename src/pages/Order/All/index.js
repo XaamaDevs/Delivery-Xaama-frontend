@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId }) {
@@ -41,22 +41,23 @@ export default function AllOrders({ userId }) {
 			}).then((response) => {
 				if(response.data && response.data.length) {
 					setOrders(response.data);
-					setLoading(false);
 				} else {
 					setTitle("Erro!");
 					setColor("danger");
 					setMessage("Não há pedidos!");
+					setModalAlert(true);
 				}
 			}).catch((error) => {
-				setTitle("Erro!");
+				setTitle("Alerta!");
 				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
-				setLoading(true);
+				setModalAlert(true);
 			});
+			setLoading(false);
 		}
 
 		loadOrder();
@@ -68,8 +69,33 @@ export default function AllOrders({ userId }) {
 		setModalOrderListing(true);
 	}
 
+	async function handleDeliver(event, order) {
+		event.preventDefault();
+
+		await api.put("/order/" + order._id, { status:true } , {
+			headers : { 
+				authorization: userId
+			}})
+			.then(() => {
+				setTitle("Pedido enviado!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setModalAlert(true);
+			});
+	}
+
 	const header = (
-		<Nav fill variant="tabs" defaultActiveKey={"#0"}>
+		<Nav fill variant="tabs">
 			{(orderA.products) ? (orderA.products).map((productA, index) => (
 				<Nav.Item key={index}>
 					<Nav.Link
@@ -85,7 +111,73 @@ export default function AllOrders({ userId }) {
 		</Nav>
 	);
 
-	
+	const productCard = (product) => {
+		return (
+			<>
+				{product.product ?
+					<CardDeck className="p-2">
+						<Card className="h-100 p-1" bg="secondary" key={product._id}>
+							<Row>
+								<Col md={7}>
+									<Image src={product.product ? product.product.thumbnail_url : camera} fluid rounded />
+									<Card.Body key={product._id}>
+										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
+										<Card.Text>
+											{product.product ? ((product.product.ingredients.length == 1) ? 
+												"Ingrediente: "
+												:
+												"Ingredientes: "
+											)
+												:
+												null
+											}
+											{product.product ? product.product.ingredients.map((ingredient, index) => (
+												index === product.product.ingredients.length-1 ?
+													ingredient
+													:
+													ingredient + ", "
+											))
+												:
+												null
+											}
+										</Card.Text>
+										
+									</Card.Body>
+								</Col>
+								<Col className="ml-3 mt-2" >
+									<Card.Title>{product.additions ? "Adições:" : "Sem Adições"}</Card.Title>
+									{product.additions ? (product.additions).map(addition => (
+										<>
+											<Card.Text key={(addition) ? addition._id : null }>{addition.name}
+												<br></br>
+												<small className="ml-1">
+													{"Preço: R$" + addition.price}
+												</small>
+											</Card.Text>
+										</>
+									))
+										:
+										null
+									}
+								</Col>
+							</Row>
+							<Card.Footer w-100>
+								<small>
+									{product.product ? 
+										"Preço: R$" + product.product.prices[product.size]
+										:
+										null
+									}
+								</small>
+							</Card.Footer>
+						</Card>
+					</CardDeck>
+					:
+					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">Selecione o produto desejado acima</h1>
+				}
+			</>
+		);
+	}
 
 	async function handleProductList(event, productA) {
 		event.preventDefault();
@@ -104,25 +196,51 @@ export default function AllOrders({ userId }) {
 					/>
 				</Container>
 				:
-				<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-					{orders.map(order => (
-						<Col key={order._id} className="order-item" >
-							<header>
-								<img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
-								<div className="order-info">
-									<strong>{order.user.name}</strong>
-									<span>{order.user.email}</span>
-								</div>             
-							</header>
-							<p>{order.user.phone ? order.phone: "Telefone: (__) _ ____-____"}</p>
-							<p>{order.user.address && order.user.address.length ? order.user.address.join(", ") : "Endereço não informado" }</p>
-							<Button
-								onClick={e => handleSetOrder(e, order)}
-								variant="outline-warning">Ver pedido
-							</Button>
-						</Col>
-					))}
-				</Row>
+				<>
+					{orders && orders.length ? 
+						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
+						:
+						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
+					}
+					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
+						{orders.map(order => (
+							<Col key={order._id} className="order-item" >
+								<header>
+									<img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
+									<div className="order-info">
+										<strong>{order.user.name}</strong>
+										<span>{order.user.email}</span>
+									</div>             
+								</header>
+								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
+								{order.deliver ?
+									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
+									: 
+									<p>{"Vai retirar no balcão!"}</p>
+								}
+								<p>
+									{"Total a pagar R$" + order.total}
+								</p>
+								<button 
+									onClick={e => handleSetOrder(e, order)}
+									className="btn mt-1 mr-1" 
+									id="btn-password"
+								>
+								Ver pedido
+								</button>
+								{!(order.status) ? 
+									<Button
+										className="mt-1"
+										onClick={e => handleDeliver(e, order)}
+										variant="outline-warning">Entregar pedido
+									</Button>
+									: 
+									null
+								}
+							</Col>
+						))}
+					</Row>
+				</>
 			}
 
 			<Modal show={modalOrderListing} onHide={e => setModalOrderListing(false)} size="lg" centered>
@@ -142,54 +260,7 @@ export default function AllOrders({ userId }) {
 								variant="warning"
 							/>
 							:
-							product ?
-								<CardDeck className="p-2">
-									<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-										<Card.Img variant="top" src={product.product ? product.product.thumbnail_url : camera} fluid />
-										<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
-											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-											<Card.Text>
-												{product.product ? product.product.ingredients.map((ingredient, index) => (
-													index === product.product.ingredients.length-1 ?
-														ingredient
-														:
-														ingredient + ", "
-												))
-													:
-													null
-												}
-											</Card.Text>
-											
-										</Card.Body>
-										<Card.Footer>
-											<small>
-												{product.product ? 
-													"Preço: R$" + product.product.prices[product.size]
-													:
-													null
-												}
-											</small>
-										</Card.Footer>
-										<Card.Text>
-											{product.additions ? (product.additions).map(addition => (
-												<>
-													<Card.Title key={(product.addition) ? (product.addition)._id : null }>{addition.name}</Card.Title>
-													<small>
-														{"Preço: R$" + addition.price}
-													</small>
-												</>
-											))
-											 :
-											 null
-									  	}
-										</Card.Text>
-										<Card.Text>
-											{"Total a pagar R$:" + product.total}
-										</Card.Text>
-									</Card>
-								</CardDeck>
-								:
-								null
+							product ? productCard(product) : null
 						}
 					</Card>
 					
