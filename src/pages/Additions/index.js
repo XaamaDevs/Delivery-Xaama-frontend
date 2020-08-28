@@ -400,7 +400,7 @@ export default function Additions({ userId }) {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
 										}} 
-										pattern="^[0-9]+(\.[0-9])*"
+										pattern="^[0-9]+(\.[0-9])*$"
 										type="text"
 										placeholder="Preço"
 										required
@@ -480,7 +480,7 @@ export default function Additions({ userId }) {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
 										}} 
-										pattern="^[0-9]+(\.[0-9])*"
+										pattern="^[0-9]+(\.[0-9])*$"
 										placeholder="Preço"
 										required
 									/>

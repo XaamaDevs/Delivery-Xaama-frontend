@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, Carousel, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -26,6 +26,10 @@ export default function Menu({ userId, user }) {
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
 	const [productThumbnail, setProductThumbnail] = useState(null);
+
+	//	Addition variables
+	const [additionsByType, setAdditionsByType] = useState({});
+	const [additions, setAdditions] = useState([]);
 
 	//	Message settings
 	const [productAddModal, setProductAddModal] = useState(false);
@@ -94,6 +98,34 @@ export default function Menu({ userId, user }) {
 					setToastShow(true);
 				});
 
+			await api.get("addition")
+				.then((response) => {
+					var AddsByType = {};
+
+					for(var type of productTypes) {
+						var adds = [];
+
+						for(var addition of response.data) {
+							if(addition.type.indexOf(type) >= 0) {
+								adds.push(addition);
+							}
+						}
+						
+						AddsByType[type] = adds;
+					}
+
+					setAdditionsByType(AddsByType);
+				}).catch((error) => {
+					setTitle("Erro!");
+					setColor("danger");
+					if(error.response) {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+
 			setLoading(false);
 		}
 
@@ -117,6 +149,7 @@ export default function Menu({ userId, user }) {
 		event.preventDefault();
 
 		setProducts(productsByType[type]);
+		setAdditions(additionsByType[type]);
 	}
 
 	async function handleProductAdd(event) {
@@ -233,6 +266,10 @@ export default function Menu({ userId, user }) {
 			});
 	}
 
+	async function handleProductOrder(event) {
+		event.preventDefault();
+	}
+
 	async function handleProductModal(event, modal, product = null) {
 		event.preventDefault();
 		
@@ -282,9 +319,11 @@ export default function Menu({ userId, user }) {
 
 	async function validateIngredients(event) {
 		const c = event.target.value.replace(productIngredients, "");
+		const ingRegExp = new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
+
 
 		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
-			event.target.value = /^[A-Za-z]+(,\s[A-Za-z]+)*$/.test(event.target.value) ? event.target.value : productIngredients;
+			event.target.value = ingRegExp.test(event.target.value) ? event.target.value : productIngredients;
 		}
 
 		if(productIngredients[productIngredients.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
@@ -523,6 +562,7 @@ export default function Menu({ userId, user }) {
 										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
 										as="textarea"
 										rows="2"
+										style={{resize :"none"}}
 										required
 									/>
 									<Form.Text className="text-muted">
@@ -623,6 +663,7 @@ export default function Menu({ userId, user }) {
 										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
 										as="textarea"
 										rows="2"
+										style={{resize :"none"}}
 										required
 									/>
 									<Form.Text className="text-muted">
@@ -668,17 +709,67 @@ export default function Menu({ userId, user }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={productOrderModal} onHide={() => setProductOrderModal(false)} size="lg" centered>
+			<Modal 
+				show={productOrderModal} 
+				onHide={() => {setProductOrderModal(false); setToastShow(false);}} 
+				size="lg" 
+				centered
+			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar ao pedido</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Woohoo, youre reading this text in a modal!</Modal.Body>
+				<Modal.Body>
+					<Row>
+						<Col className="d-flex m-auto" sm>
+							<Image 
+								id="thumbnail" 
+								className={preview || productThumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
+								src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+								alt="Imagem do produto"
+								fluid
+							/>
+						</Col>
+						<Col sm>
+							<Card bg="light" text="dark">
+								<Card.Body>
+									<Card.Title>{productName}</Card.Title>
+									<Card.Text>{productIngredients}</Card.Text>
+									<Carousel slide={false} indicators={false}>
+										{additions ? 
+											additions.map((add, index) => (
+												<Carousel.Item key={index} className="text-dark">
+													<Image
+														className="d-block m-auto"
+														style={{height: "100px"}}
+														src={add.thumbnail_url ? add.thumbnail_url : camera}
+														alt="Adição"
+													/>
+													<Carousel.Caption className="text-dark p-0 mt-auto">
+														<h5>{add.name}</h5>
+														<p>{"R$ " + add.price}</p>
+													</Carousel.Caption>
+												</Carousel.Item>
+											))
+											:
+											null
+										}
+									</Carousel>
+								</Card.Body>
+							</Card>
+						</Col>
+					</Row>
+					<Row>
+						<Col sm>
+						</Col>
+					</Row>
+				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={() => setProductOrderModal(false)}>
-						Close
+					<Button variant="danger" onClick={() => {setProductOrderModal(false); setToastShow(false);}}>
+						Fechar
 					</Button>
 					<Button variant="warning" onClick={() => setProductOrderModal(false)}>
-						Save Changes
+						Adicionar
 					</Button>
 				</Modal.Footer>
 			</Modal>
