@@ -30,6 +30,9 @@ export default function Routes() {
 	const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
 	const [user, setUser] = useState({});
 
+	//	Order state variables
+	const [order, setOrder] = useState({});
+
 	//	Loading state variable
 	const [isLoading, setLoading] = useState(true);
 
@@ -80,12 +83,13 @@ export default function Routes() {
 				/>
 				<Route 
 					exact path="/menu" 
-					render={() => <Menu userId={userId} user={user} />} 
+					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} />} 
 				/>
 				<Route 
 					exact path="/user" 
 					render={() => {
-						return userId ? <User userId={userId} setUserId={setUserId} user={user} setUser={setUser} /> : <Auth />;
+						return userId ? 
+							<User userId={userId} setUserId={setUserId} user={user} setUser={setUser} /> : <Auth />;
 					}}
 				/>
 				<Route 

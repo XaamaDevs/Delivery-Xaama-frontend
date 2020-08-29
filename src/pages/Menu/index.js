@@ -5,7 +5,20 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, Carousel, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { Container, 
+	Carousel, 
+	Spinner, 
+	Toast, 
+	Nav, 
+	Card, 
+	Button, 
+	CardDeck, 
+	Modal, 
+	Form, 
+	Col, 
+	Row, 
+	Image 
+} from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -14,7 +27,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu({ userId, user }) {
+export default function Menu({ userId, user, order, setOrder }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
@@ -30,6 +43,13 @@ export default function Menu({ userId, user }) {
 	//	Addition variables
 	const [additionsByType, setAdditionsByType] = useState({});
 	const [additions, setAdditions] = useState([]);
+
+	//	Order variables
+	const [productOrder, setProductOrder] = useState({});
+	const [productSize, setProductSize] = useState(0);
+	const [productNote, setProductNote] = useState("");
+	const [additionsOrder, setAdditionsOrder] = useState([]);
+	const [productTotal, setProductTotal] = useState(0);
 
 	//	Message settings
 	const [productAddModal, setProductAddModal] = useState(false);
@@ -130,7 +150,7 @@ export default function Menu({ userId, user }) {
 		}
 
 		fetchData();
-	}, [productTypes, history, userId]);
+	}, [productTypes, userId]);
 
 	//	Product image preview
 	const preview = useMemo(() => {
@@ -268,6 +288,48 @@ export default function Menu({ userId, user }) {
 
 	async function handleProductOrder(event) {
 		event.preventDefault();
+
+		const product = {
+			product: productOrder,
+			additions: additionsOrder,
+			size: productSize,
+			note: productNote
+		};
+
+		if(order.products) {
+			var newOrder = order;
+			newOrder["products"].push(product);
+
+			setOrder(newOrder);
+		} else {
+			setOrder({ products: [product] });
+		}
+
+		setProductOrderModal(false);
+	}
+
+	async function handleAdditionOrder(event, add) {
+		event.preventDefault();
+
+		var newAdditionsOrder = additionsOrder;
+
+		newAdditionsOrder.push(add);
+
+		setAdditionsOrder(newAdditionsOrder);
+	}
+
+	async function handleProductTotal(event) {
+		event.preventDefault();
+
+		if(productOrder.prices) {
+			var total = productOrder.prices[productSize];
+
+			for(var add of additionsOrder) {
+				total += add.price;
+			}
+
+			setProductTotal(total);
+		}
 	}
 
 	async function handleProductModal(event, modal, product = null) {
@@ -291,9 +353,6 @@ export default function Menu({ userId, user }) {
 		case 2:
 			setProductDeleteModal(true);
 			break;
-		case 3:
-			setProductOrderModal(true);
-			break;
 		default:
 			break;
 		}
@@ -303,7 +362,11 @@ export default function Menu({ userId, user }) {
 		const c = event.target.value.replace(productPrices, "");
 
 		if(!/^((^$)|(^\s$)|(^,$)|(^\.$))$/.test(c) && c.length <= 1) {
-			event.target.value = /^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$/.test(event.target.value) ? event.target.value : productPrices;
+			event.target.value = 
+				/^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$/.test(event.target.value) ? 
+					event.target.value 
+					: 
+					productPrices;
 		}
 
 		if(productPrices[productPrices.length-1] === c && /^((^\s$)|(^,$)|(^\.$))$/.test(c)) {
@@ -319,7 +382,8 @@ export default function Menu({ userId, user }) {
 
 	async function validateIngredients(event) {
 		const c = event.target.value.replace(productIngredients, "");
-		const ingRegExp = new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
+		const ingRegExp = 
+			new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
 
 
 		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
@@ -405,7 +469,15 @@ export default function Menu({ userId, user }) {
 								className="my-auto" 
 								variant="warning"
 								size="sm"
-								onClick ={e => handleProductModal(e, 3, product)} 
+								onClick ={e => {
+									setProductNote("");
+									setAdditionsOrder([]);
+									setProductSize(0);
+									setProductTotal(0);
+									setProductOrder(product); 
+									setProductTotal(product.prices[0]);
+									setProductOrderModal(true);
+								}} 
 							>
 								Adicionar aos pedidos
 							</Button>
@@ -721,22 +793,28 @@ export default function Menu({ userId, user }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Row>
-						<Col className="d-flex m-auto" sm>
+						<Col className="d-flex my-2" sm>
 							<Image 
 								id="thumbnail" 
-								className={preview || productThumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
-								src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+								className={preview || productOrder.thumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
+								src={preview ? preview : (productOrder.thumbnail_url ? productOrder.thumbnail_url : camera)}
 								alt="Imagem do produto"
 								fluid
 							/>
 						</Col>
-						<Col sm>
-							<Card bg="light" text="dark">
+						<Col className="my-2" sm>
+							<Card className="h-100" bg="dark">
+								<Card.Header>
+									{productOrder.type ?
+										productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
+										:
+										null
+									}
+								</Card.Header>
 								<Card.Body>
-									<Card.Title>{productName}</Card.Title>
-									<Card.Text>{productIngredients}</Card.Text>
-									<Carousel slide={false} indicators={false}>
-										{additions ? 
+									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
+									<Carousel interval={null} indicators={false}>
+										{additions && additions.length ? 
 											additions.map((add, index) => (
 												<Carousel.Item key={index} className="text-dark">
 													<Image
@@ -745,9 +823,15 @@ export default function Menu({ userId, user }) {
 														src={add.thumbnail_url ? add.thumbnail_url : camera}
 														alt="Adição"
 													/>
-													<Carousel.Caption className="text-dark p-0 mt-auto">
-														<h5>{add.name}</h5>
-														<p>{"R$ " + add.price}</p>
+													<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
+														<Button 
+															className="mx-auto" 
+															size="sm" 
+															variant="primary"
+															onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
+														>
+															{add.name + " +R$" + add.price}
+														</Button>
 													</Carousel.Caption>
 												</Carousel.Item>
 											))
@@ -760,16 +844,57 @@ export default function Menu({ userId, user }) {
 						</Col>
 					</Row>
 					<Row>
-						<Col sm>
+						<Col className="my-2" sm>
+							<Card bg="light" text="dark">
+								<Card.Header>Observações</Card.Header>
+								<Card.Body>
+									<Form.Control 
+										value={productNote}
+										onChange={e => setProductNote(e.target.value)} 
+										placeholder="Digite aqui se você deseja remover algum ingrediente do pedido (opcional)"
+										as="textarea"
+										rows="2"
+										style={{resize :"none"}}
+									/>
+								</Card.Body>
+							</Card>
 						</Col>
+						{additionsOrder &&  additionsOrder.length ?
+							<Col className="my-2" sm>
+								<Card bg="light" text="dark">
+									<Card.Header>Adições</Card.Header>
+									<Card.Body>
+										<Row className="d-flex flex-row flex-wrap justify-content-start">
+											{additionsOrder.map((add, index) =>(
+												<Button 
+													size="sm"
+													key={index} 
+													className="m-1"
+													onClick={e => {
+														var newAdditionsOrder = additionsOrder;
+														newAdditionsOrder.splice(index, 1);
+														setAdditionsOrder(newAdditionsOrder);
+														handleProductTotal(e);
+													}}
+												>
+													{add.name + " X"}
+												</Button>
+											))}
+										</Row>
+									</Card.Body>
+								</Card>
+							</Col>
+							:
+							null
+						}
 					</Row>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="danger" onClick={() => {setProductOrderModal(false); setToastShow(false);}}>
 						Fechar
 					</Button>
-					<Button variant="warning" onClick={() => setProductOrderModal(false)}>
-						Adicionar
+					<Button variant="warning" onClick={handleProductOrder}>
+						{"Adicionar ao carrinho +R$" + productTotal}
 					</Button>
 				</Modal.Footer>
 			</Modal>
