@@ -147,12 +147,15 @@ export default function AllOrders({ userId }) {
 												null
 											}
 										</Card.Text>
+										<Card.Text>
+											{product && product.note ? "Observações: " + product.note : "Sem Observações"}
+										</Card.Text>
 										
 									</Card.Body>
 								</Col>
 								<Col className="ml-3 mt-2" >
-									<Card.Title>{product.additions ? "Adições:" : "Sem Adições"}</Card.Title>
-									{product.additions ? (product.additions).map(addition => (
+									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
+									{product.additions.length ? (product.additions).map(addition => (
 										<>
 											<Card.Text key={(addition) ? addition._id : null }>{addition.name}
 												<br></br>
