@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Form, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId }) {
@@ -28,6 +28,7 @@ export default function AllOrders({ userId }) {
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
@@ -84,6 +85,32 @@ export default function AllOrders({ userId }) {
 			}})
 			.then(() => {
 				setTitle("Pedido enviado!");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setModalAlert(true);
+			});
+	}
+
+	async function handleDeleteOrders(event) {
+		event.preventDefault();
+		setModalDeleteOrder(false);
+
+		await api.delete("order", {
+			headers : { 
+				authorization: userId,
+			}})
+			.then(() => {
+				setTitle("Todos pedidos apagados!");
 				setMessage("Alterações feitas com sucesso!");
 				setColor("warning");
 				setModalAlert(true);
@@ -266,6 +293,15 @@ export default function AllOrders({ userId }) {
 							</Col>
 						))}
 					</Row>
+					{orders && orders.length ? 
+						<Button
+							className="d-flex mx-auto my-4"
+							onClick={e => setModalDeleteOrder(true)}
+							variant="outline-danger">Apagar todos pedidos
+						</Button>
+						: 
+						null
+					}
 				</>
 			}
 
@@ -296,6 +332,25 @@ export default function AllOrders({ userId }) {
 						Fechar
 					</Button>
 				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modalDeleteOrder} onHide={e => setModalDeleteOrder(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Todos os pedidos serão apagados</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Atenção! É importante apagar todos os pedidos do dia anterior para não
+					sobrecarregar o banco de dados, mas certifique-se que todos os pedidos foram
+					entregues antes de apagá-los.<br></br> <br></br>
+					Dica: Apague todos os dias antes de começar a funcionar. <br></br> <br></br>
+	
+					<Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
+						Cancelar
+					</Button>{" "}
+					<Button className="mt-1" variant="danger" onClick={handleDeleteOrders}>
+						Apagar
+					</Button>
+				</Modal.Body>
 			</Modal>
 			
 			<Modal show={modalAlert} onHide={e => history.go()}>
