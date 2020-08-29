@@ -65,3 +65,51 @@
   border-color: #f0d890;
   color: #000000;
 }
+
+@media (min-width: 0) {
+	.display-4 { 
+		font-size: 200%;
+	}
+}
+
+@media (min-width: 320px) {
+	.display-4 { 
+		font-size: 180%;
+	}
+}
+
+@media (min-width: 375px) {
+	.display-4 { 
+		font-size: 240%;
+	}
+}
+
+@media (min-width: 425px) {
+	.display-4 { 
+		font-size: 270%;
+	}
+}
+
+@media (min-width: 768px) {
+	.display-4 { 
+		font-size: 339%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.display-4 { 
+		font-size: 403%;
+	}
+}
+
+@media (min-width: 1440px) {
+	.display-4 { 
+		font-size: 700%;
+	}
+}
+
+@media (min-width: 2560px) {
+	.display-4 { 
+		font-size: 1387%;
+	}
+}

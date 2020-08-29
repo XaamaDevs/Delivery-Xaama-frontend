@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId }) {
@@ -28,6 +28,7 @@ export default function AllOrders({ userId }) {
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	const history = useHistory();
@@ -42,10 +43,10 @@ export default function AllOrders({ userId }) {
 				if(response.data && response.data.length) {
 					setOrders(response.data);
 				} else {
-					setTitle("Erro!");
+					setTitle("Alerta!");
 					setColor("danger");
 					setMessage("Não há pedidos!");
-					setModalAlert(true);
+					setToastShow(true);
 				}
 			}).catch((error) => {
 				setTitle("Alerta!");
@@ -55,7 +56,7 @@ export default function AllOrders({ userId }) {
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setToastShow(true);
 			});
 			setLoading(false);
 		}
@@ -67,6 +68,11 @@ export default function AllOrders({ userId }) {
 		event.preventDefault();
 		setOrderA(order);
 		setModalOrderListing(true);
+	}
+	
+	async function handleProductList(event, productA) {
+		event.preventDefault();
+		setProduct(productA);
 	}
 
 	async function handleDeliver(event, order) {
@@ -179,10 +185,24 @@ export default function AllOrders({ userId }) {
 		);
 	}
 
-	async function handleProductList(event, productA) {
-		event.preventDefault();
-		setProduct(productA);
-	}
+	const toast = (
+		<div
+			aria-live="polite"
+			aria-atomic="true"
+			style={{
+				position: "absolute",
+				top: "50%",
+				right: "50%",
+			}}
+		>
+			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
+				<Toast.Header>
+					<strong className="mr-auto">{title}</strong>
+				</Toast.Header>
+				<Toast.Body>{message}</Toast.Body>
+			</Toast>
+		</div>
+	);
 	
 	return (
 		<div className="all-container w-100">
@@ -200,7 +220,10 @@ export default function AllOrders({ userId }) {
 					{orders && orders.length ? 
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
 						:
-						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
+						<>
+							{toast}
+							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
+						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
 						{orders.map(order => (
