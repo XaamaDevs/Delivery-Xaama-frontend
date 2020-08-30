@@ -36,6 +36,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productName, setProductName] = useState("");
 	const [productIngredients, setProductIngredients] = useState("");
 	const [productPrices, setProductPrices] = useState("");
+	const [productSizes, setProductSizes] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
 	const [productThumbnail, setProductThumbnail] = useState(null);
@@ -181,6 +182,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		data.append("ingredients", productIngredients);
 		data.append("type", productType);
 		data.append("prices", productPrices);
+		data.append("sizes", productSizes);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -225,6 +227,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
+		data.append("sizes", productSizes);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -339,6 +342,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		setProductName(product ? product.name : "");
 		setProductIngredients(product ? product.ingredients.join(", ") : "");
 		setProductPrices(product ? product.prices.join(", ") : "");
+		setProductSizes(product ? product.sizes.join(", ") : "");
 		setProductType(product ? product.type : "");
 		setProductThumbnail(null);
 		setProductThumbnail_url(product ? product.thumbnail_url : null);
@@ -380,7 +384,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		setProductPrices(event.target.value);
 	}
 
-	async function validateIngredients(event) {
+	async function validateIngSize(event) {
 		const c = event.target.value.replace(productIngredients, "");
 		const ingRegExp = 
 			new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
@@ -605,7 +609,22 @@ export default function Menu({ userId, user, order, setOrder }) {
 										required
 									/>
 									<Form.Text className="text-muted">
-										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
+										Para múltiplos tamanhos, separe entre vírgula
+									</Form.Text>
+								</Form.Group>
+								<Form.Group controlId="productSizes">
+									<Form.Label>
+										Tamanhos
+									</Form.Label>
+									<Form.Control 
+										value={productSizes}
+										onChange={e => setProductSizes(e.target.value)} 
+										pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+										type="text"
+										required
+									/>
+									<Form.Text className="text-muted">
+										Separe os tamanhos por vírgula
 									</Form.Text>
 								</Form.Group>
 								<Form.Group controlId="productType">
@@ -630,8 +649,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
 										value={productIngredients}
-										onChange={validateIngredients} 
-										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
+										onChange={validateIngSize} 
 										as="textarea"
 										rows="2"
 										style={{resize :"none"}}
@@ -707,7 +725,22 @@ export default function Menu({ userId, user, order, setOrder }) {
 										required
 									/>
 									<Form.Text className="text-muted">
-										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
+										Para múltiplos tamanhos, separe entre vírgula
+									</Form.Text>
+								</Form.Group>
+								<Form.Group controlId="productSizes">
+									<Form.Label>
+										Tamanhos
+									</Form.Label>
+									<Form.Control 
+										value={productSizes}
+										onChange={e => setProductSizes(e.target.value)} 
+										pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+										type="text"
+										required
+									/>
+									<Form.Text className="text-muted">
+										Separe os tamanhos por vírgula
 									</Form.Text>
 								</Form.Group>
 								<Form.Group controlId="productType">
@@ -731,8 +764,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									<Form.Label>Ingredientes</Form.Label>
 									<Form.Control 
 										value={productIngredients}
-										onChange={validateIngredients} 
-										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
+										onChange={validateIngSize} 
 										as="textarea"
 										rows="2"
 										style={{resize :"none"}}
@@ -805,11 +837,41 @@ export default function Menu({ userId, user, order, setOrder }) {
 						<Col className="my-2" sm>
 							<Card className="h-100" bg="dark">
 								<Card.Header>
-									{productOrder.type ?
-										productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
-										:
-										null
-									}
+									<Row className="d-flex align-items-center">
+										<Col>
+											{productOrder.type ?
+												productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
+												:
+												null
+											}
+										</Col>
+										{productOrder.prices && productOrder.prices.length !== 1 ?
+											<Col>
+												<Form.Group className="m-auto" controlId="productType">
+													<Form.Control 
+														value={productOrder.sizes[productSize]} 
+														onChange={e => {
+															const size = productOrder.sizes.indexOf(e.target.value);
+															setProductSize(size);
+															var total = productOrder.prices[size];
+															for(var add of additionsOrder) {
+																total += add.price;
+															}
+															setProductTotal(total);
+														}} 
+														as="select"
+														required
+													>
+														{productOrder.sizes.map((size, index) => (
+															<option key={index}>{size}</option>
+														))}
+													</Form.Control>
+												</Form.Group>
+											</Col>
+											:
+											null
+										}
+									</Row>
 								</Card.Header>
 								<Card.Body>
 									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
