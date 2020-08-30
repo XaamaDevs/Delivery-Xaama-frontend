@@ -17,7 +17,7 @@ import camera from "../../../assets/camera.svg";
 import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId }) {
+export default function AllOrders({ userId, userType }) {
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
@@ -61,7 +61,7 @@ export default function AllOrders({ userId }) {
 			});
 			setLoading(false);
 		}
-
+    console.log(userType);
 		loadOrder();
 	}, []);
 
@@ -235,135 +235,142 @@ export default function AllOrders({ userId }) {
 	);
 	
 	return (
-		<div className="all-container w-100">
-			{isLoading ?
-				<Container className="d-flex h-100">
-					<Spinner 
-						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}} 
-						animation="grow" 
-						variant="warning"
-					/>
-				</Container>
-				:
-				<>
-					{orders && orders.length ? 
-						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
-						:
-						<>
-							{toast}
-							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
-						</>
-					}
-					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{orders.map(order => (
-							<Col key={order._id} className="order-item" >
-								<header>
-									<img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>             
-								</header>
-								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
-								{order.deliver ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
-									<p>{"Vai retirar no balcão!"}</p>
-								}
-								<p>
-									{"Total a pagar R$" + order.total}
-								</p>
-								<button 
-									onClick={e => handleSetOrder(e, order)}
-									className="btn mt-1 mr-1" 
-									id="btn-password"
-								>
-								Ver pedido
-								</button>
-								{!(order.status) ? 
-									<Button
-										className="mt-1"
-										onClick={e => handleDeliver(e, order)}
-										variant="outline-warning">Entregar pedido
-									</Button>
-									: 
-									null
-								}
-							</Col>
-						))}
-					</Row>
-					{orders && orders.length ? 
-						<Button
-							className="d-flex mx-auto my-4"
-							onClick={e => setModalDeleteOrder(true)}
-							variant="outline-danger">Apagar todos pedidos
-						</Button>
-						: 
-						null
-					}
-				</>
-			}
+    <>
+      
+      {(userType === 0) ?
+        <h1>TEst</h1>
+        : 
+        <div className="all-container w-100">
+          {isLoading ?
+            <Container className="d-flex h-100">
+              <Spinner 
+                className="my-5 mx-auto"
+                style={{width: "5rem", height: "5rem"}} 
+                animation="grow" 
+                variant="warning"
+              />
+            </Container>
+            :
+            <>
+              {orders && orders.length ? 
+                <h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
+                :
+                <>
+                  {toast}
+                  <h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
+                </>
+              }
+              <Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
+                {orders.map(order => (
+                  <Col key={order._id} className="order-item" >
+                    <header>
+                      <img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
+                      <div className="order-info">
+                        <strong>{order.user.name}</strong>
+                        <span>{order.user.email}</span>
+                      </div>             
+                    </header>
+                    <p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
+                    {order.deliver ?
+                      <p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
+                      : 
+                      <p>{"Vai retirar no balcão!"}</p>
+                    }
+                    <p>
+                      {"Total a pagar R$" + order.total}
+                    </p>
+                    <button 
+                      onClick={e => handleSetOrder(e, order)}
+                      className="btn mt-1 mr-1" 
+                      id="btn-password"
+                    >
+                    Ver pedido
+                    </button>
+                    {!(order.status) ? 
+                      <Button
+                        className="mt-1"
+                        onClick={e => handleDeliver(e, order)}
+                        variant="outline-warning">Entregar pedido
+                      </Button>
+                      : 
+                      null
+                    }
+                  </Col>
+                ))}
+              </Row>
+              {orders && orders.length ? 
+                <Button
+                  className="d-flex mx-auto my-4"
+                  onClick={e => setModalDeleteOrder(true)}
+                  variant="outline-danger">Apagar todos pedidos
+                </Button>
+                : 
+                null
+              }
+            </>
+          }
 
-			<Modal show={modalOrderListing} onHide={e => setModalOrderListing(false)} size="lg" centered>
-				<Modal.Header closeButton>
-					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Card bg="light" >
-						<Card.Header>
-							{header}
-						</Card.Header>
-						{isLoading ? 
-							<Spinner 
-								className="my-5 mx-auto" 
-								style={{width: "5rem", height: "5rem"}} 
-								animation="grow" 
-								variant="warning"
-							/>
-							:
-							product ? productCard(product) : null
-						}
-					</Card>
-					
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="warning" onClick={e => setModalOrderListing(false)}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+          <Modal show={modalOrderListing} onHide={e => setModalOrderListing(false)} size="lg" centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Card bg="light" >
+                <Card.Header>
+                  {header}
+                </Card.Header>
+                {isLoading ? 
+                  <Spinner 
+                    className="my-5 mx-auto" 
+                    style={{width: "5rem", height: "5rem"}} 
+                    animation="grow" 
+                    variant="warning"
+                  />
+                  :
+                  product ? productCard(product) : null
+                }
+              </Card>
+              
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="warning" onClick={e => setModalOrderListing(false)}>
+                Fechar
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
-			<Modal show={modalDeleteOrder} onHide={e => setModalDeleteOrder(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>Todos os pedidos serão apagados</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					Atenção! É importante apagar todos os pedidos do dia anterior para não
-					sobrecarregar o banco de dados, mas certifique-se que todos os pedidos foram
-					entregues antes de apagá-los.<br></br> <br></br>
-					Dica: Apague todos os dias antes de começar a funcionar. <br></br> <br></br>
-	
-					<Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
-						Cancelar
-					</Button>{" "}
-					<Button className="mt-1" variant="danger" onClick={handleDeleteOrders}>
-						Apagar
-					</Button>
-				</Modal.Body>
-			</Modal>
-			
-			<Modal show={modalAlert} onHide={e => history.go()}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={e => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		</div>
+          <Modal show={modalDeleteOrder} onHide={e => setModalDeleteOrder(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Todos os pedidos serão apagados</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Atenção! É importante apagar todos os pedidos do dia anterior para não
+              sobrecarregar o banco de dados, mas certifique-se que todos os pedidos foram
+              entregues antes de apagá-los.<br></br> <br></br>
+              Dica: Apague todos os dias antes de começar a funcionar. <br></br> <br></br>
+      
+              <Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
+                Cancelar
+              </Button>{" "}
+              <Button className="mt-1" variant="danger" onClick={handleDeleteOrders}>
+                Apagar
+              </Button>
+            </Modal.Body>
+          </Modal>
+          
+          <Modal show={modalAlert} onHide={e => history.go()}>
+            <Modal.Header closeButton>
+              <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{message}</Modal.Body>
+            <Modal.Footer>
+              <Button variant={color} onClick={e => history.go()}>
+                Fechar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+        }
+    </>
 	);
 }
