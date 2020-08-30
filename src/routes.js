@@ -72,7 +72,10 @@ export default function Routes() {
 			<Navbar userId={userId} setUserId={setUserId} user={user} setUser={setUser} />
 			<Switch>
 				<Route exact path="/" component={HomePage} />
-				<Route exact path="/order" component={Order} />
+				<Route 
+					exact path="/order" 
+					render={() => <Order userId={userId} user={user} />} 
+				/>
 				<Route 
 					exact path="/login" 
 					render={() => !userId ? <Login setUserId={setUserId} /> : <Logged />}

@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Form, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId }) {
@@ -36,7 +36,7 @@ export default function AllOrders({ userId }) {
 
 	useEffect(() => {
 		async function loadOrder() {
-			const response = await api.get("/order", {
+			const response = await api.get("/orders", {
 				headers : {
 					authorization: userId
 				}

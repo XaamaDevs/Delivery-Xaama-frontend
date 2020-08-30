@@ -337,6 +337,19 @@ export default function User({ userId, setUserId, user, setUser }) {
 							</Button>
 						}
 					</Row>
+					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
+						{user.userType === 0 ?
+							<button 
+								onClick={() => history.push("/order")}
+								className="btn" 
+								id="btn-password"
+							>
+							Ver meus pedidos
+							</button>
+							:
+							null
+						}
+					</Row>
 					{user.userType === 1 || user.userType === 2 ?
 						<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
 							<Button
