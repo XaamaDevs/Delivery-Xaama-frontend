@@ -36,7 +36,7 @@ export default function AllOrders({ userId }) {
 
 	useEffect(() => {
 		async function loadOrder() {
-			const response = await api.get("/orders", {
+			await api.get("order", {
 				headers : {
 					authorization: userId
 				}
@@ -63,7 +63,7 @@ export default function AllOrders({ userId }) {
 		}
 
 		loadOrder();
-	}, []);
+	}, [userId]);
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
@@ -156,7 +156,7 @@ export default function AllOrders({ userId }) {
 									<Card.Body key={product._id}>
 										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
 										<Card.Text>
-											{product.product ? ((product.product.ingredients.length == 1) ? 
+											{product.product ? ((product.product.ingredients.length === 1) ? 
 												"Ingrediente: "
 												:
 												"Ingredientes: "
@@ -259,7 +259,7 @@ export default function AllOrders({ userId }) {
 						{orders.map(order => (
 							<Col key={order._id} className="order-item" >
 								<header>
-									<img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
+									<Image src={order.user.thumbnail ? order.user.thumbnail_url: camera } alt="thumbnail" />
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
@@ -296,7 +296,7 @@ export default function AllOrders({ userId }) {
 					{orders && orders.length ? 
 						<Button
 							className="d-flex mx-auto my-4"
-							onClick={e => setModalDeleteOrder(true)}
+							onClick={() => setModalDeleteOrder(true)}
 							variant="outline-danger">Apagar todos pedidos
 						</Button>
 						: 
@@ -305,7 +305,7 @@ export default function AllOrders({ userId }) {
 				</>
 			}
 
-			<Modal show={modalOrderListing} onHide={e => setModalOrderListing(false)} size="lg" centered>
+			<Modal show={modalOrderListing} onHide={() => setModalOrderListing(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
@@ -328,13 +328,13 @@ export default function AllOrders({ userId }) {
 					
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={e => setModalOrderListing(false)}>
+					<Button variant="warning" onClick={() => setModalOrderListing(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalDeleteOrder} onHide={e => setModalDeleteOrder(false)}>
+			<Modal show={modalDeleteOrder} onHide={() => setModalDeleteOrder(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>Todos os pedidos serão apagados</Modal.Title>
 				</Modal.Header>
@@ -353,13 +353,13 @@ export default function AllOrders({ userId }) {
 				</Modal.Body>
 			</Modal>
 			
-			<Modal show={modalAlert} onHide={e => history.go()}>
+			<Modal show={modalAlert} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={e => history.go()}>
+					<Button variant={color} onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>

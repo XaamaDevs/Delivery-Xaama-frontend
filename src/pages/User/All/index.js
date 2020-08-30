@@ -14,7 +14,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Spinner, Container } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Spinner, Container, Image } from "react-bootstrap";
 
 
 //	Exporting resource to routes.js
@@ -46,26 +46,25 @@ export default function AllUsers({ userId }) {
 		}
 
 		loadUser();
-	}, []);
+	}, [userId]);
 
 	async function handleTypeUser(event) {
 		event.preventDefault();
 
-		try {
-			const response = await api.put("/company", {
-				userUpdateId,
-				type: newType,
-				password: userPassword}, {
-				headers : { 
-					authorization: userId
-				}
-			});
+		await api.put("/company", {
+			userUpdateId,
+			type: newType,
+			password: userPassword}, {
+			headers : { 
+				authorization: userId
+			}
+		}).then(() => {
 			setTitle("Alterações usuário");
 			setMessage("Alterações feitas com sucesso!");
 			setColor("warning");
 			setModalAlert(true);
 			setModal1Show(false);
-		} catch(error) {
+		}).catch((error) => {
 			setTitle("Erro!");
 			setColor("danger");
 			if (error.response) {
@@ -75,7 +74,7 @@ export default function AllUsers({ userId }) {
 			}
 			setModalAlert(true);
 			setModal1Show(false);
-		}
+		});
 
 		setUserPassword("");
 	}
@@ -116,7 +115,7 @@ export default function AllUsers({ userId }) {
 					{users.map(user => (
 						<Col key={user._id} className="user-item">
 							<header>
-								<img src={user.thumbnail ? user.thumbnail_url: camera } />
+								<Image src={user.thumbnail ? user.thumbnail_url: camera } alt="thumbnail" />
 								<div className="user-info">
 									<strong>{user.name}</strong>
 									<span>{user.email}</span>
@@ -126,7 +125,7 @@ export default function AllUsers({ userId }) {
 							<p>{user.address && user.address.length ? user.address.join(", ") : "Endereço não informado" }</p>
 							<p>Mude o tipo do usuário. <strong>Cuidado ao promover um usuário a ADM!</strong></p>
 							
-							{ (userId == user._id) ?
+							{ (userId === user._id) ?
 								<Button
 									onClick={() => history.push("/user")}
 									variant="outline-warning ml-2">Perfil
@@ -135,7 +134,7 @@ export default function AllUsers({ userId }) {
 								<></>
 							}
 
-							{((userId != user._id) && (user.userType != 2)) ?
+							{((userId !== user._id) && (user.userType !== 2)) ?
 								<Button
 									onClick={event => handleModal(event, 1, "open", user._id, 2)}
 									variant="outline-danger ml-2">ADM
@@ -144,7 +143,7 @@ export default function AllUsers({ userId }) {
 								<></>
 							}
 
-							{((userId != user._id) && (user.userType != 1))?
+							{((userId !== user._id) && (user.userType !== 1))?
 								<Button
 									onClick={event => handleModal(event, 1, "open", user._id, 1)}
 									variant="outline-warning ml-2">Gerente
@@ -153,7 +152,7 @@ export default function AllUsers({ userId }) {
 								<></>
 							}
 
-							{((userId != user._id) && (user.userType != 0)) ?
+							{((userId !== user._id) && (user.userType !== 0)) ?
 								<button 
 									onClick ={event => handleModal(event, 1, "open", user._id, 0)}
 									className="btn ml-2" 
@@ -168,7 +167,7 @@ export default function AllUsers({ userId }) {
 				</Row>
 			}
 			
-			<Modal show={modal1Show} onHide={e => setModal1Show(false)} size="sm" centered>
+			<Modal show={modal1Show} onHide={() => setModal1Show(false)} size="sm" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar tipo</Modal.Title>
 				</Modal.Header>
@@ -190,7 +189,7 @@ export default function AllUsers({ userId }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={e => setModal1Show(false)}>
+					<Button variant="danger" onClick={() => setModal1Show(false)}>
 						Fechar
 					</Button>
 					<Button variant="warning" type="submit" onClick={handleTypeUser}>
@@ -199,13 +198,13 @@ export default function AllUsers({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalAlert} onHide={e => history.go()}>
+			<Modal show={modalAlert} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={e => history.go()}>
+					<Button variant={color} onClick={() => history.go()}>
 						Fechar
 					</Button>
 				</Modal.Footer>
