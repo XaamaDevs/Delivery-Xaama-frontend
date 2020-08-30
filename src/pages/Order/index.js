@@ -1,9 +1,6 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
 
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
-
 // Importing backend api
 import api from "../../services/api";
 
@@ -17,7 +14,7 @@ import camera from "../../assets/camera.svg";
 import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId }) {
+export default function AllOrders({ userId, user, order, setOrder }) {
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
@@ -29,36 +26,31 @@ export default function AllOrders({ userId }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-	const history = useHistory();
-
 	useEffect(() => {
 		async function loadOrder() {
-			const response = await api.get("/order", {
-				headers : {
-					authorization: userId
-				}
-			}).then((response) => {
-				if(response.data && response.data.length) {
-					setOrders(response.data);
-				} else {
+			await api.get("/order/" + userId)
+				.then((response) => {
+					if(response.data && response.data.length) {
+						setOrders(response.data);
+					} else {
+						setTitle("Alerta!");
+						setMessage("Não há pedidos!");
+						setToastShow(true);
+					}
+				}).catch((error) => {
 					setTitle("Alerta!");
-					setMessage("Não há pedidos!");
+					if(error.response) {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
 					setToastShow(true);
-				}
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+				});
 			setLoading(false);
 		}
 
 		loadOrder();
-	}, []);
+	}, [userId]);
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
@@ -100,7 +92,7 @@ export default function AllOrders({ userId }) {
 									<Card.Body key={product._id}>
 										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
 										<Card.Text>
-											{product.product ? ((product.product.ingredients.length == 1) ? 
+											{product.product ? ((product.product.ingredients.length === 1) ? 
 												"Ingrediente: "
 												:
 												"Ingredientes: "
@@ -203,7 +195,7 @@ export default function AllOrders({ userId }) {
 						{orders.map(order => (
 							<Col key={order._id} className="order-item" >
 								<header>
-									<img src={order.user.thumbnail ? order.user.thumbnail_url: camera } />
+									<Image src={order.user.thumbnail ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
@@ -242,7 +234,7 @@ export default function AllOrders({ userId }) {
 				</>
 			}
 
-			<Modal show={modalOrderListing} onHide={e => setModalOrderListing(false)} size="lg" centered>
+			<Modal show={modalOrderListing} onHide={() => setModalOrderListing(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
@@ -265,7 +257,7 @@ export default function AllOrders({ userId }) {
 					
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={e => setModalOrderListing(false)}>
+					<Button variant="warning" onClick={() => setModalOrderListing(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>

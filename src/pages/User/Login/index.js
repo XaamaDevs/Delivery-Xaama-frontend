@@ -91,13 +91,13 @@ export default function Login({ setUserId }) {
 					</Col>
 				</Row>
 			</Form>
-			<Modal show={modalAlert} onClick={e => setModalAlert(false)}>
+			<Modal show={modalAlert} onClick={() => setModalAlert(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={e => setModalAlert(false)}>
+					<Button variant={color} onClick={() => setModalAlert(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>

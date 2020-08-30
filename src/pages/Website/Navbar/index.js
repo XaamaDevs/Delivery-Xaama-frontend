@@ -8,7 +8,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser, setOrder }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
@@ -21,6 +21,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser }) {
 
 			setUserId(sessionStorage.getItem("userId"));
 			setUser({});
+			setOrder({});
 
 			history.push("/");
 		} catch (error) {
@@ -99,6 +100,21 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser }) {
 					</Nav>
 					:
 					<Nav className="ml-auto">
+						{user.userType === 0 ?
+							<Nav.Item>
+								<NavLink
+									style={{color: "#ffbf00"}}
+									activeClassName="activeRoute"
+									activeStyle={{ color: "white" }}
+									to="/order"
+									className="nav-link mx-2"
+								>
+									Meus Pedidos
+								</NavLink>
+							</Nav.Item>
+							:
+							null
+						}
 						<Nav.Item>
 							<NavLink
 								style={{color: "#ffbf00"}}

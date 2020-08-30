@@ -9,6 +9,8 @@ import { Container,
 	Carousel, 
 	Spinner, 
 	Toast, 
+	OverlayTrigger,
+	Tooltip,
 	Nav, 
 	Card, 
 	Button, 
@@ -36,6 +38,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productName, setProductName] = useState("");
 	const [productIngredients, setProductIngredients] = useState("");
 	const [productPrices, setProductPrices] = useState("");
+	const [productSizes, setProductSizes] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
 	const [productThumbnail, setProductThumbnail] = useState(null);
@@ -181,6 +184,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		data.append("ingredients", productIngredients);
 		data.append("type", productType);
 		data.append("prices", productPrices);
+		data.append("sizes", productSizes);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -225,6 +229,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
+		data.append("sizes", productSizes);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -311,11 +316,13 @@ export default function Menu({ userId, user, order, setOrder }) {
 	async function handleAdditionOrder(event, add) {
 		event.preventDefault();
 
-		var newAdditionsOrder = additionsOrder;
+		if(additionsOrder.length < 4) {
+			var newAdditionsOrder = additionsOrder;
+			
+			newAdditionsOrder.push(add);
 
-		newAdditionsOrder.push(add);
-
-		setAdditionsOrder(newAdditionsOrder);
+			setAdditionsOrder(newAdditionsOrder);
+		}
 	}
 
 	async function handleProductTotal(event) {
@@ -339,6 +346,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		setProductName(product ? product.name : "");
 		setProductIngredients(product ? product.ingredients.join(", ") : "");
 		setProductPrices(product ? product.prices.join(", ") : "");
+		setProductSizes(product ? product.sizes.join(", ") : "");
 		setProductType(product ? product.type : "");
 		setProductThumbnail(null);
 		setProductThumbnail_url(product ? product.thumbnail_url : null);
@@ -399,6 +407,27 @@ export default function Menu({ userId, user, order, setOrder }) {
 		}
 
 		setProductIngredients(event.target.value);
+	}
+
+	async function validateSizes(event) {
+		const c = event.target.value.replace(productSizes, "");
+		const ingRegExp = 
+			new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
+
+
+		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
+			event.target.value = ingRegExp.test(event.target.value) ? event.target.value : productSizes;
+		}
+
+		if(productSizes[productSizes.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
+			event.target.value = productSizes;
+		}
+
+		if(event.target.value.length === 1 && /^((^\s$)|(^,$))$/.test(c)) {
+			event.target.value = productSizes;
+		}
+
+		setProductSizes(event.target.value);
 	}
 
 	const header = (
@@ -469,7 +498,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								className="my-auto" 
 								variant="warning"
 								size="sm"
-								onClick ={e => {
+								onClick ={() => {
 									setProductNote("");
 									setAdditionsOrder([]);
 									setProductSize(0);
@@ -597,16 +626,44 @@ export default function Menu({ userId, user, order, setOrder }) {
 									<Form.Label>
 										Preço
 									</Form.Label>
-									<Form.Control 
-										value={productPrices}
-										onChange={validatePrices} 
-										pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
-										type="text"
-										required
-									/>
-									<Form.Text className="text-muted">
-										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
-									</Form.Text>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para múltiplos tamanhos, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productPrices}
+											onChange={validatePrices} 
+											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
+											type="text"
+											required
+										/>
+									</OverlayTrigger>
+								</Form.Group>
+								<Form.Group controlId="productSizes">
+									<Form.Label>
+										Tamanhos
+									</Form.Label>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para tamanho único, digite único, 
+												para múltiplos tamanhos, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productSizes}
+											onChange={validateSizes} 
+											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+											type="text"
+											required
+										/>
+									</OverlayTrigger>
 								</Form.Group>
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
@@ -628,18 +685,23 @@ export default function Menu({ userId, user, order, setOrder }) {
 							<Col sm>
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
-									<Form.Control 
-										value={productIngredients}
-										onChange={validateIngredients} 
-										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
-										as="textarea"
-										rows="2"
-										style={{resize :"none"}}
-										required
-									/>
-									<Form.Text className="text-muted">
-										Para múltiplos ingredientes, separe-os entre vírgulas
-									</Form.Text>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para múltiplos ingredientes, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productIngredients}
+											onChange={validateIngredients} 
+											as="textarea"
+											rows="2"
+											style={{resize :"none"}}
+											required
+										/>
+									</OverlayTrigger>
 								</Form.Group>
 							</Col>
 						</Row>
@@ -699,16 +761,44 @@ export default function Menu({ userId, user, order, setOrder }) {
 									<Form.Label>
 										{productPrices && productPrices.split(",").length === 1 ? "Preço" : "Preços"}
 									</Form.Label>
-									<Form.Control 
-										value={productPrices}
-										onChange={validatePrices} 
-										pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
-										type="text"
-										required
-									/>
-									<Form.Text className="text-muted">
-										Se o produto tiver mais de um tamanho, separe-os entre vírgulas
-									</Form.Text>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para múltiplos tamanhos, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productPrices}
+											onChange={validatePrices} 
+											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
+											type="text"
+											required
+										/>
+									</OverlayTrigger>
+								</Form.Group>
+								<Form.Group controlId="productSizes">
+									<Form.Label>
+										Tamanhos
+									</Form.Label>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para tamanho único, digite único, 
+												para múltiplos tamanhos, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productSizes}
+											onChange={validateSizes} 
+											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+											type="text"
+											required
+										/>
+									</OverlayTrigger>
 								</Form.Group>
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
@@ -729,18 +819,23 @@ export default function Menu({ userId, user, order, setOrder }) {
 							<Col sm>
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
-									<Form.Control 
-										value={productIngredients}
-										onChange={validateIngredients} 
-										pattern="^[A-Za-z]+(,\s[A-Za-z]+)*$"
-										as="textarea"
-										rows="2"
-										style={{resize :"none"}}
-										required
-									/>
-									<Form.Text className="text-muted">
-										Para múltiplos ingredientes, separe-os entre vírgulas
-									</Form.Text>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Para múltiplos ingredientes, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control 
+											value={productIngredients}
+											onChange={validateIngredients} 
+											as="textarea"
+											rows="2"
+											style={{resize :"none"}}
+											required
+										/>
+									</OverlayTrigger>
 								</Form.Group>
 							</Col>
 						</Row>
@@ -805,40 +900,79 @@ export default function Menu({ userId, user, order, setOrder }) {
 						<Col className="my-2" sm>
 							<Card className="h-100" bg="dark">
 								<Card.Header>
-									{productOrder.type ?
-										productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
-										:
-										null
-									}
-								</Card.Header>
-								<Card.Body>
-									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
-									<Carousel interval={null} indicators={false}>
-										{additions && additions.length ? 
-											additions.map((add, index) => (
-												<Carousel.Item key={index} className="text-dark">
-													<Image
-														className="d-block m-auto"
-														style={{height: "100px"}}
-														src={add.thumbnail_url ? add.thumbnail_url : camera}
-														alt="Adição"
-													/>
-													<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
-														<Button 
-															className="mx-auto" 
-															size="sm" 
-															variant="primary"
-															onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
-														>
-															{add.name + " +R$" + add.price}
-														</Button>
-													</Carousel.Caption>
-												</Carousel.Item>
-											))
+									<Row className="d-flex align-items-center">
+										<Col>
+											{productOrder.type ?
+												productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
+												:
+												null
+											}
+										</Col>
+										{productOrder.prices && productOrder.prices.length !== 1 ?
+											<Col>
+												<Form.Group className="m-auto" controlId="productType">
+													<Form.Control 
+														value={productOrder.sizes[productSize]} 
+														onChange={e => {
+															const size = productOrder.sizes.indexOf(e.target.value);
+															setProductSize(size);
+															var total = productOrder.prices[size];
+															for(var add of additionsOrder) {
+																total += add.price;
+															}
+															setProductTotal(total);
+														}} 
+														as="select"
+														required
+													>
+														{productOrder.sizes.map((size, index) => (
+															<option key={index}>{size}</option>
+														))}
+													</Form.Control>
+												</Form.Group>
+											</Col>
 											:
 											null
 										}
-									</Carousel>
+									</Row>
+								</Card.Header>
+								<Card.Body>
+									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
+									<OverlayTrigger
+										placement="right"
+										overlay={
+											<Tooltip>
+												Você pode inserir no máximo 4 adições ao seu produto.
+											</Tooltip>
+										}
+									>
+										<Carousel interval={null} indicators={false}>
+											{additions && additions.length ? 
+												additions.map((add, index) => (
+													<Carousel.Item key={index} className="text-dark">
+														<Image
+															className="d-block m-auto"
+															style={{height: "100px"}}
+															src={add.thumbnail_url ? add.thumbnail_url : camera}
+															alt="Adição"
+														/>
+														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
+															<Button 
+																className="mx-auto" 
+																size="sm" 
+																variant="primary"
+																onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
+															>
+																{add.name + " +R$" + add.price}
+															</Button>
+														</Carousel.Caption>
+													</Carousel.Item>
+												))
+												:
+												null
+											}
+										</Carousel>
+									</OverlayTrigger>
 								</Card.Body>
 							</Card>
 						</Col>
