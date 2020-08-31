@@ -608,6 +608,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
+									rounded
 									fluid
 								/>
 							</Col>
@@ -747,6 +748,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
+									rounded
 									fluid
 								/>
 							</Col>
@@ -902,6 +904,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								className={preview || productOrder.thumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
 								src={preview ? preview : (productOrder.thumbnail_url ? productOrder.thumbnail_url : camera)}
 								alt="Imagem do produto"
+								rounded
 								fluid
 							/>
 						</Col>

@@ -110,7 +110,13 @@ export default function Routes() {
 					exact path="/user" 
 					render={() => {
 						return userId ? 
-							<User userId={userId} setUserId={setUserId} user={user} setUser={setUser} /> : <Auth />;
+							<User 
+								userId={userId} 
+								setUserId={setUserId} 
+								user={user} 
+								setUser={setUser}
+								companyInfo={companyInfo} 
+							/> : <Auth />;
 					}}
 				/>
 				<Route 

@@ -75,7 +75,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				</Nav.Item>
 			))
 				:
-				<></>
+				null
 			}
 		</Nav>
 	);
@@ -88,7 +88,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
 								<Col md={7}>
-									<Image src={product.product ? product.product.thumbnail_url : camera} fluid rounded />
+									<Image src={product.product.thumbnail_url ? product.product.thumbnail_url : camera} fluid rounded />
 									<Card.Body key={product._id}>
 										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
 										<Card.Text>
@@ -119,14 +119,12 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 								<Col className="ml-3 mt-2" >
 									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
 									{product.additions.length ? (product.additions).map(addition => (
-										<>
-											<Card.Text key={(addition) ? addition._id : null }>{addition.name}
-												<br></br>
-												<small className="ml-1">
-													{"Preço: R$" + addition.price}
-												</small>
-											</Card.Text>
-										</>
+										<Card.Text key={(addition) ? addition._id : null }>{addition.name}
+											<br></br>
+											<small className="ml-1">
+												{"Preço: R$" + addition.price}
+											</small>
+										</Card.Text>
 									))
 										:
 										null
@@ -149,7 +147,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				}
 			</>
 		);
-	}
+	};
 
 	const toast = (
 		<div
@@ -192,10 +190,26 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
+						{order.products ? 
+							<Col className="order-item" >
+								<header>
+									<h5 className="text-white">Pedido em aberto</h5>            
+								</header>
+								<Button 
+									onClick={e => handleSetOrder(e, order)}
+									className="btn mt-1 mr-1" 
+									id="btn-password"
+								>
+									Ver pedido
+								</Button>
+							</Col>
+							:
+							null
+						}
 						{orders.map(order => (
 							<Col key={order._id} className="order-item" >
 								<header>
-									<Image src={order.user.thumbnail ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
+									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
@@ -257,7 +271,10 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 					
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => setModalOrderListing(false)}>
+					<Button 
+						variant="warning" 
+						onClick={() => {setModalOrderListing(false); setOrderA({}); setProduct({});}}
+					>
 						Fechar
 					</Button>
 				</Modal.Footer>

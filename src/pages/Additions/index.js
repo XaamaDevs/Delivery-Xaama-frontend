@@ -5,7 +5,20 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, Spinner, Toast, Nav, Card, Button, CardDeck, Modal, Form, Col, Row, Image } from "react-bootstrap";
+import { 
+	Container, 
+	Spinner, 
+	Toast, 
+	Nav, 
+	Card, 
+	Button, 
+	CardDeck, 
+	Modal, 
+	Form, 
+	Col, 
+	Row, 
+	Image 
+} from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -376,6 +389,7 @@ export default function Additions({ userId }) {
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
+									rounded
 									fluid
 								/>
 							</Col>
@@ -456,6 +470,7 @@ export default function Additions({ userId }) {
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
+									rounded
 									fluid
 								/>
 							</Col>
