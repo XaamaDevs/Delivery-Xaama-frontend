@@ -21,7 +21,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [feedback, setFeedback]= useState("");
-	const [orderId, setOrderId]= useState("");
+  const [orderId, setOrderId]= useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
@@ -58,7 +58,6 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
 		setOrderA(order);
-		setOrderId(order._id)
 		setModalOrderListing(true);
 	}
 	
@@ -67,34 +66,35 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 		setProduct(productA);
 	}
 
-	async function handleFeedback(event, order) {
+	async function handleFeedback(event) {
 		event.preventDefault();
 
 		const data = new FormData();
 
-		data.append("status", order.status);
-		data.append("feedback", feedback);
+		data.append("status", true);
+    data.append("feedback", feedback);
 
-		await api.put("/order/" + order._id, data , {
+		await api.put("/order/" + orderId, data , {
 			headers : { 
 				authorization: userId
 			}})
 			.then(() => {
 				setTitle("Pedido enviado!");
-				setMessage("Alterações feitas com sucesso!");
-				//setColor("warning");
-				//setModalAlert(true);
+        setMessage("Alterações feitas com sucesso!");
+        setModalFeedback(false);
+				setToastShow(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				//setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
-				}
-				//setModalAlert(true);
-			});
+        }
+        setModalFeedback(false);
+				setToastShow(true);
+      });
+      setFeedback("");
 	}
 
 	const header = (
@@ -263,7 +263,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 											variant="outline-warning">Pedido a caminho
 										</Button>
 										<Button
-											onClick={() => setModalFeedback(true)}
+											onClick={() => {setOrderId(order._id); setModalFeedback(true);}}
 											className="d-flex justify-content-center mx-auto mt-1"
 											variant="outline-warning">Recebeu seu pedido? Avalie!
 										</Button>
@@ -317,7 +317,8 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 									<Form.Control 
 										value={feedback}
 										onChange={e => setFeedback(e.target.value)} 
-										type="text" 
+                    as="textarea"
+                    rows="12"
 										placeholder="Avaliação sobre o pedido e atendimento"
 										required
 									/>
@@ -325,7 +326,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setModalFeedback(false)}}>
+							<Button variant="danger" onClick={() => {setModalFeedback(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">

@@ -62,6 +62,10 @@ export default function Routes() {
 	function managerAuth() {
 		return (user && (user.userType === 1 || user.userType === 2));
 	}
+	
+	function userAndAdmin() {
+		return (user && ((user._id == userId) || user.userType === 1 || user.userType === 2));
+	}
 
 	if(isLoading) {
 		return (<Loading />);
