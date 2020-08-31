@@ -627,7 +627,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										Preço
 									</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para múltiplos tamanhos, separe-os entre vírgulas.
@@ -639,16 +639,17 @@ export default function Menu({ userId, user, order, setOrder }) {
 											onChange={validatePrices} 
 											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
 											type="text"
+											placeholder="Preço do produto"
 											required
 										/>
 									</OverlayTrigger>
 								</Form.Group>
 								<Form.Group controlId="productSizes">
 									<Form.Label>
-										Tamanhos
+										Tamanho
 									</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para tamanho único, digite único, 
@@ -661,6 +662,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 											onChange={validateSizes} 
 											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
 											type="text"
+											placeholder="Tamanho do produto"
 											required
 										/>
 									</OverlayTrigger>
@@ -671,6 +673,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										value={productType} 
 										onChange={e => setProductType(e.target.value)} 
 										as="select"
+										placeholder="Tipo do produto"
 										required
 									>
 										<option></option>
@@ -686,7 +689,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para múltiplos ingredientes, separe-os entre vírgulas.
@@ -699,6 +702,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}
+											placeholder="Ingredientes do produto"
 											required
 										/>
 									</OverlayTrigger>
@@ -759,10 +763,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 								</Form.Group>
 								<Form.Group controlId="productPrices">
 									<Form.Label>
-										{productPrices && productPrices.split(",").length === 1 ? "Preço" : "Preços"}
+										Preço
 									</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para múltiplos tamanhos, separe-os entre vírgulas.
@@ -774,16 +778,17 @@ export default function Menu({ userId, user, order, setOrder }) {
 											onChange={validatePrices} 
 											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
 											type="text"
+											placeholder="Preço do produto"
 											required
 										/>
 									</OverlayTrigger>
 								</Form.Group>
 								<Form.Group controlId="productSizes">
 									<Form.Label>
-										Tamanhos
+										Tamanho
 									</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para tamanho único, digite único, 
@@ -796,6 +801,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 											onChange={validateSizes} 
 											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
 											type="text"
+											placeholder="Tamanho do produto"
 											required
 										/>
 									</OverlayTrigger>
@@ -806,6 +812,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										value={productType} 
 										onChange={e => setProductType(e.target.value)} 
 										as="select"
+										placeholder="Tipo do produto"
 										required
 									>
 										{productTypes.map((type, index) => (
@@ -820,7 +827,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<OverlayTrigger
-										placement="right"
+										placement="top"
 										overlay={
 											<Tooltip>
 												Para múltiplos ingredientes, separe-os entre vírgulas.
@@ -833,6 +840,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}
+											placeholder="Ingredientes do produto"
 											required
 										/>
 									</OverlayTrigger>
@@ -939,7 +947,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								<Card.Body>
 									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
 									<OverlayTrigger
-										placement="right"
+										placement="bottom"
 										overlay={
 											<Tooltip>
 												Você pode inserir no máximo 4 adições ao seu produto.

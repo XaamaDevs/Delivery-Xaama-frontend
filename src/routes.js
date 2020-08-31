@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 //	Importing all app pages
 import HomePage from "./pages/Website/Home";
 import NotFoundPage from "./pages/Website/NotFound";
+import About from "./pages/Website/About";
 import Navbar from "./pages/Website/Navbar";
 import Loading from "./pages/Website/Loading";
 import User from "./pages/User";
@@ -30,8 +31,11 @@ export default function Routes() {
 	const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
 	const [user, setUser] = useState({});
 
-	//	Order state variables
+	//	Order state variable
 	const [order, setOrder] = useState({});
+
+	//	Company info state variable
+	const [companyInfo, setCompanyInfo] = useState({});
 
 	//	Loading state variable
 	const [isLoading, setLoading] = useState(true);
@@ -45,11 +49,17 @@ export default function Routes() {
 						if(response && response.data) {
 							setUser(response.data);
 						}
-						setLoading(false);
 					});
-			} else {
-				setLoading(false);
 			}
+
+			await api.get("company")
+				.then((response) => {
+					if(response && response.data) {
+						setCompanyInfo(response.data);
+					}
+				});
+
+			setLoading(false);
 		}
 
 		fetchData();
@@ -69,9 +79,17 @@ export default function Routes() {
 
 	return (
 		<BrowserRouter>
-			<Navbar userId={userId} setUserId={setUserId} user={user} setUser={setUser} setOrder={setOrder} />
+			<Navbar 
+				userId={userId} 
+				setUserId={setUserId} 
+				user={user} 
+				setUser={setUser} 
+				setOrder={setOrder}
+				companyInfo ={companyInfo}
+			/>
 			<Switch>
 				<Route exact path="/" component={HomePage} />
+				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route 
 					exact path="/order" 
 					render={() => <Order userId={userId} user={user} order={order} setOrder={setOrder} />} 

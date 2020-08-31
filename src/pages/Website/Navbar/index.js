@@ -8,7 +8,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser, setOrder }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser, setOrder, companyInfo }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
@@ -31,7 +31,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, setOrd
 
 	return (
 		<Navbar className="text-warning py-5 px-3" bg="transparent" expand="lg">
-			<NavLink to="/" className="navbar-brand text-warning mx-5">Xaama</NavLink>
+			<NavLink to="/" className="navbar-brand text-warning mx-5">{companyInfo.name}</NavLink>
 			<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
 			<Navbar.Collapse id="basic-navbar-nav">
 				<Nav className="mr-auto">
@@ -72,6 +72,17 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, setOrd
 						:
 						null
 					}
+					<Nav.Item>
+						<NavLink 
+							style={{color: "#ffbf00"}}
+							activeClassName="activeRoute"
+							activeStyle={{ color: "white" }}
+							to="/about"
+							className="nav-link mx-2"
+						>
+							Sobre
+						</NavLink>
+					</Nav.Item>
 				</Nav>
 				{!userId ?
 					<Nav className="ml-auto">
