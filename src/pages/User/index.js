@@ -18,7 +18,7 @@ import camera from "../../assets/camera.svg";
 
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser }) {
+export default function User({ userId, setUserId, user, setUser, companyInfo }) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -27,11 +27,20 @@ export default function User({ userId, setUserId, user, setUser }) {
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
+
+	//	Company variable
+	const [companyName, setCompanyName] = useState(companyInfo.name);
+	const [companyEmail, setCompanyEmail] = useState(companyInfo.email);
+	const [companyPhone, setCompanyPhone] = useState(companyInfo.phone);
+	const [companyAddress, setCompanyAddress] = useState(companyInfo.address);
+	const [companyFreight, setCompanyFreight] = useState(companyInfo.freight);
+	const [companyProductTypes, setCompanyProductTypes] = useState(companyInfo.productTypes.join(", "));
 	
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
 	const [modal3Show, setModal3Show] = useState(false);
+	const [modal4Show, setModal4Show] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
@@ -207,6 +216,42 @@ export default function User({ userId, setUserId, user, setUser }) {
 				setToastShow(true);
 			});
 	}
+
+	//	Function to handle update company info
+	async function handleCompanyUpdate(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("name", companyName);
+		data.append("email", companyEmail);
+		data.append("address", companyAddress);
+		data.append("phone", companyPhone);
+		data.append("freight", companyFreight);
+		data.append("productTypes", companyProductTypes);
+
+		await api.post("company", data , {
+			headers : { 
+				authorization: userId
+			}})
+			.then(() => {
+				setTitle("Alterações da empresa");
+				setMessage("Alterações feitas com sucesso!");
+				setColor("warning");
+				setModal4Show(false);
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setModalAlert(true);
+			});
+	}
 	
 	async function handleModal(event, modal, user = null) {
 		event.preventDefault();
@@ -218,6 +263,12 @@ export default function User({ userId, setUserId, user, setUser }) {
 			setUserAddress(user.address ? user.address.join(", ") : null);
 		}
 
+		setCompanyName(companyInfo.name);
+		setCompanyEmail(companyInfo.email);
+		setCompanyAddress(companyInfo.address);
+		setCompanyFreight(companyInfo.freight);
+		setCompanyProductTypes(companyInfo.productTypes.join(", "));
+
 		switch(modal){
 		case 1:
 			setModal1Show(true);
@@ -227,6 +278,9 @@ export default function User({ userId, setUserId, user, setUser }) {
 			break;
 		case 3:
 			setModal3Show(true);
+			break;
+		case 4:
+			setModal4Show(true);
 			break;
 		default:
 			break;
@@ -327,7 +381,12 @@ export default function User({ userId, setUserId, user, setUser }) {
 							Trocar senha
 						</Button>
 						{user.userType === 2 ?
-							null
+							<Button
+								onClick = {event => handleModal(event, 4)}
+								variant="outline-primary"
+							>
+								Info da empresa
+							</Button>
 							:
 							<Button
 								onClick = {event => handleModal(event, 3, user)}
@@ -416,10 +475,11 @@ export default function User({ userId, setUserId, user, setUser }) {
 										value={userAddress}
 										onChange={e => setUserAddress(e.target.value)} 
 										type="text" 
-										placeholder="Bairro, Rua, Número"
+										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 									/>
 								</Form.Group>
-								<Form.Text className="text-muted">Separe o bairro, rua e o número por vírgula
+								<Form.Text className="text-muted">
+									Separe rua, número, bairro e complemento por vírgula
 								</Form.Text>
 							</Col>
 						</Row>
@@ -494,6 +554,108 @@ export default function User({ userId, setUserId, user, setUser }) {
 						Apagar Perfil
 					</Button>
 				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modal4Show} onHide={() => {setModal4Show(false); setToastShow(false);}} size="lg" centered>
+				{toast}
+				<Modal.Header closeButton>
+					<Modal.Title>Modificar informações da empresa</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form onSubmit={handleCompanyUpdate}>
+						<Row>
+							<Col>
+								<Form.Group controlId="companyName">
+									<Form.Label>Nome</Form.Label>
+									<Form.Control 
+										value={companyName}
+										onChange={e => setCompanyName(e.target.value)} 
+										type="text" 
+										placeholder="Nome da empresa"
+										required
+									/>
+								</Form.Group>
+							</Col>
+							<Col>
+								<Form.Group controlId="companyEmail">
+									<Form.Label>Email</Form.Label>
+									<Form.Control 
+										value={companyEmail}
+										onChange={e => setCompanyEmail(e.target.value)} 
+										type="text" 
+										placeholder="Email da empresa"
+										required
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<Form.Group controlId="companyPhone">
+									<Form.Label>Telefone</Form.Label>
+									<Form.Control 
+										value={companyPhone}
+										onChange={e => setCompanyPhone(e.target.value)} 
+										type="text" 
+										placeholder="(__) _ ____-____"
+										required
+									/>
+								</Form.Group>
+							</Col>
+							<Col>
+								<Form.Group controlId="companyAddress">
+									<Form.Label>Endereço</Form.Label>
+									<Form.Control 
+										value={companyAddress}
+										onChange={e => setCompanyAddress(e.target.value)} 
+										type="text" 
+										placeholder="Rua, Número, Bairro, Cidade"
+									/>
+								</Form.Group>
+								<Form.Text className="text-muted">
+									Separe rua, número, bairro e cidade por vírgula
+								</Form.Text>
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<Form.Group controlId="companyFreight">
+									<Form.Label>Valor do frete</Form.Label>
+									<Form.Control 
+										value={companyFreight}
+										onChange={e => setCompanyFreight(e.target.value)} 
+										type="text" 
+										placeholder="Valor do frete"
+										required
+									/>
+								</Form.Group>
+							</Col>
+							<Col>
+								<Form.Group controlId="companyProductTypes">
+									<Form.Label>Tipos de produtos</Form.Label>
+									<Form.Control 
+										value={companyProductTypes}
+										onChange={e => setCompanyProductTypes(e.target.value)} 
+										type="text" 
+										placeholder="Tipos de produtos"
+										required
+									/>
+								</Form.Group>
+								<Form.Text className="text-muted">
+									Separe os tipos por vírgula
+								</Form.Text>
+							</Col>
+						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setModal4Show(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
+					</Form>
+				</Modal.Body>
 			</Modal>
 
 			<Modal show={modalAlert} onClick={() => history.go()}>
