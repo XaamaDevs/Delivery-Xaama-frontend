@@ -24,10 +24,12 @@ export default function AllOrders({ userId, userType }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
+	const [feedback, setFeedback]= useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	const [modalFeedback, setModalFeedback] = useState(false);
 	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
@@ -98,6 +100,13 @@ export default function AllOrders({ userId, userType }) {
 				}
 				setModalAlert(true);
 			});
+	}
+	
+	async function handleFeedback(event, order) {
+		event.preventDefault();
+
+		setFeedback(order.feedback);
+		setModalFeedback(true);
 	}
 
 	async function handleDeleteOrders(event) {
@@ -287,7 +296,11 @@ export default function AllOrders({ userId, userType }) {
 										variant="outline-warning">Entregar pedido
 									</Button>
 									: 
-									null
+									<Button
+										className="mt-1"
+										onClick={e => handleFeedback(e, order)}
+										variant="outline-warning">Avaliação
+									</Button>
 								}
 							</Col>
 						))}
@@ -359,6 +372,18 @@ export default function AllOrders({ userId, userType }) {
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
 					<Button variant={color} onClick={() => history.go()}>
+						Fechar
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modalFeedback} onHide={() => setModalFeedback(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Avalição do pedido</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>{feedback ? feedback : "Ainda não avaliou"}</Modal.Body>
+				<Modal.Footer>
+					<Button variant="warning" onClick={() => setModalFeedback(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>

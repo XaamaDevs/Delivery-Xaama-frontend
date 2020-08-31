@@ -11,7 +11,7 @@ import "./styles.css";
 import camera from "../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Form, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId, user, order, setOrder }) {
@@ -20,9 +20,12 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	const [product, setProduct] = useState({});
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
+	const [feedback, setFeedback]= useState("");
+	const [orderId, setOrderId]= useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
+	const [modalFeedback, setModalFeedback] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
@@ -55,12 +58,43 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
 		setOrderA(order);
+		setOrderId(order._id)
 		setModalOrderListing(true);
 	}
 	
 	async function handleProductList(event, productA) {
 		event.preventDefault();
 		setProduct(productA);
+	}
+
+	async function handleFeedback(event, order) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("status", order.status);
+		data.append("feedback", feedback);
+
+		await api.put("/order/" + order._id, data , {
+			headers : { 
+				authorization: userId
+			}})
+			.then(() => {
+				setTitle("Pedido enviado!");
+				setMessage("Alterações feitas com sucesso!");
+				//setColor("warning");
+				//setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				//setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				//setModalAlert(true);
+			});
 	}
 
 	const header = (
@@ -222,11 +256,18 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 										className="mt-1"
 										variant="outline-danger">Pedido sendo preparado
 									</Button>
-									: 
-									<Button
-										className="mt-1"
-										variant="outline-warning">Pedido a caminho
-									</Button>
+									:
+									<>
+										<Button
+											className="mt-1"
+											variant="outline-warning">Pedido a caminho
+										</Button>
+										<Button
+											onClick={() => setModalFeedback(true)}
+											className="d-flex justify-content-center mx-auto mt-1"
+											variant="outline-warning">Recebeu seu pedido? Avalie!
+										</Button>
+									</>
 								}
 							</Col>
 						))}
@@ -261,6 +302,38 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						Fechar
 					</Button>
 				</Modal.Footer>
+			</Modal>
+
+			<Modal show={modalFeedback} onHide={() => {setModalFeedback(false);}} size="lg" centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Avaliar pedido</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form onSubmit={handleFeedback}>
+						<Row>
+							<Col>
+								<Form.Group controlId="feedback">
+									<Form.Label>Sua avaliação</Form.Label>
+									<Form.Control 
+										value={feedback}
+										onChange={e => setFeedback(e.target.value)} 
+										type="text" 
+										placeholder="Avaliação sobre o pedido e atendimento"
+										required
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => {setModalFeedback(false)}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Enviar avaliação
+							</Button>
+						</Modal.Footer>
+					</Form>
+				</Modal.Body>
 			</Modal>
 		</div>
 	);
