@@ -103,7 +103,7 @@ export default function Routes() {
 				/>
 				<Route 
 					exact path="/allorders" 
-					render={() => userId ? (<AllOrders userId={userId} userType={user.userType} />) : <Auth />}
+					render={() => userId ? (managerAuth() ? <AllOrders userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route 
 					exact path="/allusers" 

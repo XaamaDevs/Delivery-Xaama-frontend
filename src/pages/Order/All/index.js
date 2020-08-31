@@ -61,7 +61,6 @@ export default function AllOrders({ userId, userType }) {
 			});
 			setLoading(false);
 		}
-    console.log(userType);
 		loadOrder();
 	}, [userId]);
 
