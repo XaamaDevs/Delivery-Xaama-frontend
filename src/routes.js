@@ -74,7 +74,7 @@ export default function Routes() {
 	}
 
 	function userAuth() {
-		return (user && userId);
+		return (user._id && userId);
 	}
 	
 	function userAndAdmin() {
@@ -99,18 +99,6 @@ export default function Routes() {
 				<Route exact path="/" component={HomePage} />
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route 
-					exact path="/order" 
-					render={() => {
-						return userAuth() ? 
-							<Order 
-								userId={userId} 
-								user={user} 
-								order={order}
-								setOrder={setOrder} 
-							/> : <Auth />;
-					}}
-				/>
-				<Route 
 					exact path="/login" 
 					render={() => !userAuth() ? <Login setUserId={setUserId} /> : <Logged />}
 				/>
@@ -121,6 +109,18 @@ export default function Routes() {
 				<Route 
 					exact path="/menu" 
 					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} />} 
+				/>
+				<Route 
+					exact path="/order" 
+					render={() => {
+						return userAuth() ? 
+							<Order 
+								userId={userId} 
+								user={user} 
+								order={order}
+								setOrder={setOrder} 
+							/> : <Auth />;
+					}}
 				/>
 				<Route 
 					exact path="/user" 
