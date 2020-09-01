@@ -128,6 +128,7 @@ export default function Signup({ setUserId, setUser }) {
 							type="password"
 							value={password}
 							onChange={event => setPassword(event.target.value)}
+							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
 						<small style={{color:"#f0d890"}}>Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
@@ -139,6 +140,7 @@ export default function Signup({ setUserId, setUser }) {
 							type="password"
 							value={passwordC}
 							onChange={event => setPasswordC(event.target.value)}
+							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
 					</Form.Group>
