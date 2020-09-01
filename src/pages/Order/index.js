@@ -20,13 +20,15 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	const [product, setProduct] = useState({});
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
+	const [color, setColor] = useState("");
 	const [feedback, setFeedback]= useState("");
-  const [orderId, setOrderId]= useState("");
+	const [orderId, setOrderId]= useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
 	const [modalFeedback, setModalFeedback] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -68,33 +70,27 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 
 	async function handleFeedback(event) {
 		event.preventDefault();
-
-		const data = new FormData();
-
-		data.append("status", true);
-    data.append("feedback", feedback);
-
-		await api.put("/order/" + orderId, data , {
-			headers : { 
-				authorization: userId
-			}})
+		
+		await api.put("/order/" + orderId, {status: true, feedback: feedback})
 			.then(() => {
-				setTitle("Pedido enviado!");
-        setMessage("Alterações feitas com sucesso!");
-        setModalFeedback(false);
-				setToastShow(true);
+				setTitle("Avaliação enviada!");
+				setMessage("Obrigado pelo seu feedback!");
+				setColor("warning");
+				setModalFeedback(false);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
+				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
-        }
-        setModalFeedback(false);
-				setToastShow(true);
-      });
-      setFeedback("");
+				}
+				setModalFeedback(false);
+				setFeedback(true);
+			});
+		setFeedback("");
 	}
 
 	const header = (
@@ -188,7 +184,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 			aria-live="polite"
 			aria-atomic="true"
 			style={{
-				position: "absolute",
+				position: "fixed",
 				top: "50%",
 				right: "50%",
 			}}
@@ -258,31 +254,33 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 								<p>
 									{"Total a pagar R$" + order.total}
 								</p>
-								<button 
-									onClick={e => handleSetOrder(e, order)}
-									className="btn mt-1 mr-1" 
-									id="btn-password"
-								>
-								Ver pedido
-								</button>
-								{!(order.status) ? 
-									<Button
-										className="mt-1"
-										variant="outline-danger">Pedido sendo preparado
-									</Button>
-									:
-									<>
+								<Row>
+									<button 
+										onClick={e => handleSetOrder(e, order)}
+										className="btn d-flex justify-content-center mx-auto mt-1"
+										id="btn-password"
+									>
+									Ver pedido
+									</button>
+									{!(order.status) ? 
 										<Button
-											className="mt-1"
-											variant="outline-warning">Pedido a caminho
-										</Button>
-										<Button
-											onClick={() => {setOrderId(order._id); setModalFeedback(true);}}
 											className="d-flex justify-content-center mx-auto mt-1"
-											variant="outline-warning">Recebeu seu pedido? Avalie!
+											variant="outline-danger">Pedido sendo preparado
 										</Button>
-									</>
-								}
+										:
+										<>
+											<Button
+												className="d-flex justify-content-center mx-auto mt-1"
+												variant="outline-warning">Pedido a caminho
+											</Button>
+											<Button
+												onClick={() => {setOrderId(order._id); setModalFeedback(true);}}
+												className="d-flex justify-content-center mx-auto mt-1"
+												variant="outline-warning">Recebeu seu pedido? Avalie!
+											</Button>
+										</>
+									}
+								</Row>
 							</Col>
 						))}
 					</Row>
@@ -334,8 +332,8 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 									<Form.Control 
 										value={feedback}
 										onChange={e => setFeedback(e.target.value)} 
-                    as="textarea"
-                    rows="12"
+										as="textarea"
+										rows="12"
 										placeholder="Avaliação sobre o pedido e atendimento"
 										required
 									/>
@@ -352,6 +350,18 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						</Modal.Footer>
 					</Form>
 				</Modal.Body>
+			</Modal>
+
+			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>{title}</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>{message}</Modal.Body>
+				<Modal.Footer>
+					<Button variant={color} onClick={() => setModalAlert(false)}>
+						Fechar
+					</Button>
+				</Modal.Footer>
 			</Modal>
 		</div>
 	);

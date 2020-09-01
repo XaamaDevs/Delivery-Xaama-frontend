@@ -80,10 +80,7 @@ export default function AllOrders({ userId, userType }) {
 	async function handleDeliver(event, order) {
 		event.preventDefault();
 
-		await api.put("/order/" + order._id, { status:true } , {
-			headers : { 
-				authorization: userId
-			}})
+		await api.put("/order/" + order._id, { status:true })
 			.then(() => {
 				setTitle("Pedido enviado!");
 				setMessage("Alterações feitas com sucesso!");
