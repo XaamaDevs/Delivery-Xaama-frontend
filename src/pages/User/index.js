@@ -23,7 +23,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
 	const [userPhone, setUserPhone] = useState("");
-	const [userAddress, setUserAddress] = useState([]);
+	const [userAddress, setUserAddress] = useState("");
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
@@ -71,7 +71,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("name", user.name);
 		data.append("email", user.email);
 		data.append("address", userAddress);
-		data.append("phone", userPhone);
+		data.append("phone", userPhone ? userPhone : null);
 
 		if(thumbnail){
 			data.append("thumbnail", thumbnail);
@@ -152,7 +152,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			data.append("name", userName);
 			data.append("email", userEmail);
 			data.append("address", userAddress);
-			data.append("phone", userPhone);
 			data.append("passwordN", userPasswordN);
 			data.append("passwordO", userPasswordO);
 
@@ -513,6 +512,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										placeholder="Senha atual"
 										required
 									/>
+									<small>Sua nova senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
 								</Form.Group>
 							</Col>
 							<Col>

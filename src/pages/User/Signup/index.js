@@ -130,6 +130,7 @@ export default function Signup({ setUserId, setUser }) {
 							onChange={event => setPassword(event.target.value)}
 							required
 						/>
+						<small style={{color:"#f0d890"}}>Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
 					</Form.Group>
 					<Form.Group controlId="passwordC">
 						<Form.Label>Confirmar Senha</Form.Label>
