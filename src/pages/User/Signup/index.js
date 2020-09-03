@@ -8,7 +8,7 @@ import api from "../../../services/api";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Modal, Image, Form, Button, Col, Row } from "react-bootstrap";
+import { Modal, Image, Form, Button, Col, Row, Toast } from "react-bootstrap";
 
 // Importing styles
 import "./styles.css";
@@ -28,7 +28,8 @@ export default function Signup({ setUserId, setUser }) {
 	const [color, setColor] = useState("");
 	
 	//	Modal settings
-	const [modalAlert, setModalAlert] = useState(false);
+  const [modalAlert, setModalAlert] = useState(false);
+  const [toastShow, setToastShow] = useState(false);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -63,11 +64,11 @@ export default function Signup({ setUserId, setUser }) {
 				setTitle("Erro!");
 				setColor("danger");
 				if(error.response) {
-					setMessage(error.response.data);
+					setMessage(error.response);
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setToastShow(true);
 			});
 	}
 
@@ -76,7 +77,26 @@ export default function Signup({ setUserId, setUser }) {
 		event.preventDefault();
 
 		document.getElementById("inputThumbnail").click();
-	}
+  }
+  
+  const toast = (
+		<div
+			aria-live="polite"
+			aria-atomic="true"
+			style={{
+				position: "fixed",
+				top: "inherit",
+				right: "3%"
+			}}
+		>
+			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
+				<Toast.Header>
+					<strong className="mr-auto">{title}</strong>
+				</Toast.Header>
+				<Toast.Body>{message}</Toast.Body>
+			</Toast>
+		</div>
+	);
 
 	return (
 		<div className="user-container h-100">

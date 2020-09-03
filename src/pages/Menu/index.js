@@ -67,7 +67,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
-	const history = useHistory();
+  const history = useHistory();
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
