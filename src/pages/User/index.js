@@ -20,10 +20,10 @@ import camera from "../../assets/camera.svg";
 //	Exporting resource to routes.js
 export default function User({ userId, setUserId, user, setUser, companyInfo }) {
 	//	User variables
-	const [userName, setUserName] = useState("");
-	const [userEmail, setUserEmail] = useState("");
-	const [userPhone, setUserPhone] = useState("");
-	const [userAddress, setUserAddress] = useState("");
+	const [userName, setUserName] = useState(user.name);
+	const [userEmail, setUserEmail] = useState(user.email);
+	const [userPhone, setUserPhone] = useState(user.phone);
+	const [userAddress, setUserAddress] = useState(user.address ? user.address.join(", ") : null);
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
@@ -68,10 +68,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 		const data = new FormData();
 
-		data.append("name", user.name);
-		data.append("email", user.email);
+		data.append("name", userName);
+		data.append("email", userEmail);
+		data.append("phone", userPhone);
 		data.append("address", userAddress);
-		data.append("phone", userPhone ? userPhone : null);
 
 		if(thumbnail){
 			data.append("thumbnail", thumbnail);
@@ -114,10 +114,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 		const data = new FormData();
 
-		data.append("name", user.name);
-		data.append("email", user.email);
-		data.append("address", userAddress);
+		data.append("name", userName);
+		data.append("email", userEmail);
 		data.append("phone", userPhone);
+		data.append("address", userAddress);
 		data.append("thumbnail", thumbnail);
 
 		await api.put("user", data , {
@@ -151,6 +151,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 			data.append("name", userName);
 			data.append("email", userEmail);
+			data.append("phone", userPhone);
 			data.append("address", userAddress);
 			data.append("passwordN", userPasswordN);
 			data.append("passwordO", userPasswordO);
@@ -430,7 +431,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				<Modal.Body>
 					<Form onSubmit={handleUserUpdate}>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control 
@@ -442,7 +443,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userEmail">
 									<Form.Label>Email</Form.Label>
 									<Form.Control 
@@ -456,24 +457,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userPhone">
 									<Form.Label>Telefone</Form.Label>
 									<Form.Control 
 										value={userPhone}
 										onChange={e => setUserPhone(e.target.value)} 
 										type="text" 
+										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userAddress">
 									<Form.Label>Endereço</Form.Label>
 									<Form.Control 
 										value={userAddress}
 										onChange={e => setUserAddress(e.target.value)} 
 										type="text" 
+										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 									/>
 								</Form.Group>
@@ -502,26 +505,28 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				<Modal.Body>
 					<Form onSubmit={handlePasswordUpdate}>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userPasswordO">
 									<Form.Label>Senha atual</Form.Label>
 									<Form.Control 
 										value={userPasswordO}
 										onChange={e => setUserPasswordO(e.target.value)} 
 										type="password" 
+										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha atual"
 										required
 									/>
 									<small>Sua nova senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="userPasswordN">
 									<Form.Label>Senha nova</Form.Label>
 									<Form.Control 
 										value={userPasswordN}
 										onChange={e => setUserPasswordN(e.target.value)} 
 										type="password" 
+										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha nova"
 										required
 									/>
@@ -597,6 +602,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										value={companyPhone}
 										onChange={e => setCompanyPhone(e.target.value)} 
 										type="text" 
+										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
 										required
 									/>
@@ -609,6 +615,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										value={companyAddress}
 										onChange={e => setCompanyAddress(e.target.value)} 
 										type="text" 
+										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Cidade"
 									/>
 								</Form.Group>

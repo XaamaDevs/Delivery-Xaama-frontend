@@ -371,7 +371,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 		if(!/^((^$)|(^\s$)|(^,$)|(^\.$))$/.test(c) && c.length <= 1) {
 			event.target.value = 
-				/^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$/.test(event.target.value) ? 
+				/^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$/.test(event.target.value) ? 
 					event.target.value 
 					: 
 					productPrices;
@@ -391,7 +391,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	async function validateIngredients(event) {
 		const c = event.target.value.replace(productIngredients, "");
 		const ingRegExp = 
-			new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
+			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
 
 
 		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
@@ -411,12 +411,12 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 	async function validateSizes(event) {
 		const c = event.target.value.replace(productSizes, "");
-		const ingRegExp = 
-			new RegExp(/^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$/);
+		const sizeRegExp = 
+			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
 
 
 		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
-			event.target.value = ingRegExp.test(event.target.value) ? event.target.value : productSizes;
+			event.target.value = sizeRegExp.test(event.target.value) ? event.target.value : productSizes;
 		}
 
 		if(productSizes[productSizes.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
@@ -638,7 +638,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										<Form.Control 
 											value={productPrices}
 											onChange={validatePrices} 
-											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
+											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
 											required
@@ -661,7 +661,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										<Form.Control 
 											value={productSizes}
 											onChange={validateSizes} 
-											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
 											type="text"
 											placeholder="Tamanho do produto"
 											required
@@ -778,7 +778,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										<Form.Control 
 											value={productPrices}
 											onChange={validatePrices} 
-											pattern="^[0-9]+(\.[0-9])*(,\s[0-9]+(\.?[0-9])*)*$"
+											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
 											required
@@ -801,7 +801,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										<Form.Control 
 											value={productSizes}
 											onChange={validateSizes} 
-											pattern="^[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+(,\s[A-Za-z^~`´\u00C0-\u024F\u1E00-\u1EFF\s]+)*$"
+											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
 											type="text"
 											placeholder="Tamanho do produto"
 											required
