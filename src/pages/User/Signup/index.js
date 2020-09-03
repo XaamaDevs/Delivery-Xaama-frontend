@@ -18,18 +18,19 @@ import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function Signup({ setUserId, setUser }) {
+	//	User variables
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordC, setPasswordC] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
+	
+	//	Modal settings
+	const [modalAlert, setModalAlert] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	
-	//	Modal settings
-  const [modalAlert, setModalAlert] = useState(false);
-  const [toastShow, setToastShow] = useState(false);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -64,7 +65,7 @@ export default function Signup({ setUserId, setUser }) {
 				setTitle("Erro!");
 				setColor("danger");
 				if(error.response) {
-					setMessage(error.response);
+					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
@@ -77,16 +78,17 @@ export default function Signup({ setUserId, setUser }) {
 		event.preventDefault();
 
 		document.getElementById("inputThumbnail").click();
-  }
-  
-  const toast = (
+	}
+	
+	const toast = (
 		<div
 			aria-live="polite"
 			aria-atomic="true"
 			style={{
 				position: "fixed",
 				top: "inherit",
-				right: "3%"
+				right: "3%",
+				zIndex: 5
 			}}
 		>
 			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
@@ -100,6 +102,7 @@ export default function Signup({ setUserId, setUser }) {
 
 	return (
 		<div className="user-container h-100">
+			{toast}
 			<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
 				<Col sm="4" className="d-flex flex-column m-auto p-3">
 					<Form.Group controlId="inputThumbnail">

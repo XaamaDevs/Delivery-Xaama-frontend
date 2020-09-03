@@ -5,13 +5,13 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Modal, Form, Button, Col, Row } from "react-bootstrap";
+import { Modal, Toast, Form, Button, Col, Row } from "react-bootstrap";
 
 //	Importing api to communicate to backend
 import api from "../../../services/api";
 
 //	Exporting resource to routes.js
-export default function Login({ setUserId }) {
+export default function Login({ setUserId, setUser }) {
 	//	Session variables
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -19,6 +19,7 @@ export default function Login({ setUserId }) {
 	//	Message settings
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
+	const [toastShow, setToastShow] = useState(false);
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
 	
@@ -34,25 +35,45 @@ export default function Login({ setUserId }) {
 				sessionStorage.setItem("userId", response.data._id);
 
 				setUserId(sessionStorage.getItem("userId"));
+				setUser(response.data);
 				
 				history.push("/menu");
 			})
 			.catch((error) => {
 				setTitle("Erro!");
 				setColor("danger");
-			
-				setModalAlert(true);
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setToastShow(true);
 			});
 	}
+	
+	const toast = (
+		<div
+			aria-live="polite"
+			aria-atomic="true"
+			style={{
+				position: "fixed",
+				top: "inherit",
+				right: "3%",
+				zIndex: 5
+			}}
+		>
+			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
+				<Toast.Header>
+					<strong className="mr-auto">{title}</strong>
+				</Toast.Header>
+				<Toast.Body>{message}</Toast.Body>
+			</Toast>
+		</div>
+	);
 
 	return (
 		<div className="user-container d-flex h-100">
+			{toast}
 			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>
 				<Form.Group controlId="email">
 					<Form.Label>Email</Form.Label>

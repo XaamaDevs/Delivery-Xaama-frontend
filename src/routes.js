@@ -100,7 +100,7 @@ export default function Routes() {
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route 
 					exact path="/login" 
-					render={() => !userAuth() ? <Login setUserId={setUserId} /> : <Logged />}
+					render={() => !userAuth() ? <Login setUserId={setUserId} setUser={setUser} /> : <Logged />}
 				/>
 				<Route 
 					exact path="/signup" 

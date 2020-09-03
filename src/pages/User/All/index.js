@@ -34,33 +34,33 @@ export default function AllUsers({ userId }) {
 	const [modalAlert, setModalAlert] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-  const history = useHistory();
+	const history = useHistory();
 
-  useEffect(() => {
-    subscribeToNewUsers(user => setUsers([...users, user]));
-  }, [users]);
-  
-  async function setupWebSocket() {
-    disconnect();
-    connect();
-  }
+	useEffect(() => {
+		subscribeToNewUsers(user => setUsers([...users, user]));
+	}, [users]);
+	
+	async function setupWebSocket() {
+		disconnect();
+		connect();
+	}
 
 	useEffect(() => {
 		async function loadUser() {
-			const response = await api.get("/user", {
+			const response = await api.get("user", {
 				headers : { 
 					authorization: userId
 				}
-      });
-      setUsers(response.data);
-      setupWebSocket();
+			});
+			setUsers(response.data);
+			setupWebSocket();
 			setLoading(false);
 		}
 
 		loadUser();
-  }, [userId]);
-  
-  
+	}, [userId]);
+	
+	
 
 	async function handleTypeUser(event) {
 		event.preventDefault();
