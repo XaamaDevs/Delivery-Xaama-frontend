@@ -15,20 +15,22 @@ import { Card, CardDeck, Nav, Button, Modal, Form, Row, Col, Spinner, Container,
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId, user, order, setOrder }) {
+	//	Order state variables
 	const [orders, setOrders] = useState([]);
+	const [orderId, setOrderId]= useState("");
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
+	const [feedback, setFeedback]= useState("");
+
+	//	Modal settings
+	const [orderListingModal, setOrderListingModal] = useState(false);
+	const [feedbackModal, setFeedbackModal] = useState(false);
+	const [productFinishOrderModal, setProductFinishOrderModal] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	const [feedback, setFeedback]= useState("");
-	const [orderId, setOrderId]= useState("");
-
-	//	Modal settings
-	const [modalOrderListing, setModalOrderListing] = useState(false);
-	const [modalFeedback, setModalFeedback] = useState(false);
-	const [toastShow, setToastShow] = useState(false);
-	const [modalAlert, setModalAlert] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -60,7 +62,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
 		setOrderA(order);
-		setModalOrderListing(true);
+		setOrderListingModal(true);
 	}
 	
 	async function handleProductList(event, productA) {
@@ -76,7 +78,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				setTitle("Avaliação enviada!");
 				setMessage("Obrigado pelo seu feedback!");
 				setColor("warning");
-				setModalFeedback(false);
+				setFeedbackModal(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
@@ -87,7 +89,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				} else {
 					setMessage(error.message);
 				}
-				setModalFeedback(false);
+				setFeedbackModal(false);
 				setFeedback(true);
 			});
 		setFeedback("");
@@ -173,7 +175,9 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						</Card>
 					</CardDeck>
 					:
-					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">Selecione o produto desejado acima</h1>
+					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">
+						Selecione o produto desejado acima
+					</h1>
 				}
 			</>
 		);
@@ -185,8 +189,9 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 			aria-atomic="true"
 			style={{
 				position: "fixed",
-				top: "50%",
-				right: "50%",
+				top: "inherit",
+				right: "3%",
+				zIndex: 5
 			}}
 		>
 			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
@@ -200,6 +205,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 	
 	return (
 		<div className="all-container w-100">
+			{toast}
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner 
@@ -215,29 +221,50 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
 						:
 						<>
-							{toast}
 							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos!</h1>
 						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
 						{order.products ? 
-							<Col className="order-item" >
+							<Col className="order-item">
 								<header>
-									<h5 className="text-white">Pedido em aberto</h5>            
+									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
+									<div className="order-info">
+										<strong>{order.user.name}</strong>
+										<span>{order.user.email}</span>
+									</div>             
 								</header>
-								<Button 
-									onClick={e => handleSetOrder(e, order)}
-									className="btn mt-1 mr-1" 
-									id="btn-password"
-								>
+								<p>{order.user.phone.length ? order.user.phone: "Telefone não informado"}</p>
+								{order.deliver ?
+									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
+									: 
+									<p>{"Vai retirar no balcão!"}</p>
+								}
+								<p>
+									{"Total a pagar R$" + order.total}
+								</p>
+								<Row>
+									<Button 
+										onClick={e => handleSetOrder(e, order)}
+										className="mx-auto my-1"
+										id="btn-password"
+									>
 									Ver pedido
-								</Button>
+									</Button>
+									<Button
+										onClick={() => setProductFinishOrderModal(true)}
+										className="mx-auto my-1"
+										variant="outline-warning"
+									>
+										Finalizar pedido
+									</Button>
+								</Row>
 							</Col>
 							:
 							null
 						}
 						{orders.map(order => (
-							<Col key={order._id} className="order-item" >
+							<Col key={order._id} className="order-item">
 								<header>
 									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
 									<div className="order-info">
@@ -255,13 +282,13 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 									{"Total a pagar R$" + order.total}
 								</p>
 								<Row>
-									<button 
+									<Button 
 										onClick={e => handleSetOrder(e, order)}
 										className="btn d-flex justify-content-center mx-auto mt-1"
 										id="btn-password"
 									>
 									Ver pedido
-									</button>
+									</Button>
 									{!(order.status) ? 
 										<Button
 											className="d-flex justify-content-center mx-auto mt-1"
@@ -274,7 +301,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 												variant="outline-warning">Pedido a caminho
 											</Button>
 											<Button
-												onClick={() => {setOrderId(order._id); setModalFeedback(true);}}
+												onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
 												className="d-flex justify-content-center mx-auto mt-1"
 												variant="outline-warning">Recebeu seu pedido? Avalie!
 											</Button>
@@ -287,7 +314,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				</>
 			}
 
-			<Modal show={modalOrderListing} onHide={() => setModalOrderListing(false)} size="lg" centered>
+			<Modal show={orderListingModal} onHide={() => setOrderListingModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
@@ -312,14 +339,37 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				<Modal.Footer>
 					<Button 
 						variant="warning" 
-						onClick={() => {setModalOrderListing(false); setOrderA({}); setProduct({});}}
+						onClick={() => {setOrderListingModal(false); setOrderA({}); setProduct({});}}
 					>
 						Fechar
 					</Button>
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalFeedback} onHide={() => {setModalFeedback(false);}} size="lg" centered>
+
+
+			<Modal 
+				show={productFinishOrderModal} 
+				onHide={() => setProductFinishOrderModal(false)} 
+				size="lg" 
+				centered
+			>
+				<Modal.Header closeButton>
+					<Modal.Title>Finalizar pedido</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Modal.Footer>
+						<Button variant="danger" onClick={() => setProductFinishOrderModal(false)}>
+							Fechar
+						</Button>
+						<Button variant="warning" type="submit">
+							Finalizar
+						</Button>
+					</Modal.Footer>
+				</Modal.Body>
+			</Modal>
+
+			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);}} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Avaliar pedido</Modal.Title>
 				</Modal.Header>
@@ -341,7 +391,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setModalFeedback(false);}}>
+							<Button variant="danger" onClick={() => {setFeedbackModal(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">

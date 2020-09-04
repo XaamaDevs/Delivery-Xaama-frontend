@@ -63,7 +63,7 @@ export default function Routes() {
 		}
 
 		fetchData();
-	}, [userId]);
+	}, [userId, order]);
 
 	function adminAuth() {
 		return (user && (user.userType === 2));
@@ -75,10 +75,6 @@ export default function Routes() {
 
 	function userAuth() {
 		return (user._id && userId);
-	}
-	
-	function userAndAdmin() {
-		return (user && ((user._id == userId) || user.userType === 1 || user.userType === 2));
 	}
 
 	if(isLoading) {

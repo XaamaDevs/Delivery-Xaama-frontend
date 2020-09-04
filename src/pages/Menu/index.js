@@ -304,10 +304,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 		if(order.products) {
 			var newOrder = order;
 			newOrder["products"].push(product);
+			newOrder["total"] += productTotal;
 
 			setOrder(newOrder);
 		} else {
-			setOrder({ products: [product] });
+			setOrder({ products: [product], user, deliver: false, total: productTotal, address: user.address });
 		}
 
 		setProductOrderModal(false);
