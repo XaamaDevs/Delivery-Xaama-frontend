@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
-import { connect, disconnect, subscribeToNewUsers } from "../../../services/websocket";
+import { connect, disconnect, subscribeToNewUsers, subscribeToDeleteUsers } from "../../../services/websocket";
 
 // Importing styles
 import "./styles.css";
@@ -36,30 +36,30 @@ export default function AllUsers({ userId }) {
 
 	const history = useHistory();
 
-	useEffect(() => {
-		subscribeToNewUsers(user => setUsers([...users, user]));
-	}, [users]);
-	
-	async function setupWebSocket() {
+  async function setupWebSocket() {
 		disconnect();
 		connect();
-	}
+  }
+  
+  async function loadUser() {
+    const response = await api.get("user", {
+      headers : { 
+        authorization: userId
+      }
+    });
+    setUsers(response.data);
+    setupWebSocket();
+    setLoading(false);
+  }
 
 	useEffect(() => {
-		async function loadUser() {
-			const response = await api.get("user", {
-				headers : { 
-					authorization: userId
-				}
-			});
-			setUsers(response.data);
-			setupWebSocket();
-			setLoading(false);
-		}
-
 		loadUser();
-	}, [userId]);
-	
+  }, [userId]);
+  
+  useEffect(() => {
+    subscribeToNewUsers(user => setUsers([...users, user]));
+    subscribeToDeleteUsers(loadUser());
+	}, [users]);
 	
 
 	async function handleTypeUser(event) {

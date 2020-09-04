@@ -7,6 +7,8 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
+import { connect, disconnect, subscribeToNewOrders } from "../../../services/websocket";
+
 // Importing styles
 import "./styles.css";
 
@@ -34,7 +36,16 @@ export default function AllOrders({ userId, userType }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-	const history = useHistory();
+  const history = useHistory();
+	
+	async function setupWebSocket() {
+		disconnect();
+		connect();
+  }
+  
+  useEffect(() => {
+		subscribeToNewOrders(order => setOrders([...orders, order]));
+	}, [orders]);
 
 	useEffect(() => {
 		async function loadOrder() {
@@ -44,7 +55,8 @@ export default function AllOrders({ userId, userType }) {
 				}
 			}).then((response) => {
 				if(response.data && response.data.length) {
-					setOrders(response.data);
+          setOrders(response.data);
+          setupWebSocket();
 				} else {
 					setTitle("Alerta!");
 					setColor("danger");
@@ -64,7 +76,7 @@ export default function AllOrders({ userId, userType }) {
 			setLoading(false);
 		}
 		loadOrder();
-	}, [userId]);
+  }, [userId]);
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();

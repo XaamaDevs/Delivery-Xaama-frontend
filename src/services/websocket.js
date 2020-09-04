@@ -8,12 +8,16 @@ function subscribeToNewUsers(subcribeFunction) {
 	socket.on("new-user", subcribeFunction);
 }
 
+function subscribeToDeleteUsers(subcribeFunction) {
+	socket.on("delete-user", subcribeFunction);
+}
+
+function subscribeToNewOrders(subcribeFunction) {
+	socket.on("new-order", subcribeFunction);
+}
+
 function connect() {
 	socket.connect();
-
-	socket.on("message", text => {
-		console.log(text);
-	});
 }
 
 function disconnect() {
@@ -25,5 +29,7 @@ function disconnect() {
 export {
 	connect,
 	disconnect,
-	subscribeToNewUsers,
+  subscribeToNewUsers,
+  subscribeToNewOrders,
+  subscribeToDeleteUsers,
 };
