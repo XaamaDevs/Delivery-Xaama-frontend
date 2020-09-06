@@ -42,41 +42,42 @@ export default function AllOrders({ userId, userType }) {
 		disconnect();
 		connect();
   }
+
+  async function loadOrder() {
+    await api.get("order", {
+      headers : {
+        authorization: userId
+      }
+    }).then((response) => {
+      if(response.data) {
+        setOrders(response.data);
+        setupWebSocket();
+      } else {
+        setTitle("Alerta!");
+        setColor("danger");
+        setMessage("Não há pedidos!");
+        setToastShow(true);
+      }
+    }).catch((error) => {
+      setTitle("Alerta!");
+      setColor("danger");
+      if(error.response) {
+        setMessage(error.response.data);
+      } else {
+        setMessage(error.message);
+      }
+      setToastShow(true);
+    });
+    setLoading(false);
+  }
   
+	useEffect(() => {
+		loadOrder();
+  }, [userId]);
+
   useEffect(() => {
 		subscribeToNewOrders(order => setOrders([...orders, order]));
 	}, [orders]);
-
-	useEffect(() => {
-		async function loadOrder() {
-			await api.get("order", {
-				headers : {
-					authorization: userId
-				}
-			}).then((response) => {
-				if(response.data && response.data.length) {
-          setOrders(response.data);
-          setupWebSocket();
-				} else {
-					setTitle("Alerta!");
-					setColor("danger");
-					setMessage("Não há pedidos!");
-					setToastShow(true);
-				}
-			}).catch((error) => {
-				setTitle("Alerta!");
-				setColor("danger");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
-			setLoading(false);
-		}
-		loadOrder();
-  }, [userId]);
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();

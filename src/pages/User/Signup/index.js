@@ -69,7 +69,7 @@ export default function Signup({ setUserId, setUser }) {
 				} else {
 					setMessage(error.message);
 				}
-				setToastShow(true);
+				setToastShow(true); // deu erro de objeto
 			});
 	}
 
