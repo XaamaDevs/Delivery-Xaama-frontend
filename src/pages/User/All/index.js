@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
-import { connect, disconnect, subscribeToNewUsers, subscribeToDeleteUsers } from "../../../services/websocket";
+import { connect, disconnect, subscribeToNewUsers, subscribeToDeleteUsers, subscribeToUpdateUsers } from "../../../services/websocket";
 
 // Importing styles
 import "./styles.css";
@@ -59,6 +59,7 @@ export default function AllUsers({ userId }) {
   useEffect(() => {
     subscribeToNewUsers(user => setUsers([...users, user]));
     subscribeToDeleteUsers(loadUser());
+    subscribeToUpdateUsers(loadUser());
 	}, [users]);
 	
 

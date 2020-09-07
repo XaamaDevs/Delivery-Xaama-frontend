@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
-import { connect, disconnect, subscribeToNewOrders } from "../../../services/websocket";
+import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders } from "../../../services/websocket";
 
 // Importing styles
 import "./styles.css";
@@ -30,7 +30,8 @@ export default function AllOrders({ userId, userType }) {
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
-	const [modalAlert, setModalAlert] = useState(false);
+  const [modalAlert, setModalAlert] = useState(false);
+  const [modalUpdate, setModalUpdate] = useState(false);
 	const [modalFeedback, setModalFeedback] = useState(false);
 	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -38,7 +39,7 @@ export default function AllOrders({ userId, userType }) {
 
   const history = useHistory();
 	
-	async function setupWebSocket() {
+	function setupWebSocket() {
 		disconnect();
 		connect();
   }
@@ -58,6 +59,7 @@ export default function AllOrders({ userId, userType }) {
         setMessage("Não há pedidos!");
         setToastShow(true);
       }
+      
     }).catch((error) => {
       setTitle("Alerta!");
       setColor("danger");
@@ -70,15 +72,17 @@ export default function AllOrders({ userId, userType }) {
     });
     setLoading(false);
   }
-  
+
+  useEffect(() => {
+    subscribeToNewOrders(o => setOrders([...orders, o]));
+    subscribeToUpdateOrders(loadOrder());
+	}, [orders]);
+
 	useEffect(() => {
 		loadOrder();
   }, [userId]);
 
-  useEffect(() => {
-		subscribeToNewOrders(order => setOrders([...orders, order]));
-	}, [orders]);
-
+  
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
 		setOrderA(order);
@@ -98,7 +102,7 @@ export default function AllOrders({ userId, userType }) {
 				setTitle("Pedido enviado!");
 				setMessage("Alterações feitas com sucesso!");
 				setColor("warning");
-				setModalAlert(true);
+				setModalUpdate(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
@@ -108,7 +112,7 @@ export default function AllOrders({ userId, userType }) {
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setModalUpdate(true);
 			});
 	}
 	
@@ -382,6 +386,18 @@ export default function AllOrders({ userId, userType }) {
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
 					<Button variant={color} onClick={() => history.go()}>
+						Fechar
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+      <Modal show={modalUpdate} onHide={() => setModalUpdate(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>{title}</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>{message}</Modal.Body>
+				<Modal.Footer>
+					<Button variant={color} onClick={() => setModalUpdate(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>
