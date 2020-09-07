@@ -42,45 +42,45 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
-	const [productFinishOrderModal, setProductFinishOrderModal] = useState(false);
+	const [finishOrderModal, setFinishOrderModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-  const [isLoading, setLoading] = useState(true);
-  
-  function setupWebSocket() {
+	const [isLoading, setLoading] = useState(true);
+	
+	function setupWebSocket() {
 		disconnect();
 		connect();
-  }
+	}
 
-  async function loadOrder() {
-    await api.get("/order/" + userId)
-      .then((response) => {
-        if(response.data && response.data.length) {
-          setOrders(response.data);
-          setupWebSocket();
-        } else {
-          setTitle("Alerta!");
-          setMessage("Não há pedidos!");
-          setToastShow(true);
-        }
-      }).catch((error) => {
-        setTitle("Alerta!");
-        if(error.response) {
-          setMessage(error.response.data);
-        } else {
-          setMessage(error.message);
-        }
-        setToastShow(true);
-      });
-    setLoading(false);
-  }
+	async function loadOrder() {
+		await api.get("/order/" + userId)
+			.then((response) => {
+				if(response.data && response.data.length) {
+					setOrders(response.data);
+					setupWebSocket();
+				} else {
+					setTitle("Alerta!");
+					setMessage("Não há pedidos!");
+					setToastShow(true);
+				}
+			}).catch((error) => {
+				setTitle("Alerta!");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+		setLoading(false);
+	}
 
-  useEffect(() => {
-    subscribeToNewOrders(o => setOrders([...orders, o]));
-    subscribeToUpdateOrders(loadOrder());
+	useEffect(() => {
+		subscribeToNewOrders(o => setOrders([...orders, o]));
+		subscribeToUpdateOrders(loadOrder());
 	}, [orders]);
 
 	useEffect(() => {
@@ -123,6 +123,34 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				setFeedback(true);
 			});
 		setFeedback("");
+	}
+
+	async function handleFinishOrder(event) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		data.append("user", order.user);
+		data.append("products", order.products);
+		data.append("deliver", deliverOrder);
+		data.append("address", deliverAddress);
+
+		await api.post("order", data)
+			.then(() => {
+				setTitle("Pedido enviado!");
+				setMessage("Obrigado pela preferência! Acompanhe seu pedido por aqui.");
+				setColor("warning");
+				setFinishOrderModal(false);
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Alerta!");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
 	}
 
 	const header = (
@@ -284,7 +312,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									<Button
 										onClick={() => {
 											setDeliverAdress(order.user.address.join(", ")); 
-											setProductFinishOrderModal(true); 
+											setFinishOrderModal(true); 
 										}}
 										className="mx-auto my-1"
 										variant="outline-warning"
@@ -380,16 +408,17 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 			</Modal>
 
 			<Modal 
-				show={productFinishOrderModal} 
-				onHide={() => setProductFinishOrderModal(false)} 
-				size="lg" 
+				show={finishOrderModal} 
+				onHide={() => {setToastShow(false); setFinishOrderModal(false);}} 
+				size="md" 
 				centered
 			>
+				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Finalizar pedido</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
+					<Form onSubmit={handleFinishOrder}>
 						<Form.Group controlId="deliverAddress">
 							<Form.Label>
 								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
@@ -417,7 +446,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 							</Form.Text>
 						</Form.Group>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => setProductFinishOrderModal(false)}>
+							<Button variant="danger" onClick={() => {setToastShow(false); setFinishOrderModal(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
