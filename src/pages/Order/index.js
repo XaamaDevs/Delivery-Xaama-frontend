@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 // Importing backend api
 import api from "../../services/api";
 
+import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders } from "../../services/websocket";
+
 // Importing styles
 import "./styles.css";
 
@@ -46,31 +48,42 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
+  
+  function setupWebSocket() {
+		disconnect();
+		connect();
+  }
+
+  async function loadOrder() {
+    await api.get("/order/" + userId)
+      .then((response) => {
+        if(response.data && response.data.length) {
+          setOrders(response.data);
+          setupWebSocket();
+        } else {
+          setTitle("Alerta!");
+          setMessage("Não há pedidos!");
+          setToastShow(true);
+        }
+      }).catch((error) => {
+        setTitle("Alerta!");
+        if(error.response) {
+          setMessage(error.response.data);
+        } else {
+          setMessage(error.message);
+        }
+        setToastShow(true);
+      });
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    subscribeToNewOrders(o => setOrders([...orders, o]));
+    subscribeToUpdateOrders(loadOrder());
+	}, [orders]);
 
 	useEffect(() => {
-		async function loadOrder() {
-			await api.get("/order/" + userId)
-				.then((response) => {
-					if(response.data && response.data.length) {
-						setOrders(response.data);
-					} else {
-						setTitle("Alerta!");
-						setMessage("Não há pedidos!");
-						setToastShow(true);
-					}
-				}).catch((error) => {
-					setTitle("Alerta!");
-					if(error.response) {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
-			setLoading(false);
-		}
-
 		loadOrder();
 	}, [userId]);
 

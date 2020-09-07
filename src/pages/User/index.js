@@ -383,7 +383,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						{user.userType === 2 ?
 							<Button
 								onClick = {event => handleModal(event, 4)}
-								variant="outline-primary"
+								variant="outline-warning"
 							>
 								Info da empresa
 							</Button>
