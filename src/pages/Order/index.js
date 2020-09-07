@@ -11,16 +11,31 @@ import "./styles.css";
 import camera from "../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Form, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
+import { 
+	Card, 
+	CardDeck, 
+	Nav, 
+	Button, 
+	Modal, 
+	Form, 
+	Row, 
+	Col, 
+	Spinner, 
+	Container, 
+	Image, 
+	Toast 
+} from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, user, order, setOrder }) {
+export default function AllOrders({ userId, user, order, setOrder, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
-	const [orderId, setOrderId]= useState("");
+	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
-	const [feedback, setFeedback]= useState("");
+	const [feedback, setFeedback] = useState("");
+	const [deliverAddress, setDeliverAdress] = useState("");
+	const [deliverOrder, setDeliverOrder] = useState(false);
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
@@ -61,12 +76,14 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
+
 		setOrderA(order);
 		setOrderListingModal(true);
 	}
 	
 	async function handleProductList(event, productA) {
 		event.preventDefault();
+
 		setProduct(productA);
 	}
 
@@ -119,7 +136,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 					<CardDeck className="p-2">
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
-								<Col md={7}>
+								<Col md={6}>
 									<Image src={product.product.thumbnail_url ? product.product.thumbnail_url : camera} fluid rounded />
 									<Card.Body key={product._id}>
 										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
@@ -148,7 +165,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 										
 									</Card.Body>
 								</Col>
-								<Col className="ml-3 mt-2" >
+								<Col className="ml-3 mt-2">
 									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
 									{product.additions.length ? (product.additions).map(addition => (
 										<Card.Text key={(addition) ? addition._id : null }>{addition.name}
@@ -217,7 +234,7 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				</Container>
 				:
 				<>
-					{orders && orders.length ? 
+					{(orders && orders.length) || order.products ? 
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
 						:
 						<>
@@ -235,13 +252,13 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 									</div>             
 								</header>
 								<p>{order.user.phone.length ? order.user.phone: "Telefone não informado"}</p>
-								{order.deliver ?
+								{deliverOrder ?
 									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
 									: 
 									<p>{"Vai retirar no balcão!"}</p>
 								}
 								<p>
-									{"Total a pagar R$" + order.total}
+									{"Total a pagar R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
 								</p>
 								<Row>
 									<Button 
@@ -249,10 +266,13 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 										className="mx-auto my-1"
 										id="btn-password"
 									>
-									Ver pedido
+										Ver pedido
 									</Button>
 									<Button
-										onClick={() => setProductFinishOrderModal(true)}
+										onClick={() => {
+											setDeliverAdress(order.user.address.join(", ")); 
+											setProductFinishOrderModal(true); 
+										}}
 										className="mx-auto my-1"
 										variant="outline-warning"
 									>
@@ -346,8 +366,6 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 				</Modal.Footer>
 			</Modal>
 
-
-
 			<Modal 
 				show={productFinishOrderModal} 
 				onHide={() => setProductFinishOrderModal(false)} 
@@ -358,14 +376,42 @@ export default function AllOrders({ userId, user, order, setOrder }) {
 					<Modal.Title>Finalizar pedido</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Modal.Footer>
-						<Button variant="danger" onClick={() => setProductFinishOrderModal(false)}>
-							Fechar
-						</Button>
-						<Button variant="warning" type="submit">
-							Finalizar
-						</Button>
-					</Modal.Footer>
+					<Form>
+						<Form.Group controlId="deliverAddress">
+							<Form.Label>
+								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
+							</Form.Label>
+							<Form.Check 
+								type="switch"
+								id="custom-switch"
+								label="Marque aqui"
+								checked={deliverOrder}
+								onChange={e => setDeliverOrder(e.target.checked)}
+							/>
+						</Form.Group>
+						<Form.Group controlId="deliverAddress">
+							<Form.Label>Endereço</Form.Label>
+							<Form.Control 
+								value={deliverAddress}
+								onChange={e => setDeliverAdress(e.target.value)} 
+								type="text" 
+								pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
+								placeholder="Rua, Número, Bairro, Complemento (opcional)"
+								disabled={!deliverOrder}
+							/>
+							<Form.Text className="text-muted">
+								Separe rua, número, bairro e complemento por vírgula
+							</Form.Text>
+						</Form.Group>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => setProductFinishOrderModal(false)}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+							</Button>
+						</Modal.Footer>
+					</Form>
 				</Modal.Body>
 			</Modal>
 

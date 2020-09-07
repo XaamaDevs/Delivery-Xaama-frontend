@@ -479,10 +479,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 									/>
+									<Form.Text className="text-muted">
+										Separe rua, número, bairro e complemento por vírgula
+									</Form.Text>
 								</Form.Group>
-								<Form.Text className="text-muted">
-									Separe rua, número, bairro e complemento por vírgula
-								</Form.Text>
 							</Col>
 						</Row>
 						<Modal.Footer>
@@ -516,7 +516,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										placeholder="Senha atual"
 										required
 									/>
-									<small>Sua nova senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
+									<Form.Text className="text-muted">
+										Sua nova senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número
+									</Form.Text>
 								</Form.Group>
 							</Col>
 							<Col sm>
@@ -618,10 +620,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Cidade"
 									/>
+									<Form.Text className="text-muted">
+										Separe rua, número, bairro e cidade por vírgula
+									</Form.Text>
 								</Form.Group>
-								<Form.Text className="text-muted">
-									Separe rua, número, bairro e cidade por vírgula
-								</Form.Text>
 							</Col>
 						</Row>
 						<Row>
@@ -647,10 +649,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										placeholder="Tipos de produtos"
 										required
 									/>
+									<Form.Text className="text-muted">
+										Separe os tipos por vírgula
+									</Form.Text>
 								</Form.Group>
-								<Form.Text className="text-muted">
-									Separe os tipos por vírgula
-								</Form.Text>
 							</Col>
 						</Row>
 						<Modal.Footer>

@@ -115,6 +115,7 @@ export default function Routes() {
 								user={user} 
 								order={order}
 								setOrder={setOrder} 
+								companyInfo={companyInfo}
 							/> : <Auth />;
 					}}
 				/>
