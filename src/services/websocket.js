@@ -1,5 +1,8 @@
 import socketio from "socket.io-client";
 
+// Importing backend api
+import api from "./api";
+
 const socket = socketio("http://localhost:4000", {
 	autoConnect: false,
 });
@@ -28,8 +31,19 @@ function connect() {
 	socket.connect();
 }
 
-function disconnect() {
+async function disconnect() {
 	if (socket.connected) {
+    await api.delete("socket")
+      .then((response) => {
+				//alert(response);
+			})
+			.catch((error) => {
+				if(error.response) {
+					//alert(error.response.data);
+				} else {
+					//alert(error.message)
+				}
+			});
 		socket.disconnect();
 	}
 }
