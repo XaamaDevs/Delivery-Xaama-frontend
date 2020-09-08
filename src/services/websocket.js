@@ -23,6 +23,10 @@ function subscribeToNewOrders(subcribeFunction) {
 	socket.on("new-order", subcribeFunction);
 }
 
+function subscribeToDeleteOrders(subcribeFunction) {
+	socket.on("delete-order", subcribeFunction);
+}
+
 function subscribeToUpdateOrders(subcribeFunction) {
 	socket.on("update-order", subcribeFunction);
 }
@@ -54,6 +58,7 @@ export {
   subscribeToNewUsers,
   subscribeToNewOrders,
   subscribeToDeleteUsers,
+  subscribeToDeleteOrders,
   subscribeToUpdateUsers,
   subscribeToUpdateOrders,
 };

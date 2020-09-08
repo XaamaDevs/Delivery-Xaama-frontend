@@ -169,7 +169,7 @@ export default function AllOrders({ userId, userType }) {
 	const productCard = (product) => {
 		return (
 			<>
-				{product.product ?
+				{orders && orders.length && product.product ?
 					<CardDeck className="p-2">
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
@@ -269,64 +269,62 @@ export default function AllOrders({ userId, userType }) {
 				</Container>
 				:
 				<>
-					{orders && orders.length ? 
-						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
-						:
+          {orders && orders.length ?
+            <>
+              <h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Todos pedidos das últimas 24 horas!</h1>
+              <Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
+                {orders.map(order => (
+                  <Col key={order._id} className="order-item" >
+                    <header>
+                      <Image src={order.user.thumbnail ? order.user.thumbnail_url: camera } alt="thumbnail" />
+                      <div className="order-info">
+                        <strong>{order.user.name}</strong>
+                        <span>{order.user.email}</span>
+                      </div>             
+                    </header>
+                    <p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
+                    {order.deliver ?
+                      <p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
+                      : 
+                      <p>{"Vai retirar no balcão!"}</p>
+                    }
+                    <p>
+                      {"Total a pagar R$" + order.total}
+                    </p>
+                    <button 
+                      onClick={e => handleSetOrder(e, order)}
+                      className="btn mt-1 mr-1" 
+                      id="btn-password"
+                    >
+                    Ver pedido
+                    </button>
+                    {!(order.status) ? 
+                      <Button
+                        className="mt-1"
+                        onClick={e => handleDeliver(e, order)}
+                        variant="outline-warning">Entregar pedido
+                      </Button>
+                      : 
+                      <Button
+                        className="mt-1"
+                        onClick={e => handleFeedback(e, order)}
+                        variant="outline-warning">Avaliação
+                      </Button>
+                    }
+                  </Col>
+                ))}
+              </Row>
+              <Button
+                className="d-flex mx-auto my-4"
+                onClick={() => setModalDeleteOrder(true)}
+                variant="outline-danger">Apagar todos pedidos
+              </Button>
+            </>
+            :
 						<>
 							{toast}
 							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
 						</>
-					}
-					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{orders.map(order => (
-							<Col key={order._id} className="order-item" >
-								<header>
-									<Image src={order.user.thumbnail ? order.user.thumbnail_url: camera } alt="thumbnail" />
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>             
-								</header>
-								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
-								{order.deliver ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
-									<p>{"Vai retirar no balcão!"}</p>
-								}
-								<p>
-									{"Total a pagar R$" + order.total}
-								</p>
-								<button 
-									onClick={e => handleSetOrder(e, order)}
-									className="btn mt-1 mr-1" 
-									id="btn-password"
-								>
-								Ver pedido
-								</button>
-								{!(order.status) ? 
-									<Button
-										className="mt-1"
-										onClick={e => handleDeliver(e, order)}
-										variant="outline-warning">Entregar pedido
-									</Button>
-									: 
-									<Button
-										className="mt-1"
-										onClick={e => handleFeedback(e, order)}
-										variant="outline-warning">Avaliação
-									</Button>
-								}
-							</Col>
-						))}
-					</Row>
-					{orders && orders.length ? 
-						<Button
-							className="d-flex mx-auto my-4"
-							onClick={() => setModalDeleteOrder(true)}
-							variant="outline-danger">Apagar todos pedidos
-						</Button>
-						: 
-						null
 					}
 				</>
 			}

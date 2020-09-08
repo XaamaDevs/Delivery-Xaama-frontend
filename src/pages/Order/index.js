@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 // Importing backend api
 import api from "../../services/api";
 
-import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders } from "../../services/websocket";
+import { connect, disconnect, subscribeToNewOrders, subscribeToDeleteOrders, subscribeToUpdateOrders } from "../../services/websocket";
 
 // Importing styles
 import "./styles.css";
@@ -79,7 +79,8 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	}
 
 	useEffect(() => {
-		subscribeToNewOrders(o => setOrders([...orders, o]));
+    subscribeToNewOrders(o => setOrders([...orders, o]));
+    subscribeToDeleteOrders(setOrders(orders));
 		subscribeToUpdateOrders(loadOrder());
 	}, [orders]);
 
@@ -353,7 +354,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									{!(order.status) ? 
 										<Button
 											className="d-flex justify-content-center mx-auto mt-1"
-											variant="outline-danger">Pedido sendo preparado
+											variant="danger">Pedido sendo preparado
 										</Button>
 										:
 										<>
