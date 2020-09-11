@@ -58,7 +58,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	async function loadOrder() {
 		await api.get("/order/" + userId)
 			.then((response) => {
-				if(response.data && response.data.length) {
+				if(response.data) {
 					setOrders(response.data);
 					setupWebSocket();
 				} else {
@@ -79,8 +79,8 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	}
 
 	useEffect(() => {
-    subscribeToNewOrders(o => setOrders([...orders, o]));
-    subscribeToDeleteOrders(setOrders(orders));
+		subscribeToNewOrders(o => setOrders([...orders, o]));
+		subscribeToDeleteOrders(loadOrder());
 		subscribeToUpdateOrders(loadOrder());
 	}, [orders]);
 
@@ -174,7 +174,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const productCard = (product) => {
 		return (
 			<>
-				{product.product ?
+				{orders && orders.length && product.product ?
 					<CardDeck className="p-2">
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
@@ -358,15 +358,24 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 										</Button>
 										:
 										<>
-											<Button
-												className="d-flex justify-content-center mx-auto mt-1"
-												variant="outline-warning">Pedido a caminho
-											</Button>
-											<Button
-												onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
-												className="d-flex justify-content-center mx-auto mt-1"
-												variant="outline-warning">Recebeu seu pedido? Avalie!
-											</Button>
+											{!(order.feedback) ?
+												<>
+													<Button
+														className="d-flex justify-content-center mx-auto mt-1"
+														variant="outline-warning">Pedido a caminho
+													</Button>
+													<Button
+														onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
+														className="d-flex justify-content-center mx-auto mt-1"
+														variant="outline-warning">Recebeu seu pedido? Avalie!
+													</Button>
+												</>
+												: 
+												<Button
+													className="d-flex justify-content-center mx-auto mt-1"
+													variant="outline-warning">Pedido entregue
+												</Button>
+											}
 										</>
 									}
 								</Row>

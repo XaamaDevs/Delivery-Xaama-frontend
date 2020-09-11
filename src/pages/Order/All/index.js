@@ -31,7 +31,6 @@ export default function AllOrders({ userId, userType }) {
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
   const [modalAlert, setModalAlert] = useState(false);
-  const [modalUpdate, setModalUpdate] = useState(false);
 	const [modalFeedback, setModalFeedback] = useState(false);
 	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -41,7 +40,7 @@ export default function AllOrders({ userId, userType }) {
 	
 	function setupWebSocket() {
 		disconnect();
-		connect();
+    connect();
   }
 
   async function loadOrder() {
@@ -102,7 +101,7 @@ export default function AllOrders({ userId, userType }) {
 				setTitle("Pedido enviado!");
 				setMessage("Alterações feitas com sucesso!");
 				setColor("warning");
-				setModalUpdate(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
@@ -112,7 +111,7 @@ export default function AllOrders({ userId, userType }) {
 				} else {
 					setMessage(error.message);
 				}
-				setModalUpdate(true);
+				setModalAlert(true);
 			});
 	}
 	
@@ -377,25 +376,13 @@ export default function AllOrders({ userId, userType }) {
 				</Modal.Body>
 			</Modal>
 			
-			<Modal show={modalAlert} onHide={() => history.go()}>
+			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={() => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
-
-      <Modal show={modalUpdate} onHide={() => setModalUpdate(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalUpdate(false)}>
+					<Button variant={color} onClick={() => setModalAlert(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>
