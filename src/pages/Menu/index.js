@@ -5,21 +5,21 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Container, 
-	Carousel, 
-	Spinner, 
-	Toast, 
+import { Container,
+	Carousel,
+	Spinner,
+	Toast,
 	OverlayTrigger,
 	Tooltip,
-	Nav, 
-	Card, 
-	Button, 
-	CardDeck, 
-	Modal, 
-	Form, 
-	Col, 
-	Row, 
-	Image 
+	Nav,
+	Card,
+	Button,
+	CardDeck,
+	Modal,
+	Form,
+	Col,
+	Row,
+	Image
 } from "react-bootstrap";
 
 //	Importing api to communicate to backend
@@ -67,7 +67,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
-  const history = useHistory();
+	const history = useHistory();
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
@@ -105,7 +105,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								prods.push(product);
 							}
 						}
-						
+
 						prodsByType[type] = prods;
 					}
 
@@ -133,7 +133,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 								adds.push(addition);
 							}
 						}
-						
+
 						AddsByType[type] = adds;
 					}
 
@@ -163,7 +163,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	//	Function to handle input product thumbnail
 	async function inputImage(event) {
 		event.preventDefault();
-	
+
 		document.getElementById("inputImage").click();
 	}
 
@@ -198,7 +198,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		}
 
 		await api.post("product", data, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -243,7 +243,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 		}
 
 		await api.put("product/" + productId, data, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -267,9 +267,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 	async function handleProductDelete(event) {
 		event.preventDefault();
-		
+
 		await api.delete("product/" + productId, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -319,7 +319,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 		if(additionsOrder.length < 4) {
 			var newAdditionsOrder = additionsOrder;
-			
+
 			newAdditionsOrder.push(add);
 
 			setAdditionsOrder(newAdditionsOrder);
@@ -342,7 +342,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 	async function handleProductModal(event, modal, product = null) {
 		event.preventDefault();
-		
+
 		setProductId(product ? product._id : "");
 		setProductName(product ? product.name : "");
 		setProductIngredients(product ? product.ingredients.join(", ") : "");
@@ -371,10 +371,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 		const c = event.target.value.replace(productPrices, "");
 
 		if(!/^((^$)|(^\s$)|(^,$)|(^\.$))$/.test(c) && c.length <= 1) {
-			event.target.value = 
-				/^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$/.test(event.target.value) ? 
-					event.target.value 
-					: 
+			event.target.value =
+				/^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$/.test(event.target.value) ?
+					event.target.value
+					:
 					productPrices;
 		}
 
@@ -391,7 +391,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 	async function validateIngredients(event) {
 		const c = event.target.value.replace(productIngredients, "");
-		const ingRegExp = 
+		const ingRegExp =
 			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
 
 
@@ -412,7 +412,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 	async function validateSizes(event) {
 		const c = event.target.value.replace(productSizes, "");
-		const sizeRegExp = 
+		const sizeRegExp =
 			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
 
 
@@ -437,7 +437,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				{Object.keys(productsByType).map((type, index) => (
 					productsByType[type] && productsByType[type].length ?
 						<Nav.Item key={index}>
-							<Nav.Link 
+							<Nav.Link
 								className="btn-outline-warning rounded"
 								href={"#" + index}
 								onClick={e => handleProductsList(e, type)}>
@@ -449,7 +449,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				))}
 				{user.userType === 1 || user.userType === 2 ?
 					<Nav.Item>
-						<Nav.Link 
+						<Nav.Link
 							className="btn-outline-warning rounded"
 							onClick={e => handleProductModal(e, 0)}>
 							Adicionar novo produto
@@ -476,18 +476,18 @@ export default function Menu({ userId, user, order, setOrder }) {
 								ingredient + ", "
 						))}
 					</Card.Text>
-					{userId && user ? 
+					{userId && user ?
 						user.userType === 1 || user.userType === 2 ?
 							<div className="d-flex justify-content-between flex-wrap my-auto">
-								<Button  
+								<Button
 									variant="warning"
 									size="sm"
 									onClick ={e => handleProductModal(e, 1, product)}
 								>
 									Modificar
 								</Button>
-								<Button 
-									variant="danger" 
+								<Button
+									variant="danger"
 									size="sm"
 									onClick={e => handleProductModal(e, 2, product)}
 								>
@@ -496,7 +496,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 							</div>
 							:
 							<Button
-								className="my-auto" 
+								className="my-auto"
 								variant="warning"
 								size="sm"
 								onClick ={() => {
@@ -504,10 +504,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 									setAdditionsOrder([]);
 									setProductSize(0);
 									setProductTotal(0);
-									setProductOrder(product); 
+									setProductOrder(product);
 									setProductTotal(product.prices[0]);
 									setProductOrderModal(true);
-								}} 
+								}}
 							>
 								Adicionar aos pedidos
 							</Button>
@@ -557,11 +557,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 		<Container className="product-container w-100">
 			<Card className="px-3" bg="dark">
 				{header}
-				{isLoading ? 
-					<Spinner 
-						className="my-5 mx-auto" 
-						style={{width: "5rem", height: "5rem"}} 
-						animation="grow" 
+				{isLoading ?
+					<Spinner
+						className="my-5 mx-auto"
+						style={{width: "5rem", height: "5rem"}}
+						animation="grow"
 						variant="warning"
 					/>
 					:
@@ -583,10 +583,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 				}
 			</Card>
 
-			<Modal 
-				show={productAddModal} 
-				onHide={() => {setProductAddModal(false); setToastShow(false);}} 
-				size="lg" 
+			<Modal
+				show={productAddModal}
+				onHide={() => {setProductAddModal(false); setToastShow(false);}}
+				size="lg"
 				centered
 			>
 				{toast}
@@ -603,8 +603,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 									type="file"
 									onChange={event => setProductThumbnail(event.target.files[0])}
 								/>
-								<Image 
-									id="thumbnail" 
+								<Image
+									id="thumbnail"
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -616,10 +616,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 							<Col sm>
 								<Form.Group controlId="productName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={productName}
-										onChange={e => setProductName(e.target.value)} 
-										type="text" 
+										onChange={e => setProductName(e.target.value)}
+										type="text"
 										placeholder="Nome do produto"
 										required
 									/>
@@ -636,9 +636,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productPrices}
-											onChange={validatePrices} 
+											onChange={validatePrices}
 											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
@@ -654,14 +654,14 @@ export default function Menu({ userId, user, order, setOrder }) {
 										placement="top"
 										overlay={
 											<Tooltip>
-												Para tamanho único, digite único, 
+												Para tamanho único, digite único,
 												para múltiplos tamanhos, separe-os entre vírgulas.
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productSizes}
-											onChange={validateSizes} 
+											onChange={validateSizes}
 											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
 											type="text"
 											placeholder="Tamanho do produto"
@@ -671,9 +671,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 								</Form.Group>
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
-									<Form.Control 
-										value={productType} 
-										onChange={e => setProductType(e.target.value)} 
+									<Form.Control
+										value={productType}
+										onChange={e => setProductType(e.target.value)}
 										as="select"
 										placeholder="Tipo do produto"
 										required
@@ -698,9 +698,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productIngredients}
-											onChange={validateIngredients} 
+											onChange={validateIngredients}
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}
@@ -723,10 +723,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal 
-				show={productUpdateModal} 
-				onHide={() => {setProductUpdateModal(false); setToastShow(false);}} 
-				size="lg" 
+			<Modal
+				show={productUpdateModal}
+				onHide={() => {setProductUpdateModal(false); setToastShow(false);}}
+				size="lg"
 				centered
 			>
 				{toast}
@@ -743,8 +743,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 									type="file"
 									onChange={event => setProductThumbnail(event.target.files[0])}
 								/>
-								<Image 
-									id="thumbnail" 
+								<Image
+									id="thumbnail"
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -756,10 +756,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 							<Col sm>
 								<Form.Group controlId="productName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={productName}
-										onChange={e => setProductName(e.target.value)} 
-										type="text" 
+										onChange={e => setProductName(e.target.value)}
+										type="text"
 										placeholder="Nome do produto"
 										required
 									/>
@@ -776,9 +776,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productPrices}
-											onChange={validatePrices} 
+											onChange={validatePrices}
 											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
@@ -794,14 +794,14 @@ export default function Menu({ userId, user, order, setOrder }) {
 										placement="top"
 										overlay={
 											<Tooltip>
-												Para tamanho único, digite único, 
+												Para tamanho único, digite único,
 												para múltiplos tamanhos, separe-os entre vírgulas.
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productSizes}
-											onChange={validateSizes} 
+											onChange={validateSizes}
 											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
 											type="text"
 											placeholder="Tamanho do produto"
@@ -811,9 +811,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 								</Form.Group>
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
-									<Form.Control 
-										value={productType} 
-										onChange={e => setProductType(e.target.value)} 
+									<Form.Control
+										value={productType}
+										onChange={e => setProductType(e.target.value)}
 										as="select"
 										placeholder="Tipo do produto"
 										required
@@ -837,9 +837,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 											</Tooltip>
 										}
 									>
-										<Form.Control 
+										<Form.Control
 											value={productIngredients}
-											onChange={validateIngredients} 
+											onChange={validateIngredients}
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}
@@ -869,7 +869,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				</Modal.Header>
 				<Modal.Body>
 					<h3>
-						{productName && productType ? 
+						{productName && productType ?
 							productType[0].toUpperCase() + productType.slice(1) + " " + productName
 							:
 							null
@@ -887,10 +887,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal 
-				show={productOrderModal} 
-				onHide={() => {setProductOrderModal(false); setToastShow(false);}} 
-				size="lg" 
+			<Modal
+				show={productOrderModal}
+				onHide={() => {setProductOrderModal(false); setToastShow(false);}}
+				size="lg"
 				centered
 			>
 				{toast}
@@ -900,8 +900,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 				<Modal.Body>
 					<Row>
 						<Col className="d-flex my-2" sm>
-							<Image 
-								id="thumbnail" 
+							<Image
+								id="thumbnail"
 								className={preview || productOrder.thumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
 								src={preview ? preview : (productOrder.thumbnail_url ? productOrder.thumbnail_url : camera)}
 								alt="Imagem do produto"
@@ -923,8 +923,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 										{productOrder.prices && productOrder.prices.length !== 1 ?
 											<Col>
 												<Form.Group className="m-auto" controlId="productType">
-													<Form.Control 
-														value={productOrder.sizes[productSize]} 
+													<Form.Control
+														value={productOrder.sizes[productSize]}
 														onChange={e => {
 															const size = productOrder.sizes.indexOf(e.target.value);
 															setProductSize(size);
@@ -933,7 +933,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 																total += add.price;
 															}
 															setProductTotal(total);
-														}} 
+														}}
 														as="select"
 														required
 													>
@@ -959,7 +959,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 										}
 									>
 										<Carousel interval={null} indicators={false}>
-											{additions && additions.length ? 
+											{additions && additions.length ?
 												additions.map((add, index) => (
 													<Carousel.Item key={index} className="text-dark">
 														<Image
@@ -969,9 +969,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 															alt="Adição"
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
-															<Button 
-																className="mx-auto" 
-																size="sm" 
+															<Button
+																className="mx-auto"
+																size="sm"
 																variant="primary"
 																onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
 															>
@@ -994,9 +994,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 							<Card bg="light" text="dark">
 								<Card.Header>Observações</Card.Header>
 								<Card.Body>
-									<Form.Control 
+									<Form.Control
 										value={productNote}
-										onChange={e => setProductNote(e.target.value)} 
+										onChange={e => setProductNote(e.target.value)}
 										placeholder="Digite aqui se você deseja remover algum ingrediente do pedido (opcional)"
 										as="textarea"
 										rows="2"
@@ -1012,9 +1012,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 									<Card.Body>
 										<Row className="d-flex flex-row flex-wrap justify-content-start">
 											{additionsOrder.map((add, index) =>(
-												<Button 
+												<Button
 													size="sm"
-													key={index} 
+													key={index}
 													className="m-1"
 													onClick={e => {
 														var newAdditionsOrder = additionsOrder;

@@ -1,6 +1,9 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
 
+//	Importing React Router features
+import { useHistory } from "react-router-dom";
+
 // Importing backend api
 import api from "../../services/api";
 
@@ -13,19 +16,19 @@ import "./styles.css";
 import camera from "../../assets/camera.svg";
 
 //	Importing React features
-import { 
-	Card, 
-	CardDeck, 
-	Nav, 
-	Button, 
-	Modal, 
-	Form, 
-	Row, 
-	Col, 
-	Spinner, 
-	Container, 
-	Image, 
-	Toast 
+import {
+	Card,
+	CardDeck,
+	Nav,
+	Button,
+	Modal,
+	Form,
+	Row,
+	Col,
+	Spinner,
+	Container,
+	Image,
+	Toast
 } from "react-bootstrap";
 
 //	Exporting resource to routes.js
@@ -49,7 +52,10 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
-	
+
+	//	Defining history to jump through pages
+	const history = useHistory();
+
 	function setupWebSocket() {
 		disconnect();
 		connect();
@@ -94,7 +100,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 		setOrderA(order);
 		setOrderListingModal(true);
 	}
-	
+
 	async function handleProductList(event, productA) {
 		event.preventDefault();
 
@@ -103,7 +109,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 
 	async function handleFeedback(event) {
 		event.preventDefault();
-		
+
 		await api.put("/order/" + orderId, {status: true, feedback: feedback})
 			.then(() => {
 				setTitle("Avaliação enviada!");
@@ -129,12 +135,12 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	async function handleFinishOrder(event) {
 		event.preventDefault();
 
-		const data = new FormData();
-
-		data.append("user", order.user);
-		data.append("products", order.products);
-		data.append("deliver", deliverOrder);
-		data.append("address", deliverAddress);
+		const data = {
+			user: order.user,
+			products: order.products,
+			deliver: deliverOrder,
+			address: deliverAddress
+		};
 
 		await api.post("order", data)
 			.then(() => {
@@ -159,7 +165,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 			{(orderA.products) ? (orderA.products).map((productA, index) => (
 				<Nav.Item key={index}>
 					<Nav.Link
-						className="btn-outline-dark rounded" 
+						className="btn-outline-dark rounded"
 						href={"#" + index}
 						onClick={e => handleProductList(e, productA)} >{productA.product.name}
 					</Nav.Link>
@@ -183,7 +189,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									<Card.Body key={product._id}>
 										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
 										<Card.Text>
-											{product.product ? ((product.product.ingredients.length === 1) ? 
+											{product.product ? ((product.product.ingredients.length === 1) ?
 												"Ingrediente: "
 												:
 												"Ingredientes: "
@@ -204,7 +210,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 										<Card.Text>
 											{product && product.note ? "Observações: " + product.note : "Sem Observações"}
 										</Card.Text>
-										
+
 									</Card.Body>
 								</Col>
 								<Col className="ml-3 mt-2">
@@ -224,7 +230,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 							</Row>
 							<Card.Footer w-100>
 								<small>
-									{product.product ? 
+									{product.product ?
 										"Preço: R$" + product.product.prices[product.size]
 										:
 										null
@@ -261,22 +267,22 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 			</Toast>
 		</div>
 	);
-	
+
 	return (
 		<div className="all-container w-100">
 			{toast}
 			{isLoading ?
 				<Container className="d-flex h-100">
-					<Spinner 
+					<Spinner
 						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}} 
-						animation="grow" 
+						style={{width: "5rem", height: "5rem"}}
+						animation="grow"
 						variant="warning"
 					/>
 				</Container>
 				:
 				<>
-					{(orders && orders.length) || order.products ? 
+					{(orders && orders.length) || order.products ?
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
 						:
 						<>
@@ -284,26 +290,26 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{order.products ? 
+						{order.products ?
 							<Col className="order-item">
 								<header>
 									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
-									</div>             
+									</div>
 								</header>
 								<p>{order.user.phone.length ? order.user.phone: "Telefone não informado"}</p>
 								{deliverOrder ?
 									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
+									:
 									<p>{"Vai retirar no balcão!"}</p>
 								}
 								<p>
 									{"Total a pagar R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
 								</p>
 								<Row>
-									<Button 
+									<Button
 										onClick={e => handleSetOrder(e, order)}
 										className="mx-auto my-1"
 										id="btn-password"
@@ -312,8 +318,8 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									</Button>
 									<Button
 										onClick={() => {
-											setDeliverAdress(order.user.address.join(", ")); 
-											setFinishOrderModal(true); 
+											setDeliverAdress(order.user.address.join(", "));
+											setFinishOrderModal(true);
 										}}
 										className="mx-auto my-1"
 										variant="outline-warning"
@@ -332,26 +338,26 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
-									</div>             
+									</div>
 								</header>
 								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
 								{order.deliver ?
 									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
+									:
 									<p>{"Vai retirar no balcão!"}</p>
 								}
 								<p>
 									{"Total a pagar R$" + order.total}
 								</p>
 								<Row>
-									<Button 
+									<Button
 										onClick={e => handleSetOrder(e, order)}
 										className="btn d-flex justify-content-center mx-auto mt-1"
 										id="btn-password"
 									>
 									Ver pedido
 									</Button>
-									{!(order.status) ? 
+									{!(order.status) ?
 										<Button
 											className="d-flex justify-content-center mx-auto mt-1"
 											variant="danger">Pedido sendo preparado
@@ -370,7 +376,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 														variant="outline-warning">Recebeu seu pedido? Avalie!
 													</Button>
 												</>
-												: 
+												:
 												<Button
 													className="d-flex justify-content-center mx-auto mt-1"
 													variant="outline-warning">Pedido entregue
@@ -394,22 +400,22 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						<Card.Header>
 							{header}
 						</Card.Header>
-						{isLoading ? 
-							<Spinner 
-								className="my-5 mx-auto" 
-								style={{width: "5rem", height: "5rem"}} 
-								animation="grow" 
+						{isLoading ?
+							<Spinner
+								className="my-5 mx-auto"
+								style={{width: "5rem", height: "5rem"}}
+								animation="grow"
 								variant="warning"
 							/>
 							:
 							product ? productCard(product) : null
 						}
 					</Card>
-					
+
 				</Modal.Body>
 				<Modal.Footer>
-					<Button 
-						variant="warning" 
+					<Button
+						variant="warning"
 						onClick={() => {setOrderListingModal(false); setOrderA({}); setProduct({});}}
 					>
 						Fechar
@@ -417,10 +423,10 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</Modal.Footer>
 			</Modal>
 
-			<Modal 
-				show={finishOrderModal} 
-				onHide={() => {setToastShow(false); setFinishOrderModal(false);}} 
-				size="md" 
+			<Modal
+				show={finishOrderModal}
+				onHide={() => {setToastShow(false); setFinishOrderModal(false);}}
+				size="md"
 				centered
 			>
 				{toast}
@@ -433,7 +439,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 							<Form.Label>
 								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
 							</Form.Label>
-							<Form.Check 
+							<Form.Check
 								type="switch"
 								id="custom-switch"
 								label="Marque aqui"
@@ -443,10 +449,10 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						</Form.Group>
 						<Form.Group controlId="deliverAddress">
 							<Form.Label>Endereço</Form.Label>
-							<Form.Control 
+							<Form.Control
 								value={deliverAddress}
-								onChange={e => setDeliverAdress(e.target.value)} 
-								type="text" 
+								onChange={e => setDeliverAdress(e.target.value)}
+								type="text"
 								pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 								placeholder="Rua, Número, Bairro, Complemento (opcional)"
 								disabled={!deliverOrder}
@@ -477,9 +483,9 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 							<Col>
 								<Form.Group controlId="feedback">
 									<Form.Label>Sua avaliação</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={feedback}
-										onChange={e => setFeedback(e.target.value)} 
+										onChange={e => setFeedback(e.target.value)}
 										as="textarea"
 										rows="12"
 										placeholder="Avaliação sobre o pedido e atendimento"
@@ -506,7 +512,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalAlert(false)}>
+					<Button variant={color} onClick={() => { setModalAlert(false); history.go(); }}>
 						Fechar
 					</Button>
 				</Modal.Footer>
