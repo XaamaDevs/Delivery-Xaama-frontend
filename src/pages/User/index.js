@@ -26,6 +26,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [userAddress, setUserAddress] = useState(user.address ? user.address.join(", ") : null);
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
+	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
 
 	//	Company variable
@@ -35,7 +36,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companyAddress, setCompanyAddress] = useState(companyInfo.address);
 	const [companyFreight, setCompanyFreight] = useState(companyInfo.freight);
 	const [companyProductTypes, setCompanyProductTypes] = useState(companyInfo.productTypes.join(", "));
-	
+
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
@@ -46,7 +47,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	
+
 	//	Defining history to jump through pages
 	const history = useHistory();
 
@@ -58,7 +59,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	//	Function to handle input image profile
 	async function inputImage(event) {
 		event.preventDefault();
-	
+
 		document.getElementById("inputImage").click();
 	}
 
@@ -86,7 +87,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		}
 
 		await api.put("user", data , {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -121,7 +122,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("thumbnail", thumbnail);
 
 		await api.put("user", data , {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -157,7 +158,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			data.append("passwordO", userPasswordO);
 
 			await api.put("user" , data,  {
-				headers : { 
+				headers : {
 					authorization: userId
 				}})
 				.then(() => {
@@ -182,7 +183,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			setColor("warning");
 			setToastShow(true);
 		}
-		
+
 		setUserPasswordO("");
 		setUserPasswordN("");
 	}
@@ -191,8 +192,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		event.preventDefault();
 
 		await api.delete("user", {
-			headers : { 
-				authorization: userId
+			headers: {
+				authorization: userId,
+				password: userPasswordOnDelete
 			}})
 			.then((response) => {
 				sessionStorage.removeItem("userId");
@@ -215,6 +217,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				}
 				setToastShow(true);
 			});
+
+		setUserPasswordOnDelete("");
 	}
 
 	//	Function to handle update company info
@@ -231,7 +235,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("productTypes", companyProductTypes);
 
 		await api.post("company", data , {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
@@ -252,7 +256,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				setModalAlert(true);
 			});
 	}
-	
+
 	async function handleModal(event, modal, user = null) {
 		event.preventDefault();
 
@@ -318,10 +322,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							onChange={event => setThumbnail(event.target.files[0])}
 							required
 						/>
-						<Image 
+						<Image
 							id="thumbnail"
 							className={user.thumbnail || preview ? "border-0 m-auto" : "w-100 m-auto"}
-							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)} 
+							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)}
 							alt="Selecione sua imagem"
 							onClick={inputImage}
 							rounded
@@ -329,16 +333,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						/>
 						{user.thumbnail ?
 							<div className="d-flex justify-content-center flex-wrap my-auto">
-								<Button 
+								<Button
 									className="my-1 mx-2"
-									type="submit" 
-									variant="outline-warning" 
+									type="submit"
+									variant="outline-warning"
 								>
 									Trocar foto
 								</Button>
-								<Button 
+								<Button
 									className="my-1 mx-2"
-									onClick={handleThumbnailDelete} 
+									onClick={handleThumbnailDelete}
 									variant="outline-danger"
 								>
 									Apagar foto
@@ -346,9 +350,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</div>
 							:
 							<div className="d-flex">
-								<Button 
-									className="my-3 mx-auto" 
-									type="submit" 
+								<Button
+									className="my-3 mx-auto"
+									type="submit"
 									variant="outline-warning"
 								>
 									Adicionar foto
@@ -367,15 +371,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						</Card.Body>
 					</Card>
 					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
-						<Button 
+						<Button
 							variant="outline-warning"
 							onClick={event => handleModal(event, 1, user)}
 						>
 							Editar perfil
 						</Button>
-						<Button 
+						<Button
 							onClick ={event => handleModal(event, 2, user)}
-							className="btn" 
+							className="btn"
 							id="btn-password"
 						>
 							Trocar senha
@@ -400,15 +404,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
 							<Button
 								onClick={() => history.push("/allorders")}
-								className="btn" 
+								className="btn"
 								id="btn-password"
 							>
 								Listar todos pedidos
 							</Button>
 							{user.userType === 2 ?
-								<button 
+								<button
 									onClick={() => history.push("/allusers")}
-									className="btn" 
+									className="btn"
 									id="btn-password"
 								>
 									Listar todos usuários
@@ -434,10 +438,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userName}
-										onChange={e => setUserName(e.target.value)} 
-										type="text" 
+										onChange={e => setUserName(e.target.value)}
+										type="text"
 										placeholder="Nome de usuário"
 										required
 									/>
@@ -446,10 +450,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userEmail">
 									<Form.Label>Email</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userEmail}
-										onChange={e => setUserEmail(e.target.value)} 
-										type="text" 
+										onChange={e => setUserEmail(e.target.value)}
+										type="text"
 										placeholder="Seu email"
 										required
 									/>
@@ -460,10 +464,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userPhone">
 									<Form.Label>Telefone</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userPhone}
-										onChange={e => setUserPhone(e.target.value)} 
-										type="text" 
+										onChange={e => setUserPhone(e.target.value)}
+										type="text"
 										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
 									/>
@@ -472,10 +476,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userAddress">
 									<Form.Label>Endereço</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userAddress}
-										onChange={e => setUserAddress(e.target.value)} 
-										type="text" 
+										onChange={e => setUserAddress(e.target.value)}
+										type="text"
 										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 									/>
@@ -508,10 +512,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userPasswordO">
 									<Form.Label>Senha atual</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userPasswordO}
-										onChange={e => setUserPasswordO(e.target.value)} 
-										type="password" 
+										onChange={e => setUserPasswordO(e.target.value)}
+										type="password"
 										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha atual"
 										required
@@ -524,10 +528,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col sm>
 								<Form.Group controlId="userPasswordN">
 									<Form.Label>Senha nova</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={userPasswordN}
-										onChange={e => setUserPasswordN(e.target.value)} 
-										type="password" 
+										onChange={e => setUserPasswordN(e.target.value)}
+										type="password"
 										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha nova"
 										required
@@ -547,12 +551,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modal3Show} onHide={() => {setModal3Show(false); setToastShow(false);}} size="sm" centered>
+			<Modal show={modal3Show} onHide={() => {setModal3Show(false); setToastShow(false);}} size="md" centered>
 				{toast}
 				<Modal.Header closeButton>
 					<Modal.Title>Apagar perfil</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Tem certeza que deseja excluir seu perfil? :/</Modal.Body>
+				<Modal.Body>
+					Tem certeza que deseja excluir seu perfil? :/
+					<Form className="my-3" onSubmit={handleUserDelete}>
+						<Form.Group controlId="passwordOnDelete">
+							<Form.Label>Confirme sua senha para prosseguir</Form.Label>
+							<Form.Control
+								placeholder="Senha"
+								type="password"
+								value={userPasswordOnDelete}
+								onChange={event => setUserPasswordOnDelete(event.target.value)}
+								required
+							/>
+						</Form.Group>
+					</Form>
+				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => {setModal3Show(false); setToastShow(false);}}>
 						Cancelar
@@ -574,10 +592,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyName}
-										onChange={e => setCompanyName(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyName(e.target.value)}
+										type="text"
 										placeholder="Nome da empresa"
 										required
 									/>
@@ -586,10 +604,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyEmail">
 									<Form.Label>Email</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyEmail}
-										onChange={e => setCompanyEmail(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyEmail(e.target.value)}
+										type="text"
 										placeholder="Email da empresa"
 										required
 									/>
@@ -600,10 +618,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyPhone">
 									<Form.Label>Telefone</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyPhone}
-										onChange={e => setCompanyPhone(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyPhone(e.target.value)}
+										type="text"
 										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
 										required
@@ -613,10 +631,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyAddress">
 									<Form.Label>Endereço</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyAddress}
-										onChange={e => setCompanyAddress(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyAddress(e.target.value)}
+										type="text"
 										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
 										placeholder="Rua, Número, Bairro, Cidade"
 									/>
@@ -630,10 +648,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyFreight">
 									<Form.Label>Valor do frete</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyFreight}
-										onChange={e => setCompanyFreight(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyFreight(e.target.value)}
+										type="text"
 										placeholder="Valor do frete"
 										required
 									/>
@@ -642,10 +660,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Col>
 								<Form.Group controlId="companyProductTypes">
 									<Form.Label>Tipos de produtos</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={companyProductTypes}
-										onChange={e => setCompanyProductTypes(e.target.value)} 
-										type="text" 
+										onChange={e => setCompanyProductTypes(e.target.value)}
+										type="text"
 										placeholder="Tipos de produtos"
 										required
 									/>
@@ -667,7 +685,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modalAlert} onClick={() => history.go()}>
+			<Modal show={modalAlert} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
