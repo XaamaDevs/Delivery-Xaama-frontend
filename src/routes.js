@@ -83,67 +83,68 @@ export default function Routes() {
 
 	return (
 		<BrowserRouter>
-			<Navbar 
-				userId={userId} 
-				setUserId={setUserId} 
-				user={user} 
-				setUser={setUser} 
+			<Navbar
+				userId={userId}
+				setUserId={setUserId}
+				user={user}
+				setUser={setUser}
+				order={order}
 				setOrder={setOrder}
 				companyInfo ={companyInfo}
 			/>
 			<Switch>
 				<Route exact path="/" component={HomePage} />
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
-				<Route 
-					exact path="/login" 
+				<Route
+					exact path="/login"
 					render={() => !userAuth() ? <Login setUserId={setUserId} setUser={setUser} /> : <Logged />}
 				/>
-				<Route 
-					exact path="/signup" 
+				<Route
+					exact path="/signup"
 					render={() => !userAuth() ? <Signup setUserId={setUserId} setUser={setUser} /> : <Logged />}
 				/>
-				<Route 
-					exact path="/menu" 
-					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} />} 
+				<Route
+					exact path="/menu"
+					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} />}
 				/>
-				<Route 
-					exact path="/order" 
+				<Route
+					exact path="/order"
 					render={() => {
-						return userAuth() ? 
-							<Order 
-								userId={userId} 
-								user={user} 
+						return userAuth() ?
+							<Order
+								userId={userId}
+								user={user}
 								order={order}
-								setOrder={setOrder} 
+								setOrder={setOrder}
 								companyInfo={companyInfo}
 							/> : <Auth />;
 					}}
 				/>
-				<Route 
-					exact path="/user" 
+				<Route
+					exact path="/user"
 					render={() => {
-						return userAuth() ? 
-							<User 
-								userId={userId} 
-								setUserId={setUserId} 
-								user={user} 
+						return userAuth() ?
+							<User
+								userId={userId}
+								setUserId={setUserId}
+								user={user}
 								setUser={setUser}
-								companyInfo={companyInfo} 
+								companyInfo={companyInfo}
 							/> : <Auth />;
 					}}
 				/>
-				<Route 
-					exact path="/additions" 
+				<Route
+					exact path="/additions"
 					render={() => {
 						return userId ? (managerAuth() ? <Additions userId={userId} /> : <Autho />) : <Auth />;
 					}}
 				/>
-				<Route 
-					exact path="/allorders" 
+				<Route
+					exact path="/allorders"
 					render={() => userId ? (managerAuth() ? <AllOrders userId={userId} /> : <Autho />) : <Auth />}
 				/>
-				<Route 
-					exact path="/allusers" 
+				<Route
+					exact path="/allusers"
 					render={() => userId ? (adminAuth() ? <AllUsers userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route path="*" component={NotFoundPage} />

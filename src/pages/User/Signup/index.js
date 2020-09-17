@@ -24,7 +24,7 @@ export default function Signup({ setUserId, setUser }) {
 	const [password, setPassword] = useState("");
 	const [passwordC, setPasswordC] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
-	
+
 	//	Modal settings
 	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -58,7 +58,7 @@ export default function Signup({ setUserId, setUser }) {
 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data);
-	
+
 				history.push("/menu");
 			})
 			.catch((error) => {
@@ -79,7 +79,7 @@ export default function Signup({ setUserId, setUser }) {
 
 		document.getElementById("inputThumbnail").click();
 	}
-	
+
 	const toast = (
 		<div
 			aria-live="polite"
@@ -107,13 +107,12 @@ export default function Signup({ setUserId, setUser }) {
 				<Col sm="4" className="d-flex flex-column m-auto p-3">
 					<Form.Group controlId="inputThumbnail">
 						<Form.Label style={{color: "#ffffff" }}>Foto de perfil</Form.Label>
-						<Form.Control 
+						<Form.Control
 							className="d-none"
-							onChange={event => setThumbnail(event.target.files[0])} 
-							type="file" 
-							placeholder="email@provedor.com"
+							onChange={event => setThumbnail(event.target.files[0])}
+							type="file"
 						/>
-						<Image 
+						<Image
 							id="thumbnail"
 							className={thumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview : camera}
@@ -126,17 +125,18 @@ export default function Signup({ setUserId, setUser }) {
 				<Col sm="4" className="text-white m-auto p-3">
 					<Form.Group controlId="name">
 						<Form.Label>Nome</Form.Label>
-						<Form.Control 
+						<Form.Control
 							placeholder="Seu nome"
 							type="text"
 							value={name}
 							onChange={event => setName(event.target.value)}
+							autoFocus
 							required
 						/>
 					</Form.Group>
 					<Form.Group controlId="email">
 						<Form.Label>Email</Form.Label>
-						<Form.Control 
+						<Form.Control
 							placeholder="Seu email"
 							type="email"
 							value={email}
@@ -146,7 +146,7 @@ export default function Signup({ setUserId, setUser }) {
 					</Form.Group>
 					<Form.Group controlId="password">
 						<Form.Label>Senha</Form.Label>
-						<Form.Control 
+						<Form.Control
 							placeholder="Senha"
 							type="password"
 							value={password}
@@ -158,7 +158,7 @@ export default function Signup({ setUserId, setUser }) {
 					</Form.Group>
 					<Form.Group controlId="passwordC">
 						<Form.Label>Confirmar Senha</Form.Label>
-						<Form.Control 
+						<Form.Control
 							placeholder="Confirme sua senha"
 							type="password"
 							value={passwordC}

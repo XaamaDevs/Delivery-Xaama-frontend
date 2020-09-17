@@ -39,13 +39,10 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
 	const [feedback, setFeedback] = useState("");
-	const [deliverAddress, setDeliverAdress] = useState("");
-	const [deliverOrder, setDeliverOrder] = useState(false);
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
-	const [finishOrderModal, setFinishOrderModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
@@ -130,34 +127,6 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				setFeedback(true);
 			});
 		setFeedback("");
-	}
-
-	async function handleFinishOrder(event) {
-		event.preventDefault();
-
-		const data = {
-			user: order.user,
-			products: order.products,
-			deliver: deliverOrder,
-			address: deliverAddress
-		};
-
-		await api.post("order", data)
-			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Obrigado pela preferência! Acompanhe seu pedido por aqui.");
-				setColor("warning");
-				setFinishOrderModal(false);
-				setModalAlert(true);
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
 	}
 
 	const header = (
@@ -290,47 +259,6 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{order.products ?
-							<Col className="order-item">
-								<header>
-									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>
-								</header>
-								<p>{order.user.phone.length ? order.user.phone: "Telefone não informado"}</p>
-								{deliverOrder ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									:
-									<p>{"Vai retirar no balcão!"}</p>
-								}
-								<p>
-									{"Total a pagar R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-								</p>
-								<Row>
-									<Button
-										onClick={e => handleSetOrder(e, order)}
-										className="mx-auto my-1"
-										id="btn-password"
-									>
-										Ver pedido
-									</Button>
-									<Button
-										onClick={() => {
-											setDeliverAdress(order.user.address.join(", "));
-											setFinishOrderModal(true);
-										}}
-										className="mx-auto my-1"
-										variant="outline-warning"
-									>
-										Finalizar pedido
-									</Button>
-								</Row>
-							</Col>
-							:
-							null
-						}
 						{orders.map(order => (
 							<Col key={order._id} className="order-item">
 								<header>
@@ -421,56 +349,6 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						Fechar
 					</Button>
 				</Modal.Footer>
-			</Modal>
-
-			<Modal
-				show={finishOrderModal}
-				onHide={() => {setToastShow(false); setFinishOrderModal(false);}}
-				size="md"
-				centered
-			>
-				{toast}
-				<Modal.Header closeButton>
-					<Modal.Title>Finalizar pedido</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form onSubmit={handleFinishOrder}>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>
-								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
-							</Form.Label>
-							<Form.Check
-								type="switch"
-								id="custom-switch"
-								label="Marque aqui"
-								checked={deliverOrder}
-								onChange={e => setDeliverOrder(e.target.checked)}
-							/>
-						</Form.Group>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>Endereço</Form.Label>
-							<Form.Control
-								value={deliverAddress}
-								onChange={e => setDeliverAdress(e.target.value)}
-								type="text"
-								pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
-								placeholder="Rua, Número, Bairro, Complemento (opcional)"
-								disabled={!deliverOrder}
-							/>
-							<Form.Text className="text-muted">
-								Separe rua, número, bairro e complemento por vírgula
-							</Form.Text>
-						</Form.Group>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setToastShow(false); setFinishOrderModal(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-							</Button>
-						</Modal.Footer>
-					</Form>
-				</Modal.Body>
 			</Modal>
 
 			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);}} size="lg" centered>
