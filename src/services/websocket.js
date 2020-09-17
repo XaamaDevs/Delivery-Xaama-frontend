@@ -36,9 +36,9 @@ function connect() {
 }
 
 async function disconnect() {
-	if (socket.connected) {
+  if (socket.connected) {
     await api.delete("socket")
-      .then((response) => {
+    .then((response) => {
 				//alert(response);
 			})
 			.catch((error) => {
@@ -47,9 +47,9 @@ async function disconnect() {
 				} else {
 					//alert(error.message)
 				}
-			});
+	  });
 		socket.disconnect();
-	}
+  }
 }
 
 export {
