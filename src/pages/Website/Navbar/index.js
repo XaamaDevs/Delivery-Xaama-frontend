@@ -5,13 +5,30 @@ import React, { useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Navbar, Nav, Modal, Toast, Button, Form } from "react-bootstrap";
+import {
+	Navbar,
+	Nav,
+	Modal,
+	Toast,
+	Button,
+	Tabs,
+	Tab,
+	Card,
+	CardDeck,
+	Row,
+	Col,
+	Form,
+	Image
+} from "react-bootstrap";
 
 //	Importing React icons features
 import { RiShoppingBasketLine } from "react-icons/ri";
 
 // Importing backend api
 import api from "../../../services/api";
+
+// Importing image from camera
+import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
@@ -74,6 +91,110 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			alert(error);
 		}
 	}
+
+	const header = (
+		<Nav fill variant="tabs">
+			{order.products ?
+				order.products.map((productO, index) => (
+					<Nav.Item key={index}>
+						<Nav.Link
+							className="btn-outline-dark rounded"
+							href={"#" + index}
+							onClick={() => setProduct(productO)}
+						>
+							{productO.product.name}
+						</Nav.Link>
+					</Nav.Item>
+				))
+				:
+				null
+			}
+		</Nav>
+	);
+
+	const productCard = (product) => {
+		return (
+			<>
+				{product.product ?
+					<CardDeck className="p-2">
+						<Card className="h-100 p-1" bg="secondary" key={product._id}>
+							<Row>
+								<Col sm>
+									<Image
+										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
+										alt="thumbnail"
+										fluid
+										rounded
+									/>
+								</Col>
+								<Col sm>
+									<Card.Body key={product._id}>
+										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
+										<Card.Text>
+											{product.product ? ((product.product.ingredients.length === 1) ?
+												"Ingrediente: "
+												:
+												"Ingredientes: "
+											)
+												:
+												null
+											}
+											{product.product ? product.product.ingredients.map((ingredient, index) => (
+												index === product.product.ingredients.length-1 ?
+													ingredient
+													:
+													ingredient + ", "
+											))
+												:
+												null
+											}
+										</Card.Text>
+										<Card.Text>
+											{product && product.note ? "Observações: " + product.note : "Sem Observações"}
+										</Card.Text>
+									</Card.Body>
+								</Col>
+							</Row>
+							<Row>
+								<Card bg="secondary">
+									<Card.Body>
+										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
+										{product.additions.length ?
+											<Card.Text>
+												<Row>
+													{(product.additions).map(addition => (
+														<Col key={(addition) ? addition._id : null } sm>
+															{addition.name}
+															<small>{"Preço: R$" + addition.price}</small>
+														</Col>
+													))}
+												</Row>
+											</Card.Text>
+											:
+											null
+										}
+									</Card.Body>
+								</Card>
+							</Row>
+							<Card.Footer>
+								<small>
+									{product.product ?
+										"Preço: R$" + product.product.prices[product.size]
+										:
+										null
+									}
+								</small>
+							</Card.Footer>
+						</Card>
+					</CardDeck>
+					:
+					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">
+						Selecione o produto desejado acima
+					</h1>
+				}
+			</>
+		);
+	};
 
 	const toast = (
 		<div
@@ -237,7 +358,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
 			<Modal
 				show={shoppingBasketModal}
-				onHide={() => {setToastShow(false); setShoppingBasketModal(false);}}
+				onHide={() => { setProduct({}); setToastShow(false); setShoppingBasketModal(false); }}
 				size="lg"
 				centered
 			>
@@ -246,42 +367,61 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 					<Modal.Title>Cesta de compras</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleFinishOrder}>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>
-								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
-							</Form.Label>
-							<Form.Check
-								type="switch"
-								id="custom-switch"
-								label="Marque aqui"
-								checked={deliverOrder}
-								onChange={e => setDeliverOrder(e.target.checked)}
-							/>
-						</Form.Group>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>Endereço</Form.Label>
-							<Form.Control
-								value={deliverAddress}
-								onChange={e => setDeliverAdress(e.target.value)}
-								type="text"
-								pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
-								placeholder="Rua, Número, Bairro, Complemento (opcional)"
-								disabled={!deliverOrder}
-							/>
-							<Form.Text className="text-muted">
-								Separe rua, número, bairro e complemento por vírgula
-							</Form.Text>
-						</Form.Group>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setToastShow(false); setShoppingBasketModal(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-							</Button>
-						</Modal.Footer>
-					</Form>
+					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
+						<Tab eventKey="finishOrder" title="Finalizar pedido">
+							<Form onSubmit={handleFinishOrder}>
+								<Form.Group controlId="deliverAddress">
+									<Form.Label>
+										{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
+									</Form.Label>
+									<Form.Check
+										type="switch"
+										id="custom-switch"
+										label="Marque aqui"
+										checked={deliverOrder}
+										onChange={e => setDeliverOrder(e.target.checked)}
+									/>
+								</Form.Group>
+								<Form.Group controlId="deliverAddress">
+									<Form.Label>Endereço</Form.Label>
+									<Form.Control
+										value={deliverAddress}
+										onChange={e => setDeliverAdress(e.target.value)}
+										type="text"
+										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
+										placeholder="Rua, Número, Bairro, Complemento (opcional)"
+										disabled={!deliverOrder}
+									/>
+									<Form.Text className="text-muted">
+										Separe rua, número, bairro e complemento por vírgula
+									</Form.Text>
+								</Form.Group>
+								<Modal.Footer>
+									<Button
+										variant="danger"
+										onClick={() => {
+											setProduct({});
+											setToastShow(false);
+											setShoppingBasketModal(false);
+										}}
+									>
+										Fechar
+									</Button>
+									<Button variant="warning" type="submit">
+										{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+									</Button>
+								</Modal.Footer>
+							</Form>
+						</Tab>
+						<Tab eventKey="order" title="Ver pedido">
+							<Card bg="light" >
+								<Card.Header>
+									{header}
+								</Card.Header>
+								{product ? productCard(product) : null}
+							</Card>
+						</Tab>
+					</Tabs>
 				</Modal.Body>
 			</Modal>
 
