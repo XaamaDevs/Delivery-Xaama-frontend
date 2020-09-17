@@ -34,7 +34,7 @@ import camera from "../../../assets/camera.svg";
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
 	//	Order state variables
 	const [product, setProduct] = useState({});
-	const [deliverAddress, setDeliverAdress] = useState(user.address.join(", "));
+	const [deliverAddress, setDeliverAdress] = useState(user.address ? user.address.join(", ") : "null");
 	const [deliverOrder, setDeliverOrder] = useState(false);
 
 	//	Message settings
@@ -163,7 +163,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 								</Col>
 							</Row>
 							<Row>
-								<Card bg="secondary">
+								<Col>
 									<Card.Body>
 										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
 										{product.additions.length ?
@@ -171,8 +171,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												<Row>
 													{(product.additions).map(addition => (
 														<Col key={(addition) ? addition._id : null } sm>
-															{addition.name}
-															<small>{"Preço: R$" + addition.price}</small>
+															{addition.name + "\nPreço: R$" + addition.price}
 														</Col>
 													))}
 												</Row>
@@ -181,7 +180,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 											null
 										}
 									</Card.Body>
-								</Card>
+								</Col>
 							</Row>
 							<Card.Footer>
 								<small>
@@ -367,6 +366,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				show={shoppingBasketModal}
 				onHide={() => { setProduct({}); setToastShow(false); setShoppingBasketModal(false); }}
 				size="lg"
+				className="p-0"
 				centered
 			>
 				{toast}

@@ -149,55 +149,74 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const productCard = (product) => {
 		return (
 			<>
-				{orders && orders.length && product.product ?
+				{product.product ?
 					<CardDeck className="p-2">
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
-								<Col md={6}>
-									<Image src={product.product.thumbnail_url ? product.product.thumbnail_url : camera} fluid rounded />
-									<Card.Body key={product._id}>
-										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-										<Card.Text>
-											{product.product ? ((product.product.ingredients.length === 1) ?
-												"Ingrediente: "
-												:
-												"Ingredientes: "
-											)
-												:
-												null
-											}
-											{product.product ? product.product.ingredients.map((ingredient, index) => (
-												index === product.product.ingredients.length-1 ?
-													ingredient
-													:
-													ingredient + ", "
-											))
-												:
-												null
-											}
-										</Card.Text>
-										<Card.Text>
-											{product && product.note ? "Observações: " + product.note : "Sem Observações"}
-										</Card.Text>
-
-									</Card.Body>
+								<Col sm>
+									<Image
+										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
+										alt="thumbnail"
+										fluid
+										rounded
+									/>
 								</Col>
-								<Col className="ml-3 mt-2">
-									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-									{product.additions.length ? (product.additions).map(addition => (
-										<Card.Text key={(addition) ? addition._id : null }>{addition.name}
-											<br></br>
-											<small className="ml-1">
-												{"Preço: R$" + addition.price}
-											</small>
-										</Card.Text>
-									))
-										:
-										null
-									}
+								<Col sm>
+									<Row>
+										<Card.Body>
+											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
+											<Card.Text>
+												{product.product ? ((product.product.ingredients.length === 1) ?
+													"Ingrediente: "
+													:
+													"Ingredientes: "
+												)
+													:
+													null
+												}
+												{product.product ? product.product.ingredients.map((ingredient, index) => (
+													index === product.product.ingredients.length-1 ?
+														ingredient
+														:
+														ingredient + ", "
+												))
+													:
+													null
+												}
+											</Card.Text>
+										</Card.Body>
+									</Row>
+									<Row>
+										<Card.Body>
+											<Card.Title>Observações:</Card.Title>
+											<Card.Text>
+												{product.note ? product.note : "Sem Observações"}
+											</Card.Text>
+										</Card.Body>
+									</Row>
 								</Col>
 							</Row>
-							<Card.Footer w-100>
+							<Row>
+								<Col>
+									<Card.Body>
+										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
+										{product.additions.length ?
+											<Card.Text>
+												<Row>
+													{(product.additions).map(addition => (
+														<Col key={(addition) ? addition._id : null } sm>
+															{addition.name + "\nPreço: R$" + addition.price}
+														</Col>
+													))}
+												</Row>
+											</Card.Text>
+											:
+											null
+										}
+									</Card.Body>
+								</Col>
+							</Row>
+							<Card.Footer>
 								<small>
 									{product.product ?
 										"Preço: R$" + product.product.prices[product.size]
@@ -319,7 +338,13 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</>
 			}
 
-			<Modal show={orderListingModal} onHide={() => setOrderListingModal(false)} size="lg" centered>
+			<Modal
+				show={orderListingModal}
+				onHide={() => setOrderListingModal(false)}
+				size="lg"
+				className="p-0"
+				centered
+			>
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
