@@ -22,7 +22,7 @@ export default function Login({ setUserId, setUser }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	
+
 	//	Defining history to jump through pages
 	const history = useHistory();
 
@@ -36,7 +36,7 @@ export default function Login({ setUserId, setUser }) {
 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data);
-				
+
 				history.push("/menu");
 			})
 			.catch((error) => {
@@ -50,7 +50,7 @@ export default function Login({ setUserId, setUser }) {
 				setToastShow(true);
 			});
 	}
-	
+
 	const toast = (
 		<div
 			aria-live="polite"
@@ -77,20 +77,21 @@ export default function Login({ setUserId, setUser }) {
 			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>
 				<Form.Group controlId="email">
 					<Form.Label>Email</Form.Label>
-					<Form.Control 
+					<Form.Control
 						value={email}
-						onChange={event => setEmail(event.target.value)} 
-						type="email" 
+						onChange={event => setEmail(event.target.value)}
+						type="email"
 						placeholder="email@provedor.com"
+						autoFocus
 						required
 					/>
 				</Form.Group>
 				<Form.Group controlId="password">
 					<Form.Label>Senha</Form.Label>
-					<Form.Control 
+					<Form.Control
 						value={password}
-						onChange={event => setPassword(event.target.value)} 
-						type="password" 
+						onChange={event => setPassword(event.target.value)}
+						type="password"
 						placeholder="Senha"
 						required
 					/>

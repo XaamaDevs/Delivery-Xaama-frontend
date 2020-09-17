@@ -1,6 +1,9 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
 
+//	Importing React Router features
+import { useHistory } from "react-router-dom";
+
 // Importing backend api
 import api from "../../services/api";
 
@@ -13,19 +16,19 @@ import "./styles.css";
 import camera from "../../assets/camera.svg";
 
 //	Importing React features
-import { 
-	Card, 
-	CardDeck, 
-	Nav, 
-	Button, 
-	Modal, 
-	Form, 
-	Row, 
-	Col, 
-	Spinner, 
-	Container, 
-	Image, 
-	Toast 
+import {
+	Card,
+	CardDeck,
+	Nav,
+	Button,
+	Modal,
+	Form,
+	Row,
+	Col,
+	Spinner,
+	Container,
+	Image,
+	Toast
 } from "react-bootstrap";
 
 //	Exporting resource to routes.js
@@ -36,20 +39,20 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
 	const [feedback, setFeedback] = useState("");
-	const [deliverAddress, setDeliverAdress] = useState("");
-	const [deliverOrder, setDeliverOrder] = useState(false);
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
-	const [finishOrderModal, setFinishOrderModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
-	
+
+	//	Defining history to jump through pages
+	const history = useHistory();
+
 	function setupWebSocket() {
 		disconnect();
 		connect();
@@ -94,7 +97,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 		setOrderA(order);
 		setOrderListingModal(true);
 	}
-	
+
 	async function handleProductList(event, productA) {
 		event.preventDefault();
 
@@ -103,7 +106,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 
 	async function handleFeedback(event) {
 		event.preventDefault();
-		
+
 		await api.put("/order/" + orderId, {status: true, feedback: feedback})
 			.then(() => {
 				setTitle("Avaliação enviada!");
@@ -126,40 +129,12 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 		setFeedback("");
 	}
 
-	async function handleFinishOrder(event) {
-		event.preventDefault();
-
-		const data = new FormData();
-
-		data.append("user", order.user);
-		data.append("products", order.products);
-		data.append("deliver", deliverOrder);
-		data.append("address", deliverAddress);
-
-		await api.post("order", data)
-			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Obrigado pela preferência! Acompanhe seu pedido por aqui.");
-				setColor("warning");
-				setFinishOrderModal(false);
-				setModalAlert(true);
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
-	}
-
 	const header = (
 		<Nav fill variant="tabs">
 			{(orderA.products) ? (orderA.products).map((productA, index) => (
 				<Nav.Item key={index}>
 					<Nav.Link
-						className="btn-outline-dark rounded" 
+						className="btn-outline-dark rounded"
 						href={"#" + index}
 						onClick={e => handleProductList(e, productA)} >{productA.product.name}
 					</Nav.Link>
@@ -174,57 +149,76 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const productCard = (product) => {
 		return (
 			<>
-				{orders && orders.length && product.product ?
+				{product.product ?
 					<CardDeck className="p-2">
 						<Card className="h-100 p-1" bg="secondary" key={product._id}>
 							<Row>
-								<Col md={6}>
-									<Image src={product.product.thumbnail_url ? product.product.thumbnail_url : camera} fluid rounded />
-									<Card.Body key={product._id}>
-										<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-										<Card.Text>
-											{product.product ? ((product.product.ingredients.length === 1) ? 
-												"Ingrediente: "
-												:
-												"Ingredientes: "
-											)
-												:
-												null
-											}
-											{product.product ? product.product.ingredients.map((ingredient, index) => (
-												index === product.product.ingredients.length-1 ?
-													ingredient
-													:
-													ingredient + ", "
-											))
-												:
-												null
-											}
-										</Card.Text>
-										<Card.Text>
-											{product && product.note ? "Observações: " + product.note : "Sem Observações"}
-										</Card.Text>
-										
-									</Card.Body>
+								<Col sm>
+									<Image
+										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
+										alt="thumbnail"
+										fluid
+										rounded
+									/>
 								</Col>
-								<Col className="ml-3 mt-2">
-									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-									{product.additions.length ? (product.additions).map(addition => (
-										<Card.Text key={(addition) ? addition._id : null }>{addition.name}
-											<br></br>
-											<small className="ml-1">
-												{"Preço: R$" + addition.price}
-											</small>
-										</Card.Text>
-									))
-										:
-										null
-									}
+								<Col sm>
+									<Row>
+										<Card.Body>
+											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
+											<Card.Text>
+												{product.product ? ((product.product.ingredients.length === 1) ?
+													"Ingrediente: "
+													:
+													"Ingredientes: "
+												)
+													:
+													null
+												}
+												{product.product ? product.product.ingredients.map((ingredient, index) => (
+													index === product.product.ingredients.length-1 ?
+														ingredient
+														:
+														ingredient + ", "
+												))
+													:
+													null
+												}
+											</Card.Text>
+										</Card.Body>
+									</Row>
+									<Row>
+										<Card.Body>
+											<Card.Title>Observações:</Card.Title>
+											<Card.Text>
+												{product.note ? product.note : "Sem Observações"}
+											</Card.Text>
+										</Card.Body>
+									</Row>
 								</Col>
 							</Row>
-							<Card.Footer w-100>
+							<Row>
+								<Col>
+									<Card.Body>
+										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
+										{product.additions.length ?
+											<Card.Text>
+												<Row>
+													{(product.additions).map(addition => (
+														<Col key={(addition) ? addition._id : null } sm>
+															{addition.name + "\nPreço: R$" + addition.price}
+														</Col>
+													))}
+												</Row>
+											</Card.Text>
+											:
+											null
+										}
+									</Card.Body>
+								</Col>
+							</Row>
+							<Card.Footer>
 								<small>
-									{product.product ? 
+									{product.product ?
 										"Preço: R$" + product.product.prices[product.size]
 										:
 										null
@@ -261,22 +255,22 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 			</Toast>
 		</div>
 	);
-	
+
 	return (
 		<div className="all-container w-100">
 			{toast}
 			{isLoading ?
 				<Container className="d-flex h-100">
-					<Spinner 
+					<Spinner
 						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}} 
-						animation="grow" 
+						style={{width: "5rem", height: "5rem"}}
+						animation="grow"
 						variant="warning"
 					/>
 				</Container>
 				:
 				<>
-					{(orders && orders.length) || order.products ? 
+					{(orders && orders.length) || order.products ?
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
 						:
 						<>
@@ -284,47 +278,6 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						</>
 					}
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{order.products ? 
-							<Col className="order-item">
-								<header>
-									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>             
-								</header>
-								<p>{order.user.phone.length ? order.user.phone: "Telefone não informado"}</p>
-								{deliverOrder ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
-									<p>{"Vai retirar no balcão!"}</p>
-								}
-								<p>
-									{"Total a pagar R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-								</p>
-								<Row>
-									<Button 
-										onClick={e => handleSetOrder(e, order)}
-										className="mx-auto my-1"
-										id="btn-password"
-									>
-										Ver pedido
-									</Button>
-									<Button
-										onClick={() => {
-											setDeliverAdress(order.user.address.join(", ")); 
-											setFinishOrderModal(true); 
-										}}
-										className="mx-auto my-1"
-										variant="outline-warning"
-									>
-										Finalizar pedido
-									</Button>
-								</Row>
-							</Col>
-							:
-							null
-						}
 						{orders.map(order => (
 							<Col key={order._id} className="order-item">
 								<header>
@@ -332,26 +285,26 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 									<div className="order-info">
 										<strong>{order.user.name}</strong>
 										<span>{order.user.email}</span>
-									</div>             
+									</div>
 								</header>
 								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
 								{order.deliver ?
 									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									: 
+									:
 									<p>{"Vai retirar no balcão!"}</p>
 								}
 								<p>
 									{"Total a pagar R$" + order.total}
 								</p>
 								<Row>
-									<Button 
+									<Button
 										onClick={e => handleSetOrder(e, order)}
 										className="btn d-flex justify-content-center mx-auto mt-1"
 										id="btn-password"
 									>
 									Ver pedido
 									</Button>
-									{!(order.status) ? 
+									{!(order.status) ?
 										<Button
 											className="d-flex justify-content-center mx-auto mt-1"
 											variant="danger">Pedido sendo preparado
@@ -370,7 +323,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 														variant="outline-warning">Recebeu seu pedido? Avalie!
 													</Button>
 												</>
-												: 
+												:
 												<Button
 													className="d-flex justify-content-center mx-auto mt-1"
 													variant="outline-warning">Pedido entregue
@@ -385,7 +338,13 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</>
 			}
 
-			<Modal show={orderListingModal} onHide={() => setOrderListingModal(false)} size="lg" centered>
+			<Modal
+				show={orderListingModal}
+				onHide={() => setOrderListingModal(false)}
+				size="lg"
+				className="p-0"
+				centered
+			>
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
@@ -394,77 +353,27 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 						<Card.Header>
 							{header}
 						</Card.Header>
-						{isLoading ? 
-							<Spinner 
-								className="my-5 mx-auto" 
-								style={{width: "5rem", height: "5rem"}} 
-								animation="grow" 
+						{isLoading ?
+							<Spinner
+								className="my-5 mx-auto"
+								style={{width: "5rem", height: "5rem"}}
+								animation="grow"
 								variant="warning"
 							/>
 							:
 							product ? productCard(product) : null
 						}
 					</Card>
-					
+
 				</Modal.Body>
 				<Modal.Footer>
-					<Button 
-						variant="warning" 
+					<Button
+						variant="warning"
 						onClick={() => {setOrderListingModal(false); setOrderA({}); setProduct({});}}
 					>
 						Fechar
 					</Button>
 				</Modal.Footer>
-			</Modal>
-
-			<Modal 
-				show={finishOrderModal} 
-				onHide={() => {setToastShow(false); setFinishOrderModal(false);}} 
-				size="md" 
-				centered
-			>
-				{toast}
-				<Modal.Header closeButton>
-					<Modal.Title>Finalizar pedido</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form onSubmit={handleFinishOrder}>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>
-								{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
-							</Form.Label>
-							<Form.Check 
-								type="switch"
-								id="custom-switch"
-								label="Marque aqui"
-								checked={deliverOrder}
-								onChange={e => setDeliverOrder(e.target.checked)}
-							/>
-						</Form.Group>
-						<Form.Group controlId="deliverAddress">
-							<Form.Label>Endereço</Form.Label>
-							<Form.Control 
-								value={deliverAddress}
-								onChange={e => setDeliverAdress(e.target.value)} 
-								type="text" 
-								pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
-								placeholder="Rua, Número, Bairro, Complemento (opcional)"
-								disabled={!deliverOrder}
-							/>
-							<Form.Text className="text-muted">
-								Separe rua, número, bairro e complemento por vírgula
-							</Form.Text>
-						</Form.Group>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setToastShow(false); setFinishOrderModal(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-							</Button>
-						</Modal.Footer>
-					</Form>
-				</Modal.Body>
 			</Modal>
 
 			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);}} size="lg" centered>
@@ -477,9 +386,9 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 							<Col>
 								<Form.Group controlId="feedback">
 									<Form.Label>Sua avaliação</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={feedback}
-										onChange={e => setFeedback(e.target.value)} 
+										onChange={e => setFeedback(e.target.value)}
 										as="textarea"
 										rows="12"
 										placeholder="Avaliação sobre o pedido e atendimento"
@@ -506,7 +415,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</Modal.Header>
 				<Modal.Body>{message}</Modal.Body>
 				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalAlert(false)}>
+					<Button variant={color} onClick={() => { setModalAlert(false); history.go(); }}>
 						Fechar
 					</Button>
 				</Modal.Footer>
