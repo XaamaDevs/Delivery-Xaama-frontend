@@ -355,70 +355,6 @@ export default function Menu({ userId, user, order, setOrder }) {
 		}
 	}
 
-	async function validatePrices(event) {
-		const c = event.target.value.replace(productPrices, "");
-
-		if(!/^((^$)|(^\s$)|(^,$)|(^\.$))$/.test(c) && c.length <= 1) {
-			event.target.value =
-				/^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$/.test(event.target.value) ?
-					event.target.value
-					:
-					productPrices;
-		}
-
-		if(productPrices[productPrices.length-1] === c && /^((^\s$)|(^,$)|(^\.$))$/.test(c)) {
-			event.target.value = productPrices;
-		}
-
-		if(event.target.value.length === 1 && /^((^\s$)|(^,$)|(^\.$))$/.test(c)) {
-			event.target.value = productPrices;
-		}
-
-		setProductPrices(event.target.value);
-	}
-
-	async function validateIngredients(event) {
-		const c = event.target.value.replace(productIngredients, "");
-		const ingRegExp =
-			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
-
-
-		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
-			event.target.value = ingRegExp.test(event.target.value) ? event.target.value : productIngredients;
-		}
-
-		if(productIngredients[productIngredients.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
-			event.target.value = productIngredients;
-		}
-
-		if(event.target.value.length === 1 && /^((^\s$)|(^,$))$/.test(c)) {
-			event.target.value = productIngredients;
-		}
-
-		setProductIngredients(event.target.value);
-	}
-
-	async function validateSizes(event) {
-		const c = event.target.value.replace(productSizes, "");
-		const sizeRegExp =
-			new RegExp(/^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$/);
-
-
-		if(!/^((^$)|(^\s$)|(^,$))$/.test(c) && c.length <= 1) {
-			event.target.value = sizeRegExp.test(event.target.value) ? event.target.value : productSizes;
-		}
-
-		if(productSizes[productSizes.length-1] === c && /^((^\s$)|(^,$))$/.test(c)) {
-			event.target.value = productSizes;
-		}
-
-		if(event.target.value.length === 1 && /^((^\s$)|(^,$))$/.test(c)) {
-			event.target.value = productSizes;
-		}
-
-		setProductSizes(event.target.value);
-	}
-
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav fill variant="tabs">
@@ -607,7 +543,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productPrices}
-											onChange={validatePrices}
+											onChange={(e) => setProductPrices(e.target.value)}
 											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
@@ -630,8 +566,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productSizes}
-											onChange={validateSizes}
-											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
+											onChange={(e) => setProductSizes(e.target.value)}
+											pattern="^[^\s,]+(\s[^\s,]+)*(,\s?[^\s,]+(\s[^\s,]+)*)*$"
 											type="text"
 											placeholder="Tamanho do produto"
 											required
@@ -669,7 +605,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productIngredients}
-											onChange={validateIngredients}
+											onChange={(e) => setProductIngredients(e.target.value)}
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}
@@ -747,7 +683,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productPrices}
-											onChange={validatePrices}
+											onChange={(e) => setProductPrices(e.target.value)}
 											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
 											type="text"
 											placeholder="Preço do produto"
@@ -770,8 +706,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productSizes}
-											onChange={validateSizes}
-											pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)*$"
+											onChange={(e) => setProductSizes(e.target.value)}
+											pattern="^[^\s,]+(\s[^\s,]+)*(,\s?[^\s,]+(\s[^\s,]+)*)*$"
 											type="text"
 											placeholder="Tamanho do produto"
 											required
@@ -808,7 +744,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									>
 										<Form.Control
 											value={productIngredients}
-											onChange={validateIngredients}
+											onChange={(e) => setProductIngredients(e.target.value)}
 											as="textarea"
 											rows="2"
 											style={{resize :"none"}}

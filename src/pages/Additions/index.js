@@ -61,8 +61,7 @@ export default function Additions({ userId }) {
 						setMessage("Não há tipos de produtos cadastrados");
 						setToastShow(true);
 					}
-				})
-				.catch((error) => {
+				}).catch((error) => {
 					setTitle("Erro!");
 					if(error.response) {
 						setMessage(error.response.data);
