@@ -1,26 +1,28 @@
 //	Importing React main module and its features
 import React, { useState, useEffect, useMemo } from "react";
-
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
 
 //	Importing React Bootstrap features
-import { Container,
+import {
+	Container,
 	Carousel,
+	Modal,
 	Spinner,
-	Toast,
 	OverlayTrigger,
 	Tooltip,
 	Nav,
 	Card,
 	Button,
 	CardDeck,
-	Modal,
 	Form,
 	Col,
 	Row,
 	Image
 } from "react-bootstrap";
+
+//	Importing website utils
+import Alert from "../Website/Alert";
+import Push from "../Website/Push";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -59,15 +61,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productUpdateModal, setProductUpdateModal] = useState(false);
 	const [productDeleteModal, setProductDeleteModal] = useState(false);
 	const [productOrderModal, setProductOrderModal] = useState(false);
-	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
-
-	//	Defining history to jump through pages
-	const history = useHistory();
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
@@ -78,14 +76,12 @@ export default function Menu({ userId, user, order, setOrder }) {
 						setProductTypes(response.data);
 					} else {
 						setTitle("Erro!");
-						setColor("danger");
 						setMessage("Não há tipos de produtos cadastrados");
 						setToastShow(true);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					setColor("danger");
-					if(error.response) {
+					if(error.response && typeof(error.response.data) !== "object") {
 						setMessage(error.response.data);
 					} else {
 						setMessage(error.message);
@@ -112,8 +108,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 					setProductsByType(prodsByType);
 				}).catch((error) => {
 					setTitle("Erro!");
-					setColor("danger");
-					if(error.response) {
+					if(error.response && typeof(error.response.data) !== "object") {
 						setMessage(error.response.data);
 					} else {
 						setMessage(error.message);
@@ -140,8 +135,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 					setAdditionsByType(AddsByType);
 				}).catch((error) => {
 					setTitle("Erro!");
-					setColor("danger");
-					if(error.response) {
+					if(error.response && typeof(error.response.data) !== "object") {
 						setMessage(error.response.data);
 					} else {
 						setMessage(error.message);
@@ -205,13 +199,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 				setProductAddModal(false);
 				setTitle("Alterações produto!");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -250,13 +242,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 				setProductUpdateModal(false);
 				setTitle("Alterações produto!");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -276,13 +266,11 @@ export default function Menu({ userId, user, order, setOrder }) {
 				setProductDeleteModal(false);
 				setTitle("Alterações produto!");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -534,28 +522,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 		);
 	};
 
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%"
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
-
 	return (
 		<Container className="product-container w-100">
-			<Card className="px-3" bg="dark">
+			<Card className="px-3" text="light" bg="dark">
 				{header}
 				{isLoading ?
 					<Spinner
@@ -589,7 +558,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				size="lg"
 				centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar produto</Modal.Title>
 				</Modal.Header>
@@ -729,7 +698,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				size="lg"
 				centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
@@ -863,7 +832,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 			</Modal>
 
 			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Remover produto</Modal.Title>
 				</Modal.Header>
@@ -893,7 +862,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				size="lg"
 				centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Adicionar ao pedido</Modal.Title>
 				</Modal.Header>
@@ -910,7 +879,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 							/>
 						</Col>
 						<Col className="my-2" sm>
-							<Card className="h-100" bg="dark">
+							<Card className="h-100" text="light" bg="dark">
 								<Card.Header>
 									<Row className="d-flex align-items-center">
 										<Col>
@@ -1045,17 +1014,14 @@ export default function Menu({ userId, user, order, setOrder }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalWarningShow} onHide={() => history.go()}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</Container>
 	);
 }
+
+Menu.propTypes = {
+	userId : PropTypes.string.isRequired,
+	user : PropTypes.object.isRequired,
+	order : PropTypes.object.isRequired,
+	setOrder : PropTypes.any.isRequired
+};
