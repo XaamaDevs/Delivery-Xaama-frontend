@@ -137,7 +137,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				history.push("/");
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -173,7 +173,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -625,4 +625,4 @@ User.propTypes = {
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.any.isRequired,
 	companyInfo : PropTypes.object.isRequired
-}
+};

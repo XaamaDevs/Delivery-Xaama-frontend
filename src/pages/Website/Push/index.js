@@ -12,7 +12,8 @@ export default function Push({ toastShow, setToastShow, title, message }) {
 			style={{
 				position: "fixed",
 				top: "inherit",
-				right: "2%"
+				right: "2%",
+				zIndex: "5"
 			}}
 		>
 			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>

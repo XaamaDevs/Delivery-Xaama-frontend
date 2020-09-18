@@ -1,5 +1,6 @@
 //	Importing React main module and its features
 import React, { useState, useMemo} from "react";
+import PropTypes from "prop-types";
 
 // Importing backend api
 import api from "../../../services/api";
@@ -8,10 +9,10 @@ import api from "../../../services/api";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Modal, Image, Form, Button, Col, Row, Toast } from "react-bootstrap";
+import { Image, Form, Button, Col, Row } from "react-bootstrap";
 
-// Importing styles
-import "./styles.css";
+//	Importing website utils
+import Push from "../../Website/Push";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
@@ -25,12 +26,10 @@ export default function Signup({ setUserId, setUser }) {
 	const [passwordC, setPasswordC] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
 
-	//	Modal settings
-	const [modalAlert, setModalAlert] = useState(false);
+	//	Message settings
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -63,13 +62,12 @@ export default function Signup({ setUserId, setUser }) {
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
-				setToastShow(true); // deu erro de objeto
+				setToastShow(true);
 			});
 	}
 
@@ -77,50 +75,30 @@ export default function Signup({ setUserId, setUser }) {
 	async function inputImage(event) {
 		event.preventDefault();
 
-		document.getElementById("inputThumbnail").click();
+		document.getElementById("inputImage").click();
 	}
-
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%",
-				zIndex: 5
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
 
 	return (
 		<div className="user-container h-100">
-			{toast}
+			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
 				<Col sm="4" className="d-flex flex-column m-auto p-3">
-					<Form.Group controlId="inputThumbnail">
-						<Form.Label style={{color: "#ffffff" }}>Foto de perfil</Form.Label>
-						<Form.Control
-							className="d-none"
-							onChange={event => setThumbnail(event.target.files[0])}
-							type="file"
-						/>
-						<Image
-							id="thumbnail"
-							className={thumbnail ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-							src={preview ? preview : camera}
-							alt="Selecione sua imagem"
-							onClick={inputImage}
-							fluid
-						/>
-					</Form.Group>
+					<Form.Control
+						id="inputImage"
+						className="d-none"
+						type="file"
+						onChange={event => setThumbnail(event.target.files[0])}
+						required
+					/>
+					<Image
+						id="thumbnail"
+						className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+						src={preview ? preview :  camera}
+						alt="Selecione sua imagem"
+						onClick={inputImage}
+						rounded
+						fluid
+					/>
 				</Col>
 				<Col sm="4" className="text-white m-auto p-3">
 					<Form.Group controlId="name">
@@ -185,18 +163,11 @@ export default function Signup({ setUserId, setUser }) {
 					</Row>
 				</Col>
 			</Form>
-
-			<Modal show={modalAlert} onClick={() => setModalAlert(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalAlert(false)}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
 		</div>
 	);
 }
+
+Signup.propTypes = {
+	setUserId : PropTypes.any.isRequired,
+	setUser : PropTypes.any.isRequired
+};
