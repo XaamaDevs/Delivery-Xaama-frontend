@@ -1,11 +1,16 @@
 //	Importing React main module and its features
 import React, { useState, useMemo } from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Router features
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal, Toast } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal } from "react-bootstrap";
+
+//	Importing website utils
+import Alert from "../Website/Alert";
+import Push from "../Website/Push";
 
 // Importing backend api
 import api from "../../services/api";
@@ -15,7 +20,6 @@ import "./styles.css";
 
 // Importing image from camera
 import camera from "../../assets/camera.svg";
-
 
 //	Exporting resource to routes.js
 export default function User({ userId, setUserId, user, setUser, companyInfo }) {
@@ -46,7 +50,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -64,7 +67,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	}
 
 	//	Function to handle update user
-	async function handleUserUpdate(event) {
+	async function handleUserUpdate(event, action = null) {
 		event.preventDefault();
 
 		const data = new FormData();
@@ -74,16 +77,23 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("phone", userPhone);
 		data.append("address", userAddress);
 
-		if(thumbnail){
-			data.append("thumbnail", thumbnail);
-		} else {
-			if(user.thumbnail) {
-				const blob = await fetch(user.thumbnail_url).then(r => r.blob());
-				const token = user.thumbnail_url.split(".");
-				const extension = token[token.length-1];
-				setThumbnail(new File([blob], "thumbnail." + extension));
-				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+		if(action === 0) {
+			if(thumbnail) {
+				data.append("thumbnail", thumbnail);
+			} else {
+				if(user.thumbnail) {
+					const blob = await fetch(user.thumbnail_url).then(r => r.blob());
+					const token = user.thumbnail_url.split(".");
+					const extension = token[token.length-1];
+					data.append("thumbnail", new File([blob], "thumbnail." + extension));
+				}
 			}
+		} else if(action === 1) {
+			data.append("passwordN", userPasswordN);
+			data.append("passwordO", userPasswordO);
+
+			setUserPasswordO("");
+			setUserPasswordN("");
 		}
 
 		await api.put("user", data , {
@@ -91,101 +101,20 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				authorization: userId
 			}})
 			.then(() => {
-				setTitle("Alterações usuário");
+				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
 				setModal1Show(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setToastShow(true);
 			});
-	}
-
-	//	Function to handle delete image profile
-	async function handleThumbnailDelete(event) {
-		event.preventDefault();
-
-		const data = new FormData();
-
-		data.append("name", userName);
-		data.append("email", userEmail);
-		data.append("phone", userPhone);
-		data.append("address", userAddress);
-		data.append("thumbnail", thumbnail);
-
-		await api.put("user", data , {
-			headers : {
-				authorization: userId
-			}})
-			.then(() => {
-				setTitle("Alterações usuário");
-				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModal3Show(false);
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setModalAlert(true);
-			});
-	}
-
-	async function handlePasswordUpdate(event) {
-		event.preventDefault();
-
-		if(userPasswordO && userPasswordO.length && userPasswordN && userPasswordN.length) {
-			const data = new FormData();
-
-			data.append("name", userName);
-			data.append("email", userEmail);
-			data.append("phone", userPhone);
-			data.append("address", userAddress);
-			data.append("passwordN", userPasswordN);
-			data.append("passwordO", userPasswordO);
-
-			await api.put("user" , data,  {
-				headers : {
-					authorization: userId
-				}})
-				.then(() => {
-					setTitle("Alteração senha");
-					setMessage("Alteração feita com sucesso!");
-					setColor("warning");
-					setModal2Show(false);
-					setModalAlert(true);
-				}).catch((error) => {
-					setTitle("Erro!");
-					setColor("danger");
-					if(error.response) {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
-		} else {
-			setTitle("Alteração senha");
-			setMessage("Atençao! Sua senha atual ou senha nova está vazia!");
-			setColor("warning");
-			setToastShow(true);
-		}
-
-		setUserPasswordO("");
-		setUserPasswordN("");
 	}
 
 	async function handleUserDelete(event) {
@@ -202,14 +131,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser({});
 
-				setTitle("Alteração usuário");
+				setTitle("Alterações de usuário");
 				setMessage(response.data);
-				setColor("warning");
 				setToastShow(true);
 				history.push("/");
 			}).catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
@@ -241,19 +168,17 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			.then(() => {
 				setTitle("Alterações da empresa");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
 				setModal4Show(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
 				}
-				setModalAlert(true);
+				setToastShow(true);
 			});
 	}
 
@@ -291,30 +216,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		}
 	}
 
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%"
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
-
 	return (
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
-				<div className="col-sm-4 m-auto p-3">
-					<Form className="d-flex flex-column" onSubmit={handleUserUpdate}>
+				<Col className="m-auto p-3" sm="4">
+					<Form className="d-flex flex-column" onSubmit={(e) => handleUserUpdate(e, 0)}>
 						<Form.Control
 							id="inputImage"
 							className="d-none"
@@ -342,7 +248,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								</Button>
 								<Button
 									className="my-1 mx-2"
-									onClick={handleThumbnailDelete}
+									onClick={handleUserUpdate}
 									variant="outline-danger"
 								>
 									Apagar foto
@@ -360,14 +266,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</div>
 						}
 					</Form>
-				</div>
-				<div id="user-i" className="col-sm-4 p-3">
-					<Card bg="dark">
+				</Col>
+				<Col className="m-auto p-3" sm="4">
+					<Card text="light" bg="dark">
 						<Card.Header >{user.name}</Card.Header>
 						<Card.Body>
-							<Card.Text>{user.email}</Card.Text>
-							<Card.Text>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</Card.Text>
-							<Card.Text>{user.address && user.address.length ? user.address.join(", ") : "Endereço:" }</Card.Text>
+							<Card.Text>{"Email: " + user.email}</Card.Text>
+						</Card.Body>
+						<Card.Body>
+							<Card.Text>{"Telefone: " + (user.phone ? user.phone: "Não informado")}</Card.Text>
+						</Card.Body>
+						<Card.Body>
+							<Card.Text>{"Endereço: " + ((user.address && user.address.length) ? user.address.join(", ") : "Não informado")}</Card.Text>
 						</Card.Body>
 					</Card>
 					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
@@ -410,13 +320,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								Listar todos pedidos
 							</Button>
 							{user.userType === 2 ?
-								<button
+								<Button
 									onClick={() => history.push("/allusers")}
-									className="btn"
 									id="btn-password"
 								>
 									Listar todos usuários
-								</button>
+								</Button>
 								:
 								null
 							}
@@ -424,16 +333,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						:
 						null
 					}
-				</div>
+				</Col>
 			</div>
 
-			<Modal show={modal1Show} onHide={() => {setModal1Show(false); setToastShow(false);}} size="lg" centered>
-				{toast}
+			<Modal
+				show={modal1Show}
+				onHide={() => { setModal1Show(false); setToastShow(false); }}
+				size="lg"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar usuário</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleUserUpdate}>
+					<Form onSubmit={(e) => handleUserUpdate(e, 0)}>
 						<Row>
 							<Col sm>
 								<Form.Group controlId="userName">
@@ -453,7 +367,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									<Form.Control
 										value={userEmail}
 										onChange={e => setUserEmail(e.target.value)}
-										type="text"
+										type="email"
 										placeholder="Seu email"
 										required
 									/>
@@ -480,7 +394,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										value={userAddress}
 										onChange={e => setUserAddress(e.target.value)}
 										type="text"
-										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
+										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
 										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 									/>
 									<Form.Text className="text-muted">
@@ -490,7 +404,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setModal1Show(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setModal1Show(false); setToastShow(false); }}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -501,13 +415,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modal2Show} onHide={() => {setModal2Show(false); setToastShow(false);}} size="lg" centered>
-				{toast}
+			<Modal
+				show={modal2Show}
+				onHide={() => {setModal2Show(false); setToastShow(false);}}
+				size="lg"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar senha</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handlePasswordUpdate}>
+					<Form onSubmit={(e) => handleUserUpdate(e, 1)}>
 						<Row>
 							<Col sm>
 								<Form.Group controlId="userPasswordO">
@@ -540,7 +459,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setModal2Show(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setModal2Show(false); setToastShow(false); }}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -551,8 +470,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modal3Show} onHide={() => {setModal3Show(false); setToastShow(false);}} size="md" centered>
-				{toast}
+			<Modal
+				show={modal3Show}
+				onHide={() => { setModal3Show(false); setToastShow(false); }}
+				size="md"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Apagar perfil</Modal.Title>
 				</Modal.Header>
@@ -572,7 +496,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => {setModal3Show(false); setToastShow(false);}}>
+					<Button variant="warning" onClick={() => { setModal3Show(false); setToastShow(false); }}>
 						Cancelar
 					</Button>
 					<Button variant="danger" type="submit" onClick={handleUserDelete}>
@@ -581,8 +505,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modal4Show} onHide={() => {setModal4Show(false); setToastShow(false);}} size="lg" centered>
-				{toast}
+			<Modal
+				show={modal4Show}
+				onHide={() => { setModal4Show(false); setToastShow(false); }}
+				size="lg"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar informações da empresa</Modal.Title>
 				</Modal.Header>
@@ -607,7 +536,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									<Form.Control
 										value={companyEmail}
 										onChange={e => setCompanyEmail(e.target.value)}
-										type="text"
+										type="email"
 										placeholder="Email da empresa"
 										required
 									/>
@@ -635,7 +564,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										value={companyAddress}
 										onChange={e => setCompanyAddress(e.target.value)}
 										type="text"
-										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
+										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
 										placeholder="Rua, Número, Bairro, Cidade"
 									/>
 									<Form.Text className="text-muted">
@@ -674,7 +603,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setModal4Show(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -685,17 +614,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modalAlert} onHide={() => history.go()}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</div>
 	);
+}
+
+User.propTypes = {
+	userId : PropTypes.string.isRequired,
+	setUserId : PropTypes.any.isRequired,
+	user : PropTypes.object.isRequired,
+	setUser : PropTypes.any.isRequired,
+	companyInfo : PropTypes.object.isRequired
 }
