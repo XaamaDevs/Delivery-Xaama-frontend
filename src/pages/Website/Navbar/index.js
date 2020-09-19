@@ -1,5 +1,6 @@
 //	Importing React main module and its features
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Router features
 import { NavLink, useHistory } from "react-router-dom";
@@ -9,26 +10,23 @@ import {
 	Navbar,
 	Nav,
 	Modal,
-	Toast,
 	Button,
 	Tabs,
 	Tab,
 	Card,
-	CardDeck,
-	Row,
-	Col,
-	Form,
-	Image
+	Form
 } from "react-bootstrap";
+
+//	Importing website utils
+import Alert from "../../Website/Alert";
+import Push from "../../Website/Push";
+import ProductDeck from "../../Website/ProductDeck";
 
 //	Importing React icons features
 import { RiShoppingBasketLine } from "react-icons/ri";
 
 // Importing backend api
 import api from "../../../services/api";
-
-// Importing image from camera
-import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
@@ -91,136 +89,6 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			alert(error);
 		}
 	}
-
-	const header = (
-		<Nav fill variant="tabs">
-			{order.products ?
-				order.products.map((productO, index) => (
-					<Nav.Item key={index}>
-						<Nav.Link
-							className="btn-outline-dark rounded"
-							href={"#" + index}
-							onClick={() => setProduct(productO)}
-						>
-							{productO.product.name}
-						</Nav.Link>
-					</Nav.Item>
-				))
-				:
-				null
-			}
-		</Nav>
-	);
-
-	const productCard = (product) => {
-		return (
-			<>
-				{product.product ?
-					<CardDeck className="p-2">
-						<Card className="h-100 p-1" bg="secondary" key={product._id}>
-							<Row>
-								<Col sm>
-									<Image
-										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
-										alt="thumbnail"
-										fluid
-										rounded
-									/>
-								</Col>
-								<Col sm>
-									<Row>
-										<Card.Body>
-											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-											<Card.Text>
-												{product.product ? ((product.product.ingredients.length === 1) ?
-													"Ingrediente: "
-													:
-													"Ingredientes: "
-												)
-													:
-													null
-												}
-												{product.product ? product.product.ingredients.map((ingredient, index) => (
-													index === product.product.ingredients.length-1 ?
-														ingredient
-														:
-														ingredient + ", "
-												))
-													:
-													null
-												}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-									<Row>
-										<Card.Body>
-											<Card.Title>Observações:</Card.Title>
-											<Card.Text>
-												{product.note ? product.note : "Sem Observações"}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<Card.Body>
-										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-										{product.additions.length ?
-											<Card.Text>
-												<Row>
-													{(product.additions).map(addition => (
-														<Col key={(addition) ? addition._id : null } sm>
-															{addition.name + "\nPreço: R$" + addition.price}
-														</Col>
-													))}
-												</Row>
-											</Card.Text>
-											:
-											null
-										}
-									</Card.Body>
-								</Col>
-							</Row>
-							<Card.Footer>
-								<small>
-									{product.product ?
-										"Preço: R$" + product.product.prices[product.size]
-										:
-										null
-									}
-								</small>
-							</Card.Footer>
-						</Card>
-					</CardDeck>
-					:
-					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">
-						Selecione o produto desejado acima
-					</h1>
-				}
-			</>
-		);
-	};
-
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%",
-				zIndex: 5
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
 
 	return (
 		<>
@@ -369,7 +237,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				className="p-0"
 				centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Cesta de compras</Modal.Title>
 				</Modal.Header>
@@ -395,9 +263,10 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 										value={deliverAddress}
 										onChange={e => setDeliverAdress(e.target.value)}
 										type="text"
-										pattern="^[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+,\s?[0-9]+,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+(,\s?[a-zA-Z0-9\s\-.^~`´'\u00C0-\u024F\u1E00-\u1EFF]+)?$"
+										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
 										placeholder="Rua, Número, Bairro, Complemento (opcional)"
 										disabled={!deliverOrder}
+										required={deliverOrder}
 									/>
 									<Form.Text className="text-muted">
 										Separe rua, número, bairro e complemento por vírgula
@@ -423,26 +292,26 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 						<Tab eventKey="order" title="Ver pedido">
 							<Card bg="light" >
 								<Card.Header>
-									{header}
+									<ProductDeck.Header products={order.products} setProduct={setProduct} />
 								</Card.Header>
-								{product ? productCard(product) : null}
+								{product ? <ProductDeck.Card product={product} /> : null}
 							</Card>
 						</Tab>
 					</Tabs>
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setModalAlert(false); history.go(); }}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</>
 	);
 }
+
+WebsiteNavbar.propTypes = {
+	userId : PropTypes.string.isRequired,
+	setUserId : PropTypes.any.isRequired,
+	user : PropTypes.object.isRequired,
+	setUser : PropTypes.any.isRequired,
+	order : PropTypes.object.isRequired,
+	setOrder : PropTypes.any.isRequired,
+	companyInfo : PropTypes.object.isRequired
+};

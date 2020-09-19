@@ -33,18 +33,18 @@ function connect() {
 }
 
 async function disconnect() {
-  if (socket.connected) {  
-    socket.disconnect();
-  }
+	if (socket.connected) {
+		socket.disconnect();
+	}
 }
 
 export {
 	connect,
 	disconnect,
-  subscribeToNewUsers,
-  subscribeToNewOrders,
-  subscribeToDeleteUsers,
-  subscribeToDeleteOrders,
-  subscribeToUpdateUsers,
-  subscribeToUpdateOrders,
+	subscribeToNewUsers,
+	subscribeToNewOrders,
+	subscribeToDeleteUsers,
+	subscribeToDeleteOrders,
+	subscribeToUpdateUsers,
+	subscribeToUpdateOrders,
 };

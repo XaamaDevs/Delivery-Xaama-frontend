@@ -17,8 +17,8 @@ export default function NotFound() {
 				<p className="font-italic text-warning">O conteúdo que você está procurando não existe</p>
 				<hr className="my-3"/>
 				<p className="lead">
-					<Link 
-						to="/" 
+					<Link
+						to="/"
 						className="btn btn-outline-light btn-sm p-1">
 						Voltar para o início
 					</Link>

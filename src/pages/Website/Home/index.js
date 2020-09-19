@@ -17,8 +17,8 @@ export default function Home() {
 				<p className="font-italic text-warning">Faça seu pedido agora</p>
 				<hr className="my-3"/>
 				<p className="lead">
-					<Link 
-						to="/menu" 
+					<Link
+						to="/menu"
 						className="btn btn-outline-light btn-sm p-1">
 						Veja o Cardápio
 					</Link>
@@ -26,25 +26,25 @@ export default function Home() {
 			</Jumbotron>
 			<Carousel className="col-sm-5 m-auto px-5">
 				<Carousel.Item>
-					<Image 
-						className="w-100" 
-						src="https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png" 
+					<Image
+						className="w-100"
+						src="https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png"
 						alt="First slide"
 						fluid
 					/>
 				</Carousel.Item>
 				<Carousel.Item>
-					<Image 
-						className="w-100" 
-						src="https://gormansfamilyfood.com/files/2020/04/003-drink.png" 
+					<Image
+						className="w-100"
+						src="https://gormansfamilyfood.com/files/2020/04/003-drink.png"
 						alt="Second slide"
 						fluid
 					/>
 				</Carousel.Item>
 				<Carousel.Item>
-					<Image 
-						className="w-100" 
-						src="https://plazaoaxacallc.com/files/2019/06/001_taco.png" 
+					<Image
+						className="w-100"
+						src="https://plazaoaxacallc.com/files/2019/06/001_taco.png"
 						alt="Third slide"
 						fluid
 					/>

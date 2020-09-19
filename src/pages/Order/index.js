@@ -5,8 +5,6 @@ import PropTypes from "prop-types";
 //	Importing React features
 import {
 	Card,
-	CardDeck,
-	Nav,
 	Button,
 	Modal,
 	Form,
@@ -20,6 +18,7 @@ import {
 //	Importing website utils
 import Alert from "../Website/Alert";
 import Push from "../Website/Push";
+import ProductDeck from "../Website/ProductDeck";
 
 // Importing image from camera
 import camera from "../../assets/camera.svg";
@@ -40,7 +39,7 @@ import {
 } from "../../services/websocket";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, order }) {
+export default function AllOrders({ userId }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
@@ -96,12 +95,6 @@ export default function AllOrders({ userId, order }) {
 		setOrderListingModal(true);
 	}
 
-	async function handleProductList(event, productA) {
-		event.preventDefault();
-
-		setProduct(productA);
-	}
-
 	async function handleFeedback(event) {
 		event.preventDefault();
 
@@ -125,113 +118,6 @@ export default function AllOrders({ userId, order }) {
 		setFeedback("");
 	}
 
-	const header = (
-		<Nav fill variant="tabs">
-			{(orderA.products) ? (orderA.products).map((productA, index) => (
-				<Nav.Item key={index}>
-					<Nav.Link
-						className="btn-outline-dark rounded"
-						href={"#" + index}
-						onClick={e => handleProductList(e, productA)} >{productA.product.name}
-					</Nav.Link>
-				</Nav.Item>
-			))
-				:
-				null
-			}
-		</Nav>
-	);
-
-	const productCard = (product) => {
-		return (
-			<>
-				{product.product ?
-					<CardDeck className="p-2">
-						<Card className="h-100 p-1" bg="secondary" key={product._id}>
-							<Row>
-								<Col sm>
-									<Image
-										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
-										alt="thumbnail"
-										fluid
-										rounded
-									/>
-								</Col>
-								<Col sm>
-									<Row>
-										<Card.Body>
-											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-											<Card.Text>
-												{product.product ? ((product.product.ingredients.length === 1) ?
-													"Ingrediente: "
-													:
-													"Ingredientes: "
-												)
-													:
-													null
-												}
-												{product.product ? product.product.ingredients.map((ingredient, index) => (
-													index === product.product.ingredients.length-1 ?
-														ingredient
-														:
-														ingredient + ", "
-												))
-													:
-													null
-												}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-									<Row>
-										<Card.Body>
-											<Card.Title>Observações:</Card.Title>
-											<Card.Text>
-												{product.note ? product.note : "Sem Observações"}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<Card.Body>
-										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-										{product.additions.length ?
-											<Card.Text>
-												<Row>
-													{(product.additions).map(addition => (
-														<Col key={(addition) ? addition._id : null } sm>
-															{addition.name + "\nPreço: R$" + addition.price}
-														</Col>
-													))}
-												</Row>
-											</Card.Text>
-											:
-											null
-										}
-									</Card.Body>
-								</Col>
-							</Row>
-							<Card.Footer>
-								<small>
-									{product.product ?
-										"Preço: R$" + product.product.prices[product.size]
-										:
-										null
-									}
-								</small>
-							</Card.Footer>
-						</Card>
-					</CardDeck>
-					:
-					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">
-						Selecione o produto desejado acima
-					</h1>
-				}
-			</>
-		);
-	};
-
 	return (
 		<div className="all-container w-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -246,7 +132,7 @@ export default function AllOrders({ userId, order }) {
 				</Container>
 				:
 				<>
-					{(orders && orders.length) || order.products ?
+					{orders && orders.length  ?
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
 						:
 						<>
@@ -325,9 +211,9 @@ export default function AllOrders({ userId, order }) {
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Card bg="light" >
+					<Card bg="light">
 						<Card.Header>
-							{header}
+							<ProductDeck.Header products={orderA.products} setProduct={setProduct} />
 						</Card.Header>
 						{isLoading ?
 							<Spinner
@@ -337,19 +223,10 @@ export default function AllOrders({ userId, order }) {
 								variant="warning"
 							/>
 							:
-							product ? productCard(product) : null
+							product ? <ProductDeck.Card product={product} /> : null
 						}
 					</Card>
-
 				</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant="warning"
-						onClick={() => {setOrderListingModal(false); setOrderA({}); setProduct({});}}
-					>
-						Fechar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);}} size="lg" centered>
@@ -385,12 +262,11 @@ export default function AllOrders({ userId, order }) {
 				</Modal.Body>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</div>
 	);
 }
 
 AllOrders.propTypes = {
-	userId : PropTypes.string.isRequired,
-	order : PropTypes.object.isRequired
+	userId : PropTypes.string.isRequired
 };

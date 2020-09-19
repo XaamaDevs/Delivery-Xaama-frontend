@@ -1,11 +1,12 @@
 //	Importing React main module and its features
 import React from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Bootstrap features
 import { Container, Row, Col, Card } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function NotFound({ companyInfo }) {
+export default function About({ companyInfo }) {
 	return (
 		<div className="d-flex flex-column flex-wrap justify-content-center m-0 p-0 w-100">
 			<Container className="w-100">
@@ -58,3 +59,7 @@ export default function NotFound({ companyInfo }) {
 		</div>
 	);
 }
+
+About.propTypes = {
+	companyInfo : PropTypes.object.isRequired
+};

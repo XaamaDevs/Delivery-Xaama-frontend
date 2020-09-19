@@ -517,7 +517,7 @@ export default function Additions({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</Container>
 	);
 }

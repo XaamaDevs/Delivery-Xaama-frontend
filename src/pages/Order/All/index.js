@@ -1,10 +1,24 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
-// Importing backend api
-import api from "../../../services/api";
+//	Importing React features
+import {
+	Card,
+	Button,
+	Modal,
+	Row,
+	Col,
+	Spinner,
+	Container,
+	Image,
+	Form
+} from "react-bootstrap";
 
-import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders, subscribeToDeleteOrders } from "../../../services/websocket";
+//	Importing website utils
+import Alert from "../../Website/Alert";
+import Push from "../../Website/Push";
+import ProductDeck from "../../Website/ProductDeck";
 
 // Importing styles
 import "./styles.css";
@@ -12,23 +26,30 @@ import "./styles.css";
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
 
-//	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast, Form } from "react-bootstrap";
+// Importing backend api
+import api from "../../../services/api";
+
+import {
+	connect,
+	disconnect,
+	subscribeToNewOrders,
+	subscribeToUpdateOrders,
+	subscribeToDeleteOrders
+} from "../../../services/websocket";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, userType }) {
+export default function AllOrders({ userId }) {
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
 	const [product, setProduct] = useState({});
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
-  const [feedback, setFeedback]= useState("");
-  const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
+	const [feedback, setFeedback]= useState("");
+	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
-  const [modalAlert, setModalAlert] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [modalFeedback, setModalFeedback] = useState(false);
 	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -36,58 +57,44 @@ export default function AllOrders({ userId, userType }) {
 
 	function setupWebSocket() {
 		disconnect();
-    connect();
-  }
+		connect();
+	}
 
-  useEffect(() => {
-    subscribeToNewOrders(o => setOrders([...orders, o]));
-    subscribeToUpdateOrders(o => setOrders(o));
-    subscribeToDeleteOrders(o => setOrders(o));
+	useEffect(() => {
+		subscribeToNewOrders(o => setOrders([...orders, o]));
+		subscribeToUpdateOrders(o => setOrders(o));
+		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {
-    async function loadOrder() {
-      await api.get("order", {
-        headers : {
-          authorization: userId
-        }
-      }).then((response) => {
-        if(response.data) {
-          setOrders(response.data);
-          setupWebSocket();
-        } else {
-          setTitle("Alerta!");
-          setColor("danger");
-          setMessage("Não há pedidos!");
-          setToastShow(true);
-        }
-
-      }).catch((error) => {
-        setTitle("Alerta!");
-        setColor("danger");
-        if(error.response && typeof(error.response.data) !== "object") {
-          setMessage(error.response.data);
-        } else {
-          setMessage(error.message);
-        }
-        setToastShow(true);
-      });
-      setLoading(false);
-    }
+		async function loadOrder() {
+			await api.get("order", {
+				headers : {
+					authorization: userId
+				}
+			}).then((response) => {
+				setOrders(response.data);
+				setupWebSocket();
+			}).catch((error) => {
+				setTitle("Alerta!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+			setLoading(false);
+		}
 
 		loadOrder();
-  }, [userId]);
+	}, [userId]);
 
 
 	async function handleSetOrder(event, order) {
 		event.preventDefault();
 		setOrderA(order);
 		setModalOrderListing(true);
-	}
-
-	async function handleProductList(event, productA) {
-		event.preventDefault();
-		setProduct(productA);
 	}
 
 	async function handleDeliver(event, order) {
@@ -97,12 +104,10 @@ export default function AllOrders({ userId, userType }) {
 			.then(() => {
 				setTitle("Pedido enviado!");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
 				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
@@ -117,45 +122,16 @@ export default function AllOrders({ userId, userType }) {
 
 		setFeedback(order.feedback);
 		setModalFeedback(true);
-  }
+	}
 
-  async function deleteAllSockets() {
-    await api.delete("sockets", {
-      headers: { authorization: userId }
-    })
-      .then(() => {
-        //
-      }).catch((error) => {
-        setTitle("Erro!");
-				setColor("danger");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setModalAlert(true);
-      });
-  }
-
-	async function handleDeleteOrders(event) {
-		event.preventDefault();
-		setModalDeleteOrder(false);
-
-		await api.delete("order", {
-			headers : {
-        authorization: userId,
-        password: userPasswordOnDelete
-			}})
+	async function deleteAllSockets() {
+		await api.delete("sockets", {
+			headers: { authorization: userId }
+		})
 			.then(() => {
-        deleteAllSockets();
-				setTitle("Todos pedidos apagados!");
-				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-        setModalAlert(true);
-			})
-			.catch((error) => {
+				//
+			}).catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
@@ -165,134 +141,35 @@ export default function AllOrders({ userId, userType }) {
 			});
 	}
 
-	const header = (
-		<Nav fill variant="tabs">
-			{(orderA.products) ? (orderA.products).map((productA, index) => (
-				<Nav.Item key={index}>
-					<Nav.Link
-						className="btn-outline-dark rounded"
-						href={"#" + index}
-						onClick={e => handleProductList(e, productA)} >{productA.product.name}
-					</Nav.Link>
-				</Nav.Item>
-			))
-				:
-				<></>
-			}
-		</Nav>
-	);
+	async function handleDeleteOrders(event) {
+		event.preventDefault();
+		setModalDeleteOrder(false);
 
-	const productCard = (product) => {
-		return (
-			<>
-				{product.product ?
-					<CardDeck className="p-2">
-						<Card className="h-100 p-1" bg="secondary" key={product._id}>
-							<Row>
-								<Col sm>
-									<Image
-										src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
-										alt="thumbnail"
-										fluid
-										rounded
-									/>
-								</Col>
-								<Col sm>
-									<Row>
-										<Card.Body>
-											<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-											<Card.Text>
-												{product.product ? ((product.product.ingredients.length === 1) ?
-													"Ingrediente: "
-													:
-													"Ingredientes: "
-												)
-													:
-													null
-												}
-												{product.product ? product.product.ingredients.map((ingredient, index) => (
-													index === product.product.ingredients.length-1 ?
-														ingredient
-														:
-														ingredient + ", "
-												))
-													:
-													null
-												}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-									<Row>
-										<Card.Body>
-											<Card.Title>Observações:</Card.Title>
-											<Card.Text>
-												{product.note ? product.note : "Sem Observações"}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<Card.Body>
-										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-										{product.additions.length ?
-											<Card.Text>
-												<Row>
-													{(product.additions).map(addition => (
-														<Col key={(addition) ? addition._id : null } sm>
-															{addition.name + "\nPreço: R$" + addition.price}
-														</Col>
-													))}
-												</Row>
-											</Card.Text>
-											:
-											null
-										}
-									</Card.Body>
-								</Col>
-							</Row>
-							<Card.Footer>
-								<small>
-									{product.product ?
-										"Preço: R$" + product.product.prices[product.size]
-										:
-										null
-									}
-								</small>
-							</Card.Footer>
-						</Card>
-					</CardDeck>
-					:
-					<h1 style={{color: "#000000"}} className="display-5 text-center m-auto p-5">
-						Selecione o produto desejado acima
-					</h1>
+		await api.delete("order", {
+			headers : {
+				authorization: userId,
+				password: userPasswordOnDelete
+			}})
+			.then(() => {
+				deleteAllSockets();
+				setTitle("Todos pedidos apagados!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
 				}
-			</>
-		);
-	};
-
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "absolute",
-				top: "50%",
-				right: "50%",
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
+				setModalAlert(true);
+			});
+	}
 
 	return (
 		<div className="all-container w-100">
+			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
@@ -356,7 +233,6 @@ export default function AllOrders({ userId, userType }) {
 					</>
 					:
 					<>
-						{toast}
 						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos das últimas 24 horas!</h1>
 					</>
 			}
@@ -374,7 +250,7 @@ export default function AllOrders({ userId, userType }) {
 				<Modal.Body>
 					<Card bg="light" >
 						<Card.Header>
-							{header}
+							<ProductDeck.Header products={orderA.products} setProduct={setProduct} />
 						</Card.Header>
 						{isLoading ?
 							<Spinner
@@ -384,7 +260,7 @@ export default function AllOrders({ userId, userType }) {
 								variant="warning"
 							/>
 							:
-							product ? productCard(product) : null
+							product ? <ProductDeck.Card product={product} /> : null
 						}
 					</Card>
 
@@ -406,7 +282,7 @@ export default function AllOrders({ userId, userType }) {
 					entregues antes de apagá-los.<br></br> <br></br>
 					Dica: Apague todos os dias antes de começar a funcionar. <br></br> <br></br>
 
-          <Form className="my-3" onSubmit={handleDeleteOrders}>
+					<Form className="my-3" onSubmit={handleDeleteOrders}>
 						<Form.Group controlId="passwordOnDelete">
 							<Form.Label>Confirme sua senha para prosseguir</Form.Label>
 							<Form.Control
@@ -417,28 +293,14 @@ export default function AllOrders({ userId, userType }) {
 								required
 							/>
 						</Form.Group>
-
-            <Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
-              Cancelar
-            </Button>{" "}
-            <Button className="mt-1" variant="danger" type="submit">
-              Apagar
-            </Button>
-
-          </Form>
+						<Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
+							Cancelar
+						</Button>{" "}
+						<Button className="mt-1" variant="danger" type="submit">
+							Apagar
+						</Button>
+					</Form>
 				</Modal.Body>
-			</Modal>
-
-			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalAlert(false)}>
-						Fechar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Modal show={modalFeedback} onHide={() => setModalFeedback(false)}>
@@ -452,6 +314,17 @@ export default function AllOrders({ userId, userType }) {
 					</Button>
 				</Modal.Footer>
 			</Modal>
+
+			<Alert.Close
+				modalAlert={modalAlert}
+				setModalAlert={setModalAlert}
+				title={title}
+				message={message}
+			/>
 		</div>
 	);
 }
+
+AllOrders.propTypes = {
+	userId : PropTypes.string.isRequired
+};
