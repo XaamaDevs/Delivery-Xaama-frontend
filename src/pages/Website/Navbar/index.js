@@ -66,7 +66,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				setModalAlert(true);
 			}).catch((error) => {
 				setTitle("Alerta!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);

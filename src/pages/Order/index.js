@@ -19,6 +19,7 @@ import {
 
 //	Importing website utils
 import Alert from "../Website/Alert";
+import Push from "../Website/Push";
 
 // Importing image from camera
 import camera from "../../assets/camera.svg";
@@ -61,29 +62,6 @@ export default function AllOrders({ userId, order }) {
 		connect();
 	}
 
-	async function loadOrder() {
-		await api.get("/order/" + userId)
-			.then((response) => {
-				if(response.data) {
-					setOrders(response.data);
-					setupWebSocket();
-				} else {
-					setTitle("Alerta!");
-					setMessage("Não há pedidos!");
-					setToastShow(true);
-				}
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
-		setLoading(false);
-	}
-
 	useEffect(() => {
 		subscribeToNewOrders(o => setOrders([...orders, o]));
 		subscribeToUpdateOrders(o => setOrders(o));
@@ -91,6 +69,23 @@ export default function AllOrders({ userId, order }) {
 	}, [orders]);
 
 	useEffect(() => {
+		async function loadOrder() {
+			await api.get("order/" + userId)
+				.then((response) => {
+					setOrders(response.data);
+					setupWebSocket();
+				}).catch((error) => {
+					setTitle("Alerta!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+			setLoading(false);
+		}
+
 		loadOrder();
 	}, [userId]);
 
@@ -110,23 +105,23 @@ export default function AllOrders({ userId, order }) {
 	async function handleFeedback(event) {
 		event.preventDefault();
 
-		await api.put("/order/" + orderId, {status: true, feedback: feedback})
-			.then(() => {
-				setTitle("Avaliação enviada!");
-				setMessage("Obrigado pelo seu feedback!");
-				setFeedbackModal(false);
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setFeedbackModal(false);
-				setFeedback(true);
-			});
+		await api.put("order/" + orderId, {
+			status: true,
+			feedback: feedback
+		}).then(() => {
+			setFeedbackModal(false);
+			setTitle("Avaliação enviada!");
+			setMessage("Obrigado pelo seu feedback!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setFeedbackModal(false);
+		});
 		setFeedback("");
 	}
 
@@ -239,6 +234,7 @@ export default function AllOrders({ userId, order }) {
 
 	return (
 		<div className="all-container w-100">
+			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner

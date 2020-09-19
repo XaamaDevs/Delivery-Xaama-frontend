@@ -63,7 +63,7 @@ export default function Additions({ userId }) {
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response) {
+					if(error.response && typeof(error.response.data) !== "object") {
 						setMessage(error.response.data);
 					} else {
 						setMessage(error.message);
@@ -76,7 +76,7 @@ export default function Additions({ userId }) {
 					setAdditions(response.data);
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response) {
+					if(error.response && typeof(error.response.data) !== "object") {
 						setMessage(error.response.data);
 					} else {
 						setMessage(error.message);
@@ -144,7 +144,7 @@ export default function Additions({ userId }) {
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -195,7 +195,7 @@ export default function Additions({ userId }) {
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -219,7 +219,7 @@ export default function Additions({ userId }) {
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
