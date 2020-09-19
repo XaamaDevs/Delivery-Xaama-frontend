@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -27,19 +27,19 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [userName, setUserName] = useState(user.name);
 	const [userEmail, setUserEmail] = useState(user.email);
 	const [userPhone, setUserPhone] = useState(user.phone);
-	const [userAddress, setUserAddress] = useState(user.address ? user.address.join(", ") : null);
+	const [userAddress, setUserAddress] = useState(user.address ? user.address.join(", ") : "");
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
 
 	//	Company variable
-	const [companyName, setCompanyName] = useState(companyInfo.name);
-	const [companyEmail, setCompanyEmail] = useState(companyInfo.email);
-	const [companyPhone, setCompanyPhone] = useState(companyInfo.phone);
-	const [companyAddress, setCompanyAddress] = useState(companyInfo.address);
-	const [companyFreight, setCompanyFreight] = useState(companyInfo.freight);
-	const [companyProductTypes, setCompanyProductTypes] = useState(companyInfo.productTypes.join(", "));
+	const [companyName, setCompanyName] = useState("");
+	const [companyEmail, setCompanyEmail] = useState("");
+	const [companyPhone, setCompanyPhone] = useState("");
+	const [companyAddress, setCompanyAddress] = useState("");
+	const [companyFreight, setCompanyFreight] = useState("");
+	const [companyProductTypes, setCompanyProductTypes] = useState("");
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -47,12 +47,30 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [modal3Show, setModal3Show] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
+
+	//	Update user state variables
+	useEffect(() => {
+		setUserName(user.name);
+		setUserEmail(user.email);
+		setUserPhone(user.phone ? user.phone : "");
+		setUserAddress(user.address ? user.address.join(", ") : "");
+	}, [modal1Show, modal2Show]);
+
+	//	Update company state variables
+	useEffect(() => {
+		setCompanyName(companyInfo.name);
+		setCompanyEmail(companyInfo.email);
+		setCompanyAddress(companyInfo.address);
+		setCompanyFreight(companyInfo.freight);
+		setCompanyProductTypes(companyInfo.productTypes.join(", "));
+	}, [modal4Show]);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -74,8 +92,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 		data.append("name", userName);
 		data.append("email", userEmail);
-		data.append("phone", userPhone);
-		data.append("address", userAddress);
+		data.append("phone", userPhone && userPhone.length ? userPhone : "");
+		data.append("address", userAddress && userAddress.length ? userAddress : "");
 
 		if(action === 0) {
 			if(thumbnail) {
@@ -101,9 +119,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				authorization: userId
 			}})
 			.then(() => {
+				setModal1Show(false);
+				setModal2Show(false);
 				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
-				setModal1Show(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
@@ -113,7 +132,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				} else {
 					setMessage(error.message);
 				}
-				setToastShow(true);
+				if(!action) {
+					setModalAlertThumbnail(true);
+				} else {
+					setToastShow(true);
+				}
 			});
 	}
 
@@ -166,9 +189,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				authorization: userId
 			}})
 			.then(() => {
+				setModal4Show(false);
 				setTitle("Alterações da empresa");
 				setMessage("Alterações feitas com sucesso!");
-				setModal4Show(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
@@ -180,40 +203,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				}
 				setToastShow(true);
 			});
-	}
-
-	async function handleModal(event, modal, user = null) {
-		event.preventDefault();
-
-		if(user) {
-			setUserName(user.name);
-			setUserEmail(user.email);
-			setUserPhone(user.phone);
-			setUserAddress(user.address ? user.address.join(", ") : null);
-		}
-
-		setCompanyName(companyInfo.name);
-		setCompanyEmail(companyInfo.email);
-		setCompanyAddress(companyInfo.address);
-		setCompanyFreight(companyInfo.freight);
-		setCompanyProductTypes(companyInfo.productTypes.join(", "));
-
-		switch(modal){
-		case 1:
-			setModal1Show(true);
-			break;
-		case 2:
-			setModal2Show(true);
-			break;
-		case 3:
-			setModal3Show(true);
-			break;
-		case 4:
-			setModal4Show(true);
-			break;
-		default:
-			break;
-		}
 	}
 
 	return (
@@ -230,7 +219,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						/>
 						<Image
 							id="thumbnail"
-							className={user.thumbnail || preview ? "border-0 m-auto" : "w-100 m-auto"}
+							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)}
 							alt="Selecione sua imagem"
 							onClick={inputImage}
@@ -283,12 +272,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
 						<Button
 							variant="outline-warning"
-							onClick={event => handleModal(event, 1, user)}
+							onClick={() => setModal1Show(true)}
 						>
 							Editar perfil
 						</Button>
 						<Button
-							onClick ={event => handleModal(event, 2, user)}
+							onClick ={() => setModal2Show(true)}
 							className="btn"
 							id="btn-password"
 						>
@@ -296,14 +285,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						</Button>
 						{user.userType === 2 ?
 							<Button
-								onClick = {event => handleModal(event, 4)}
+								onClick = {() => setModal4Show(true)}
 								variant="outline-warning"
 							>
 								Info da empresa
 							</Button>
 							:
 							<Button
-								onClick = {event => handleModal(event, 3, user)}
+								onClick = {() => setModal3Show(true)}
 								variant="outline-danger"
 							>
 								Apagar perfil
@@ -381,7 +370,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									<Form.Control
 										value={userPhone}
 										onChange={e => setUserPhone(e.target.value)}
-										type="text"
+										type="tel"
 										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
 									/>
@@ -615,6 +604,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
+			<Alert.Close
+				modalAlert={modalAlertThumbnail}
+				setModalAlert={setModalAlertThumbnail}
+				title={title}
+				message={message}
+			/>
 		</div>
 	);
 }
