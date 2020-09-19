@@ -1,24 +1,25 @@
 //	Importing React main module and its features
 import React, { useState, useEffect, useMemo } from "react";
-
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
 
 //	Importing React Bootstrap features
-import { 
-	Container, 
-	Spinner, 
-	Toast, 
-	Nav, 
-	Card, 
-	Button, 
-	CardDeck, 
-	Modal, 
-	Form, 
-	Col, 
-	Row, 
-	Image 
+import {
+	Container,
+	Spinner,
+	Nav,
+	Card,
+	Button,
+	CardDeck,
+	Modal,
+	Form,
+	Col,
+	Row,
+	Image
 } from "react-bootstrap";
+
+//	Importing website utils
+import Alert from "../Website/Alert";
+import Push from "../Website/Push";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -42,15 +43,11 @@ export default function Additions({ userId }) {
 	const [additionAddModal, setAdditionAddModal] = useState(false);
 	const [additionUpdateModal, setAdditionUpdateModal] = useState(false);
 	const [additionDeleteModal, setAdditionDeleteModal] = useState(false);
-	const [modalWarningShow, setModalWarningShow] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
-
-	//	Defining history to jump through pages
-	const history = useHistory();
 
 	//	Loading current user info and addition list
 	useEffect(() => {
@@ -61,14 +58,11 @@ export default function Additions({ userId }) {
 						setProductTypes(response.data);
 					} else {
 						setTitle("Erro!");
-						setColor("danger");
 						setMessage("Não há tipos de produtos cadastrados");
 						setToastShow(true);
 					}
-				})
-				.catch((error) => {
+				}).catch((error) => {
 					setTitle("Erro!");
-					setColor("danger");
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
@@ -76,13 +70,12 @@ export default function Additions({ userId }) {
 					}
 					setToastShow(true);
 				});
-			
+
 			await api.get("addition")
 				.then((response) => {
 					setAdditions(response.data);
 				}).catch((error) => {
 					setTitle("Erro!");
-					setColor("danger");
 					if(error.response) {
 						setMessage(error.response.data);
 					} else {
@@ -93,7 +86,7 @@ export default function Additions({ userId }) {
 
 			setLoading(false);
 		}
-		
+
 		fetchData();
 	}, [userId]);
 
@@ -105,7 +98,7 @@ export default function Additions({ userId }) {
 	//	Function to handle input addition thumbnail
 	async function inputImage(event) {
 		event.preventDefault();
-	
+
 		document.getElementById("inputImage").click();
 	}
 
@@ -119,7 +112,7 @@ export default function Additions({ userId }) {
 
 		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
-	
+
 		for(const type of addTypesElem) {
 			if(type.selected === true) {
 				addTypes += type.value + ", ";
@@ -127,7 +120,7 @@ export default function Additions({ userId }) {
 		}
 
 		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
-		
+
 		data.append("type", addTypes);
 
 		if(additionThumbnail) {
@@ -140,19 +133,17 @@ export default function Additions({ userId }) {
 		}
 
 		await api.post("addition", data, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
 				setAdditionAddModal(false);
 				setTitle("Nova adição!");
 				setMessage("Adição criada com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
@@ -172,7 +163,7 @@ export default function Additions({ userId }) {
 
 		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
-	
+
 		for(const type of addTypesElem) {
 			if(type.selected === true) {
 				addTypes += type.value + ", ";
@@ -180,7 +171,7 @@ export default function Additions({ userId }) {
 		}
 
 		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
-		
+
 		data.append("type", addTypes);
 
 		if(additionThumbnail) {
@@ -193,19 +184,17 @@ export default function Additions({ userId }) {
 		}
 
 		await api.put("addition/" + additionId, data, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
 				setAdditionUpdateModal(false);
 				setTitle("Alterações de adição!");
 				setMessage("Alterações feitas com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
@@ -217,21 +206,19 @@ export default function Additions({ userId }) {
 
 	async function handleAdditionDelete(event) {
 		event.preventDefault();
-		
+
 		await api.delete("addition/" + additionId, {
-			headers : { 
+			headers : {
 				authorization: userId
 			}})
 			.then(() => {
 				setAdditionDeleteModal(false);
 				setTitle("Remoção de adição!");
 				setMessage("Adição removida com sucesso!");
-				setColor("warning");
-				setModalWarningShow(true);
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
@@ -270,7 +257,7 @@ export default function Additions({ userId }) {
 		<Card.Header className="pb-3">
 			<Nav variant="tabs" defaultActiveKey="#">
 				<Nav.Item>
-					<Nav.Link 
+					<Nav.Link
 						href="#"
 						className="btn-outline-warning rounded"
 						onClick={e => handleAdditionModal(e, 0)}
@@ -289,15 +276,15 @@ export default function Additions({ userId }) {
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
 					<div className="d-flex justify-content-between flex-wrap my-auto">
-						<Button 
+						<Button
 							variant="warning"
 							size="sm"
-							onClick ={e => handleAdditionModal(e, 1, addition)} 
+							onClick ={e => handleAdditionModal(e, 1, addition)}
 						>
 								Modificar adição
 						</Button>
-						<Button 
-							variant="danger" 
+						<Button
+							variant="danger"
 							size="sm"
 							onClick={e => handleAdditionModal(e, 2, addition)}
 						>
@@ -314,34 +301,15 @@ export default function Additions({ userId }) {
 		);
 	};
 
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%"
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
-
 	return (
 		<Container className="addition-container w-100">
-			<Card className="px-3" bg="dark">
+			<Card className="px-3" text="light" bg="dark">
 				{header}
-				{isLoading ? 
-					<Spinner 
-						className="my-5 mx-auto" 
-						style={{width: "5rem", height: "5rem"}} 
-						animation="grow" 
+				{isLoading ?
+					<Spinner
+						className="my-5 mx-auto"
+						style={{width: "5rem", height: "5rem"}}
+						animation="grow"
 						variant="warning"
 					/>
 					:
@@ -363,13 +331,13 @@ export default function Additions({ userId }) {
 				}
 			</Card>
 
-			<Modal 
-				show={additionAddModal} 
-				onHide={() =>  {setAdditionAddModal(false); setToastShow(false);}} 
-				size="lg" 
+			<Modal
+				show={additionAddModal}
+				onHide={() =>  {setAdditionAddModal(false); setToastShow(false);}}
+				size="lg"
 				centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Nova adição</Modal.Title>
 				</Modal.Header>
@@ -383,8 +351,8 @@ export default function Additions({ userId }) {
 									type="file"
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 								/>
-								<Image 
-									id="thumbnail" 
+								<Image
+									id="thumbnail"
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -396,10 +364,10 @@ export default function Additions({ userId }) {
 							<Col sm>
 								<Form.Group controlId="additionName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={additionName}
-										onChange={e => setAdditionName(e.target.value)} 
-										type="text" 
+										onChange={e => setAdditionName(e.target.value)}
+										type="text"
 										placeholder="Nome da adição"
 										required
 									/>
@@ -408,12 +376,12 @@ export default function Additions({ userId }) {
 									<Form.Label>
 										Preço
 									</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={additionPrice}
 										onChange={e => {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
-										}} 
+										}}
 										pattern="^[0-9]+(\.[0-9]+)*$"
 										type="text"
 										placeholder="Preço da adição"
@@ -445,12 +413,12 @@ export default function Additions({ userId }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal 
-				show={additionUpdateModal} 
-				onHide={() => {setAdditionUpdateModal(false); setToastShow(false);}} 
+			<Modal
+				show={additionUpdateModal}
+				onHide={() => {setAdditionUpdateModal(false); setToastShow(false);}}
 				size="lg" centered
 			>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
@@ -464,8 +432,8 @@ export default function Additions({ userId }) {
 									type="file"
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 								/>
-								<Image 
-									id="thumbnail" 
+								<Image
+									id="thumbnail"
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -477,10 +445,10 @@ export default function Additions({ userId }) {
 							<Col sm>
 								<Form.Group controlId="additionName">
 									<Form.Label>Nome</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={additionName}
-										onChange={e => setAdditionName(e.target.value)} 
-										type="text" 
+										onChange={e => setAdditionName(e.target.value)}
+										type="text"
 										placeholder="Nome do adicional"
 										required
 									/>
@@ -489,12 +457,12 @@ export default function Additions({ userId }) {
 									<Form.Label>
 										Preço
 									</Form.Label>
-									<Form.Control 
+									<Form.Control
 										value={additionPrice}
 										onChange={e => {
 											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 											setAdditionPrice(e.target.value);
-										}} 
+										}}
 										pattern="^[0-9]+(\.[0-9]+)*$"
 										type="text"
 										placeholder="Preço da adição"
@@ -505,7 +473,7 @@ export default function Additions({ userId }) {
 									<Form.Label>Tipo</Form.Label>
 									<Form.Control as="select" htmlSize="2" multiple required>
 										{productTypes.map((type, index) => (
-											<option 
+											<option
 												key={index}
 												selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
 												{type}
@@ -531,7 +499,7 @@ export default function Additions({ userId }) {
 			</Modal>
 
 			<Modal show={additionDeleteModal} onHide={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
-				{toast}
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Remover adição</Modal.Title>
 				</Modal.Header>
@@ -549,17 +517,14 @@ export default function Additions({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={modalWarningShow} onHide={() => history.go()}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => history.go()}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</Container>
 	);
 }
+
+Additions.propTypes = {
+	userId : PropTypes.string.isRequired,
+	user : PropTypes.object.isRequired,
+	order : PropTypes.object.isRequired,
+	setOrder : PropTypes.any.isRequired
+};

@@ -1,11 +1,15 @@
 //	Importing React main module and its features
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Router features
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Modal, Toast, Form, Button, Col, Row } from "react-bootstrap";
+import { Form, Button, Col, Row } from "react-bootstrap";
+
+//	Importing website utils
+import Push from "../../Website/Push";
 
 //	Importing api to communicate to backend
 import api from "../../../services/api";
@@ -17,11 +21,9 @@ export default function Login({ setUserId, setUser }) {
 	const [password, setPassword] = useState("");
 
 	//	Message settings
-	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [toastShow, setToastShow] = useState(false);
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -41,8 +43,7 @@ export default function Login({ setUserId, setUser }) {
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
-				if(error.response) {
+				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
 				} else {
 					setMessage(error.message);
@@ -51,29 +52,9 @@ export default function Login({ setUserId, setUser }) {
 			});
 	}
 
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%",
-				zIndex: 5
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
-
 	return (
 		<div className="user-container d-flex h-100">
-			{toast}
+			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>
 				<Form.Group controlId="email">
 					<Form.Label>Email</Form.Label>
@@ -113,17 +94,11 @@ export default function Login({ setUserId, setUser }) {
 					</Col>
 				</Row>
 			</Form>
-			<Modal show={modalAlert} onClick={() => setModalAlert(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => setModalAlert(false)}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
 		</div>
 	);
 }
+
+Login.propTypes = {
+	setUserId : PropTypes.any.isRequired,
+	setUser : PropTypes.any.isRequired
+};
