@@ -79,12 +79,12 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				setToastShow(true);
 			});
 		setLoading(false);
-	}
+  }
 
 	useEffect(() => {
     subscribeToNewOrders(o => setOrders([...orders, o]));
-		subscribeToDeleteOrders(loadOrder());
-    subscribeToUpdateOrders(loadOrder());
+		subscribeToUpdateOrders(o => setOrders(o));
+    subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {

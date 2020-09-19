@@ -36,19 +36,8 @@ function connect() {
 }
 
 async function disconnect() {
-  if (socket.connected) {
-    await api.delete("socket")
-    .then((response) => {
-				//alert(response);
-			})
-			.catch((error) => {
-				if(error.response) {
-					//alert(error.response.data);
-				} else {
-					//alert(error.message)
-				}
-	  });
-		socket.disconnect();
+  if (socket.connected) {  
+    socket.disconnect();
   }
 }
 

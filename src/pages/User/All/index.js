@@ -51,17 +51,16 @@ export default function AllUsers({ userId }) {
     setupWebSocket();
     setLoading(false);
   }
-
+  
+  useEffect(() => {
+    subscribeToNewUsers(u => setUsers([...users, u]));
+    subscribeToUpdateUsers(u => setUsers(u));
+    subscribeToDeleteUsers(u => setUsers(u));
+  }, [users]);
+  
 	useEffect(() => {
 		loadUser();
   }, [userId]);
-  
-  useEffect(() => {
-    subscribeToNewUsers(user => setUsers([...users, user]));
-    subscribeToDeleteUsers(loadUser());
-    subscribeToUpdateUsers(loadUser());
-	}, [users]);
-	
 
 	async function handleTypeUser(event) {
 		event.preventDefault();

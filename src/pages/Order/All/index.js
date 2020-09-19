@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 // Importing backend api
 import api from "../../../services/api";
 
-import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders } from "../../../services/websocket";
+import { connect, disconnect, subscribeToNewOrders, subscribeToUpdateOrders, subscribeToDeleteOrders } from "../../../services/websocket";
 
 // Importing styles
 import "./styles.css";
@@ -74,7 +74,8 @@ export default function AllOrders({ userId, userType }) {
 
   useEffect(() => {
     subscribeToNewOrders(o => setOrders([...orders, o]));
-    subscribeToUpdateOrders(loadOrder());
+    subscribeToUpdateOrders(o => setOrders(o));
+    subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {
