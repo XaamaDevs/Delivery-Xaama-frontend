@@ -315,7 +315,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												className="nav-link"
 												onClick={() => setShoppingBasketModal(true)}
 											>
-												<RiShoppingBasketLine size="20" />
+												<RiShoppingBasketLine size="25" />
 											</NavLink>
 										</Nav.Item>
 										:
