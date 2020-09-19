@@ -121,7 +121,23 @@ export default function AllOrders({ userId, userType }) {
 
 		setFeedback(order.feedback);
 		setModalFeedback(true);
-	}
+  }
+  
+  async function deleteAllSockets() {
+    await api.delete("sockets")
+      .then(() => { 
+        //
+      }).catch((error) => {
+        setTitle("Erro!");
+				setColor("danger");
+				if(error.response) {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setModalAlert(true);
+      });
+  }
 
 	async function handleDeleteOrders(event) {
 		event.preventDefault();
@@ -132,10 +148,11 @@ export default function AllOrders({ userId, userType }) {
 				authorization: userId,
 			}})
 			.then(() => {
+        deleteAllSockets();
 				setTitle("Todos pedidos apagados!");
 				setMessage("Alterações feitas com sucesso!");
 				setColor("warning");
-				setModalAlert(true);
+        setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");

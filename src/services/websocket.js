@@ -1,8 +1,5 @@
 import socketio from "socket.io-client";
 
-// Importing backend api
-import api from "./api";
-
 const socket = socketio("http://localhost:4000", {
 	autoConnect: false,
 });
