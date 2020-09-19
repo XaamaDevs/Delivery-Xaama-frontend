@@ -335,7 +335,7 @@ export default function AllOrders({ userId, userType }) {
 						<Button
 							className="d-flex mx-auto my-4"
 							onClick={() => setModalDeleteOrder(true)}
-							variant="outline-danger">Apagar todos pedidos
+							variant="danger">Apagar todos pedidos
 						</Button>
 					</>
 					:

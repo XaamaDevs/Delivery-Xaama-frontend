@@ -315,7 +315,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 												<>
 													<Button
 														className="d-flex justify-content-center mx-auto mt-1"
-														variant="outline-warning">Pedido a caminho
+														variant="warning">Pedido a caminho
 													</Button>
 													<Button
 														onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
@@ -326,7 +326,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 												:
 												<Button
 													className="d-flex justify-content-center mx-auto mt-1"
-													variant="outline-warning">Pedido entregue
+													variant="warning">Pedido entregue
 												</Button>
 											}
 										</>
