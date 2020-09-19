@@ -1,9 +1,6 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
 
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
-
 // Importing backend api
 import api from "../../../services/api";
 
@@ -16,7 +13,7 @@ import "./styles.css";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast } from "react-bootstrap";
+import { Card, CardDeck, Nav, Button, Modal, Row, Col, Spinner, Container, Image, Toast, Form } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function AllOrders({ userId, userType }) {
@@ -26,7 +23,8 @@ export default function AllOrders({ userId, userType }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [color, setColor] = useState("");
-	const [feedback, setFeedback]= useState("");
+  const [feedback, setFeedback]= useState("");
+  const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
@@ -36,40 +34,9 @@ export default function AllOrders({ userId, userType }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-  const history = useHistory();
-
 	function setupWebSocket() {
 		disconnect();
     connect();
-  }
-
-  async function loadOrder() {
-    await api.get("order", {
-      headers : {
-        authorization: userId
-      }
-    }).then((response) => {
-      if(response.data) {
-        setOrders(response.data);
-        setupWebSocket();
-      } else {
-        setTitle("Alerta!");
-        setColor("danger");
-        setMessage("Não há pedidos!");
-        setToastShow(true);
-      }
-
-    }).catch((error) => {
-      setTitle("Alerta!");
-      setColor("danger");
-      if(error.response) {
-        setMessage(error.response.data);
-      } else {
-        setMessage(error.message);
-      }
-      setToastShow(true);
-    });
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -79,6 +46,35 @@ export default function AllOrders({ userId, userType }) {
 	}, [orders]);
 
 	useEffect(() => {
+    async function loadOrder() {
+      await api.get("order", {
+        headers : {
+          authorization: userId
+        }
+      }).then((response) => {
+        if(response.data) {
+          setOrders(response.data);
+          setupWebSocket();
+        } else {
+          setTitle("Alerta!");
+          setColor("danger");
+          setMessage("Não há pedidos!");
+          setToastShow(true);
+        }
+  
+      }).catch((error) => {
+        setTitle("Alerta!");
+        setColor("danger");
+        if(error.response) {
+          setMessage(error.response.data);
+        } else {
+          setMessage(error.message);
+        }
+        setToastShow(true);
+      });
+      setLoading(false);
+    }
+
 		loadOrder();
   }, [userId]);
 
@@ -124,7 +120,9 @@ export default function AllOrders({ userId, userType }) {
   }
   
   async function deleteAllSockets() {
-    await api.delete("sockets")
+    await api.delete("sockets", {
+      headers: { authorization: userId }
+    })
       .then(() => { 
         //
       }).catch((error) => {
@@ -145,7 +143,8 @@ export default function AllOrders({ userId, userType }) {
 
 		await api.delete("order", {
 			headers : {
-				authorization: userId,
+        authorization: userId,
+        password: userPasswordOnDelete
 			}})
 			.then(() => {
         deleteAllSockets();
@@ -407,12 +406,26 @@ export default function AllOrders({ userId, userType }) {
 					entregues antes de apagá-los.<br></br> <br></br>
 					Dica: Apague todos os dias antes de começar a funcionar. <br></br> <br></br>
 
-					<Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
-						Cancelar
-					</Button>{" "}
-					<Button className="mt-1" variant="danger" onClick={handleDeleteOrders}>
-						Apagar
-					</Button>
+          <Form className="my-3" onSubmit={handleDeleteOrders}>
+						<Form.Group controlId="passwordOnDelete">
+							<Form.Label>Confirme sua senha para prosseguir</Form.Label>
+							<Form.Control
+								placeholder="Senha"
+								type="password"
+								value={userPasswordOnDelete}
+								onChange={event => setUserPasswordOnDelete(event.target.value)}
+								required
+							/>
+						</Form.Group>
+            
+            <Button className="mt-1" variant="warning" onClick={() => setModalDeleteOrder(false)}>
+              Cancelar
+            </Button>{" "}
+            <Button className="mt-1" variant="danger" type="submit">
+              Apagar
+            </Button>
+					
+          </Form>
 				</Modal.Body>
 			</Modal>
 

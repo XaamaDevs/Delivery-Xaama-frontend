@@ -58,29 +58,6 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 		connect();
 	}
 
-	async function loadOrder() {
-		await api.get("/order/" + userId)
-			.then((response) => {
-				if(response.data) {
-					setOrders(response.data);
-					setupWebSocket();
-				} else {
-					setTitle("Alerta!");
-					setMessage("Não há pedidos!");
-					setToastShow(true);
-				}
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response) {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
-		setLoading(false);
-  }
-
 	useEffect(() => {
     subscribeToNewOrders(o => setOrders([...orders, o]));
 		subscribeToUpdateOrders(o => setOrders(o));
@@ -88,6 +65,29 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	}, [orders]);
 
 	useEffect(() => {
+    async function loadOrder() {
+      await api.get("/order/" + userId)
+        .then((response) => {
+          if(response.data) {
+            setOrders(response.data);
+            setupWebSocket();
+          } else {
+            setTitle("Alerta!");
+            setMessage("Não há pedidos!");
+            setToastShow(true);
+          }
+        }).catch((error) => {
+          setTitle("Alerta!");
+          if(error.response) {
+            setMessage(error.response.data);
+          } else {
+            setMessage(error.message);
+          }
+          setToastShow(true);
+        });
+      setLoading(false);
+    }
+  
 		loadOrder();
 	}, [userId]);
 

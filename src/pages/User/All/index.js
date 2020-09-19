@@ -41,16 +41,7 @@ export default function AllUsers({ userId }) {
 		connect();
   }
   
-  async function loadUser() {
-    const response = await api.get("user", {
-      headers : { 
-        authorization: userId
-      }
-    });
-    setUsers(response.data);
-    setupWebSocket();
-    setLoading(false);
-  }
+  
   
   useEffect(() => {
     subscribeToNewUsers(u => setUsers([...users, u]));
@@ -59,6 +50,17 @@ export default function AllUsers({ userId }) {
   }, [users]);
   
 	useEffect(() => {
+    async function loadUser() {
+      const response = await api.get("user", {
+        headers : { 
+          authorization: userId
+        }
+      });
+      setUsers(response.data);
+      setupWebSocket();
+      setLoading(false);
+    }
+    
 		loadUser();
   }, [userId]);
 
