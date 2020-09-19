@@ -1,19 +1,6 @@
 //	Importing React main module and its features
 import React, { useState, useEffect } from "react";
-
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
-
-// Importing backend api
-import api from "../../services/api";
-
-import { connect, disconnect, subscribeToNewOrders, subscribeToDeleteOrders, subscribeToUpdateOrders } from "../../services/websocket";
-
-// Importing styles
-import "./styles.css";
-
-// Importing image from camera
-import camera from "../../assets/camera.svg";
+import PropTypes from "prop-types";
 
 //	Importing React features
 import {
@@ -27,12 +14,32 @@ import {
 	Col,
 	Spinner,
 	Container,
-	Image,
-	Toast
+	Image
 } from "react-bootstrap";
 
+//	Importing website utils
+import Alert from "../Website/Alert";
+
+// Importing image from camera
+import camera from "../../assets/camera.svg";
+
+// Importing styles
+import "./styles.css";
+
+// Importing backend api
+import api from "../../services/api";
+
+//	Importing socket utils
+import {
+	connect,
+	disconnect,
+	subscribeToNewOrders,
+	subscribeToDeleteOrders,
+	subscribeToUpdateOrders
+} from "../../services/websocket";
+
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, user, order, setOrder, companyInfo }) {
+export default function AllOrders({ userId, order }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
@@ -47,11 +54,7 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [color, setColor] = useState("");
 	const [isLoading, setLoading] = useState(true);
-
-	//	Defining history to jump through pages
-	const history = useHistory();
 
 	function setupWebSocket() {
 		disconnect();
@@ -79,12 +82,12 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				setToastShow(true);
 			});
 		setLoading(false);
-  }
+	}
 
 	useEffect(() => {
-    subscribeToNewOrders(o => setOrders([...orders, o]));
+		subscribeToNewOrders(o => setOrders([...orders, o]));
 		subscribeToUpdateOrders(o => setOrders(o));
-    subscribeToDeleteOrders(o => setOrders(o));
+		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {
@@ -111,13 +114,11 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 			.then(() => {
 				setTitle("Avaliação enviada!");
 				setMessage("Obrigado pelo seu feedback!");
-				setColor("warning");
 				setFeedbackModal(false);
 				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
-				setColor("danger");
 				if(error.response) {
 					setMessage(error.response.data);
 				} else {
@@ -236,29 +237,8 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 		);
 	};
 
-	const toast = (
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			style={{
-				position: "fixed",
-				top: "inherit",
-				right: "3%",
-				zIndex: 5
-			}}
-		>
-			<Toast show={toastShow} onClose={() => setToastShow(false)} delay={3000} autohide>
-				<Toast.Header>
-					<strong className="mr-auto">{title}</strong>
-				</Toast.Header>
-				<Toast.Body>{message}</Toast.Body>
-			</Toast>
-		</div>
-	);
-
 	return (
 		<div className="all-container w-100">
-			{toast}
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
@@ -409,17 +389,12 @@ export default function AllOrders({ userId, user, order, setOrder, companyInfo }
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{message}</Modal.Body>
-				<Modal.Footer>
-					<Button variant={color} onClick={() => { setModalAlert(false); history.go(); }}>
-						Fechar
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</div>
 	);
 }
+
+AllOrders.propTypes = {
+	userId : PropTypes.string.isRequired,
+	order : PropTypes.object.isRequired
+};
