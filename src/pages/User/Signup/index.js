@@ -82,23 +82,24 @@ export default function Signup({ setUserId, setUser }) {
 		<div className="user-container h-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			<Form className="d-flex flex-row flex-wrap h-100" onSubmit={handleUserSignup}>
-				<Col sm="4" className="d-flex flex-column m-auto p-3">
-					<Form.Control
-						id="inputImage"
-						className="d-none"
-						type="file"
-						onChange={event => setThumbnail(event.target.files[0])}
-						required
-					/>
-					<Image
-						id="thumbnail"
-						className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-						src={preview ? preview :  camera}
-						alt="Selecione sua imagem"
-						onClick={inputImage}
-						rounded
-						fluid
-					/>
+				<Col sm="4" className="text-white d-flex flex-column m-auto p-3">
+					<Form.Group controlId="inputImage">
+						<Form.Label>Foto de perfil</Form.Label>
+						<Form.Control
+							className="d-none"
+							type="file"
+							onChange={event => setThumbnail(event.target.files[0])}
+						/>
+						<Image
+							id="thumbnail"
+							className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							src={preview ? preview :  camera}
+							alt="Selecione sua imagem"
+							onClick={inputImage}
+							rounded
+							fluid
+						/>
+					</Form.Group>
 				</Col>
 				<Col sm="4" className="text-white m-auto p-3">
 					<Form.Group controlId="name">
