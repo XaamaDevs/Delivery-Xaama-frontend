@@ -1,5 +1,6 @@
 //	Importing React main module and its features
 import React from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Router features
 import { useHistory } from "react-router-dom";
@@ -7,7 +8,7 @@ import { useHistory } from "react-router-dom";
 //	Importing React features
 import { Modal, Button } from "react-bootstrap";
 
-export default {
+const Alert = {
 	Refresh: function Refresh({ modalAlert, title, message }) {
 		//	Defining history to jump through pages
 		const history = useHistory();
@@ -41,4 +42,19 @@ export default {
 			</Modal>
 		);
 	}
+};
+
+export default Alert;
+
+Alert.Refresh.propTypes = {
+	modalAlert : PropTypes.bool.isRequired,
+	title: PropTypes.string.isRequired,
+	message: PropTypes.string.isRequired
+};
+
+Alert.Close.propTypes = {
+	modalAlert : PropTypes.bool.isRequired,
+	setModalAlert : PropTypes.any.isRequired,
+	title: PropTypes.string.isRequired,
+	message: PropTypes.string.isRequired
 };
