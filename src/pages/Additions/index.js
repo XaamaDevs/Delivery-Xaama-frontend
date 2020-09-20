@@ -352,7 +352,7 @@ export default function Additions({ userId }) {
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 								/>
 								<Image
-									id="thumbnail"
+									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -433,7 +433,7 @@ export default function Additions({ userId }) {
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 								/>
 								<Image
-									id="thumbnail"
+									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"

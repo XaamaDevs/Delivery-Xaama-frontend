@@ -218,7 +218,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							required
 						/>
 						<Image
-							id="thumbnail"
+							id={user.thumbnail || preview ? "thumbnail" : "camera"}
 							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)}
 							alt="Selecione sua imagem"
