@@ -23,9 +23,6 @@ import ProductDeck from "../Website/ProductDeck";
 // Importing image from camera
 import camera from "../../assets/camera.svg";
 
-// Importing styles
-import "./styles.css";
-
 // Importing backend api
 import api from "../../services/api";
 
@@ -115,6 +112,7 @@ export default function AllOrders({ userId }) {
 			}
 			setFeedbackModal(false);
 		});
+
 		setFeedback("");
 	}
 
@@ -131,14 +129,10 @@ export default function AllOrders({ userId }) {
 					/>
 				</Container>
 				:
-				<>
-					{orders && orders.length  ?
-						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
-						:
-						<>
-							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos!</h1>
-						</>
-					}
+				<div className="p-0 w-100">
+					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
+						{orders && orders.length ? "Seus últimos pedidos!" : "Não há pedidos!"}
+					</h1>
 					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
 						{orders.map(order => (
 							<Col key={order._id} className="order-item">
@@ -149,46 +143,58 @@ export default function AllOrders({ userId }) {
 										<span>{order.user.email}</span>
 									</div>
 								</header>
-								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
-								{order.deliver ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									:
-									<p>{"Vai retirar no balcão!"}</p>
-								}
+								<p>
+									{order.user.phone ? order.user.phone : "Telefone não informado"}
+								</p>
+								<p>
+									{order.deliver ?
+										"Endereço de entrega: " + order.address.join(", ")
+										:
+										"Vai retirar no balcão!"
+									}
+								</p>
 								<p>
 									{"Total a pagar R$" + order.total}
 								</p>
-								<Row>
+								<Row className="d-flex justify-content-center">
 									<Button
-										onClick={e => handleSetOrder(e, order)}
-										className="btn d-flex justify-content-center mx-auto mt-1"
 										id="btn-password"
+										onClick={e => handleSetOrder(e, order)}
+										className="m-1"
 									>
-									Ver pedido
+										Ver pedido
 									</Button>
 									{!(order.status) ?
 										<Button
-											className="d-flex justify-content-center mx-auto mt-1"
-											variant="danger">Pedido sendo preparado
+											variant="danger"
+											className="m-1"
+										>
+											Pedido sendo preparado
 										</Button>
 										:
 										<>
-											{!(order.feedback) ?
+											{!order.feedback ?
 												<>
 													<Button
-														className="d-flex justify-content-center mx-auto mt-1"
-														variant="warning">Pedido a caminho
+														variant="warning"
+														className="m-1"
+													>
+														Pedido a caminho
 													</Button>
 													<Button
-														onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
-														className="d-flex justify-content-center mx-auto mt-1"
-														variant="outline-warning">Recebeu seu pedido? Avalie!
+														onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
+														variant="outline-warning"
+														className="m-1"
+													>
+														Recebeu seu pedido? Avalie!
 													</Button>
 												</>
 												:
 												<Button
-													className="d-flex justify-content-center mx-auto mt-1"
-													variant="warning">Pedido entregue
+													variant="warning"
+													className="m-1"
+												>
+													Pedido entregue
 												</Button>
 											}
 										</>
@@ -197,14 +203,13 @@ export default function AllOrders({ userId }) {
 							</Col>
 						))}
 					</Row>
-				</>
+				</div>
 			}
 
 			<Modal
 				show={orderListingModal}
 				onHide={() => setOrderListingModal(false)}
 				size="lg"
-				className="p-0"
 				centered
 			>
 				<Modal.Header closeButton>
@@ -229,7 +234,7 @@ export default function AllOrders({ userId }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);}} size="lg" centered>
+			<Modal show={feedbackModal} onHide={() => setFeedbackModal(false)} size="lg" centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Avaliar pedido</Modal.Title>
 				</Modal.Header>
