@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 //	Importing React features
 import {
+	CardDeck,
 	Card,
 	Button,
 	Modal,
@@ -31,8 +32,8 @@ import {
 	connect,
 	disconnect,
 	subscribeToNewOrders,
-	subscribeToDeleteOrders,
-	subscribeToUpdateOrders
+	subscribeToUpdateOrders,
+	subscribeToDeleteOrders
 } from "../../services/websocket";
 
 //	Exporting resource to routes.js
@@ -47,10 +48,10 @@ export default function AllOrders({ userId }) {
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
-	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
+	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	function setupWebSocket() {
@@ -117,7 +118,7 @@ export default function AllOrders({ userId }) {
 	}
 
 	return (
-		<div className="all-container w-100">
+		<div className="all-container p-0 w-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
@@ -133,76 +134,98 @@ export default function AllOrders({ userId }) {
 					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
 						{orders && orders.length ? "Seus últimos pedidos!" : "Não há pedidos!"}
 					</h1>
-					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{orders.map(order => (
-							<Col key={order._id} className="order-item">
-								<header>
-									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>
-								</header>
-								<p>
-									{order.user.phone ? order.user.phone : "Telefone não informado"}
-								</p>
-								<p>
-									{order.deliver ?
-										"Endereço de entrega: " + order.address.join(", ")
-										:
-										"Vai retirar no balcão!"
-									}
-								</p>
-								<p>
-									{"Total a pagar R$" + order.total}
-								</p>
-								<Row className="d-flex justify-content-center">
-									<Button
-										id="btn-password"
-										onClick={e => handleSetOrder(e, order)}
-										className="m-1"
-									>
-										Ver pedido
-									</Button>
-									{!(order.status) ?
-										<Button
-											variant="danger"
-											className="m-1"
-										>
-											Pedido sendo preparado
-										</Button>
-										:
-										<>
-											{!order.feedback ?
-												<>
-													<Button
-														variant="warning"
-														className="m-1"
-													>
-														Pedido a caminho
-													</Button>
-													<Button
-														onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
-														variant="outline-warning"
-														className="m-1"
-													>
-														Recebeu seu pedido? Avalie!
-													</Button>
-												</>
-												:
+					<CardDeck className="mx-3">
+						<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
+							{orders.map(order => (
+								<Col key={order._id} className="my-2">
+									<Card text="white" bg="dark">
+										<Card.Header>
+											<Row>
+												<Col sm="3">
+													<Image
+														className="h-100"
+														style={{ borderRadius: "50%" }}
+														src={order.user.thumbnail ? order.user.thumbnail_url: camera}
+														alt="thumbnail"
+														fluid
+													/>
+												</Col>
+												<Col>
+													<Row>
+														<strong>{order.user.name}</strong>
+													</Row>
+													<Row>
+														<span>{order.user.email}</span>
+													</Row>
+												</Col>
+											</Row>
+										</Card.Header>
+										<Card.Body>
+											<Card.Text>
+												<p>
+													{order.user.phone ? order.user.phone : "Telefone não informado"}
+												</p>
+												<p>
+													{order.deliver ?
+														"Endereço de entrega: " + order.address.join(", ")
+														:
+														"Vai retirar no balcão!"
+													}
+												</p>
+												<p>
+													{"Total a pagar R$" + order.total}
+												</p>
+											</Card.Text>
+											<Row className="d-flex justify-content-between">
 												<Button
-													variant="warning"
+													id="btn-password"
 													className="m-1"
+													onClick={e => handleSetOrder(e, order)}
 												>
-													Pedido entregue
+													Ver pedido
 												</Button>
-											}
-										</>
-									}
-								</Row>
-							</Col>
-						))}
-					</Row>
+												{!order.status ?
+													<Button
+														variant="danger"
+														className="m-1"
+													>
+														Pedido sendo preparado
+													</Button>
+													:
+													<>
+														{!order.feedback ?
+															<>
+																<Button
+																	variant="warning"
+																	className="m-1"
+																>
+																	Pedido a caminho
+																</Button>
+																<Button
+																	variant="outline-warning"
+																	className="m-1"
+																	onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
+																>
+																	Recebeu seu pedido? Avalie!
+																</Button>
+															</>
+															:
+															<Button
+																variant="warning"
+																className="m-1"
+															>
+																Pedido entregue
+															</Button>
+														}
+													</>
+												}
+											</Row>
+										</Card.Body>
+									</Card>
+								</Col>
+							))}
+						</Row>
+					</CardDeck>
 				</div>
 			}
 
