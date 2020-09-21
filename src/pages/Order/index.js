@@ -55,7 +55,6 @@ export default function AllOrders({ userId }) {
 	const [modalClose, setModalClose] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
 	function setupWebSocket() {
@@ -153,98 +152,102 @@ export default function AllOrders({ userId }) {
 					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
 						{orders && orders.length ? "Seus últimos pedidos!" : "Não há pedidos!"}
 					</h1>
-					<CardDeck className="mx-3">
-						<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-							{orders.map(order => (
-								<Col key={order._id} className="my-2">
-									<Card text="white" bg="dark">
-										<Card.Header>
-											<Row>
-												<Col sm="3">
-													<Image
-														className="h-100"
-														style={{ borderRadius: "50%" }}
-														src={order.user.thumbnail ? order.user.thumbnail_url: camera}
-														alt="thumbnail"
-														fluid
-													/>
-												</Col>
-												<Col>
-													<Row>
-														<strong>{order.user.name}</strong>
-													</Row>
-													<Row>
-														<span>{order.user.email}</span>
-													</Row>
-												</Col>
-											</Row>
-										</Card.Header>
-										<Card.Body>
-											<Card.Text>
-												<p>
-													{order.user.phone ? order.user.phone : "Telefone não informado"}
-												</p>
-												<p>
-													{order.deliver ?
-														"Endereço de entrega: " + order.address.join(", ")
-														:
-														"Vai retirar no balcão!"
-													}
-												</p>
-												<p>
-													{"Total a pagar R$" + order.total}
-												</p>
-											</Card.Text>
-											<Row className="d-flex justify-content-between">
-												<Button
-													id="btn-password"
-													className="m-1"
-													onClick={e => handleSetOrder(e, order)}
-												>
-													Ver pedido
-												</Button>
-												{!order.status ?
-													<Button
-														variant="danger"
-														className="m-1"
-													>
-														Pedido sendo preparado
-													</Button>
-													:
-													<>
-														{!order.feedback ?
-															<>
-																<Button
-																	variant="warning"
-																	className="m-1"
-																>
-																	Pedido a caminho
-																</Button>
-																<Button
-																	variant="outline-warning"
-																	className="m-1"
-																	onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
-																>
-																	Recebeu seu pedido? Avalie!
-																</Button>
-															</>
-															:
-															<Button
-																variant="warning"
-																className="m-1"
-															>
-																Pedido entregue
-															</Button>
-														}
-													</>
-												}
-											</Row>
-										</Card.Body>
-									</Card>
-								</Col>
-							))}
-						</Row>
-					</CardDeck>
+          {orders && orders.length ?
+            <CardDeck className="mx-3">
+              <Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
+                {orders.map(order => (
+                  <Col key={order._id} className="my-2">
+                    <Card text="white" bg="dark">
+                      <Card.Header>
+                        <Row>
+                          <Col sm="3">
+                            <Image
+                              className="h-100"
+                              style={{ borderRadius: "50%" }}
+                              src={order.user.thumbnail ? order.user.thumbnail_url: camera}
+                              alt="thumbnail"
+                              fluid
+                            />
+                          </Col>
+                          <Col>
+                            <Row>
+                              <strong>{order.user.name}</strong>
+                            </Row>
+                            <Row>
+                              <span>{order.user.email}</span>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Card.Header>
+                      <Card.Body>
+                        <Card.Text>
+                          <p>
+                            {order.user.phone ? order.user.phone : "Telefone não informado"}
+                          </p>
+                          <p>
+                            {order.deliver ?
+                              "Endereço de entrega: " + order.address.join(", ")
+                              :
+                              "Vai retirar no balcão!"
+                            }
+                          </p>
+                          <p>
+                            {"Total a pagar R$" + order.total}
+                          </p>
+                        </Card.Text>
+                        <Row className="d-flex justify-content-between">
+                          <Button
+                            id="btn-password"
+                            className="m-1"
+                            onClick={e => handleSetOrder(e, order)}
+                          >
+                            Ver pedido
+                          </Button>
+                          {!order.status ?
+                            <Button
+                              variant="danger"
+                              className="m-1"
+                            >
+                              Pedido sendo preparado
+                            </Button>
+                            :
+                            <>
+                              {!order.feedback ?
+                                <>
+                                  <Button
+                                    variant="warning"
+                                    className="m-1"
+                                  >
+                                    Pedido a caminho
+                                  </Button>
+                                  <Button
+                                    variant="outline-warning"
+                                    className="m-1"
+                                    onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
+                                  >
+                                    Recebeu seu pedido? Avalie!
+                                  </Button>
+                                </>
+                                :
+                                <Button
+                                  variant="warning"
+                                  className="m-1"
+                                >
+                                  Pedido entregue
+                                </Button>
+                              }
+                            </>
+                          }
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </CardDeck>
+          :
+            null
+          }
 				</div>
 			}
 
