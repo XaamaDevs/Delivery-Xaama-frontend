@@ -259,19 +259,23 @@ export default function AllOrders({ userId }) {
 							))}
 						</Row>
 					</CardDeck>
-					<Button
-						variant="danger"
-						className="d-flex mx-auto my-4"
-						onClick={() => setModalDeleteOrder(true)}
-					>
-						Apagar todos pedidos
-					</Button>
+          {orders && orders.length ? 
+            <Button
+              variant="danger"
+              className="d-flex mx-auto my-4"
+              onClick={() => setModalDeleteOrder(true)}
+            >
+              Apagar todos pedidos
+            </Button>
+          : 
+            null
+          }
 				</div>
 			}
 
 			<Modal
 				show={modalOrderListing}
-				onHide={() => setModalOrderListing(false)}
+				onHide={() => {setProduct({}); setModalOrderListing(false) }}
 				size="lg"
 				className="p-0"
 				centered
@@ -298,7 +302,7 @@ export default function AllOrders({ userId }) {
 
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => setModalOrderListing(false)}>
+					<Button variant="warning" onClick={() => { setProduct({}); setModalOrderListing(false)}}>
 						Fechar
 					</Button>
 				</Modal.Footer>

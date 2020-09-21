@@ -2,9 +2,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-//	Importing React Router features
-import { useHistory } from "react-router-dom";
-
 //	Importing React features
 import {
 	CardDeck,
@@ -61,9 +58,6 @@ export default function AllOrders({ userId }) {
 		disconnect();
 		connect();
   }
-
-  	//	Defining history to jump through pages
-	const history = useHistory();
   
   function filterOrders(o) {
     let resp = o.filter(f => ( f.user._id === userId ));
@@ -253,7 +247,7 @@ export default function AllOrders({ userId }) {
 
 			<Modal
 				show={orderListingModal}
-				onHide={() => setOrderListingModal(false)}
+				onHide={() => { setProduct({}); setOrderListingModal(false)} }
 				size="lg"
 				centered
 			>
