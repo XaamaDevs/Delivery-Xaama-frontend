@@ -91,7 +91,7 @@ export default function Signup({ setUserId, setUser }) {
 							onChange={event => setThumbnail(event.target.files[0])}
 						/>
 						<Image
-							id="thumbnail"
+							id={preview ? "thumbnail" : "camera"}
 							className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview :  camera}
 							alt="Selecione sua imagem"

@@ -1,5 +1,6 @@
 //	Importing React main module and its features
 import React from "react";
+import PropTypes from "prop-types";
 
 //	Importing React features
 import { CardDeck, Card, Nav, Col, Row, Image } from "react-bootstrap";
@@ -7,11 +8,11 @@ import { CardDeck, Card, Nav, Col, Row, Image } from "react-bootstrap";
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
 
-export default {
-	Header: function ProductCard({ products, setProduct }) {
+const ProductDeck = {
+	Header: function Header({ products, setProduct }) {
 		return (
 			<Nav fill variant="tabs">
-				{(products) ? (products).map((productA, index) => (
+				{products ? products.map((productA, index) => (
 					<Nav.Item key={index}>
 						<Nav.Link
 							className="btn-outline-dark rounded"
@@ -117,4 +118,15 @@ export default {
 			</>
 		);
 	}
+};
+
+export default ProductDeck;
+
+ProductDeck.Header.propTypes = {
+	products : PropTypes.array.isRequired,
+	setProduct : PropTypes.any.isRequired
+};
+
+ProductDeck.Card.propTypes = {
+	product : PropTypes.object.isRequired
 };

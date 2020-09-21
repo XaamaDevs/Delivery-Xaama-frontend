@@ -509,7 +509,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									onChange={event => setProductThumbnail(event.target.files[0])}
 								/>
 								<Image
-									id="thumbnail"
+									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
@@ -649,7 +649,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 									onChange={event => setProductThumbnail(event.target.files[0])}
 								/>
 								<Image
-									id="thumbnail"
+									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
