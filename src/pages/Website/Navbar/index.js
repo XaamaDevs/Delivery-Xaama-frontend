@@ -47,7 +47,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
-		event.preventDefault();
+    event.preventDefault();
+    history.push("/menu");
 
 		const data = {
 			user: order.user,
@@ -60,7 +61,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			.then(() => {
 				setTitle("Pedido enviado!");
 				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-				setShoppingBasketModal(false);
+        setShoppingBasketModal(false);
 				setModalAlert(true);
 			}).catch((error) => {
 				setTitle("Alerta!");

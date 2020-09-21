@@ -58,10 +58,11 @@ export default function AllOrders({ userId }) {
 	function setupWebSocket() {
 		disconnect();
 		connect();
-	}
+  }
 
 	useEffect(() => {
-		subscribeToNewOrders(o => setOrders([...orders, o]));
+    subscribeToNewOrders(o => setOrders([...orders, o[0]]));
+    console.log("orders: ", orders);
 		subscribeToUpdateOrders(o => setOrders(o));
 		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);

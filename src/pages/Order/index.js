@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
+//	Importing React Router features
+import { useHistory } from "react-router-dom";
+
 //	Importing React features
 import {
 	Card,
@@ -51,7 +54,7 @@ export default function AllOrders({ userId }) {
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
-	const [modalAlert, setModalAlert] = useState(false);
+	const [modalClose, setModalClose] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setLoading] = useState(true);
@@ -59,12 +62,27 @@ export default function AllOrders({ userId }) {
 	function setupWebSocket() {
 		disconnect();
 		connect();
-	}
+  }
+
+  	//	Defining history to jump through pages
+	const history = useHistory();
+  
+  function filterOrders(o) {
+    let resp = o.filter(f => ( f.user._id === userId ));
+    return resp && resp.length ? resp : null;
+  }
+  
+  async function newOrders(o) {
+    const resp = await filterOrders(o);
+    if(resp && resp.length) {
+      setOrders([...orders, resp]);
+    }
+  }
 
 	useEffect(() => {
-		subscribeToNewOrders(o => setOrders([...orders, o]));
-		subscribeToUpdateOrders(o => setOrders(o));
-		subscribeToDeleteOrders(o => setOrders(o));
+    subscribeToNewOrders(o => newOrders(o));
+    subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
+    subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {
@@ -105,7 +123,7 @@ export default function AllOrders({ userId }) {
 			setFeedbackModal(false);
 			setTitle("Avaliação enviada!");
 			setMessage("Obrigado pelo seu feedback!");
-			setModalAlert(true);
+			setModalClose(true);
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -132,71 +150,74 @@ export default function AllOrders({ userId }) {
 				</Container>
 				:
 				<>
-					{orders && orders.length  ?
-						<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
-						:
-						<>
-							<h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos!</h1>
-						</>
-					}
-					<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-						{orders.map(order => (
-							<Col key={order._id} className="order-item">
-								<header>
-									<Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
-									<div className="order-info">
-										<strong>{order.user.name}</strong>
-										<span>{order.user.email}</span>
-									</div>
-								</header>
-								<p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
-								{order.deliver ?
-									<p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
-									:
-									<p>{"Vai retirar no balcão!"}</p>
-								}
-								<p>
-									{"Total a pagar R$" + order.total}
-								</p>
-								<Row>
-									<Button
-										onClick={e => handleSetOrder(e, order)}
-										className="btn d-flex justify-content-center mx-auto mt-1"
-										id="btn-password"
-									>
-									Ver pedido
-									</Button>
-									{!(order.status) ?
-										<Button
-											className="d-flex justify-content-center mx-auto mt-1"
-											variant="danger">Pedido sendo preparado
-										</Button>
-										:
-										<>
-											{!(order.feedback) ?
-												<>
-													<Button
-														className="d-flex justify-content-center mx-auto mt-1"
-														variant="warning">Pedido a caminho
-													</Button>
-													<Button
-														onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
-														className="d-flex justify-content-center mx-auto mt-1"
-														variant="outline-warning">Recebeu seu pedido? Avalie!
-													</Button>
-												</>
-												:
-												<Button
-													className="d-flex justify-content-center mx-auto mt-1"
-													variant="warning">Pedido entregue
-												</Button>
-											}
-										</>
-									}
-								</Row>
-							</Col>
-						))}
-					</Row>
+          {orders && orders.length  ?
+            <>
+              <h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Seus últimos pedidos!</h1>
+                
+              <Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
+                {orders.map(order => (
+                  <Col key={order._id} className="order-item">
+                    <header>
+                      <Image src={order.user.thumbnail_url ? order.user.thumbnail_url: camera } alt="Thumbnail"/>
+                      <div className="order-info">
+                        <strong>{order.user.name}</strong>
+                        <span>{order.user.email}</span>
+                      </div>
+                    </header>
+                    <p>{order.user.phone ? order.phone: "Telefone não informado"}</p>
+                    {order.deliver ?
+                      <p>{"Endereço de entrega: " + (order.address).join(", ")}</p>
+                      :
+                      <p>{"Vai retirar no balcão!"}</p>
+                    }
+                    <p>
+                      {"Total a pagar R$" + order.total}
+                    </p>
+                    <Row>
+                      <Button
+                        onClick={e => handleSetOrder(e, order)}
+                        className="btn d-flex justify-content-center mx-auto mt-1"
+                        id="btn-password"
+                      >
+                      Ver pedido
+                      </Button>
+                      {!(order.status) ?
+                        <Button
+                          className="d-flex justify-content-center mx-auto mt-1"
+                          variant="danger">Pedido sendo preparado
+                        </Button>
+                        :
+                        <>
+                          {!(order.feedback) ?
+                            <>
+                              <Button
+                                className="d-flex justify-content-center mx-auto mt-1"
+                                variant="warning">Pedido a caminho
+                              </Button>
+                              <Button
+                                onClick={() => {setOrderId(order._id); setFeedbackModal(true);}}
+                                className="d-flex justify-content-center mx-auto mt-1"
+                                variant="outline-warning">Recebeu seu pedido? Avalie!
+                              </Button>
+                            </>
+                            :
+                            <Button
+                              className="d-flex justify-content-center mx-auto mt-1"
+                              variant="warning">Pedido entregue
+                            </Button>
+                          }
+                        </>
+                      }
+                    </Row>
+                  </Col>
+                ))}
+              </Row>
+            </>
+          :
+          <>
+            <h1 style={{color: "#FFFFFF"}} className="display-4 text-center m-auto p-3">Não há pedidos!</h1>
+          </>
+        }
 				</>
 			}
 
@@ -262,7 +283,7 @@ export default function AllOrders({ userId }) {
 				</Modal.Body>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
+			<Alert.Close modalClose={modalClose} title={title} message={message} setModalClose={setModalClose} />
 		</div>
 	);
 }
