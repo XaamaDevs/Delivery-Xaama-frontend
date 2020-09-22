@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState } from "react";
+import React, { useState, useContext, useAccordionToggle } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -7,6 +7,8 @@ import { NavLink, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
 import {
+  Accordion,
+  AccordionContext,
 	Navbar,
 	Nav,
 	Modal,
@@ -14,7 +16,9 @@ import {
 	Tabs,
 	Tab,
 	Card,
-	Form
+  Form,
+  Row,
+  Col
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -32,8 +36,9 @@ import api from "../../../services/api";
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
 	//	Order state variables
 	const [product, setProduct] = useState({});
-	const [deliverAddress, setDeliverAdress] = useState(user.address ? user.address.join(", ") : "null");
-	const [deliverOrder, setDeliverOrder] = useState(false);
+	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
+  const [deliverOrder, setDeliverOrder] = useState(false);
+  const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
 
 	//	Message settings
 	const [shoppingBasketModal, setShoppingBasketModal] = useState(false);
@@ -89,7 +94,46 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 		} catch (error) {
 			alert(error);
 		}
-	}
+  }
+
+  function CustomToggle({ children, eventKey }) {
+    const decoratedOnClick = useAccordionToggle(eventKey, () =>
+      console.log('totally custom!'),
+    );
+  
+    return (
+      <button
+        type="button"
+        style={{ backgroundColor: 'pink' }}
+        onClick={decoratedOnClick}
+      >
+        {children}
+      </button>
+    );
+  }
+  
+  function Example() {
+    return (
+      <Accordion defaultActiveKey="0">
+        <Card>
+          <Card.Header>
+            <CustomToggle eventKey="0">Click me!</CustomToggle>
+          </Card.Header>
+          <Accordion.Collapse eventKey="0">
+            <Card.Body>Hello! I'm the body</Card.Body>
+          </Accordion.Collapse>
+        </Card>
+        <Card>
+          <Card.Header>
+            <CustomToggle eventKey="1">Click me!</CustomToggle>
+          </Card.Header>
+          <Accordion.Collapse eventKey="1">
+            <Card.Body>Hello! I'm another body</Card.Body>
+          </Accordion.Collapse>
+        </Card>
+      </Accordion>
+    );
+  }
 
 	return (
 		<>
@@ -245,7 +289,24 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				<Modal.Body>
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
-							<Form onSubmit={handleFinishOrder}>
+							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
+              <Form.Group controlId="userPhone">
+                <Row>
+                  <Col md="auto">
+                    <Form.Label className="mx-auto my-2">Telefone para contato: </Form.Label>
+                  </Col>
+                  <Col md="auto">
+                    <Form.Control
+                      value={deliverPhone}
+                      onChange={e => setDeliverPhone(e.target.value)}
+                      type="text"
+                      pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+                      placeholder="(__) _ ____-____"
+                      required
+                    />
+                  </Col>
+                </Row>
+								</Form.Group>
 								<Form.Group controlId="deliverAddress">
 									<Form.Label>
 										{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
@@ -258,21 +319,29 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 										onChange={e => setDeliverOrder(e.target.checked)}
 									/>
 								</Form.Group>
-								<Form.Group controlId="deliverAddress">
-									<Form.Label>Endereço</Form.Label>
-									<Form.Control
-										value={deliverAddress}
-										onChange={e => setDeliverAdress(e.target.value)}
-										type="text"
-										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-										placeholder="Rua, Número, Bairro, Complemento (opcional)"
-										disabled={!deliverOrder}
-										required={deliverOrder}
-									/>
-									<Form.Text className="text-muted">
-										Separe rua, número, bairro e complemento por vírgula
-									</Form.Text>
-								</Form.Group>
+                {deliverOrder ?
+                  <Form.Group controlId="deliverAddress">
+                    <Form.Label>Endereço de entrega:</Form.Label>
+                    <Form.Control
+                      value={deliverAddress}
+                      onChange={e => setDeliverAdress(e.target.value)}
+                      type="text"
+                      pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
+                      placeholder="Rua, Número, Bairro, Complemento (opcional)"
+                      disabled={!deliverOrder}
+                      required={deliverOrder}
+                    />
+                    <Form.Text className="text-muted">
+                      Separe rua, número, bairro e complemento por vírgula
+                    </Form.Text>
+                  </Form.Group>
+                : 
+                  null
+                }
+                <Form.Group controlId="deliverPayament">
+                  <Form.Label>Forma de pagamento:</Form.Label>
+                  
+                </Form.Group>
 								<Modal.Footer>
 									<Button
 										variant="danger"
