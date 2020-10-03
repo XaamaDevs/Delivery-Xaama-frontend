@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState, useContext, useAccordionToggle } from "react";
+import React, { useState  } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -8,7 +8,6 @@ import { NavLink, useHistory } from "react-router-dom";
 //	Importing React Bootstrap features
 import {
   Accordion,
-  AccordionContext,
 	Navbar,
 	Nav,
 	Modal,
@@ -39,6 +38,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
   const [deliverOrder, setDeliverOrder] = useState(false);
   const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
+  const [deliverTroco, setDeliverTroco] = useState();
+  const [deliverCash, setDeliverCash] = useState(false);
+  const [deliverCard, setDeliverCard] = useState(false);
 
 	//	Message settings
 	const [shoppingBasketModal, setShoppingBasketModal] = useState(false);
@@ -55,11 +57,15 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
     event.preventDefault();
     history.push("/menu");
 
+    const type = deliverCash && !deliverCard ? 0 : 1;
+
 		const data = {
 			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
-			address: deliverAddress
+      address: deliverAddress,
+      typePayament: type,
+      troco: deliverTroco
 		};
 
 		await api.post("order", data)
@@ -95,42 +101,59 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			alert(error);
 		}
   }
-
-  function CustomToggle({ children, eventKey }) {
-    const decoratedOnClick = useAccordionToggle(eventKey, () =>
-      console.log('totally custom!'),
-    );
   
-    return (
-      <button
-        type="button"
-        style={{ backgroundColor: 'pink' }}
-        onClick={decoratedOnClick}
-      >
-        {children}
-      </button>
-    );
-  }
-  
-  function Example() {
+  function Payament() {
     return (
       <Accordion defaultActiveKey="0">
-        <Card>
-          <Card.Header>
-            <CustomToggle eventKey="0">Click me!</CustomToggle>
-          </Card.Header>
-          <Accordion.Collapse eventKey="0">
-            <Card.Body>Hello! I'm the body</Card.Body>
-          </Accordion.Collapse>
-        </Card>
-        <Card>
-          <Card.Header>
-            <CustomToggle eventKey="1">Click me!</CustomToggle>
-          </Card.Header>
-          <Accordion.Collapse eventKey="1">
-            <Card.Body>Hello! I'm another body</Card.Body>
-          </Accordion.Collapse>
-        </Card>
+        <Row>
+          <Col>
+            <Card>
+              <Card.Header>
+                <Accordion.Toggle 
+                  as={Button} 
+                  eventKey="0" 
+                  onClick = {() => {setDeliverCash(true);setDeliverCard(false);}}>Dinheiro
+                </Accordion.Toggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey="0">
+                <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
+                  <Form className="mx-auto my-2">
+                    <Form.Group controlId="userChange">
+                      <Row>
+                        <Col>
+                          <Form.Label className="my-2"> Troco para R$: </Form.Label>
+                        </Col>
+                        <Col>
+                          <Form.Control
+                            value={deliverTroco}
+                            onChange={e => setDeliverTroco(e.target.value)}
+                            type="number"
+                            min="0"
+                            autoFocus
+                            required
+                          />
+                        </Col>
+                      </Row>
+                   </Form.Group>
+                  </Form>
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Header>
+                <Accordion.Toggle 
+                  as={Button} 
+                  eventKey="1"
+                  onClick = {() => {setDeliverCash(false);setDeliverCard(true);}}>Cartão</Accordion.Toggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey="1">
+                <Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Col>
+        </Row>
       </Accordion>
     );
   }
@@ -340,7 +363,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                 }
                 <Form.Group controlId="deliverPayament">
                   <Form.Label>Forma de pagamento:</Form.Label>
-                  
+                  <Payament />
                 </Form.Group>
 								<Modal.Footer>
 									<Button
