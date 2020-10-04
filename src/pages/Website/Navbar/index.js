@@ -7,7 +7,6 @@ import { NavLink, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
 import {
-  Accordion,
 	Navbar,
 	Nav,
 	Modal,
@@ -17,7 +16,7 @@ import {
 	Card,
   Form,
   Row,
-  Col
+  Col,
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -39,7 +38,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
   const [deliverOrder, setDeliverOrder] = useState(false);
   const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
-  const [deliverTroco, setDeliverTroco] = useState();
+  const [deliverChange, setDeliverChange] = useState();
   const [deliverCash, setDeliverCash] = useState(false);
   const [deliverCard, setDeliverCard] = useState(false);
 
@@ -48,13 +47,16 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
-	const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
+  
+  // Tabs settings
+  const [eventKey, setEventKey] = useState("0");
 
 	//	Defining history to jump through pages
   const history = useHistory();
   
   useEffect(() => {
-    setDeliverTroco((order.total + (deliverOrder ? companyInfo.freight : 0)));
+    setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
   }, [order.total, deliverOrder]);
 
 	//	Function to handle finish order
@@ -70,7 +72,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			deliver: deliverOrder,
       address: deliverAddress,
       typePayament: type,
-      troco: deliverTroco,
+      change: deliverChange,
       total: (order.total + (deliverOrder ? companyInfo.freight : 0))
 		};
 
@@ -110,55 +112,48 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
   
   function Payament() {
     return (
-      <Accordion defaultActiveKey="0">
-        <Row>
-          <Col>
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle 
-                  as={Button} 
-                  eventKey="0" 
-                  onClick = {() => {setDeliverCash(true);setDeliverCard(false);}}>Dinheiro
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="0">
-                <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
-                  <Form className="mx-auto my-2">
-                    <Form.Group controlId="userChange">
-                      
-                        
-                          <Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
-                       
-                          <Form.Control
-                            value={deliverTroco}
-                            onChange={e => setDeliverTroco(e.target.value)}
-                            type="number"
-                            min={deliverTroco}
-                            autoFocus
-                            required={deliverCash}
-                          />
-                       
-                   </Form.Group>
-                  </Form>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Col>
-          <Col>
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle 
-                  as={Button} 
-                  eventKey="1"
-                  onClick = {() => {setDeliverCash(false);setDeliverCard(true);}}>Cartão</Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Col>
-        </Row>
-      </Accordion>
+      <Tabs
+        fill 
+        defaultActiveKey="0" 
+        id="uncontrolled-tabs"
+        activeKey={eventKey}
+        onSelect={(k) => setEventKey(k)} >
+        
+        <Tab eventKey="0" title="Dinheiro">
+          {eventKey == "0" ? setDeliverCash(true) : null}
+          {eventKey == "0" ? setDeliverCard(false): null}
+          <Card>
+            <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
+              <Form className="mx-auto my-2">
+                <Form.Group controlId="userChange">
+                  <Row>
+                    <Col>
+                      <Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
+                    </Col>
+                    <Col>
+                      <Form.Control
+                        value={deliverChange}
+                        onChange={e => setDeliverChange(e.target.value)}
+                        type="number"
+                        min={deliverChange}
+                        autoFocus
+                        required={deliverCash}
+                      />
+                    </Col>
+                  </Row>
+                  </Form.Group>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Tab>
+        <Tab eventKey="1" title="Cartão" >
+          <Card>
+            {eventKey == "1" ? setDeliverCash(false) : null}
+            {eventKey == "1" ? setDeliverCard(true): null}
+            <Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
+          </Card>
+        </Tab>
+      </Tabs>
     );
   }
 

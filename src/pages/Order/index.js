@@ -196,11 +196,11 @@ export default function AllOrders({ userId }) {
 														}
 													</p>
 													<p>
-														{(order.troco === order.total) ?
+														{(order.change === order.total) ?
 															"Não precisa de troco"
 															:
 															((order.typePayament === 0) ?
-																"Pagará R$" + order.troco + ", troco de R$" + (order.troco - order.total)
+																"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
 																:
 																"Pagará na maquininha"
 															)
