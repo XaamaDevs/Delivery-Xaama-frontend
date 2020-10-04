@@ -43,7 +43,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productSizes, setProductSizes] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
-	const [productThumbnail, setProductThumbnail] = useState(null);
+  const [productThumbnail, setProductThumbnail] = useState(null);
+  const [productAvailable, setProductAvailable] = useState(true);
 
 	//	Addition variables
 	const [additionsByType, setAdditionsByType] = useState({});
@@ -60,7 +61,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productAddModal, setProductAddModal] = useState(false);
 	const [productUpdateModal, setProductUpdateModal] = useState(false);
 	const [productDeleteModal, setProductDeleteModal] = useState(false);
-	const [productOrderModal, setProductOrderModal] = useState(false);
+  const [productOrderModal, setProductOrderModal] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
@@ -213,7 +214,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	}
 
 	async function handleProductUpdate(event) {
-		event.preventDefault();
+    event.preventDefault();
 
 		const data = new FormData();
 
@@ -221,7 +222,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 		data.append("ingredients", productIngredients);
 		data.append("prices", productPrices);
 		data.append("type", productType);
-		data.append("sizes", productSizes);
+    data.append("sizes", productSizes);
+    data.append("available", productAvailable);
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -326,12 +328,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 			setProductTotal(total);
 		}
-	}
+  }
 
-	async function handleProductModal(event, modal, product = null) {
-		event.preventDefault();
-
-		setProductId(product ? product._id : "");
+  async function setsProducts(product) {
+    setProductId(product ? product._id : "");
 		setProductName(product ? product.name : "");
 		setProductIngredients(product ? product.ingredients.join(", ") : "");
 		setProductPrices(product ? product.prices.join(", ") : "");
@@ -339,6 +339,12 @@ export default function Menu({ userId, user, order, setOrder }) {
 		setProductType(product ? product.type : "");
 		setProductThumbnail(null);
 		setProductThumbnail_url(product ? product.thumbnail_url : null);
+  }
+  
+	async function handleProductModal(event, modal, product = null) {
+		event.preventDefault();
+
+    setsProducts(product);
 
 		switch(modal) {
 		case 0:
@@ -349,7 +355,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 			break;
 		case 2:
 			setProductDeleteModal(true);
-			break;
+      break;
 		default:
 			break;
 		}
@@ -410,10 +416,28 @@ export default function Menu({ userId, user, order, setOrder }) {
 								>
 									Modificar
 								</Button>
+                
+                {product.available ? 
+                  <Button
+                    variant="success"
+                    size="sm"
+                    onClick={e => {setProductAvailable(false);setsProducts(product);handleProductUpdate(e, product)}}
+                  >
+                    Disponível
+                  </Button>
+                : 
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={e => {setProductAvailable(true);setsProducts(product);handleProductUpdate(e, product)}}
+                  >
+                    Indisponível
+                  </Button>
+                }
 								<Button
 									variant="danger"
 									size="sm"
-									onClick={e => handleProductModal(e, 2, product)}
+									onClick={e => handleProductUpdate(e, product)}
 								>
 									Remover
 								</Button>

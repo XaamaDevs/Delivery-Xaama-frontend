@@ -120,8 +120,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
         onSelect={(k) => setEventKey(k)} >
         
         <Tab eventKey="0" title="Dinheiro">
-          {eventKey == "0" ? setDeliverCash(true) : null}
-          {eventKey == "0" ? setDeliverCard(false): null}
+          {eventKey === "0" ? setDeliverCash(true) : null}
+          {eventKey === "0" ? setDeliverCard(false): null}
           <Card>
             <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
               <Form className="mx-auto my-2">
@@ -148,8 +148,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
         </Tab>
         <Tab eventKey="1" title="Cartão" >
           <Card>
-            {eventKey == "1" ? setDeliverCash(false) : null}
-            {eventKey == "1" ? setDeliverCard(true): null}
+            {eventKey === "1" ? setDeliverCash(false) : null}
+            {eventKey === "1" ? setDeliverCard(true): null}
             <Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
           </Card>
         </Tab>
