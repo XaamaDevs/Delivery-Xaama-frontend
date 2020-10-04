@@ -125,11 +125,10 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                 <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
                   <Form className="mx-auto my-2">
                     <Form.Group controlId="userChange">
-                      <Row>
-                        <Col>
-                          <Form.Label className="my-2"> Troco para R$: </Form.Label>
-                        </Col>
-                        <Col>
+                      
+                        
+                          <Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
+                       
                           <Form.Control
                             value={deliverTroco}
                             onChange={e => setDeliverTroco(e.target.value)}
@@ -138,8 +137,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                             autoFocus
                             required={deliverCash}
                           />
-                        </Col>
-                      </Row>
+                       
                    </Form.Group>
                   </Form>
                 </Card.Body>

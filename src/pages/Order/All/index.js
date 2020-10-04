@@ -214,18 +214,37 @@ export default function AllOrders({ userId }) {
 										<Card.Body>
 											<Card.Text>
 												<p>
-													{order.user.phone ? order.user.phone : "Telefone não informado"}
+													{order.user.phone ? "Telefone para contato: " + order.user.phone : "Telefone não informado"}
 												</p>
 												<p>
 													{order.deliver ?
 														"Endereço de entrega: " + order.address.join(", ")
 														:
-														"Vai retirar no balcão!"
+														"Irá retirar no balcão!"
 													}
 												</p>
 												<p>
 													{"Total a pagar R$" + order.total}
 												</p>
+                        <p>
+                            Método de pagamento:
+                            {order.typePayament === 1 ? 
+                              " Cartão" 
+                              : 
+                              " Dinheiro"
+                            }
+                          </p>
+                          <p>
+                            {(order.troco === order.total) ? 
+                              "Não precisa de troco"
+                              :
+                              ((order.typePayament === 0) ?
+                                  "Pagará R$" + order.troco + ", troco de R$" + (order.troco - order.total)
+                                :
+                                "Pagará na maquininha"
+                              )
+                            }
+                          </p>
 											</Card.Text>
 											<Row className="d-flex justify-content-between">
 												<Button
