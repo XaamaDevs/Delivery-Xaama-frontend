@@ -30,6 +30,7 @@ import { RiShoppingBasketLine } from "react-icons/ri";
 
 // Importing backend api
 import api from "../../../services/api";
+import { useEffect } from "react";
 
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
@@ -50,14 +51,18 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [message, setMessage] = useState("");
 
 	//	Defining history to jump through pages
-	const history = useHistory();
+  const history = useHistory();
+  
+  useEffect(() => {
+    setDeliverTroco((order.total + (deliverOrder ? companyInfo.freight : 0)));
+  }, [order.total, deliverOrder]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
     event.preventDefault();
     history.push("/menu");
 
-    const type = deliverCash && !deliverCard ? 0 : 1;
+    const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
 		const data = {
 			user: order.user,
@@ -65,7 +70,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			deliver: deliverOrder,
       address: deliverAddress,
       typePayament: type,
-      troco: deliverTroco
+      troco: deliverTroco,
+      total: (order.total + (deliverOrder ? companyInfo.freight : 0))
 		};
 
 		await api.post("order", data)
@@ -128,9 +134,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                             value={deliverTroco}
                             onChange={e => setDeliverTroco(e.target.value)}
                             type="number"
-                            min="0"
+                            min={deliverTroco}
                             autoFocus
-                            required
+                            required={deliverCash}
                           />
                         </Col>
                       </Row>
