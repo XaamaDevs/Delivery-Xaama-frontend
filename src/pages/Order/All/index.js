@@ -228,25 +228,6 @@ export default function AllOrders({ userId }) {
 												</p>
 												<p>
                             Método de pagamento:
-<<<<<<< HEAD
-                            {order.typePayament === 1 ? 
-                              " Cartão" 
-                              : 
-                              " Dinheiro"
-                            }
-                          </p>
-                          <p>
-                            {(order.change === order.total) ? 
-                              "Não precisa de troco"
-                              :
-                              ((order.typePayament === 0) ?
-                                  "Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
-                                :
-                                "Pagará na maquininha"
-                              )
-                            }
-                          </p>
-=======
 													{order.typePayament === 1 ?
 														" Cartão"
 														:
@@ -264,7 +245,6 @@ export default function AllOrders({ userId }) {
 														)
 													}
 												</p>
->>>>>>> d9783e5dc96cc431df0beea7da074c9378ee1466
 											</Card.Text>
 											<Row className="d-flex justify-content-between">
 												<Button
