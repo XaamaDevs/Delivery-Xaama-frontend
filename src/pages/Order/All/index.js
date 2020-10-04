@@ -57,11 +57,11 @@ export default function AllOrders({ userId }) {
 	function setupWebSocket() {
 		disconnect();
 		connect();
-  }
+	}
 
 	useEffect(() => {
-    subscribeToNewOrders(o => setOrders([...orders, o[0]]));
-    console.log("orders: ", orders);
+		subscribeToNewOrders(o => setOrders([...orders, o[0]]));
+		console.log("orders: ", orders);
 		subscribeToUpdateOrders(o => setOrders(o));
 		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
@@ -194,7 +194,7 @@ export default function AllOrders({ userId }) {
 											<Row>
 												<Col sm="3">
 													<Image
-														className="h-100"
+														className="w-100"
 														style={{ borderRadius: "50%" }}
 														src={order.user.thumbnail ? order.user.thumbnail_url: camera}
 														alt="thumbnail"
@@ -226,25 +226,25 @@ export default function AllOrders({ userId }) {
 												<p>
 													{"Total a pagar R$" + order.total}
 												</p>
-                        <p>
+												<p>
                             Método de pagamento:
-                            {order.typePayament === 1 ? 
-                              " Cartão" 
-                              : 
-                              " Dinheiro"
-                            }
-                          </p>
-                          <p>
-                            {(order.troco === order.total) ? 
-                              "Não precisa de troco"
-                              :
-                              ((order.typePayament === 0) ?
-                                  "Pagará R$" + order.troco + ", troco de R$" + (order.troco - order.total)
-                                :
-                                "Pagará na maquininha"
-                              )
-                            }
-                          </p>
+													{order.typePayament === 1 ?
+														" Cartão"
+														:
+														" Dinheiro"
+													}
+												</p>
+												<p>
+													{(order.troco === order.total) ?
+														"Não precisa de troco"
+														:
+														((order.typePayament === 0) ?
+															"Pagará R$" + order.troco + ", troco de R$" + (order.troco - order.total)
+															:
+															"Pagará na maquininha"
+														)
+													}
+												</p>
 											</Card.Text>
 											<Row className="d-flex justify-content-between">
 												<Button
@@ -278,23 +278,23 @@ export default function AllOrders({ userId }) {
 							))}
 						</Row>
 					</CardDeck>
-          {orders && orders.length ? 
-            <Button
-              variant="danger"
-              className="d-flex mx-auto my-4"
-              onClick={() => setModalDeleteOrder(true)}
-            >
+					{orders && orders.length ?
+						<Button
+							variant="danger"
+							className="d-flex mx-auto my-4"
+							onClick={() => setModalDeleteOrder(true)}
+						>
               Apagar todos pedidos
-            </Button>
-          : 
-            null
-          }
+						</Button>
+						:
+						null
+					}
 				</div>
 			}
 
 			<Modal
 				show={modalOrderListing}
-				onHide={() => {setProduct({}); setModalOrderListing(false) }}
+				onHide={() => {setProduct({}); setModalOrderListing(false); }}
 				size="lg"
 				className="p-0"
 				centered
@@ -321,7 +321,7 @@ export default function AllOrders({ userId }) {
 
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setProduct({}); setModalOrderListing(false)}}>
+					<Button variant="warning" onClick={() => { setProduct({}); setModalOrderListing(false);}}>
 						Fechar
 					</Button>
 				</Modal.Footer>
