@@ -156,6 +156,7 @@ export default function AllOrders({ userId }) {
 												<Row>
 													<Col sm="3">
 														<Image
+															className="w-100"
 															style={{ borderRadius: "50%" }}
 															src={order.user.thumbnail ? order.user.thumbnail_url: camera}
 															alt="thumbnail"
