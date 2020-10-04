@@ -40,12 +40,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companyAddress, setCompanyAddress] = useState("");
 	const [companyFreight, setCompanyFreight] = useState("");
 	const [companyProductTypes, setCompanyProductTypes] = useState("");
+	const [logo, setLogo] = useState(null);
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
 	const [modal3Show, setModal3Show] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
+	const [modalImages, setModalImages] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -76,6 +78,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const preview = useMemo(() => {
 		return thumbnail ? URL.createObjectURL(thumbnail): null;
 	}, [thumbnail]);
+
+	//	Company logo preview
+	const logoPreview = useMemo(() => {
+		return logo ? URL.createObjectURL(logo): null;
+	}, [logo]);
 
 	//	Function to handle input image profile
 	async function inputImage(event) {
@@ -309,12 +316,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								Listar todos pedidos
 							</Button>
 							{user.userType === 2 ?
-								<Button
-									onClick={() => history.push("/allusers")}
-									id="btn-password"
-								>
-									Listar todos usuários
-								</Button>
+								<>
+									<Button
+										onClick={() => history.push("/allusers")}
+										id="btn-password"
+									>
+										Listar todos usuários
+									</Button>
+									<Button
+										className="my-2"
+										variant="outline-warning"
+										onClick={() => setModalImages(true)}
+									>
+										Editar imagens
+									</Button>
+								</>
 								:
 								null
 							}
@@ -601,6 +617,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						</Modal.Footer>
 					</Form>
 				</Modal.Body>
+			</Modal>
+
+			<Modal
+				show={modalImages}
+				onHide={() => { setModalImages(false); setToastShow(false); }}
+				size="md"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Editar imagens</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="warning" onClick={() => { setModalImages(false); setToastShow(false); }}>
+						Cancelar
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
