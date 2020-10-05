@@ -44,7 +44,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 	const [productType, setProductType] = useState("");
 	const [productThumbnail_url, setProductThumbnail_url] = useState(null);
   const [productThumbnail, setProductThumbnail] = useState(null);
-  const [productAvailable, setProductAvailable] = useState(true);
+  const [productAvailable, setProductAvailable] = useState();
 
 	//	Addition variables
 	const [additionsByType, setAdditionsByType] = useState({});
@@ -241,7 +241,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 				authorization: userId
 			}})
 			.then(() => {
-				setProductUpdateModal(false);
+        setProductUpdateModal(false);
 				setTitle("Alterações produto!");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
@@ -329,8 +329,10 @@ export default function Menu({ userId, user, order, setOrder }) {
 			setProductTotal(total);
 		}
   }
+  
+	async function handleProductModal(event, modal, product = null) {
+		event.preventDefault();
 
-  async function setsProducts(product) {
     setProductId(product ? product._id : "");
 		setProductName(product ? product.name : "");
 		setProductIngredients(product ? product.ingredients.join(", ") : "");
@@ -338,13 +340,8 @@ export default function Menu({ userId, user, order, setOrder }) {
 		setProductSizes(product ? product.sizes.join(", ") : "");
 		setProductType(product ? product.type : "");
 		setProductThumbnail(null);
-		setProductThumbnail_url(product ? product.thumbnail_url : null);
-  }
-  
-	async function handleProductModal(event, modal, product = null) {
-		event.preventDefault();
-
-    setsProducts(product);
+    setProductThumbnail_url(product ? product.thumbnail_url : null);
+    setProductAvailable(product ? product.available : true);
 
 		switch(modal) {
 		case 0:
@@ -355,6 +352,14 @@ export default function Menu({ userId, user, order, setOrder }) {
 			break;
 		case 2:
 			setProductDeleteModal(true);
+      break;
+    case 3:
+      setProductAvailable(false);
+      handleProductUpdate(event);
+      break;
+    case 4:
+      setProductAvailable(true);
+      handleProductUpdate(event);
       break;
 		default:
 			break;
@@ -421,23 +426,24 @@ export default function Menu({ userId, user, order, setOrder }) {
                   <Button
                     variant="success"
                     size="sm"
-                    onClick={e => {setProductAvailable(false);setsProducts(product);handleProductUpdate(e, product)}}
+                    className="btn"
+							      id="btn-available"
                   >
                     Disponível
                   </Button>
                 : 
                   <Button
-                    variant="danger"
+                    variant="dark"
                     size="sm"
-                    onClick={e => {setProductAvailable(true);setsProducts(product);handleProductUpdate(e, product)}}
                   >
                     Indisponível
                   </Button>
                 }
+                
 								<Button
 									variant="danger"
 									size="sm"
-									onClick={e => handleProductUpdate(e, product)}
+									onClick={e => handleProductModal(e,2, product)}
 								>
 									Remover
 								</Button>
@@ -751,6 +757,15 @@ export default function Menu({ userId, user, order, setOrder }) {
 											<option key={index}>{type}</option>
 										))}
 									</Form.Control>
+								</Form.Group>
+                <Form.Group controlId="productAvailable">
+									<Form.Check
+										type="switch"
+										id="custom-switch"
+										label={productAvailable ? "Disponível" : "Indisponível"}
+										checked={productAvailable}
+										onChange={e => setProductAvailable(e.target.checked)}
+									/>
 								</Form.Group>
 							</Col>
 						</Row>

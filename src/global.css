@@ -26,6 +26,14 @@ body {
 	background-position: center;
 }
 
+#btn-available {
+  background-color: #f0d890;
+  color: #000000;
+  outline-color: #f0d890;
+  border-width: 1px ;
+  border-color: #f0d890;
+}
+
 #root {
 	overflow-y: auto;
 
