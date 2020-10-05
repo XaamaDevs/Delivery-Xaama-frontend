@@ -69,10 +69,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	useEffect(() => {
 		setCompanyName(companyInfo.name);
 		setCompanyEmail(companyInfo.email);
+		setCompanyPhone(companyInfo.phone);
 		setCompanyAddress(companyInfo.address);
 		setCompanyFreight(companyInfo.freight);
 		setCompanyProductTypes(companyInfo.productTypes.join(", "));
-	}, [modal4Show]);
+	}, [modal4Show, modalImages]);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -89,6 +90,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		event.preventDefault();
 
 		document.getElementById("inputImage").click();
+	}
+
+	//	Function to handle input company logo
+	async function inputLogo(event) {
+		event.preventDefault();
+
+		document.getElementById("inputLogo").click();
 	}
 
 	//	Function to handle update user
@@ -191,25 +199,36 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("freight", companyFreight);
 		data.append("productTypes", companyProductTypes);
 
+		if(logo) {
+			data.append("logo", logo);
+		} else {
+			if(companyInfo.logo) {
+				const blob = await fetch(companyInfo.logo_url).then(r => r.blob());
+				const token = companyInfo.logo_url.split(".");
+				const extension = token[token.length-1];
+				data.append("logo", new File([blob], "logo." + extension));
+			}
+		}
+
 		await api.post("company", data , {
 			headers : {
 				authorization: userId
-			}})
-			.then(() => {
-				setModal4Show(false);
-				setTitle("Alterações da empresa");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	return (
@@ -630,6 +649,43 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Modal.Title>Editar imagens</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
+						<Form.Control
+							id="inputLogo"
+							className="d-none"
+							type="file"
+							onChange={event => setLogo(event.target.files[0])}
+							required
+						/>
+						<Image
+							id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+							className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+							alt="Selecione sua logo"
+							onClick={inputLogo}
+							rounded
+							fluid
+						/>
+						{companyInfo.logo ?
+							<Button
+								className="my-3 mx-auto"
+								type="submit"
+								variant="warning"
+							>
+								Trocar foto
+							</Button>
+							:
+							<div className="d-flex">
+								<Button
+									className="my-3 mx-auto"
+									type="submit"
+									variant="warning"
+								>
+									Adicionar foto
+								</Button>
+							</div>
+						}
+					</Form>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => { setModalImages(false); setToastShow(false); }}>
