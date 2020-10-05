@@ -14,9 +14,10 @@ import {
 	Tabs,
 	Tab,
 	Card,
-  Form,
-  Row,
-  Col,
+	Form,
+	Row,
+	Col,
+	Image
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -36,51 +37,51 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	//	Order state variables
 	const [product, setProduct] = useState({});
 	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
-  const [deliverOrder, setDeliverOrder] = useState(false);
-  const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
-  const [deliverChange, setDeliverChange] = useState();
-  const [deliverCash, setDeliverCash] = useState(false);
-  const [deliverCard, setDeliverCard] = useState(false);
+	const [deliverOrder, setDeliverOrder] = useState(false);
+	const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
+	const [deliverChange, setDeliverChange] = useState();
+	const [deliverCash, setDeliverCash] = useState(false);
+	const [deliverCard, setDeliverCard] = useState(false);
 
 	//	Message settings
 	const [shoppingBasketModal, setShoppingBasketModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  
-  // Tabs settings
-  const [eventKey, setEventKey] = useState("0");
+	const [message, setMessage] = useState("");
+
+	// Tabs settings
+	const [eventKey, setEventKey] = useState("0");
 
 	//	Defining history to jump through pages
-  const history = useHistory();
-  
-  useEffect(() => {
-    setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
-  }, [order.total, deliverOrder]);
+	const history = useHistory();
+
+	useEffect(() => {
+		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
+	}, [order.total, deliverOrder]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
-    event.preventDefault();
-    history.push("/menu");
+		event.preventDefault();
+		history.push("/menu");
 
-    const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
+		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
 		const data = {
 			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
-      address: deliverAddress,
-      typePayament: type,
-      change: deliverChange,
-      total: (order.total + (deliverOrder ? companyInfo.freight : 0))
+			address: deliverAddress,
+			typePayament: type,
+			change: deliverChange,
+			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
 		};
 
 		await api.post("order", data)
 			.then(() => {
 				setTitle("Pedido enviado!");
 				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-        setShoppingBasketModal(false);
+				setShoppingBasketModal(false);
 				setModalAlert(true);
 			}).catch((error) => {
 				setTitle("Alerta!");
@@ -108,59 +109,71 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 		} catch (error) {
 			alert(error);
 		}
-  }
-  
-  function Payament() {
-    return (
-      <Tabs
-        fill 
-        defaultActiveKey="0" 
-        id="uncontrolled-tabs"
-        activeKey={eventKey}
-        onSelect={(k) => setEventKey(k)} >
-        
-        <Tab eventKey="0" title="Dinheiro">
-          {eventKey === "0" ? setDeliverCash(true) : null}
-          {eventKey === "0" ? setDeliverCard(false): null}
-          <Card>
-            <Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
-              <Form className="mx-auto my-2">
-                <Form.Group controlId="userChange">
-                  <Row>
-                    <Col>
-                      <Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
-                    </Col>
-                    <Col>
-                      <Form.Control
-                        value={deliverChange}
-                        onChange={e => setDeliverChange(e.target.value)}
-                        type="number"
-                        min={deliverChange}
-                        autoFocus
-                        required={deliverCash}
-                      />
-                    </Col>
-                  </Row>
-                  </Form.Group>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Tab>
-        <Tab eventKey="1" title="Cartão" >
-          <Card>
-            {eventKey === "1" ? setDeliverCash(false) : null}
-            {eventKey === "1" ? setDeliverCard(true): null}
-            <Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
-          </Card>
-        </Tab>
-      </Tabs>
-    );
-  }
+	}
+
+	function Payament() {
+		return (
+			<Tabs
+				fill
+				defaultActiveKey="0"
+				id="uncontrolled-tabs"
+				activeKey={eventKey}
+				onSelect={(k) => setEventKey(k)} >
+
+				<Tab eventKey="0" title="Dinheiro">
+					{eventKey === "0" ? setDeliverCash(true) : null}
+					{eventKey === "0" ? setDeliverCard(false): null}
+					<Card>
+						<Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
+							<Form className="mx-auto my-2">
+								<Form.Group controlId="userChange">
+									<Row>
+										<Col>
+											<Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
+										</Col>
+										<Col>
+											<Form.Control
+												value={deliverChange}
+												onChange={e => setDeliverChange(e.target.value)}
+												type="number"
+												min={deliverChange}
+												autoFocus
+												required={deliverCash}
+											/>
+										</Col>
+									</Row>
+								</Form.Group>
+							</Form>
+						</Card.Body>
+					</Card>
+				</Tab>
+				<Tab eventKey="1" title="Cartão" >
+					<Card>
+						{eventKey === "1" ? setDeliverCash(false) : null}
+						{eventKey === "1" ? setDeliverCard(true): null}
+						<Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
+					</Card>
+				</Tab>
+			</Tabs>
+		);
+	}
 
 	return (
 		<>
 			<Navbar className="text-warning py-5 px-3" bg="transparent" expand="lg">
-				<NavLink to="/" className="navbar-brand text-warning mx-5">{companyInfo.name}</NavLink>
+				<NavLink to="/" className="navbar-brand text-warning mx-5 p-0">
+					{companyInfo.logo ?
+						<Image
+							className={"border-0 m-auto"}
+							width="100px"
+							src={companyInfo.logo_url}
+							alt="Logo"
+							fluid
+						/>
+						:
+						companyInfo.name
+					}
+				</NavLink>
 				<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="mr-auto">
@@ -312,22 +325,22 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
-              <Form.Group controlId="userPhone">
-                <Row>
-                  <Col md="auto">
-                    <Form.Label className="mx-auto my-2">Telefone para contato: </Form.Label>
-                  </Col>
-                  <Col md="auto">
-                    <Form.Control
-                      value={deliverPhone}
-                      onChange={e => setDeliverPhone(e.target.value)}
-                      type="text"
-                      pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
-                      placeholder="(__) _ ____-____"
-                      required
-                    />
-                  </Col>
-                </Row>
+								<Form.Group controlId="userPhone">
+									<Row>
+										<Col md="auto">
+											<Form.Label className="mx-auto my-2">Telefone para contato: </Form.Label>
+										</Col>
+										<Col md="auto">
+											<Form.Control
+												value={deliverPhone}
+												onChange={e => setDeliverPhone(e.target.value)}
+												type="text"
+												pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+												placeholder="(__) _ ____-____"
+												required
+											/>
+										</Col>
+									</Row>
 								</Form.Group>
 								<Form.Group controlId="deliverAddress">
 									<Form.Label>
@@ -341,29 +354,29 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 										onChange={e => setDeliverOrder(e.target.checked)}
 									/>
 								</Form.Group>
-                {deliverOrder ?
-                  <Form.Group controlId="deliverAddress">
-                    <Form.Label>Endereço de entrega:</Form.Label>
-                    <Form.Control
-                      value={deliverAddress}
-                      onChange={e => setDeliverAdress(e.target.value)}
-                      type="text"
-                      pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-                      placeholder="Rua, Número, Bairro, Complemento (opcional)"
-                      disabled={!deliverOrder}
-                      required={deliverOrder}
-                    />
-                    <Form.Text className="text-muted">
+								{deliverOrder ?
+									<Form.Group controlId="deliverAddress">
+										<Form.Label>Endereço de entrega:</Form.Label>
+										<Form.Control
+											value={deliverAddress}
+											onChange={e => setDeliverAdress(e.target.value)}
+											type="text"
+											pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
+											placeholder="Rua, Número, Bairro, Complemento (opcional)"
+											disabled={!deliverOrder}
+											required={deliverOrder}
+										/>
+										<Form.Text className="text-muted">
                       Separe rua, número, bairro e complemento por vírgula
-                    </Form.Text>
-                  </Form.Group>
-                : 
-                  null
-                }
-                <Form.Group controlId="deliverPayament">
-                  <Form.Label>Forma de pagamento:</Form.Label>
-                  <Payament />
-                </Form.Group>
+										</Form.Text>
+									</Form.Group>
+									:
+									null
+								}
+								<Form.Group controlId="deliverPayament">
+									<Form.Label>Forma de pagamento:</Form.Label>
+									<Payament />
+								</Form.Group>
 								<Modal.Footer>
 									<Button
 										variant="danger"
