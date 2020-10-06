@@ -40,7 +40,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companyAddress, setCompanyAddress] = useState("");
 	const [companyFreight, setCompanyFreight] = useState("");
 	const [companyProductTypes, setCompanyProductTypes] = useState("");
-	const [logo, setLogo] = useState(null);
+  const [logo, setLogo] = useState(null);
+  const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
+  const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : true);
+  const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -183,7 +186,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("address", companyAddress);
 		data.append("phone", companyPhone);
 		data.append("freight", companyFreight);
-		data.append("productTypes", companyProductTypes);
+    data.append("productTypes", companyProductTypes);
+    data.append("manual", companyManual);
+    data.append("systemOpenByAdm", companySystemOpenByAdm);
+    data.append("systemOpenByHour", companySystemOpenByHour);
 
 		if(logo) {
 			data.append("logo", logo);
@@ -619,6 +625,39 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								</Form.Group>
 							</Col>
 						</Row>
+            <Row>
+              <Col>
+                <Form.Group controlId="companyManual">
+                  <Form.Label>
+                    Controlar sistema aberto/fechado manualmente. Atenção, se você
+                    ativar esta opção, você é quem irá controlar quando sistema estará
+                    aberto ou fechado a menos que a desative de novo. Cuidado!
+                  </Form.Label>
+                  <Form.Check
+                    type="switch"
+                    id="custom-switch4"
+                    label={companyManual ? "Manual" : "Automático"}
+                    checked={companyManual}
+                    onChange={e => setCompanyManual(e.target.checked)}
+                  />
+                </Form.Group>
+                {companyManual ?
+                  <Form.Group controlId="companySystemOpenByAdm">
+                    <Form.Label>Abrir/Fechar sistema</Form.Label>
+                    <Form.Check
+                      type="switch"
+                      id="custom-switch3"
+                      label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
+                      checked={companySystemOpenByAdm}
+                      onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
+                    />
+                  </Form.Group>
+                :
+                  null
+                }
+              </Col>
+              <Col></Col>
+            </Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
