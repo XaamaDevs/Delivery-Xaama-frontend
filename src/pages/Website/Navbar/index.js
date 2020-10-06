@@ -58,7 +58,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
 	useEffect(() => {
 		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
-	}, [order.total, deliverOrder]);
+	}, [order.total, deliverOrder, companyInfo.freight]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
@@ -71,8 +71,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
-      address: deliverAddress,
-      phone: deliverPhone ,
+			address: deliverAddress,
+			phone: deliverPhone ,
 			typePayament: type,
 			change: deliverChange,
 			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
@@ -138,8 +138,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												onChange={e => setDeliverChange(e.target.value)}
 												type="number"
 												min={deliverChange}
-                        required={deliverCash}
-                        autoFocus
+												required={deliverCash}
+												autoFocus
 											/>
 										</Col>
 									</Row>
@@ -338,8 +338,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												type="text"
 												pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 												placeholder="(__) _ ____-____"
-                        required
-                        autoFocus
+												required
+												autoFocus
 											/>
 										</Col>
 									</Row>
