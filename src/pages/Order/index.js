@@ -211,7 +211,7 @@ export default function AllOrders({ userId }) {
 												<Row className="d-flex justify-content-between">
 													<Button
 														id="btn-password"
-														className="m-1"
+														className="m-1 mx-auto"
 														onClick={e => handleSetOrder(e, order)}
 													>
                             Ver pedido
@@ -219,7 +219,7 @@ export default function AllOrders({ userId }) {
 													{!order.status ?
 														<Button
 															variant="danger"
-															className="m-1"
+															className="m-1 mx-auto"
 														>
                               Pedido sendo preparado
 														</Button>
@@ -229,13 +229,13 @@ export default function AllOrders({ userId }) {
 																<>
 																	<Button
 																		variant="warning"
-																		className="m-1"
+																		className="m-1 mx-auto"
 																	>
                                     Pedido a caminho
 																	</Button>
 																	<Button
 																		variant="outline-warning"
-																		className="m-1"
+																		className="m-1 mx-auto"
 																		onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
 																	>
                                     Recebeu seu pedido? Avalie!
