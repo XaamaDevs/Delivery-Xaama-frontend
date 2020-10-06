@@ -214,7 +214,7 @@ export default function AllOrders({ userId }) {
 										<Card.Body>
 											<Card.Text>
 												<p>
-													{order.user.phone ? "Telefone para contato: " + order.user.phone : "Telefone não informado"}
+													{order.phone ? "Telefone para contato: " + order.phone : "Telefone não informado"}
 												</p>
 												<p>
 													{order.deliver ?

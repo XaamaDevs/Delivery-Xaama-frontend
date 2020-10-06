@@ -158,7 +158,7 @@ export default function AllOrders({ userId }) {
 														<Image
 															className="w-100"
 															style={{ borderRadius: "50%" }}
-															src={order.user.thumbnail ? order.user.thumbnail_url: camera}
+															src={order.user && order.user.thumbnail ? order.user.thumbnail_url: camera}
 															alt="thumbnail"
 															fluid
 														/>
@@ -176,7 +176,7 @@ export default function AllOrders({ userId }) {
 											<Card.Body>
 												<Card.Text>
 													<p>
-														{order.user.phone ? "Telefone para contato: " + order.user.phone : "Telefone não informado"}
+														{order.phone ? "Telefone para contato: " + order.phone : "Telefone não informado"}
 													</p>
 													<p>
 														{order.deliver ?

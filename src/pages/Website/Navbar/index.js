@@ -71,7 +71,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
-			address: deliverAddress,
+      address: deliverAddress,
+      phone: deliverPhone ,
 			typePayament: type,
 			change: deliverChange,
 			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
@@ -115,14 +116,14 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 		return (
 			<Tabs
 				fill
-				defaultActiveKey="0"
+				defaultActiveKey="1"
 				id="uncontrolled-tabs"
 				activeKey={eventKey}
 				onSelect={(k) => setEventKey(k)} >
 
-				<Tab eventKey="0" title="Dinheiro">
-					{eventKey === "0" ? setDeliverCash(true) : null}
-					{eventKey === "0" ? setDeliverCard(false): null}
+				<Tab eventKey="1" title="Dinheiro">
+					{eventKey === "1" ? setDeliverCash(true) : null}
+					{eventKey === "1" ? setDeliverCard(false): null}
 					<Card>
 						<Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
 							<Form className="mx-auto my-2">
@@ -137,8 +138,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												onChange={e => setDeliverChange(e.target.value)}
 												type="number"
 												min={deliverChange}
-												autoFocus
-												required={deliverCash}
+                        required={deliverCash}
+                        autoFocus
 											/>
 										</Col>
 									</Row>
@@ -147,10 +148,10 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 						</Card.Body>
 					</Card>
 				</Tab>
-				<Tab eventKey="1" title="Cartão" >
+				<Tab eventKey="0" title="Cartão" >
 					<Card>
-						{eventKey === "1" ? setDeliverCash(false) : null}
-						{eventKey === "1" ? setDeliverCard(true): null}
+						{eventKey === "0" ? setDeliverCash(false) : null}
+						{eventKey === "0" ? setDeliverCard(true): null}
 						<Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
 					</Card>
 				</Tab>
@@ -337,7 +338,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 												type="text"
 												pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 												placeholder="(__) _ ____-____"
-												required
+                        required
+                        autoFocus
 											/>
 										</Col>
 									</Row>

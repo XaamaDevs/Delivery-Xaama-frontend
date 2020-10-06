@@ -126,7 +126,9 @@ export default function Menu({ userId, user, order, setOrder }) {
 
 						for(var addition of response.data) {
 							if(addition.type.indexOf(type) >= 0) {
-								adds.push(addition);
+								if(addition.available){
+									adds.push(addition);
+								}
 							}
 						}
 
@@ -282,26 +284,33 @@ export default function Menu({ userId, user, order, setOrder }) {
 	}
 
 	async function handleProductOrder(event) {
-		event.preventDefault();
-
-		const product = {
-			product: productOrder,
-			additions: additionsOrder,
-			size: productSize,
-			note: productNote
-		};
-
-		if(order.products) {
-			var newOrder = order;
-			newOrder["products"].push(product);
-			newOrder["total"] += productTotal;
-
-			setOrder(newOrder);
-		} else {
-			setOrder({ products: [product], user, deliver: false, total: productTotal, address: user.address });
-		}
-
-		setProductOrderModal(false);
+    event.preventDefault();
+    
+    if(productOrder.available) {
+      const product = {
+        product: productOrder,
+        additions: additionsOrder,
+        size: productSize,
+        note: productNote
+      };
+  
+      if(order.products) {
+        var newOrder = order;
+        newOrder["products"].push(product);
+        newOrder["total"] += productTotal;
+  
+        setOrder(newOrder);
+      } else {
+        setOrder({ products: [product], user, deliver: false, total: productTotal, address: user.address });
+      }
+  
+      setProductOrderModal(false);
+    } else {
+      setProductOrderModal(false);
+      setTitle("Atenção");
+      setMessage("Produto indisponível no momento!");
+      setModalAlert(true);
+    }
 	}
 
 	async function handleAdditionOrder(event, add) {
@@ -449,24 +458,35 @@ export default function Menu({ userId, user, order, setOrder }) {
 								</Button>
 							</div>
 							:
-							<Button
-								className="my-auto"
-								variant="warning"
-								size="sm"
-								onClick ={() => {
-									setProductNote("");
-									setAdditionsOrder([]);
-									setProductSize(0);
-									setProductTotal(0);
-									setProductOrder(product);
-									setProductTotal(product.prices[0]);
-									setProductOrderModal(true);
-								}}
-							>
-								Adicionar aos pedidos
-							</Button>
-						:
-						null
+							<>
+								{product.available ?
+									<Button
+										className="my-auto"
+										variant="warning"
+										size="sm"
+										onClick ={() => {
+											setProductNote("");
+											setAdditionsOrder([]);
+											setProductSize(0);
+											setProductTotal(0);
+											setProductOrder(product);
+											setProductTotal(product.prices[0]);
+											setProductOrderModal(true);
+										}}
+									>
+										Adicionar aos pedidos
+									</Button>
+									: 
+									<Button
+										variant="danger"
+										size="sm"
+									>
+										Indisponível no momento
+									</Button>
+								}
+								</>
+							:
+							null
 					}
 				</Card.Body>
 				<Card.Footer>
@@ -990,6 +1010,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
+      <Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message}/>
 		</Container>
 	);
 }
