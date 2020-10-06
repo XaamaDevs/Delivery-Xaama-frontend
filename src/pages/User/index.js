@@ -288,17 +288,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Card.Text>
 						</Card.Body>
 					</Card>
-					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
+					<Row className="d-flex justify-content-around flex-row flex-wrap">
 						<Button
 							variant="outline-warning"
+							className="my-2"
 							onClick={() => setModal1Show(true)}
 						>
 							Editar perfil
 						</Button>
 						<Button
 							onClick ={() => setModal2Show(true)}
-							className="btn"
 							id="btn-password"
+							className="my-2"
 						>
 							Trocar senha
 						</Button>
@@ -306,6 +307,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Button
 								onClick = {() => setModal4Show(true)}
 								variant="outline-warning"
+								className="my-2"
 							>
 								Info da empresa
 							</Button>
@@ -313,27 +315,29 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Button
 								onClick = {() => setModal3Show(true)}
 								variant="outline-danger"
+								className="my-2"
 							>
 								Apagar perfil
 							</Button>
 						}
 					</Row>
 					{user.userType === 1 || user.userType === 2 ?
-						<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
+						<Row className="d-flex justify-content-around flex-row flex-wrap">
 							<Button
 								onClick={() => history.push("/allorders")}
-								className="btn"
+								className="my-2"
 								id="btn-password"
 							>
-								Listar todos pedidos
+								Listar pedidos
 							</Button>
 							{user.userType === 2 ?
 								<>
 									<Button
+										className="my-2"
 										onClick={() => history.push("/allusers")}
 										id="btn-password"
 									>
-										Listar todos usuários
+										Listar usuários
 									</Button>
 									<Button
 										className="my-2"

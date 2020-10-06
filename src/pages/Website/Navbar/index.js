@@ -72,7 +72,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 			products: order.products,
 			deliver: deliverOrder,
 			address: deliverAddress,
-			phone: deliverPhone ,
+			phone: deliverPhone,
 			typePayament: type,
 			change: deliverChange,
 			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
@@ -112,7 +112,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 		}
 	}
 
-	function Payament() {
+	function Payment() {
 		return (
 			<Tabs
 				fill
@@ -161,7 +161,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
 	return (
 		<>
-			<Navbar className="text-warning py-5 px-3" bg="transparent" expand="lg">
+			<Navbar className="py-5 px-3" bg="transparent" expand="lg">
 				<NavLink to="/" className="navbar-brand text-warning mx-5 p-0">
 					{companyInfo.logo ?
 						<Image
@@ -375,9 +375,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 									:
 									null
 								}
-								<Form.Group controlId="deliverPayament">
+								<Form.Group controlId="deliverPayment">
 									<Form.Label>Forma de pagamento:</Form.Label>
-									<Payament />
+									<Payment />
 								</Form.Group>
 								<Modal.Footer>
 									<Button
