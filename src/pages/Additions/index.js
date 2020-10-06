@@ -37,8 +37,8 @@ export default function Additions({ userId }) {
 	const [additionPrice, setAdditionPrice] = useState("");
 	const [additionType, setAdditionType] = useState([]);
 	const [additionThumbnail_url, setAdditionThumbnail_url] = useState(null);
-  const [additionThumbnail, setAdditionThumbnail] = useState(null);
-  const [additionAvailable, setAdditionAvailable] = useState();
+	const [additionThumbnail, setAdditionThumbnail] = useState(null);
+	const [additionAvailable, setAdditionAvailable] = useState();
 
 	//	Message settings
 	const [additionAddModal, setAdditionAddModal] = useState(false);
@@ -160,8 +160,8 @@ export default function Additions({ userId }) {
 		const data = new FormData();
 
 		data.append("name", additionName);
-    data.append("price", additionPrice);
-    data.append("available", additionAvailable);
+		data.append("price", additionPrice);
+		data.append("available", additionAvailable);
 
 		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
@@ -238,8 +238,8 @@ export default function Additions({ userId }) {
 		setAdditionPrice(addition ? addition.price : "");
 		setAdditionType(addition ? addition.type : "");
 		setAdditionThumbnail(null);
-    setAdditionThumbnail_url(addition ? addition.thumbnail_url : null);
-    setAdditionAvailable(addition ? addition.available : true);
+		setAdditionThumbnail_url(addition ? addition.thumbnail_url : null);
+		setAdditionAvailable(addition ? addition.available : true);
 
 		switch(modal) {
 		case 0:
@@ -250,15 +250,15 @@ export default function Additions({ userId }) {
 			break;
 		case 2:
 			setAdditionDeleteModal(true);
-      break;
-    case 3:
-      setAdditionAvailable(false);
-      handleAdditionUpdate(event);
-      break;
-    case 4:
-      setAdditionAvailable(true);
-      handleAdditionUpdate(event);
-      break;
+			break;
+		case 3:
+			setAdditionAvailable(false);
+			handleAdditionUpdate(event);
+			break;
+		case 4:
+			setAdditionAvailable(true);
+			handleAdditionUpdate(event);
+			break;
 		default:
 			break;
 		}
@@ -295,23 +295,23 @@ export default function Additions({ userId }) {
 								Modificar
 						</Button>
 
-            {addition.available ? 
-              <Button
-                variant="success"
-                size="sm"
-                className="btn"
-                id="btn-available"
-              >
+						{addition.available ?
+							<Button
+								variant="success"
+								size="sm"
+								className="btn"
+								id="btn-available"
+							>
                 Disponível
-              </Button>
-            : 
-              <Button
-                variant="dark"
-                size="sm"
-              >
+							</Button>
+							:
+							<Button
+								variant="dark"
+								size="sm"
+							>
                 Indisponível
-              </Button>
-            }
+							</Button>
+						}
 
 						<Button
 							variant="danger"
@@ -514,7 +514,7 @@ export default function Additions({ userId }) {
 										Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
 									</Form.Text>
 								</Form.Group>
-                <Form.Group controlId="additionAvailable">
+								<Form.Group controlId="additionAvailable">
 									<Form.Check
 										type="switch"
 										id="custom-switch2"
