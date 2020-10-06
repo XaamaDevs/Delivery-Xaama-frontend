@@ -85,20 +85,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		return logo ? URL.createObjectURL(logo): null;
 	}, [logo]);
 
-	//	Function to handle input image profile
-	async function inputImage(event) {
-		event.preventDefault();
-
-		document.getElementById("inputImage").click();
-	}
-
-	//	Function to handle input company logo
-	async function inputLogo(event) {
-		event.preventDefault();
-
-		document.getElementById("inputLogo").click();
-	}
-
 	//	Function to handle update user
 	async function handleUserUpdate(event, action = null) {
 		event.preventDefault();
@@ -248,7 +234,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)}
 							alt="Selecione sua imagem"
-							onClick={inputImage}
+							onClick={() => document.getElementById("inputImage").click()}
 							rounded
 							fluid
 						/>
@@ -292,7 +278,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Card.Text>{"Telefone: " + (user.phone ? user.phone: "Não informado")}</Card.Text>
 						</Card.Body>
 						<Card.Body>
-							<Card.Text>{"Endereço: " + ((user.address && user.address.length) ? user.address.join(", ") : "Não informado")}</Card.Text>
+							<Card.Text>
+								{"Endereço: " + (
+									(user.address && user.address.length) ?
+										user.address.join(", ")
+										:
+										"Não informado"
+								)}
+							</Card.Text>
 						</Card.Body>
 					</Card>
 					<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
@@ -641,7 +634,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			<Modal
 				show={modalImages}
 				onHide={() => { setModalImages(false); setToastShow(false); }}
-				size="md"
+				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -649,43 +642,121 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Modal.Title>Editar imagens</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
-						<Form.Control
-							id="inputLogo"
-							className="d-none"
-							type="file"
-							onChange={event => setLogo(event.target.files[0])}
-							required
-						/>
-						<Image
-							id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
-							className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-							src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
-							alt="Selecione sua logo"
-							onClick={inputLogo}
-							rounded
-							fluid
-						/>
-						{companyInfo.logo ?
-							<Button
-								className="my-3 mx-auto"
-								type="submit"
-								variant="warning"
-							>
-								Trocar foto
-							</Button>
-							:
-							<div className="d-flex">
-								<Button
-									className="my-3 mx-auto"
-									type="submit"
-									variant="warning"
-								>
-									Adicionar foto
-								</Button>
-							</div>
-						}
-					</Form>
+					<Row>
+						<Col sm>
+							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
+								<Form.Group controlId="inputLogo">
+									<Form.Label>Logo da empresa</Form.Label>
+									<Form.Control
+										className="d-none"
+										type="file"
+										onChange={event => setLogo(event.target.files[0])}
+										required
+									/>
+								</Form.Group>
+								<Image
+									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									alt="Selecione sua logo"
+									onClick={() => document.getElementById("inputLogo").click()}
+									rounded
+									fluid
+								/>
+								{companyInfo.logo ?
+									<Button
+										className="my-3 mx-auto"
+										type="submit"
+										variant="warning"
+									>
+										Trocar foto
+									</Button>
+									:
+									<div className="d-flex">
+										<Button
+											className="my-3 mx-auto"
+											type="submit"
+											variant="warning"
+										>
+											Adicionar foto
+										</Button>
+									</div>
+								}
+							</Form>
+						</Col>
+						<Col sm>
+							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
+								<Form.Label>Imagens do carrossel</Form.Label>
+								<Form.Control
+									id="inputCarImage1"
+									className="d-none"
+									type="file"
+									onChange={event => setLogo(event.target.files[0])}
+									required
+								/>
+								<Image
+									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarImage1").click()}
+									rounded
+									fluid
+								/>
+								<Form.Control
+									id="inputCarImage2"
+									className="d-none"
+									type="file"
+									onChange={event => setLogo(event.target.files[0])}
+									required
+								/>
+								<Image
+									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarImage2").click()}
+									rounded
+									fluid
+								/>
+								<Form.Control
+									id="inputCarImage3"
+									className="d-none"
+									type="file"
+									onChange={event => setLogo(event.target.files[0])}
+									required
+								/>
+								<Image
+									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarImage3").click()}
+									rounded
+									fluid
+								/>
+								{companyInfo.logo ?
+									<Button
+										className="my-3 mx-auto"
+										type="submit"
+										variant="warning"
+									>
+										Trocar fotos
+									</Button>
+									:
+									<div className="d-flex">
+										<Button
+											className="my-3 mx-auto"
+											type="submit"
+											variant="warning"
+										>
+											Adicionar fotos
+										</Button>
+									</div>
+								}
+							</Form>
+						</Col>
+					</Row>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => { setModalImages(false); setToastShow(false); }}>
