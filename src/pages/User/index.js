@@ -45,12 +45,29 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
   const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : true);
   const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
 
+  // Timetable variable
+  const [timetableSundayI, setTimetableSundayI] = useState();
+  const [timetableSundayF, setTimetableSundayF] = useState();
+  const [timetableMondayI, setTimetableMondayI] = useState();
+  const [timetableMondayF, setTimetableMondayF] = useState();
+  const [timetableTuesdayI, setTimetableTuesdayI] = useState();
+  const [timetableTuesdayF, setTimetableTuesdayF] = useState();
+  const [timetableWednesdayI, setTimetableWednesdayI] = useState();
+  const [timetableWednesdayF, setTimetableWednesdayF] = useState();
+  const [timetableThursdayI, setTimetableThursdayI] = useState();
+  const [timetableThursdayF, setTimetableThursdayF] = useState();
+  const [timetableFridayI, setTimetableFridayI] = useState();
+  const [timetableFridayF, setTimetableFridayF] = useState();
+  const [timetableSaturdayI, setTimetableSaturdayI] = useState();
+  const [timetableSaturdayF, setTimetableSaturdayF] = useState();
+
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
 	const [modal3Show, setModal3Show] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
-	const [modalImages, setModalImages] = useState(false);
+  const [modalImages, setModalImages] = useState(false);
+  const [modalTimetable, setModalTimetable] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -221,7 +238,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			}
 			setToastShow(true);
 		});
-	}
+  }
+  
+  //  Function to change opening hours
+  async function handleTimetable(event) {
+    event.preventDefault();
+
+    console.log("Domingo: De", timetableSundayI, " ás ", timetableSundayF);
+    console.log("Segunda: De", timetableMondayI, " ás ", timetableMondayF);
+    console.log("Terça: De", timetableTuesdayI, " ás ", timetableTuesdayF);
+    console.log("Quarta: De", timetableWednesdayI, " ás ", timetableWednesdayF);
+    console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
+    console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
+    console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
+
+  }
 
 	return (
 		<div className="user-container h-100">
@@ -347,6 +378,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										onClick={() => setModalImages(true)}
 									>
 										Editar imagens
+									</Button>
+                  <Button
+                    className="my-2"
+										variant="outline-warning"
+										onClick={() => setModalTimetable(true)}
+									>
+										Alterar horário de funcionamento
 									</Button>
 								</>
 								:
@@ -493,6 +531,233 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
+      <Modal
+				show={modalTimetable}
+				onHide={() => {setModalTimetable(false); setToastShow(false);}}
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Modificar horário de funcionamento</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+          <Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
+					<Form onSubmit={(e) => handleTimetable(e)}>
+						<Row className="mt-2">
+							<Col className="my-2" sm={2}>
+              Domingo:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableSundayI">
+									<Form.Control
+										value={timetableSundayI}
+										onChange={e => setTimetableSundayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableSundayF">
+									<Form.Control
+										value={timetableSundayF}
+										onChange={e => setTimetableSundayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Segunda:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableMondayI">
+									<Form.Control
+										value={timetableMondayI}
+										onChange={e => setTimetableMondayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableMondayF">
+									<Form.Control
+										value={timetableMondayF}
+										onChange={e => setTimetableMondayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Terça:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableTuesdayI">
+									<Form.Control
+										value={timetableTuesdayI}
+										onChange={e => setTimetableTuesdayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableTuesdayF">
+									<Form.Control
+										value={timetableTuesdayF}
+										onChange={e => setTimetableTuesdayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Quarta:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableWednesdayI">
+									<Form.Control
+										value={timetableWednesdayI}
+										onChange={e => setTimetableWednesdayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableWednesdayF">
+									<Form.Control
+										value={timetableWednesdayF}
+										onChange={e => setTimetableWednesdayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Quinta:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableThursdayI">
+									<Form.Control
+										value={timetableThursdayI}
+										onChange={e => setTimetableThursdayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableThursdayF">
+									<Form.Control
+										value={timetableThursdayF}
+										onChange={e => setTimetableThursdayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Sexta:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableFridayI">
+									<Form.Control
+										value={timetableFridayI}
+										onChange={e => setTimetableFridayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableFridayF">
+									<Form.Control
+										value={timetableFridayF}
+										onChange={e => setTimetableFridayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+            <Row>
+							<Col className="my-2" sm={2}>
+              Sábado:
+              </Col>
+              <Col className="my-2" md="auto">
+                De
+              </Col>
+							<Col md="auto">
+               <Form.Group controlId="timetableSaturdayI">
+									<Form.Control
+										value={timetableSaturdayI}
+										onChange={e => setTimetableSaturdayI(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col >
+              <Col className="my-2" md="auto">
+                às
+              </Col>
+              <Col md="auto">
+                <Form.Group controlId="timetableSaturdayF">
+									<Form.Control
+										value={timetableSaturdayF}
+										onChange={e => setTimetableSaturdayF(e.target.value)}
+                    type="time"
+									/>
+								</Form.Group>
+              </Col>
+						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
+					</Form>
+				</Modal.Body>
+			</Modal>
+
 			<Modal
 				show={modal3Show}
 				onHide={() => { setModal3Show(false); setToastShow(false); }}
@@ -628,10 +893,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
             <Row>
               <Col>
                 <Form.Group controlId="companyManual">
-                  <Form.Label>
-                    Controlar sistema aberto/fechado manualmente. Atenção, se você
-                    ativar esta opção, você é quem irá controlar quando sistema estará
-                    aberto ou fechado a menos que a desative de novo. Cuidado!
+                  <Form.Label align="justify">
+                    Controlar sistema aberto/fechado manualmente.
                   </Form.Label>
                   <Form.Check
                     type="switch"
@@ -643,7 +906,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
                 </Form.Group>
                 {companyManual ?
                   <Form.Group controlId="companySystemOpenByAdm">
-                    <Form.Label>Abrir/Fechar sistema</Form.Label>
+                    <Form.Label>Fechar/Abrir sistema</Form.Label>
                     <Form.Check
                       type="switch"
                       id="custom-switch3"
