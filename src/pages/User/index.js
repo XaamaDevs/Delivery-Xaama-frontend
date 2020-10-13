@@ -303,7 +303,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
 		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
 
-<<<<<<< HEAD
     const timetable = [
       {dayWeek: "Domingo", beginHour: timetableSundayI, endHour: timetableSundayF},
       {dayWeek: "Segunda", beginHour: timetableMondayI, endHour: timetableMondayF},
@@ -338,9 +337,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			setToastShow(true);
 		});
   }
-=======
-	}
->>>>>>> 24445fe34971ce38b1ef430746407769c39d97af
 
 	return (
 		<div className="user-container h-100">
@@ -634,11 +630,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Modal.Title>Modificar horário de funcionamento</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-<<<<<<< HEAD
-          <Form.Label >Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
-=======
 					<Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
->>>>>>> 24445fe34971ce38b1ef430746407769c39d97af
 					<Form onSubmit={(e) => handleTimetable(e)}>
 						<Row className="mt-2">
 							<Col className="my-2" sm={2}>
@@ -987,7 +979,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								</Form.Group>
 							</Col>
 						</Row>
-<<<<<<< HEAD
             <Row>
               <Col>
                 <Form.Group controlId="companyManual">
@@ -1019,39 +1010,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
               </Col>
               <Col></Col>
             </Row>
-=======
-						<Row>
-							<Col>
-								<Form.Group controlId="companyManual">
-									<Form.Label align="justify">
-                    Controlar sistema aberto/fechado manualmente.
-									</Form.Label>
-									<Form.Check
-										type="switch"
-										id="custom-switch4"
-										label={companyManual ? "Manual" : "Automático"}
-										checked={companyManual}
-										onChange={e => setCompanyManual(e.target.checked)}
-									/>
-								</Form.Group>
-								{companyManual ?
-									<Form.Group controlId="companySystemOpenByAdm">
-										<Form.Label>Fechar/Abrir sistema</Form.Label>
-										<Form.Check
-											type="switch"
-											id="custom-switch3"
-											label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
-											checked={companySystemOpenByAdm}
-											onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
-										/>
-									</Form.Group>
-									:
-									null
-								}
-							</Col>
-							<Col></Col>
-						</Row>
->>>>>>> 24445fe34971ce38b1ef430746407769c39d97af
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
