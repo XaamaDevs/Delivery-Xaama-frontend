@@ -252,6 +252,39 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
     console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
     console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
 
+    const timetable = [
+      {dayWeek: "Domingo", beginHour: timetableSundayI, endHour: timetableSundayF},
+      {dayWeek: "Segunda", beginHour: timetableMondayI, endHour: timetableMondayF},
+      {dayWeek: "Terça", beginHour: timetableTuesdayI, endHour: timetableTuesdayF},
+      {dayWeek: "Quarta", beginHour: timetableWednesdayI, endHour: timetableWednesdayF},
+      {dayWeek: "Quinta", beginHour: timetableThursdayI, endHour: timetableThursdayF},
+      {dayWeek: "Sexta", beginHour: timetableFridayI, endHour: timetableFridayF},
+      {dayWeek: "Sábado", beginHour: timetableSaturdayI, endHour: timetableSaturdayF}
+    ];
+
+    const data = new FormData();
+    data.append("timetable", timetable);
+    
+    console.log("timetable: ", timetable);
+    await api.put("companyUpdateTimetable", data, {
+			headers : {
+				authorization: userId
+			}
+		}).then(() => {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
   }
 
 	return (
@@ -533,7 +566,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
       <Modal
 				show={modalTimetable}
-				onHide={() => {setModalTimetable(false); setToastShow(false);}}
+        onHide={() => {setModalTimetable(false); setToastShow(false);}}
+        size="md"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -541,7 +575,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Modal.Title>Modificar horário de funcionamento</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-          <Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
+          <Form.Label >Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
 					<Form onSubmit={(e) => handleTimetable(e)}>
 						<Row className="mt-2">
 							<Col className="my-2" sm={2}>
@@ -894,7 +928,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
               <Col>
                 <Form.Group controlId="companyManual">
                   <Form.Label align="justify">
-                    Controlar sistema aberto/fechado manualmente.
+                    Controlar sistema aberto/fechado manualmente
                   </Form.Label>
                   <Form.Check
                     type="switch"
