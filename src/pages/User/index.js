@@ -40,34 +40,37 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companyAddress, setCompanyAddress] = useState("");
 	const [companyFreight, setCompanyFreight] = useState("");
 	const [companyProductTypes, setCompanyProductTypes] = useState("");
-  const [logo, setLogo] = useState(null);
-  const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
-  const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : true);
-  const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
+	const [logo, setLogo] = useState(null);
+	const [c1, setC1] = useState(null);
+	const [c2, setC2] = useState(null);
+	const [c3, setC3] = useState(null);
+	const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
+	const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : true);
+	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
 
-  // Timetable variable
-  const [timetableSundayI, setTimetableSundayI] = useState();
-  const [timetableSundayF, setTimetableSundayF] = useState();
-  const [timetableMondayI, setTimetableMondayI] = useState();
-  const [timetableMondayF, setTimetableMondayF] = useState();
-  const [timetableTuesdayI, setTimetableTuesdayI] = useState();
-  const [timetableTuesdayF, setTimetableTuesdayF] = useState();
-  const [timetableWednesdayI, setTimetableWednesdayI] = useState();
-  const [timetableWednesdayF, setTimetableWednesdayF] = useState();
-  const [timetableThursdayI, setTimetableThursdayI] = useState();
-  const [timetableThursdayF, setTimetableThursdayF] = useState();
-  const [timetableFridayI, setTimetableFridayI] = useState();
-  const [timetableFridayF, setTimetableFridayF] = useState();
-  const [timetableSaturdayI, setTimetableSaturdayI] = useState();
-  const [timetableSaturdayF, setTimetableSaturdayF] = useState();
+	// Timetable variable
+	const [timetableSundayI, setTimetableSundayI] = useState();
+	const [timetableSundayF, setTimetableSundayF] = useState();
+	const [timetableMondayI, setTimetableMondayI] = useState();
+	const [timetableMondayF, setTimetableMondayF] = useState();
+	const [timetableTuesdayI, setTimetableTuesdayI] = useState();
+	const [timetableTuesdayF, setTimetableTuesdayF] = useState();
+	const [timetableWednesdayI, setTimetableWednesdayI] = useState();
+	const [timetableWednesdayF, setTimetableWednesdayF] = useState();
+	const [timetableThursdayI, setTimetableThursdayI] = useState();
+	const [timetableThursdayF, setTimetableThursdayF] = useState();
+	const [timetableFridayI, setTimetableFridayI] = useState();
+	const [timetableFridayF, setTimetableFridayF] = useState();
+	const [timetableSaturdayI, setTimetableSaturdayI] = useState();
+	const [timetableSaturdayF, setTimetableSaturdayF] = useState();
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
 	const [modal3Show, setModal3Show] = useState(false);
 	const [modal4Show, setModal4Show] = useState(false);
-  const [modalImages, setModalImages] = useState(false);
-  const [modalTimetable, setModalTimetable] = useState(false);
+	const [modalImages, setModalImages] = useState(false);
+	const [modalTimetable, setModalTimetable] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -104,6 +107,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const logoPreview = useMemo(() => {
 		return logo ? URL.createObjectURL(logo): null;
 	}, [logo]);
+
+	//	Company carousel image 1 preview
+	const c1Preview = useMemo(() => {
+		return c1 ? URL.createObjectURL(c1): null;
+	}, [c1]);
+
+	//	Company carousel image 2 preview
+	const c2Preview = useMemo(() => {
+		return c2 ? URL.createObjectURL(c2): null;
+	}, [c2]);
+
+	//	Company carousel image 3 preview
+	const c3Preview = useMemo(() => {
+		return c3 ? URL.createObjectURL(c3): null;
+	}, [c3]);
 
 	//	Function to handle update user
 	async function handleUserUpdate(event, action = null) {
@@ -203,10 +221,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("address", companyAddress);
 		data.append("phone", companyPhone);
 		data.append("freight", companyFreight);
-    data.append("productTypes", companyProductTypes);
-    data.append("manual", companyManual);
-    data.append("systemOpenByAdm", companySystemOpenByAdm);
-    data.append("systemOpenByHour", companySystemOpenByHour);
+		data.append("productTypes", companyProductTypes);
+		data.append("manual", companyManual);
+		data.append("systemOpenByAdm", companySystemOpenByAdm);
+		data.append("systemOpenByHour", companySystemOpenByHour);
 
 		if(logo) {
 			data.append("logo", logo);
@@ -216,6 +234,39 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				const token = companyInfo.logo_url.split(".");
 				const extension = token[token.length-1];
 				data.append("logo", new File([blob], "logo." + extension));
+			}
+		}
+
+		if(c1) {
+			data.append("c1", c1);
+		} else {
+			if(companyInfo.c1) {
+				const blob = await fetch(companyInfo.c1_url).then(r => r.blob());
+				const token = companyInfo.c1_url.split(".");
+				const extension = token[token.length-1];
+				data.append("c1", new File([blob], "c1." + extension));
+			}
+		}
+
+		if(c2) {
+			data.append("c2", c2);
+		} else {
+			if(companyInfo.c2) {
+				const blob = await fetch(companyInfo.c2_url).then(r => r.blob());
+				const token = companyInfo.c2_url.split(".");
+				const extension = token[token.length-1];
+				data.append("c2", new File([blob], "c2." + extension));
+			}
+		}
+
+		if(c3) {
+			data.append("c3", c3);
+		} else {
+			if(companyInfo.c3) {
+				const blob = await fetch(companyInfo.c3_url).then(r => r.blob());
+				const token = companyInfo.c3_url.split(".");
+				const extension = token[token.length-1];
+				data.append("c3", new File([blob], "c3." + extension));
 			}
 		}
 
@@ -238,21 +289,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			}
 			setToastShow(true);
 		});
-  }
-  
-  //  Function to change opening hours
-  async function handleTimetable(event) {
-    event.preventDefault();
+	}
 
-    console.log("Domingo: De", timetableSundayI, " ás ", timetableSundayF);
-    console.log("Segunda: De", timetableMondayI, " ás ", timetableMondayF);
-    console.log("Terça: De", timetableTuesdayI, " ás ", timetableTuesdayF);
-    console.log("Quarta: De", timetableWednesdayI, " ás ", timetableWednesdayF);
-    console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
-    console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
-    console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
+	//  Function to change opening hours
+	async function handleTimetable(event) {
+		event.preventDefault();
 
-  }
+		console.log("Domingo: De", timetableSundayI, " ás ", timetableSundayF);
+		console.log("Segunda: De", timetableMondayI, " ás ", timetableMondayF);
+		console.log("Terça: De", timetableTuesdayI, " ás ", timetableTuesdayF);
+		console.log("Quarta: De", timetableWednesdayI, " ás ", timetableWednesdayF);
+		console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
+		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
+		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
+
+	}
 
 	return (
 		<div className="user-container h-100">
@@ -383,8 +434,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									>
 										Editar imagens
 									</Button>
-                  <Button
-                    className="my-2"
+									<Button
+										className="my-2"
 										variant="outline-warning"
 										onClick={() => setModalTimetable(true)}
 									>
@@ -535,7 +586,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 				</Modal.Body>
 			</Modal>
 
-      <Modal
+			<Modal
 				show={modalTimetable}
 				onHide={() => {setModalTimetable(false); setToastShow(false);}}
 				centered
@@ -545,210 +596,210 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 					<Modal.Title>Modificar horário de funcionamento</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-          <Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
+					<Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
 					<Form onSubmit={(e) => handleTimetable(e)}>
 						<Row className="mt-2">
 							<Col className="my-2" sm={2}>
               Domingo:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableSundayI">
+								<Form.Group controlId="timetableSundayI">
 									<Form.Control
 										value={timetableSundayI}
 										onChange={e => setTimetableSundayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableSundayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableSundayF">
 									<Form.Control
 										value={timetableSundayF}
 										onChange={e => setTimetableSundayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Segunda:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableMondayI">
+								<Form.Group controlId="timetableMondayI">
 									<Form.Control
 										value={timetableMondayI}
 										onChange={e => setTimetableMondayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableMondayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableMondayF">
 									<Form.Control
 										value={timetableMondayF}
 										onChange={e => setTimetableMondayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Terça:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableTuesdayI">
+								<Form.Group controlId="timetableTuesdayI">
 									<Form.Control
 										value={timetableTuesdayI}
 										onChange={e => setTimetableTuesdayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableTuesdayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableTuesdayF">
 									<Form.Control
 										value={timetableTuesdayF}
 										onChange={e => setTimetableTuesdayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Quarta:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableWednesdayI">
+								<Form.Group controlId="timetableWednesdayI">
 									<Form.Control
 										value={timetableWednesdayI}
 										onChange={e => setTimetableWednesdayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableWednesdayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableWednesdayF">
 									<Form.Control
 										value={timetableWednesdayF}
 										onChange={e => setTimetableWednesdayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Quinta:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableThursdayI">
+								<Form.Group controlId="timetableThursdayI">
 									<Form.Control
 										value={timetableThursdayI}
 										onChange={e => setTimetableThursdayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableThursdayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableThursdayF">
 									<Form.Control
 										value={timetableThursdayF}
 										onChange={e => setTimetableThursdayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Sexta:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableFridayI">
+								<Form.Group controlId="timetableFridayI">
 									<Form.Control
 										value={timetableFridayI}
 										onChange={e => setTimetableFridayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableFridayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableFridayF">
 									<Form.Control
 										value={timetableFridayF}
 										onChange={e => setTimetableFridayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
-            <Row>
+						<Row>
 							<Col className="my-2" sm={2}>
               Sábado:
-              </Col>
-              <Col className="my-2" md="auto">
+							</Col>
+							<Col className="my-2" md="auto">
                 De
-              </Col>
+							</Col>
 							<Col md="auto">
-               <Form.Group controlId="timetableSaturdayI">
+								<Form.Group controlId="timetableSaturdayI">
 									<Form.Control
 										value={timetableSaturdayI}
 										onChange={e => setTimetableSaturdayI(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col >
-              <Col className="my-2" md="auto">
+							</Col >
+							<Col className="my-2" md="auto">
                 às
-              </Col>
-              <Col md="auto">
-                <Form.Group controlId="timetableSaturdayF">
+							</Col>
+							<Col md="auto">
+								<Form.Group controlId="timetableSaturdayF">
 									<Form.Control
 										value={timetableSaturdayF}
 										onChange={e => setTimetableSaturdayF(e.target.value)}
-                    type="time"
+										type="time"
 									/>
 								</Form.Group>
-              </Col>
+							</Col>
 						</Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
@@ -894,37 +945,37 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								</Form.Group>
 							</Col>
 						</Row>
-            <Row>
-              <Col>
-                <Form.Group controlId="companyManual">
-                  <Form.Label align="justify">
+						<Row>
+							<Col>
+								<Form.Group controlId="companyManual">
+									<Form.Label align="justify">
                     Controlar sistema aberto/fechado manualmente.
-                  </Form.Label>
-                  <Form.Check
-                    type="switch"
-                    id="custom-switch4"
-                    label={companyManual ? "Manual" : "Automático"}
-                    checked={companyManual}
-                    onChange={e => setCompanyManual(e.target.checked)}
-                  />
-                </Form.Group>
-                {companyManual ?
-                  <Form.Group controlId="companySystemOpenByAdm">
-                    <Form.Label>Fechar/Abrir sistema</Form.Label>
-                    <Form.Check
-                      type="switch"
-                      id="custom-switch3"
-                      label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
-                      checked={companySystemOpenByAdm}
-                      onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
-                    />
-                  </Form.Group>
-                :
-                  null
-                }
-              </Col>
-              <Col></Col>
-            </Row>
+									</Form.Label>
+									<Form.Check
+										type="switch"
+										id="custom-switch4"
+										label={companyManual ? "Manual" : "Automático"}
+										checked={companyManual}
+										onChange={e => setCompanyManual(e.target.checked)}
+									/>
+								</Form.Group>
+								{companyManual ?
+									<Form.Group controlId="companySystemOpenByAdm">
+										<Form.Label>Fechar/Abrir sistema</Form.Label>
+										<Form.Check
+											type="switch"
+											id="custom-switch3"
+											label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
+											checked={companySystemOpenByAdm}
+											onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
+										/>
+									</Form.Group>
+									:
+									null
+								}
+							</Col>
+							<Col></Col>
+						</Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
@@ -997,13 +1048,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									id="inputCarImage1"
 									className="d-none"
 									type="file"
-									onChange={event => setLogo(event.target.files[0])}
+									onChange={event => setC1(event.target.files[0])}
 									required
 								/>
 								<Image
-									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
-									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									id={companyInfo.c1 || c1Preview ? "thumbnail" : "camera"}
+									className={companyInfo.c1 || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c1Preview ? c1Preview : (companyInfo.c1 ? companyInfo.c1_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarImage1").click()}
 									rounded
@@ -1013,13 +1064,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									id="inputCarImage2"
 									className="d-none"
 									type="file"
-									onChange={event => setLogo(event.target.files[0])}
+									onChange={event => setC2(event.target.files[0])}
 									required
 								/>
 								<Image
-									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
-									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									id={companyInfo.c2 || c2Preview ? "thumbnail" : "camera"}
+									className={companyInfo.c2 || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c2Preview ? c2Preview : (companyInfo.c2 ? companyInfo.c2_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarImage2").click()}
 									rounded
@@ -1029,13 +1080,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									id="inputCarImage3"
 									className="d-none"
 									type="file"
-									onChange={event => setLogo(event.target.files[0])}
+									onChange={event => setC3(event.target.files[0])}
 									required
 								/>
 								<Image
-									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
-									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+									id={companyInfo.c3 || c3Preview ? "thumbnail" : "camera"}
+									className={companyInfo.c3 || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c3Preview ? c3Preview : (companyInfo.c3 ? companyInfo.c3_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarImage3").click()}
 									rounded
