@@ -227,46 +227,46 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("systemOpenByHour", companySystemOpenByHour);
 
 		if(logo) {
-			data.append("logo", logo);
+			data.append("images", logo);
 		} else {
 			if(companyInfo.logo) {
 				const blob = await fetch(companyInfo.logo_url).then(r => r.blob());
 				const token = companyInfo.logo_url.split(".");
 				const extension = token[token.length-1];
-				data.append("logo", new File([blob], "logo." + extension));
+				data.append("images", new File([blob], "logo." + extension));
 			}
 		}
 
 		if(c1) {
-			data.append("c1", c1);
+			data.append("images", c1);
 		} else {
 			if(companyInfo.c1) {
 				const blob = await fetch(companyInfo.c1_url).then(r => r.blob());
 				const token = companyInfo.c1_url.split(".");
 				const extension = token[token.length-1];
-				data.append("c1", new File([blob], "c1." + extension));
+				data.append("images", new File([blob], "c1." + extension));
 			}
 		}
 
 		if(c2) {
-			data.append("c2", c2);
+			data.append("images", c2);
 		} else {
 			if(companyInfo.c2) {
 				const blob = await fetch(companyInfo.c2_url).then(r => r.blob());
 				const token = companyInfo.c2_url.split(".");
 				const extension = token[token.length-1];
-				data.append("c2", new File([blob], "c2." + extension));
+				data.append("images", new File([blob], "c2." + extension));
 			}
 		}
 
 		if(c3) {
-			data.append("c3", c3);
+			data.append("images", c3);
 		} else {
 			if(companyInfo.c3) {
 				const blob = await fetch(companyInfo.c3_url).then(r => r.blob());
 				const token = companyInfo.c3_url.split(".");
 				const extension = token[token.length-1];
-				data.append("c3", new File([blob], "c3." + extension));
+				data.append("images", new File([blob], "c3." + extension));
 			}
 		}
 
@@ -303,21 +303,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
 		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
 
-    const timetable = [
-      {dayWeek: "Domingo", beginHour: timetableSundayI, endHour: timetableSundayF},
-      {dayWeek: "Segunda", beginHour: timetableMondayI, endHour: timetableMondayF},
-      {dayWeek: "Terça", beginHour: timetableTuesdayI, endHour: timetableTuesdayF},
-      {dayWeek: "Quarta", beginHour: timetableWednesdayI, endHour: timetableWednesdayF},
-      {dayWeek: "Quinta", beginHour: timetableThursdayI, endHour: timetableThursdayF},
-      {dayWeek: "Sexta", beginHour: timetableFridayI, endHour: timetableFridayF},
-      {dayWeek: "Sábado", beginHour: timetableSaturdayI, endHour: timetableSaturdayF}
-    ];
+		const timetable = [
+			{dayWeek: "Domingo", beginHour: timetableSundayI, endHour: timetableSundayF},
+			{dayWeek: "Segunda", beginHour: timetableMondayI, endHour: timetableMondayF},
+			{dayWeek: "Terça", beginHour: timetableTuesdayI, endHour: timetableTuesdayF},
+			{dayWeek: "Quarta", beginHour: timetableWednesdayI, endHour: timetableWednesdayF},
+			{dayWeek: "Quinta", beginHour: timetableThursdayI, endHour: timetableThursdayF},
+			{dayWeek: "Sexta", beginHour: timetableFridayI, endHour: timetableFridayF},
+			{dayWeek: "Sábado", beginHour: timetableSaturdayI, endHour: timetableSaturdayF}
+		];
 
-    const data = new FormData();
-    data.append("timetable", timetable);
-    
-    console.log("timetable: ", timetable);
-    await api.put("companyUpdateTimetable", data, {
+		const data = new FormData();
+		data.append("timetable", timetable);
+
+		console.log("timetable: ", timetable);
+		await api.put("companyUpdateTimetable", data, {
 			headers : {
 				authorization: userId
 			}
@@ -336,7 +336,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			}
 			setToastShow(true);
 		});
-  }
+	}
 
 	return (
 		<div className="user-container h-100">
@@ -621,8 +621,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 			<Modal
 				show={modalTimetable}
-        onHide={() => {setModalTimetable(false); setToastShow(false);}}
-        size="md"
+				onHide={() => {setModalTimetable(false); setToastShow(false);}}
+				size="md"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -979,37 +979,37 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								</Form.Group>
 							</Col>
 						</Row>
-            <Row>
-              <Col>
-                <Form.Group controlId="companyManual">
-                  <Form.Label align="justify">
+						<Row>
+							<Col>
+								<Form.Group controlId="companyManual">
+									<Form.Label align="justify">
                     Controlar sistema aberto/fechado manualmente
-                  </Form.Label>
-                  <Form.Check
-                    type="switch"
-                    id="custom-switch4"
-                    label={companyManual ? "Manual" : "Automático"}
-                    checked={companyManual}
-                    onChange={e => setCompanyManual(e.target.checked)}
-                  />
-                </Form.Group>
-                {companyManual ?
-                  <Form.Group controlId="companySystemOpenByAdm">
-                    <Form.Label>Fechar/Abrir sistema</Form.Label>
-                    <Form.Check
-                      type="switch"
-                      id="custom-switch3"
-                      label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
-                      checked={companySystemOpenByAdm}
-                      onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
-                    />
-                  </Form.Group>
-                :
-                  null
-                }
-              </Col>
-              <Col></Col>
-            </Row>
+									</Form.Label>
+									<Form.Check
+										type="switch"
+										id="custom-switch4"
+										label={companyManual ? "Manual" : "Automático"}
+										checked={companyManual}
+										onChange={e => setCompanyManual(e.target.checked)}
+									/>
+								</Form.Group>
+								{companyManual ?
+									<Form.Group controlId="companySystemOpenByAdm">
+										<Form.Label>Fechar/Abrir sistema</Form.Label>
+										<Form.Check
+											type="switch"
+											id="custom-switch3"
+											label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
+											checked={companySystemOpenByAdm}
+											onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
+										/>
+									</Form.Group>
+									:
+									null
+								}
+							</Col>
+							<Col></Col>
+						</Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
@@ -1094,27 +1094,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									required
 								/>
 								<Image
-									id={companyInfo.c1 || c1Preview ? "thumbnail" : "camera"}
-									className={companyInfo.c1 || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c1Preview ? c1Preview : (companyInfo.c1 ? companyInfo.c1_url : camera)}
+									id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? companyInfo.carousel_urls[0] : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded
 									fluid
 								/>
 								<Image
-									id={companyInfo.c2 || c2Preview ? "thumbnail" : "camera"}
-									className={companyInfo.c2 || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c2Preview ? c2Preview : (companyInfo.c2 ? companyInfo.c2_url : camera)}
+									id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? companyInfo.carousel_urls[1] : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded
 									fluid
 								/>
 								<Image
-									id={companyInfo.c3 || c3Preview ? "thumbnail" : "camera"}
-									className={companyInfo.c3 || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c3Preview ? c3Preview : (companyInfo.c3 ? companyInfo.c3_url : camera)}
+									id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? companyInfo.carousel_urls[2] : camera)}
 									alt="Selecione sua imagem para o carrossel"
 									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded

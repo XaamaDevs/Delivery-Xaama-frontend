@@ -1,5 +1,6 @@
 //	Importing React main module and its features
 import React from "react";
+import PropTypes from "prop-types";
 
 //	Importing React Router features
 import { Link } from "react-router-dom";
@@ -8,7 +9,7 @@ import { Link } from "react-router-dom";
 import { Jumbotron, Carousel, Image } from "react-bootstrap";
 
 //	Exporting resource to routes.js
-export default function Home() {
+export default function Home({ companyInfo }) {
 	return (
 		<div className="website-container d-flex flex-row flex-wrap align-items-center m-0 p-0 h-100">
 			<Jumbotron className="col-sm m-auto p-0 pl-5 bg-transparent">
@@ -28,7 +29,7 @@ export default function Home() {
 				<Carousel.Item>
 					<Image
 						className="w-100"
-						src="https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png"
+						src={companyInfo.carousel_urls[0]}
 						alt="First slide"
 						fluid
 					/>
@@ -36,7 +37,7 @@ export default function Home() {
 				<Carousel.Item>
 					<Image
 						className="w-100"
-						src="https://gormansfamilyfood.com/files/2020/04/003-drink.png"
+						src={companyInfo.carousel_urls[1]}
 						alt="Second slide"
 						fluid
 					/>
@@ -44,7 +45,7 @@ export default function Home() {
 				<Carousel.Item>
 					<Image
 						className="w-100"
-						src="https://plazaoaxacallc.com/files/2019/06/001_taco.png"
+						src={companyInfo.carousel_urls[2]}
 						alt="Third slide"
 						fluid
 					/>
@@ -53,3 +54,6 @@ export default function Home() {
 		</div>
 	);
 }
+Home.propTypes = {
+	companyInfo : PropTypes.object.isRequired
+};

@@ -93,7 +93,7 @@ export default function Routes() {
 				companyInfo ={companyInfo}
 			/>
 			<Switch>
-				<Route exact path="/" component={HomePage} />
+				<Route exact path="/" render={() => <HomePage companyInfo={companyInfo} />} />
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route
 					exact path="/login"
