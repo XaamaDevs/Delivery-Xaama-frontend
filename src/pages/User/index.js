@@ -1045,10 +1045,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
 								<Form.Label>Imagens do carrossel</Form.Label>
 								<Form.Control
-									id="inputCarImage1"
+									id="inputCarousel"
 									className="d-none"
 									type="file"
-									onChange={event => setC1(event.target.files[0])}
+									onChange={event => {
+										if(event.target.files[0])
+											setC1(event.target.files[0]);
+										if(event.target.files[1])
+											setC2(event.target.files[1]);
+										if(event.target.files[2])
+											setC3(event.target.files[2]);
+									}}
+									multiple
 									required
 								/>
 								<Image
@@ -1056,39 +1064,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									className={companyInfo.c1 || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
 									src={c1Preview ? c1Preview : (companyInfo.c1 ? companyInfo.c1_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarImage1").click()}
+									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded
 									fluid
-								/>
-								<Form.Control
-									id="inputCarImage2"
-									className="d-none"
-									type="file"
-									onChange={event => setC2(event.target.files[0])}
-									required
 								/>
 								<Image
 									id={companyInfo.c2 || c2Preview ? "thumbnail" : "camera"}
 									className={companyInfo.c2 || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
 									src={c2Preview ? c2Preview : (companyInfo.c2 ? companyInfo.c2_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarImage2").click()}
+									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded
 									fluid
-								/>
-								<Form.Control
-									id="inputCarImage3"
-									className="d-none"
-									type="file"
-									onChange={event => setC3(event.target.files[0])}
-									required
 								/>
 								<Image
 									id={companyInfo.c3 || c3Preview ? "thumbnail" : "camera"}
 									className={companyInfo.c3 || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
 									src={c3Preview ? c3Preview : (companyInfo.c3 ? companyInfo.c3_url : camera)}
 									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarImage3").click()}
+									onClick={() => document.getElementById("inputCarousel").click()}
 									rounded
 									fluid
 								/>
