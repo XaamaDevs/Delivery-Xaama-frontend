@@ -49,20 +49,20 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
 
 	// Timetable variable
-	const [timetableSundayI, setTimetableSundayI] = useState();
-	const [timetableSundayF, setTimetableSundayF] = useState();
-	const [timetableMondayI, setTimetableMondayI] = useState();
-	const [timetableMondayF, setTimetableMondayF] = useState();
-	const [timetableTuesdayI, setTimetableTuesdayI] = useState();
-	const [timetableTuesdayF, setTimetableTuesdayF] = useState();
-	const [timetableWednesdayI, setTimetableWednesdayI] = useState();
-	const [timetableWednesdayF, setTimetableWednesdayF] = useState();
-	const [timetableThursdayI, setTimetableThursdayI] = useState();
-	const [timetableThursdayF, setTimetableThursdayF] = useState();
-	const [timetableFridayI, setTimetableFridayI] = useState();
-	const [timetableFridayF, setTimetableFridayF] = useState();
-	const [timetableSaturdayI, setTimetableSaturdayI] = useState();
-	const [timetableSaturdayF, setTimetableSaturdayF] = useState();
+	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
+	const [timetableSundayF, setTimetableSundayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0].endHour ? companyInfo.timetable[0].endHour : undefined);
+	const [timetableMondayI, setTimetableMondayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1].beginHour ? companyInfo.timetable[1].beginHour : undefined);
+	const [timetableMondayF, setTimetableMondayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1].endHour ? companyInfo.timetable[1].endHour : undefined);
+	const [timetableTuesdayI, setTimetableTuesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2].beginHour ? companyInfo.timetable[2].beginHour : undefined);
+	const [timetableTuesdayF, setTimetableTuesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2].endHour ? companyInfo.timetable[2].endHour : undefined);
+	const [timetableWednesdayI, setTimetableWednesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3].beginHour ? companyInfo.timetable[3].beginHour : undefined);
+	const [timetableWednesdayF, setTimetableWednesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3].endHour ? companyInfo.timetable[3].endHour : undefined);
+	const [timetableThursdayI, setTimetableThursdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4].beginHour ? companyInfo.timetable[4].beginHour : undefined);
+	const [timetableThursdayF, setTimetableThursdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4].endHour ? companyInfo.timetable[4].endHour : undefined);
+	const [timetableFridayI, setTimetableFridayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5].beginHour ? companyInfo.timetable[5].beginHour : undefined);
+	const [timetableFridayF, setTimetableFridayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5].endHour ? companyInfo.timetable[5].endHour : undefined);
+	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
+	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -302,24 +302,34 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
 		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
 		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
-
+    
 		const timetable = [
-			{dayWeek: "Domingo", beginHour: timetableSundayI, endHour: timetableSundayF},
-			{dayWeek: "Segunda", beginHour: timetableMondayI, endHour: timetableMondayF},
-			{dayWeek: "Terça", beginHour: timetableTuesdayI, endHour: timetableTuesdayF},
-			{dayWeek: "Quarta", beginHour: timetableWednesdayI, endHour: timetableWednesdayF},
-			{dayWeek: "Quinta", beginHour: timetableThursdayI, endHour: timetableThursdayF},
-			{dayWeek: "Sexta", beginHour: timetableFridayI, endHour: timetableFridayF},
-			{dayWeek: "Sábado", beginHour: timetableSaturdayI, endHour: timetableSaturdayF}
+      {dayWeek: "Domingo", beginHour: timetableSundayI ? timetableSundayI : null, 
+        endHour: timetableSundayF ? timetableSundayF : null
+      },
+      {dayWeek: "Segunda", beginHour: timetableMondayI ? timetableMondayI : null, 
+        endHour: timetableMondayF ? timetableMondayF : null
+      },
+      {dayWeek: "Terça", beginHour: timetableTuesdayI ? timetableTuesdayI : null,
+        endHour: timetableTuesdayF ? timetableTuesdayF : null
+      },
+      {dayWeek: "Quarta", beginHour: timetableWednesdayI ? timetableWednesdayI : null,
+        endHour: timetableWednesdayF ? timetableWednesdayF : null
+      },
+      {dayWeek: "Quinta", beginHour: timetableThursdayI ? timetableThursdayI : null,
+        endHour: timetableThursdayF ? timetableThursdayF : null
+      },
+      {dayWeek: "Sexta", beginHour: timetableFridayI ? timetableFridayI : null,
+        endHour: timetableFridayF ? timetableFridayF : null
+      },
+      {dayWeek: "Sábado", beginHour: timetableSaturdayI ? timetableSaturdayI : null,
+        endHour: timetableSaturdayF ? timetableSaturdayF : null
+      }
 		];
 
-		const data = new FormData();
-		data.append("timetable", timetable);
-
-		console.log("timetable: ", timetable);
-		await api.put("companyUpdateTimetable", data, {
+		await api.put("companyUpdateTimetable", {timetable}, {
 			headers : {
-				authorization: userId
+        authorization: userId,
 			}
 		}).then(() => {
 			setModal4Show(false);
