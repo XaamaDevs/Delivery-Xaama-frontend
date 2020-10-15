@@ -407,7 +407,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 }
 
 WebsiteNavbar.propTypes = {
-	userId : PropTypes.string.isRequired,
+	userId : PropTypes.string,
 	setUserId : PropTypes.any.isRequired,
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.any.isRequired,

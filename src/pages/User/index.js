@@ -302,34 +302,34 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
 		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
 		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
-    
+
 		const timetable = [
-      {dayWeek: "Domingo", beginHour: timetableSundayI ? timetableSundayI : null, 
-        endHour: timetableSundayF ? timetableSundayF : null
-      },
-      {dayWeek: "Segunda", beginHour: timetableMondayI ? timetableMondayI : null, 
-        endHour: timetableMondayF ? timetableMondayF : null
-      },
-      {dayWeek: "Terça", beginHour: timetableTuesdayI ? timetableTuesdayI : null,
-        endHour: timetableTuesdayF ? timetableTuesdayF : null
-      },
-      {dayWeek: "Quarta", beginHour: timetableWednesdayI ? timetableWednesdayI : null,
-        endHour: timetableWednesdayF ? timetableWednesdayF : null
-      },
-      {dayWeek: "Quinta", beginHour: timetableThursdayI ? timetableThursdayI : null,
-        endHour: timetableThursdayF ? timetableThursdayF : null
-      },
-      {dayWeek: "Sexta", beginHour: timetableFridayI ? timetableFridayI : null,
-        endHour: timetableFridayF ? timetableFridayF : null
-      },
-      {dayWeek: "Sábado", beginHour: timetableSaturdayI ? timetableSaturdayI : null,
-        endHour: timetableSaturdayF ? timetableSaturdayF : null
-      }
+			{dayWeek: "Domingo", beginHour: timetableSundayI ? timetableSundayI : null,
+				endHour: timetableSundayF ? timetableSundayF : null
+			},
+			{dayWeek: "Segunda", beginHour: timetableMondayI ? timetableMondayI : null,
+				endHour: timetableMondayF ? timetableMondayF : null
+			},
+			{dayWeek: "Terça", beginHour: timetableTuesdayI ? timetableTuesdayI : null,
+				endHour: timetableTuesdayF ? timetableTuesdayF : null
+			},
+			{dayWeek: "Quarta", beginHour: timetableWednesdayI ? timetableWednesdayI : null,
+				endHour: timetableWednesdayF ? timetableWednesdayF : null
+			},
+			{dayWeek: "Quinta", beginHour: timetableThursdayI ? timetableThursdayI : null,
+				endHour: timetableThursdayF ? timetableThursdayF : null
+			},
+			{dayWeek: "Sexta", beginHour: timetableFridayI ? timetableFridayI : null,
+				endHour: timetableFridayF ? timetableFridayF : null
+			},
+			{dayWeek: "Sábado", beginHour: timetableSaturdayI ? timetableSaturdayI : null,
+				endHour: timetableSaturdayF ? timetableSaturdayF : null
+			}
 		];
 
 		await api.put("companyUpdateTimetable", {timetable}, {
 			headers : {
-        authorization: userId,
+				authorization: userId,
 			}
 		}).then(() => {
 			setModal4Show(false);
@@ -1034,7 +1034,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 
 			<Modal
 				show={modalImages}
-				onHide={() => { setModalImages(false); setToastShow(false); }}
+				onHide={() => {
+					setC1(false);
+					setC2(false);
+					setC3(false);
+					setLogo(false);
+					setModalImages(false);
+					setToastShow(false); }}
 				size="lg"
 				centered
 			>
@@ -1055,15 +1061,17 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										required
 									/>
 								</Form.Group>
-								<Image
-									id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
-									className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
-									alt="Selecione sua logo"
-									onClick={() => document.getElementById("inputLogo").click()}
-									rounded
-									fluid
-								/>
+								<Col className="text-center mx-auto" sm="4">
+									<Image
+										id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
+										className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+										src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+										alt="Selecione sua logo"
+										onClick={() => document.getElementById("inputLogo").click()}
+										rounded
+										fluid
+									/>
+								</Col>
 								{companyInfo.logo ?
 									<Button
 										className="my-3 mx-auto"
@@ -1085,6 +1093,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 								}
 							</Form>
 						</Col>
+					</Row>
+					<Row>
 						<Col sm>
 							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
 								<Form.Label>Imagens do carrossel</Form.Label>
@@ -1103,33 +1113,41 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									multiple
 									required
 								/>
-								<Image
-									id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
-									className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? companyInfo.carousel_urls[0] : camera)}
-									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarousel").click()}
-									rounded
-									fluid
-								/>
-								<Image
-									id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
-									className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? companyInfo.carousel_urls[1] : camera)}
-									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarousel").click()}
-									rounded
-									fluid
-								/>
-								<Image
-									id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
-									className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-									src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? companyInfo.carousel_urls[2] : camera)}
-									alt="Selecione sua imagem para o carrossel"
-									onClick={() => document.getElementById("inputCarousel").click()}
-									rounded
-									fluid
-								/>
+								<Row>
+									<Col sm="4">
+										<Image
+											id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
+											className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+											src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? companyInfo.carousel_urls[0] : camera)}
+											alt="Selecione sua imagem para o carrossel"
+											onClick={() => document.getElementById("inputCarousel").click()}
+											rounded
+											fluid
+										/>
+									</Col>
+									<Col sm="4">
+										<Image
+											id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
+											className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+											src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? companyInfo.carousel_urls[1] : camera)}
+											alt="Selecione sua imagem para o carrossel"
+											onClick={() => document.getElementById("inputCarousel").click()}
+											rounded
+											fluid
+										/>
+									</Col>
+									<Col sm="4">
+										<Image
+											id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
+											className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+											src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? companyInfo.carousel_urls[2] : camera)}
+											alt="Selecione sua imagem para o carrossel"
+											onClick={() => document.getElementById("inputCarousel").click()}
+											rounded
+											fluid
+										/>
+									</Col>
+								</Row>
 								{companyInfo.logo ?
 									<Button
 										className="my-3 mx-auto"
@@ -1153,11 +1171,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						</Col>
 					</Row>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setModalImages(false); setToastShow(false); }}>
-						Cancelar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />

@@ -95,5 +95,5 @@ export default function ProductDeck({ products }) {
 }
 
 ProductDeck.propTypes = {
-	products : PropTypes.array.isRequired
+	products : PropTypes.array
 };

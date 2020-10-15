@@ -1015,7 +1015,7 @@ export default function Menu({ userId, user, order, setOrder }) {
 }
 
 Menu.propTypes = {
-	userId : PropTypes.string.isRequired,
+	userId : PropTypes.string,
 	user : PropTypes.object.isRequired,
 	order : PropTypes.object.isRequired,
 	setOrder : PropTypes.any.isRequired
