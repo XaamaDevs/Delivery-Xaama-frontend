@@ -35,7 +35,6 @@ import { useEffect } from "react";
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
 	//	Order state variables
-	const [product, setProduct] = useState({});
 	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
 	const [deliverOrder, setDeliverOrder] = useState(false);
 	const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
@@ -313,7 +312,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
 			<Modal
 				show={shoppingBasketModal}
-				onHide={() => { setProduct({}); setToastShow(false); setShoppingBasketModal(false); }}
+				onHide={() => { setToastShow(false); setShoppingBasketModal(false); }}
 				size="lg"
 				className="p-0"
 				centered
@@ -383,7 +382,6 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 									<Button
 										variant="danger"
 										onClick={() => {
-											setProduct({});
 											setToastShow(false);
 											setShoppingBasketModal(false);
 										}}
@@ -397,12 +395,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 							</Form>
 						</Tab>
 						<Tab eventKey="order" title="Ver pedido">
-							<Card bg="light" >
-								<Card.Header>
-									<ProductDeck.Header products={order.products} setProduct={setProduct} />
-								</Card.Header>
-								{product ? <ProductDeck.Card product={product} /> : null}
-							</Card>
+							<ProductDeck products={order.products} />
 						</Tab>
 					</Tabs>
 				</Modal.Body>

@@ -42,7 +42,6 @@ export default function AllOrders({ userId }) {
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
-	const [product, setProduct] = useState({});
 	const [feedback, setFeedback] = useState("");
 
 	//	Modal settings
@@ -244,7 +243,7 @@ export default function AllOrders({ userId }) {
 																:
 																<Button
 																	variant="warning"
-																	className="m-1"
+																	className="m-1 mx-auto"
 																>
                                   Pedido entregue
 																</Button>
@@ -266,7 +265,7 @@ export default function AllOrders({ userId }) {
 
 			<Modal
 				show={orderListingModal}
-				onHide={() => { setProduct({}); setOrderListingModal(false);} }
+				onHide={() => setOrderListingModal(false) }
 				size="lg"
 				centered
 			>
@@ -274,21 +273,16 @@ export default function AllOrders({ userId }) {
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Card bg="light">
-						<Card.Header>
-							<ProductDeck.Header products={orderA.products} setProduct={setProduct} />
-						</Card.Header>
-						{isLoading ?
-							<Spinner
-								className="my-5 mx-auto"
-								style={{width: "5rem", height: "5rem"}}
-								animation="grow"
-								variant="warning"
-							/>
-							:
-							product ? <ProductDeck.Card product={product} /> : null
-						}
-					</Card>
+					{isLoading ?
+						<Spinner
+							className="my-5 mx-auto"
+							style={{width: "5rem", height: "5rem"}}
+							animation="grow"
+							variant="warning"
+						/>
+						:
+						<ProductDeck products={orderA.products} />
+					}
 				</Modal.Body>
 			</Modal>
 

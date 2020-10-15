@@ -40,7 +40,6 @@ export default function AllOrders({ userId }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
-	const [product, setProduct] = useState({});
 	const [feedback, setFeedback]= useState("");
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 
@@ -294,7 +293,7 @@ export default function AllOrders({ userId }) {
 
 			<Modal
 				show={modalOrderListing}
-				onHide={() => {setProduct({}); setModalOrderListing(false); }}
+				onHide={() => setModalOrderListing(false)}
 				size="lg"
 				className="p-0"
 				centered
@@ -303,25 +302,19 @@ export default function AllOrders({ userId }) {
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Card bg="light" >
-						<Card.Header>
-							<ProductDeck.Header products={orderA.products} setProduct={setProduct} />
-						</Card.Header>
-						{isLoading ?
-							<Spinner
-								className="my-5 mx-auto"
-								style={{width: "5rem", height: "5rem"}}
-								animation="grow"
-								variant="warning"
-							/>
-							:
-							product ? <ProductDeck.Card product={product} /> : null
-						}
-					</Card>
-
+					{isLoading ?
+						<Spinner
+							className="my-5 mx-auto"
+							style={{width: "5rem", height: "5rem"}}
+							animation="grow"
+							variant="warning"
+						/>
+						:
+						<ProductDeck products={orderA.products} />
+					}
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setProduct({}); setModalOrderListing(false);}}>
+					<Button variant="warning" onClick={() => setModalOrderListing(false)}>
 						Fechar
 					</Button>
 				</Modal.Footer>
