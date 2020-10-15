@@ -1078,7 +1078,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										type="submit"
 										variant="warning"
 									>
-										Trocar foto
+										Trocar Logo
 									</Button>
 									:
 									<div className="d-flex">
@@ -1087,7 +1087,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 											type="submit"
 											variant="warning"
 										>
-											Adicionar foto
+											Adicionar Logo
 										</Button>
 									</div>
 								}
@@ -1148,13 +1148,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										/>
 									</Col>
 								</Row>
-								{companyInfo.logo ?
+								{companyInfo.carousel.length == 3 ?
 									<Button
 										className="my-3 mx-auto"
 										type="submit"
 										variant="warning"
 									>
-										Trocar fotos
+										Trocar fotos do carrossel
 									</Button>
 									:
 									<div className="d-flex">
@@ -1163,7 +1163,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 											type="submit"
 											variant="warning"
 										>
-											Adicionar fotos
+											Adicionar fotos ao carrosel
 										</Button>
 									</div>
 								}
