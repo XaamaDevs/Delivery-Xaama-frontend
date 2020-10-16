@@ -49,20 +49,20 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
 
 	// Timetable variable
-	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
-	const [timetableSundayF, setTimetableSundayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0].endHour ? companyInfo.timetable[0].endHour : undefined);
-	const [timetableMondayI, setTimetableMondayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1].beginHour ? companyInfo.timetable[1].beginHour : undefined);
-	const [timetableMondayF, setTimetableMondayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1].endHour ? companyInfo.timetable[1].endHour : undefined);
-	const [timetableTuesdayI, setTimetableTuesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2].beginHour ? companyInfo.timetable[2].beginHour : undefined);
-	const [timetableTuesdayF, setTimetableTuesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2].endHour ? companyInfo.timetable[2].endHour : undefined);
-	const [timetableWednesdayI, setTimetableWednesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3].beginHour ? companyInfo.timetable[3].beginHour : undefined);
-	const [timetableWednesdayF, setTimetableWednesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3].endHour ? companyInfo.timetable[3].endHour : undefined);
-	const [timetableThursdayI, setTimetableThursdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4].beginHour ? companyInfo.timetable[4].beginHour : undefined);
-	const [timetableThursdayF, setTimetableThursdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4].endHour ? companyInfo.timetable[4].endHour : undefined);
-	const [timetableFridayI, setTimetableFridayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5].beginHour ? companyInfo.timetable[5].beginHour : undefined);
-	const [timetableFridayF, setTimetableFridayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5].endHour ? companyInfo.timetable[5].endHour : undefined);
-	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
-	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
+	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
+	const [timetableSundayF, setTimetableSundayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].endHour ? companyInfo.timetable[0].endHour : undefined);
+	const [timetableMondayI, setTimetableMondayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1] && companyInfo.timetable[1].beginHour ? companyInfo.timetable[1].beginHour : undefined);
+	const [timetableMondayF, setTimetableMondayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[1] && companyInfo.timetable[1].endHour ? companyInfo.timetable[1].endHour : undefined);
+	const [timetableTuesdayI, setTimetableTuesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2] && companyInfo.timetable[2].beginHour ? companyInfo.timetable[2].beginHour : undefined);
+	const [timetableTuesdayF, setTimetableTuesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[2] && companyInfo.timetable[2].endHour ? companyInfo.timetable[2].endHour : undefined);
+	const [timetableWednesdayI, setTimetableWednesdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3] && companyInfo.timetable[3].beginHour ? companyInfo.timetable[3].beginHour : undefined);
+	const [timetableWednesdayF, setTimetableWednesdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[3] && companyInfo.timetable[3].endHour ? companyInfo.timetable[3].endHour : undefined);
+	const [timetableThursdayI, setTimetableThursdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4] && companyInfo.timetable[4].beginHour ? companyInfo.timetable[4].beginHour : undefined);
+	const [timetableThursdayF, setTimetableThursdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[4] && companyInfo.timetable[4].endHour ? companyInfo.timetable[4].endHour : undefined);
+	const [timetableFridayI, setTimetableFridayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5] && companyInfo.timetable[5].beginHour ? companyInfo.timetable[5].beginHour : undefined);
+	const [timetableFridayF, setTimetableFridayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5] && companyInfo.timetable[5].endHour ? companyInfo.timetable[5].endHour : undefined);
+	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
+	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -295,18 +295,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	async function handleTimetable(event) {
 		event.preventDefault();
 
-		console.log("Domingo: De", timetableSundayI, " ás ", timetableSundayF);
-		console.log("Segunda: De", timetableMondayI, " ás ", timetableMondayF);
-		console.log("Terça: De", timetableTuesdayI, " ás ", timetableTuesdayF);
-		console.log("Quarta: De", timetableWednesdayI, " ás ", timetableWednesdayF);
-		console.log("Quinta: De", timetableThursdayI, " ás ", timetableThursdayF);
-		console.log("Sexta: De", timetableFridayI, " ás ", timetableFridayF);
-		console.log("Sábado: De", timetableSaturdayI, " ás ", timetableSaturdayF);
-
 		const timetable = [
 			{dayWeek: "Domingo", beginHour: timetableSundayI ? timetableSundayI : null,
 				endHour: timetableSundayF ? timetableSundayF : null
-			},
+      },
 			{dayWeek: "Segunda", beginHour: timetableMondayI ? timetableMondayI : null,
 				endHour: timetableMondayF ? timetableMondayF : null
 			},
@@ -324,7 +316,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 			},
 			{dayWeek: "Sábado", beginHour: timetableSaturdayI ? timetableSaturdayI : null,
 				endHour: timetableSaturdayF ? timetableSaturdayF : null
-			}
+      }
 		];
 
 		await api.put("companyUpdateTimetable", {timetable}, {
@@ -1148,7 +1140,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 										/>
 									</Col>
 								</Row>
-								{companyInfo.carousel.length == 3 ?
+								{companyInfo.carousel.length === 3 ?
 									<Button
 										className="my-3 mx-auto"
 										type="submit"
