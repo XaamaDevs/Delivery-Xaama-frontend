@@ -47,7 +47,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
-	const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const [modalTimetable, setModalTimetable] = useState(false);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -225,6 +226,16 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 								Sobre
 							</NavLink>
 						</Nav.Item>
+            <Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
+                className="nav-link mx-2"
+                to="#"
+                onClick={() => setModalTimetable(true)}
+							>
+								Horário de Funcionamento
+							</NavLink>
+						</Nav.Item>
 					</Nav>
 					{!userId ?
 						<Nav className="ml-auto">
@@ -398,6 +409,60 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 							<ProductDeck products={order.products} />
 						</Tab>
 					</Tabs>
+				</Modal.Body>
+			</Modal>
+
+      <Modal
+				show={modalTimetable}
+				onHide={() => {setModalTimetable(false); setToastShow(false);}}
+				size="md"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Horário de Funcionamento</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+          {
+            (companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t) => (
+              <Row className="mt-2">
+                <Col className="my-2" sm={2}>
+                {t.dayWeek}:
+                </Col>
+                {(t.beginHour && t.endHour ?
+                  <>
+                    <Col className="my-2" md="auto">
+                      De
+                    </Col> 
+                    <Col className="my-2"md="auto">
+                      {t.beginHour}
+                    </Col >
+                    <Col className="my-2" md="auto">
+                      às
+                    </Col>
+                    <Col className="my-2" md="auto">
+                      {t.endHour}
+                    </Col>
+                  </>
+                :
+                  <Col className="my-2" md="auto">
+                    Fechado
+                  </Col>
+                )}
+              </Row>
+            ))
+            : 
+            <Row>
+              <Col className="my-2" md="auto">
+                Horário indisponível
+              </Col>
+            </Row>
+          )}
+          <Modal.Footer>
+            <Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
+              Fechar
+            </Button>
+          </Modal.Footer>
 				</Modal.Body>
 			</Modal>
 
