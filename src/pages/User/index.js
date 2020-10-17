@@ -45,9 +45,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [c2, setC2] = useState(null);
 	const [c3, setC3] = useState(null);
 	const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
-	const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : true);
-	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : true);
-
+	const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : false);
+	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : false);
+  
 	// Timetable variable
 	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
 	const [timetableSundayF, setTimetableSundayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].endHour ? companyInfo.timetable[0].endHour : undefined);
@@ -224,7 +224,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("productTypes", companyProductTypes);
 		data.append("manual", companyManual);
 		data.append("systemOpenByAdm", companySystemOpenByAdm);
-		data.append("systemOpenByHour", companySystemOpenByHour);
+    data.append("systemOpenByHour", companySystemOpenByHour);
 
 		if(logo) {
 			data.append("images", logo);

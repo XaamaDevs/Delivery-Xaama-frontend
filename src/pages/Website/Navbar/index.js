@@ -399,9 +399,16 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 									>
 										Fechar
 									</Button>
-									<Button variant="warning" type="submit">
-										{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-									</Button>
+                  {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+                   || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+                    <Button variant="warning" type="submit">
+                      {"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+                    </Button>
+                  : 
+                    <Button variant="danger">
+                      Estamos fechado
+                    </Button>
+                  }
 								</Modal.Footer>
 							</Form>
 						</Tab>
@@ -459,6 +466,20 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
             </Row>
           )}
           <Modal.Footer>
+            {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+              || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+              <Button
+                id="btn-open"
+              >
+                Aberto agora
+              </Button>
+            : 
+              <Button
+                variant="danger" 
+              >
+                Fechado
+              </Button>
+            }
             <Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
               Fechar
             </Button>

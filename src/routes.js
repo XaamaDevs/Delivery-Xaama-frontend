@@ -105,7 +105,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/menu"
-					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} />}
+					render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} companyInfo={companyInfo} />}
 				/>
 				<Route
 					exact path="/order"

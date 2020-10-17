@@ -31,7 +31,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu({ userId, user, order, setOrder }) {
+export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
@@ -459,29 +459,39 @@ export default function Menu({ userId, user, order, setOrder }) {
 							</div>
 							:
 							<>
-								{product.available ?
-									<Button
-										className="my-auto"
-										variant="warning"
-										size="sm"
-										onClick ={() => {
-											setProductNote("");
-											setAdditionsOrder([]);
-											setProductSize(0);
-											setProductTotal(0);
-											setProductOrder(product);
-											setProductTotal(product.prices[0]);
-											setProductOrderModal(true);
-										}}
-									>
-										Adicionar aos pedidos
-									</Button>
-									:
+								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+                  || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+
+                  product.available ? 
+                    <Button
+                      className="my-auto"
+                      variant="warning"
+                      size="sm"
+                      onClick ={() => {
+                        setProductNote("");
+                        setAdditionsOrder([]);
+                        setProductSize(0);
+                        setProductTotal(0);
+                        setProductOrder(product);
+                        setProductTotal(product.prices[0]);
+                        setProductOrderModal(true);
+                      }}
+                    >
+                      Adicionar aos pedidos
+                    </Button>
+                    :
+                    <Button
+                      variant="danger"
+                      size="sm"
+                    >
+                      Indisponível no momento
+                    </Button>
+                  :
 									<Button
 										variant="danger"
 										size="sm"
 									>
-										Indisponível no momento
+										Estamos fechados
 									</Button>
 								}
 							</>
@@ -933,14 +943,19 @@ export default function Menu({ userId, user, order, setOrder }) {
 															alt="Adição"
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
+                              {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+                                || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
 															<Button
-																className="mx-auto"
-																size="sm"
-																variant="primary"
-																onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
-															>
-																{add.name + " +R$" + add.price}
-															</Button>
+                                  className="mx-auto"
+                                  size="sm"
+                                  variant="primary"
+                                  onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
+                                >
+                                  {add.name + " +R$" + add.price}
+                                </Button>
+                              :
+                                null
+                              }
 														</Carousel.Caption>
 													</Carousel.Item>
 												))
@@ -1003,9 +1018,18 @@ export default function Menu({ userId, user, order, setOrder }) {
 					<Button variant="danger" onClick={() => {setProductOrderModal(false); setToastShow(false);}}>
 						Fechar
 					</Button>
-					<Button variant="warning" onClick={handleProductOrder}>
-						{"Adicionar ao carrinho +R$" + productTotal}
-					</Button>
+          {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+            || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+            <Button variant="warning" onClick={handleProductOrder}>
+              {"Adicionar ao carrinho +R$" + productTotal}
+            </Button>
+          :
+            <Button
+              variant="danger" 
+            >
+              Estamos fechado
+            </Button>
+          }
 				</Modal.Footer>
 			</Modal>
 

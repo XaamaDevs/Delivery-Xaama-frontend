@@ -34,6 +34,15 @@ body {
   border-color: #f0d890;
 }
 
+#btn-open {
+  background-color: #f0d890;
+  color: #000000;
+  font-size: 15px;
+  outline-color: #f0d890;
+  border-width: 4px ;
+  border-color: #f0d890;
+}
+
 #root {
 	overflow-y: auto;
 
