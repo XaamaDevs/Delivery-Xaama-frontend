@@ -1027,7 +1027,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
             <Button
               variant="danger" 
             >
-              Estamos fechado
+              Estamos fechados
             </Button>
           }
 				</Modal.Footer>

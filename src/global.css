@@ -26,6 +26,21 @@ body {
 	background-position: center;
 }
 
+/* Settings scroll bar */
+
+::-webkit-scrollbar {
+  width:5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background:#333;
+}
+
+::-webkit-scrollbar-thumb {
+  background:  #f0d890;
+}
+
 #btn-available {
   background-color: #f0d890;
   color: #000000;

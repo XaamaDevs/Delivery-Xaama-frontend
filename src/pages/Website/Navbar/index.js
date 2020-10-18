@@ -406,7 +406,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                     </Button>
                   : 
                     <Button variant="danger">
-                      Estamos fechado
+                      Estamos fechados
                     </Button>
                   }
 								</Modal.Footer>
