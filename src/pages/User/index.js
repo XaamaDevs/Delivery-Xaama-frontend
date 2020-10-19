@@ -24,10 +24,10 @@ import camera from "../../assets/camera.svg";
 //	Exporting resource to routes.js
 export default function User({ userId, setUserId, user, setUser, companyInfo }) {
 	//	User variables
-	const [userName, setUserName] = useState(user.name);
-	const [userEmail, setUserEmail] = useState(user.email);
-	const [userPhone, setUserPhone] = useState(user.phone);
-	const [userAddress, setUserAddress] = useState(user.address ? user.address.join(", ") : "");
+	const [userName, setUserName] = useState("");
+	const [userEmail, setUserEmail] = useState("");
+	const [userPhone, setUserPhone] = useState("");
+	const [userAddress, setUserAddress] = useState("");
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");

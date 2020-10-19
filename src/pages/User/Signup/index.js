@@ -51,7 +51,7 @@ export default function Signup({ setUserId, setUser }) {
 		data.append("passwordC", passwordC);
 		data.append("thumbnail", thumbnail);
 
-		await api.post("/user", data)
+		await api.post("user", data)
 			.then((response) => {
 				sessionStorage.setItem("userId", response.data._id);
 
@@ -59,8 +59,7 @@ export default function Signup({ setUserId, setUser }) {
 				setUser(response.data);
 
 				history.push("/menu");
-			})
-			.catch((error) => {
+			}).catch((error) => {
 				setTitle("Erro!");
 				if(error.response && typeof(error.response.data) !== "object") {
 					setMessage(error.response.data);
@@ -69,13 +68,6 @@ export default function Signup({ setUserId, setUser }) {
 				}
 				setToastShow(true);
 			});
-	}
-
-	//	Function to handle input image profile
-	async function inputImage(event) {
-		event.preventDefault();
-
-		document.getElementById("inputImage").click();
 	}
 
 	return (
@@ -88,14 +80,14 @@ export default function Signup({ setUserId, setUser }) {
 						<Form.Control
 							className="d-none"
 							type="file"
-							onChange={event => setThumbnail(event.target.files[0])}
+							onChange={e => setThumbnail(e.target.files[0])}
 						/>
 						<Image
 							id={preview ? "thumbnail" : "camera"}
 							className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
 							src={preview ? preview :  camera}
 							alt="Selecione sua imagem"
-							onClick={inputImage}
+							onClick={() => document.getElementById("inputImage").click()}
 							rounded
 							fluid
 						/>
@@ -108,7 +100,7 @@ export default function Signup({ setUserId, setUser }) {
 							placeholder="Seu nome"
 							type="text"
 							value={name}
-							onChange={event => setName(event.target.value)}
+							onChange={e => setName(e.target.value)}
 							autoFocus
 							required
 						/>
@@ -119,7 +111,7 @@ export default function Signup({ setUserId, setUser }) {
 							placeholder="Seu email"
 							type="email"
 							value={email}
-							onChange={event => setEmail(event.target.value)}
+							onChange={e => setEmail(e.target.value)}
 							required
 						/>
 					</Form.Group>
@@ -129,11 +121,13 @@ export default function Signup({ setUserId, setUser }) {
 							placeholder="Senha"
 							type="password"
 							value={password}
-							onChange={event => setPassword(event.target.value)}
+							onChange={e => setPassword(e.target.value)}
 							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
-						<small style={{color:"#f0d890"}}>Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
+						<Form.Text className="text-muted">
+							Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número
+						</Form.Text>
 					</Form.Group>
 					<Form.Group controlId="passwordC">
 						<Form.Label>Confirmar Senha</Form.Label>
@@ -141,7 +135,7 @@ export default function Signup({ setUserId, setUser }) {
 							placeholder="Confirme sua senha"
 							type="password"
 							value={passwordC}
-							onChange={event => setPasswordC(event.target.value)}
+							onChange={e => setPasswordC(e.target.value)}
 							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>

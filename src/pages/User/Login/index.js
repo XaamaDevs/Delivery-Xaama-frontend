@@ -32,24 +32,25 @@ export default function Login({ setUserId, setUser }) {
 	async function handleUserLogin(event) {
 		event.preventDefault();
 
-		await api.post("session", { email, password })
-			.then((response) => {
-				sessionStorage.setItem("userId", response.data._id);
+		await api.post("session", {
+			email,
+			password
+		}).then((response) => {
+			sessionStorage.setItem("userId", response.data._id);
 
-				setUserId(sessionStorage.getItem("userId"));
-				setUser(response.data);
+			setUserId(sessionStorage.getItem("userId"));
+			setUser(response.data);
 
-				history.push("/menu");
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			history.push("/menu");
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	return (
@@ -60,7 +61,7 @@ export default function Login({ setUserId, setUser }) {
 					<Form.Label>Email</Form.Label>
 					<Form.Control
 						value={email}
-						onChange={event => setEmail(event.target.value)}
+						onChange={e => setEmail(e.target.value)}
 						type="email"
 						placeholder="email@provedor.com"
 						autoFocus
@@ -71,7 +72,7 @@ export default function Login({ setUserId, setUser }) {
 					<Form.Label>Senha</Form.Label>
 					<Form.Control
 						value={password}
-						onChange={event => setPassword(event.target.value)}
+						onChange={e => setPassword(e.target.value)}
 						type="password"
 						placeholder="Senha"
 						required

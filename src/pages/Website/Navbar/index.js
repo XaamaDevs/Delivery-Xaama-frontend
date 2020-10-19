@@ -35,9 +35,9 @@ import { useEffect } from "react";
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
 	//	Order state variables
-	const [deliverAddress, setDeliverAdress] = useState(user.address && user.address.length ? user.address.join(", ") : "");
+	const [deliverAddress, setDeliverAdress] = useState("");
+	const [deliverPhone, setDeliverPhone] = useState("");
 	const [deliverOrder, setDeliverOrder] = useState(false);
-	const [deliverPhone, setDeliverPhone] = useState(user.phone && user.phone.length ? user.phone : "");
 	const [deliverChange, setDeliverChange] = useState();
 	const [deliverCash, setDeliverCash] = useState(false);
 	const [deliverCard, setDeliverCard] = useState(false);
@@ -47,8 +47,8 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [modalTimetable, setModalTimetable] = useState(false);
+	const [message, setMessage] = useState("");
+	const [modalTimetable, setModalTimetable] = useState(false);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -59,6 +59,12 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	useEffect(() => {
 		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
 	}, [order.total, deliverOrder, companyInfo.freight]);
+
+	//	Update order state variables
+	useEffect(() => {
+		setDeliverAdress(user.address && user.address.length ? user.address.join(", ") : "");
+		setDeliverPhone(user.phone && user.phone.length ? user.phone : "");
+	}, [shoppingBasketModal]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
@@ -226,12 +232,12 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 								Sobre
 							</NavLink>
 						</Nav.Item>
-            <Nav.Item>
+						<Nav.Item>
 							<NavLink
 								style={{color: "#ffbf00"}}
-                className="nav-link mx-2"
-                to="#"
-                onClick={() => setModalTimetable(true)}
+								className="nav-link mx-2"
+								to="#"
+								onClick={() => setModalTimetable(true)}
 							>
 								Horário de Funcionamento
 							</NavLink>
@@ -336,36 +342,29 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
-								<Form.Group controlId="userPhone">
-									<Row>
-										<Col md="auto">
-											<Form.Label className="mx-auto my-2">Telefone para contato: </Form.Label>
-										</Col>
-										<Col md="auto">
-											<Form.Control
-												value={deliverPhone}
-												onChange={e => setDeliverPhone(e.target.value)}
-												type="text"
-												pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
-												placeholder="(__) _ ____-____"
-												required
-												autoFocus
-											/>
-										</Col>
-									</Row>
-								</Form.Group>
-								<Form.Group controlId="deliverAddress">
-									<Form.Label>
-										{"Deseja que o seu pedido seja entregue? +R$" + companyInfo.freight + " de taxa de entrega"}
-									</Form.Label>
-									<Form.Check
-										type="switch"
-										id="custom-switch"
-										label="Marque aqui"
-										checked={deliverOrder}
-										onChange={e => setDeliverOrder(e.target.checked)}
-									/>
-								</Form.Group>
+								<Row>
+									<Form.Group as={Col} controlId="userPhone">
+										<Form.Label>Telefone para contato: </Form.Label>
+										<Form.Control
+											value={deliverPhone}
+											onChange={e => setDeliverPhone(e.target.value)}
+											type="text"
+											pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+											placeholder="(__) _ ____-____"
+											required
+											autoFocus
+										/>
+									</Form.Group>
+									<Form.Group as={Col} controlId="deliverAddress">
+										<Form.Label>Entregar pedido?</Form.Label>
+										<Form.Check
+											type="switch"
+											label={"+ R$" + companyInfo.freight + " de taxa de entrega"}
+											checked={deliverOrder}
+											onChange={e => setDeliverOrder(e.target.checked)}
+										/>
+									</Form.Group>
+								</Row>
 								{deliverOrder ?
 									<Form.Group controlId="deliverAddress">
 										<Form.Label>Endereço de entrega:</Form.Label>
@@ -399,16 +398,16 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 									>
 										Fechar
 									</Button>
-                  {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+									{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
                    || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
-                    <Button variant="warning" type="submit">
-                      {"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-                    </Button>
-                  : 
-                    <Button variant="danger">
+										<Button variant="warning" type="submit">
+											{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+										</Button>
+										:
+										<Button variant="danger">
                       Estamos fechados
-                    </Button>
-                  }
+										</Button>
+									}
 								</Modal.Footer>
 							</Form>
 						</Tab>
@@ -419,7 +418,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				</Modal.Body>
 			</Modal>
 
-      <Modal
+			<Modal
 				show={modalTimetable}
 				onHide={() => {setModalTimetable(false); setToastShow(false);}}
 				size="md"
@@ -430,60 +429,60 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 					<Modal.Title>Horário de Funcionamento</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-          {
-            (companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t) => (
-              <Row className="mt-2">
-                <Col className="my-2" sm={2}>
-                {t.dayWeek}:
-                </Col>
-                {(t.beginHour && t.endHour ?
-                  <>
-                    <Col className="my-2" md="auto">
+					{
+						(companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t) => (
+							<Row className="mt-2">
+								<Col className="my-2" sm={2}>
+									{t.dayWeek}:
+								</Col>
+								{(t.beginHour && t.endHour ?
+									<>
+										<Col className="my-2" md="auto">
                       De
-                    </Col> 
-                    <Col className="my-2"md="auto">
-                      {t.beginHour}
-                    </Col >
-                    <Col className="my-2" md="auto">
+										</Col>
+										<Col className="my-2"md="auto">
+											{t.beginHour}
+										</Col >
+										<Col className="my-2" md="auto">
                       às
-                    </Col>
-                    <Col className="my-2" md="auto">
-                      {t.endHour}
-                    </Col>
-                  </>
-                :
-                  <Col className="my-2" md="auto">
+										</Col>
+										<Col className="my-2" md="auto">
+											{t.endHour}
+										</Col>
+									</>
+									:
+									<Col className="my-2" md="auto">
                     Fechado
-                  </Col>
-                )}
-              </Row>
-            ))
-            : 
-            <Row>
-              <Col className="my-2" md="auto">
+									</Col>
+								)}
+							</Row>
+						))
+							:
+							<Row>
+								<Col className="my-2" md="auto">
                 Horário indisponível
-              </Col>
-            </Row>
-          )}
-          <Modal.Footer>
-            {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+								</Col>
+							</Row>
+						)}
+					<Modal.Footer>
+						{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
               || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
-              <Button
-                id="btn-open"
-              >
+							<Button
+								id="btn-open"
+							>
                 Aberto agora
-              </Button>
-            : 
-              <Button
-                variant="danger" 
-              >
+							</Button>
+							:
+							<Button
+								variant="danger"
+							>
                 Fechado
-              </Button>
-            }
-            <Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
+							</Button>
+						}
+						<Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
               Fechar
-            </Button>
-          </Modal.Footer>
+						</Button>
+					</Modal.Footer>
 				</Modal.Body>
 			</Modal>
 
