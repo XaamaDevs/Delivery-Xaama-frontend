@@ -36,7 +36,7 @@ import {
 } from "../../../services/websocket";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId }) {
+export default function AllOrders({ userId, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
@@ -222,6 +222,13 @@ export default function AllOrders({ userId }) {
 														"Irá retirar no balcão!"
 													}
 												</p>
+                        <p>
+                          {order.deliver ?
+                            "Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+                            :
+                            "Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+                          }
+                        </p>
 												<p>
 													{"Total a pagar R$" + order.total}
 												</p>

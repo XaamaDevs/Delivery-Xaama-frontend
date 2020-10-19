@@ -47,7 +47,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
 	const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : false);
 	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : false);
-  
+  const [companyTimeWithdrawal, setCompanyTimeWithdrawal] = useState(companyInfo && companyInfo.timeWithdrawal ? companyInfo.timeWithdrawal : null);
+  const [companyTimeDeliveryI, setCompanyTimeDeliveryI] = useState(companyInfo ? companyInfo.timeDeliveryI : null);
+  const [companyTimeDeliveryF, setCompanyTimeDeliveryF] = useState(companyInfo ? companyInfo.timeDeliveryF: null);
+
 	// Timetable variable
 	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
 	const [timetableSundayF, setTimetableSundayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].endHour ? companyInfo.timetable[0].endHour : undefined);
@@ -225,6 +228,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 		data.append("manual", companyManual);
 		data.append("systemOpenByAdm", companySystemOpenByAdm);
     data.append("systemOpenByHour", companySystemOpenByHour);
+    data.append("timeDeliveryI", companyTimeDeliveryI);
+    data.append("timeDeliveryF", companyTimeDeliveryF);
+    data.append("timeWithdrawal", companyTimeWithdrawal);
 
 		if(logo) {
 			data.append("images", logo);
@@ -982,7 +988,37 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+              <Col>
+                <Form.Group controlId="companyTimeWithdrawal">
+									<Form.Label>Tempo para retirada de um pedido</Form.Label>
+									<Form.Control
+										value={companyTimeWithdrawal}
+										onChange={e => setCompanyTimeWithdrawal(e.target.value)}
+                    type="number"
+                    min="10"
+                    max="120"
+                    placeholder="Tempo em minutos"
+										required
+									/>
+								</Form.Group>
+              </Col>
+              <Col>
+                <Form.Group controlId="companyTimeDeliveryI">
+                  <Form.Label>Tempo mínimo para entrega de um pedido</Form.Label>
+                  <Form.Control
+                    value={companyTimeDeliveryI}
+                    onChange={e => setCompanyTimeDeliveryI(e.target.value)}
+                    type="number"
+                    min="10"
+                    max="120"
+                    placeholder="Tempo em minutos"
+                    required
+                  />
+                </Form.Group>
+              </Col>
+						</Row>
+            <Row>
+            <Col>
 								<Form.Group controlId="companyManual">
 									<Form.Label align="justify">
                     Controlar sistema aberto/fechado manualmente
@@ -1010,8 +1046,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									null
 								}
 							</Col>
-							<Col></Col>
-						</Row>
+              <Col>
+                <Form.Group controlId="companyTimeDeliveryF">
+                  <Form.Label>Tempo máximo para entrega de um pedido</Form.Label>
+                  <Form.Control
+                    value={companyTimeDeliveryF}
+                    onChange={e => setCompanyTimeDeliveryF(e.target.value)}
+                    type="number"
+                    min="10"
+                    max="120"
+                    placeholder="Tempo em minutos"
+                    required
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
 								Fechar
