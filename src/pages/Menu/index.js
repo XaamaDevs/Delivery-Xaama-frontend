@@ -459,34 +459,34 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 							</div>
 							:
 							<>
-								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
                   || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
 
-                  product.available ? 
-                    <Button
-                      className="my-auto"
-                      variant="warning"
-                      size="sm"
-                      onClick ={() => {
-                        setProductNote("");
-                        setAdditionsOrder([]);
-                        setProductSize(0);
-                        setProductTotal(0);
-                        setProductOrder(product);
-                        setProductTotal(product.prices[0]);
-                        setProductOrderModal(true);
-                      }}
-                    >
+									product.available ?
+										<Button
+											className="my-auto"
+											variant="warning"
+											size="sm"
+											onClick ={() => {
+												setProductNote("");
+												setAdditionsOrder([]);
+												setProductSize(0);
+												setProductTotal(0);
+												setProductOrder(product);
+												setProductTotal(product.prices[0]);
+												setProductOrderModal(true);
+											}}
+										>
                       Adicionar aos pedidos
-                    </Button>
-                    :
-                    <Button
-                      variant="danger"
-                      size="sm"
-                    >
+										</Button>
+										:
+										<Button
+											variant="danger"
+											size="sm"
+										>
                       Indisponível no momento
-                    </Button>
-                  :
+										</Button>
+									:
 									<Button
 										variant="danger"
 										size="sm"
@@ -943,19 +943,19 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 															alt="Adição"
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
-                              {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
                                 || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
-															<Button
-                                  className="mx-auto"
-                                  size="sm"
-                                  variant="primary"
-                                  onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
-                                >
-                                  {add.name + " +R$" + add.price}
-                                </Button>
-                              :
-                                null
-                              }
+																<Button
+																	className="mx-auto"
+																	size="sm"
+																	variant="primary"
+																	onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
+																>
+																	{add.name + " +R$" + add.price}
+																</Button>
+																:
+																null
+															}
 														</Carousel.Caption>
 													</Carousel.Item>
 												))
@@ -1018,18 +1018,18 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 					<Button variant="danger" onClick={() => {setProductOrderModal(false); setToastShow(false);}}>
 						Fechar
 					</Button>
-          {(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) 
+					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
             || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
-            <Button variant="warning" onClick={handleProductOrder}>
-              {"Adicionar ao carrinho +R$" + productTotal}
-            </Button>
-          :
-            <Button
-              variant="danger" 
-            >
+						<Button variant="warning" onClick={handleProductOrder}>
+							{"Adicionar ao carrinho +R$" + productTotal}
+						</Button>
+						:
+						<Button
+							variant="danger"
+						>
               Estamos fechados
-            </Button>
-          }
+						</Button>
+					}
 				</Modal.Footer>
 			</Modal>
 
@@ -1041,6 +1041,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 Menu.propTypes = {
 	userId : PropTypes.string,
 	user : PropTypes.object.isRequired,
+	companyInfo : PropTypes.object.isRequired,
 	order : PropTypes.object.isRequired,
 	setOrder : PropTypes.any.isRequired
 };

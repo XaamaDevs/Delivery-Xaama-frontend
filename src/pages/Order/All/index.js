@@ -222,13 +222,13 @@ export default function AllOrders({ userId, companyInfo }) {
 														"Irá retirar no balcão!"
 													}
 												</p>
-                        <p>
-                          {order.deliver ?
-                            "Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
-                            :
-                            "Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
-                          }
-                        </p>
+												<p>
+													{order.deliver ?
+														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+														:
+														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+													}
+												</p>
 												<p>
 													{"Total a pagar R$" + order.total}
 												</p>
@@ -382,5 +382,6 @@ export default function AllOrders({ userId, companyInfo }) {
 }
 
 AllOrders.propTypes = {
-	userId : PropTypes.string.isRequired
+	userId : PropTypes.string.isRequired,
+	companyInfo : PropTypes.object.isRequired
 };
