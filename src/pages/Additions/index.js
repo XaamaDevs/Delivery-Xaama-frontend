@@ -188,22 +188,21 @@ export default function Additions({ userId }) {
 		await api.put("addition/" + additionId, data, {
 			headers : {
 				authorization: userId
-			}})
-			.then(() => {
-				setAdditionUpdateModal(false);
-				setTitle("Alterações de adição!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setAdditionUpdateModal(false);
+			setTitle("Alterações de adição!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleAdditionDelete(event) {
