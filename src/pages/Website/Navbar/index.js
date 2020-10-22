@@ -430,28 +430,28 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				</Modal.Header>
 				<Modal.Body>
 					{
-						(companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t) => (
-							<Row className="mt-2">
-								<Col className="my-2" sm={2}>
+						(companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t, index) => (
+							<Row key={index} className="mt-2">
+								<Col className="text-center my-2 ml-auto p-0 pl-2">
 									{t.dayWeek}:
 								</Col>
 								{(t.beginHour && t.endHour ?
 									<>
-										<Col className="my-2" md="auto">
+										<Col className="text-center my-2 p-0">
                       De
 										</Col>
-										<Col className="my-2"md="auto">
+										<Col className="text-center my-2 p-0">
 											{t.beginHour}
 										</Col >
-										<Col className="my-2" md="auto">
+										<Col className="text-center my-2 p-0">
                       às
 										</Col>
-										<Col className="my-2" md="auto">
+										<Col className="text-center my-2 mr-auto p-0 pr-2">
 											{t.endHour}
 										</Col>
 									</>
 									:
-									<Col className="my-2" md="auto">
+									<Col className="text-center my-2 mr-auto p-0 pr-2">
                     Fechado
 									</Col>
 								)}
@@ -464,26 +464,26 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 								</Col>
 							</Row>
 						)}
-					<Modal.Footer>
-						{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-              || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
-							<Button
-								id="btn-open"
-							>
-                Aberto agora
-							</Button>
-							:
-							<Button
-								variant="danger"
-							>
-                Fechado
-							</Button>
-						}
-						<Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
-              Fechar
-						</Button>
-					</Modal.Footer>
 				</Modal.Body>
+				<Modal.Footer>
+					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
+						|| (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+						<Button
+							id="btn-open"
+						>
+							Aberto agora
+						</Button>
+						:
+						<Button
+							variant="danger"
+						>
+							Fechado
+						</Button>
+					}
+					<Button variant="warning" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
+						Fechar
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
