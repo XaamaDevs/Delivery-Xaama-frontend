@@ -21,7 +21,7 @@ export default function About({ companyInfo }) {
 									<a
 										href={"tel:" + companyInfo.phone}
 										className="text-white">
-										{"Telefone: " + companyInfo.phone}
+										{companyInfo.phone}
 									</a>
 								</h5>
 							</Col>
@@ -30,7 +30,7 @@ export default function About({ companyInfo }) {
 									<a
 										href={"mailto:" + companyInfo.email}
 										className="text-white">
-										{"Email: " + companyInfo.email}
+										{companyInfo.email}
 									</a>
 								</h5>
 							</Col>
