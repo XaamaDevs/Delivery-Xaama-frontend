@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Spinner, Container, Image } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../Website/Alert";
@@ -119,54 +119,82 @@ export default function AllUsers({ userId }) {
 					/>
 				</Container>
 				:
-				<Row xs={1} sm={2} md={3} xl={4} className="d-flex justify-content-around m-auto w-100" >
-					{users.map(user => (
-						<Col key={user._id} className="user-item">
-							<header>
-								<Image src={user.thumbnail ? user.thumbnail_url: camera } alt="thumbnail" fluid />
-								<div className="user-info">
-									<strong>{user.name}</strong>
-									<span>{user.email}</span>
-								</div>
-							</header>
-							<p>{user.phone ? user.phone: "Telefone: (__) _ ____-____"}</p>
-							<p>{user.address && user.address.length ? user.address.join(", ") : "Endereço não informado" }</p>
-							<p>Mude o tipo do usuário. <strong>Cuidado ao promover um usuário a ADM!</strong></p>
+				<CardDeck className="mx-3">
+					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >
+						{users.map(user => (
+							<Col key={user._id} className="my-2">
+								<Card text="white" bg="dark">
+									<Card.Header>
+										<Row>
+											<Col className="d-flex flex-wrap align-items-center" sm="3">
+												<Image
+													className="w-100"
+													style={{ borderRadius: "50%" }}
+													src={user.thumbnail ? user.thumbnail_url: camera }
+													alt="thumbnail"
+													fluid
+												/>
+											</Col>
+											<Col className="ml-3">
+												<Row>
+													<strong>{user.name}</strong>
+												</Row>
+												<Row>
+													<span>{user.email}</span>
+												</Row>
+											</Col>
+										</Row>
+									</Card.Header>
+									<Card.Body>
+										<Card.Text>
+											<p>
+												{user.phone ? "Telefone: " + user.phone : "Telefone não informado"}
+											</p>
+											<p>
+												{user.address && user.address.length ?
+													"Endereço: " + user.address.join(", ")
+													:
+													"Endereço não informado"
+												}
+											</p>
+											<div className="d-flex justify-content-between">
+												{((userId !== user._id) && (user.userType !== 2)) ?
+													<Button
+														onClick={() => {
+															setUserUpdateId(user._id);
+															setNewType(2);
+															setModal1Show(true);
+														}}
+														variant="outline-danger"
+													>
+														ADM
+													</Button>
+													:
+													null
+												}
 
-							<div className="d-flex justify-content-between">
-								{((userId !== user._id) && (user.userType !== 2)) ?
-									<Button
-										onClick={() => {
-											setUserUpdateId(user._id);
-											setNewType(2);
-											setModal1Show(true);
-										}}
-										variant="outline-danger"
-									>
-										ADM
-									</Button>
-									:
-									null
-								}
-
-								{((userId !== user._id) && (user.userType !== 1))?
-									<Button
-										onClick={() => {
-											setUserUpdateId(user._id);
-											setNewType(1);
-											setModal1Show(true);
-										}}
-										variant="outline-warning"
-									>
-										Gerente
-									</Button>
-									:
-									null
-								}
-							</div>
-						</Col>
-					))}
-				</Row>
+												{((userId !== user._id) && (user.userType !== 1))?
+													<Button
+														onClick={() => {
+															setUserUpdateId(user._id);
+															setNewType(1);
+															setModal1Show(true);
+														}}
+														variant="outline-warning"
+													>
+														Gerente
+													</Button>
+													:
+													null
+												}
+											</div>
+										</Card.Text>
+									</Card.Body>
+								</Card>
+							</Col>
+						))}
+					</Row>
+				</CardDeck>
 			}
 
 			<Modal show={modal1Show} onHide={() => setModal1Show(false)} size="sm" centered>
@@ -174,7 +202,8 @@ export default function AllUsers({ userId }) {
 					<Modal.Title>Modificar tipo</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleTypeUser}>
+					Cuidado ao promover um usuário!
+					<Form className="my-4" onSubmit={handleTypeUser}>
 						<Form.Group controlId="userPassword">
 							<Form.Label>Senha</Form.Label>
 							<Form.Control
@@ -197,7 +226,7 @@ export default function AllUsers({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
+			<Alert.Close setModalAlert={setModalAlert} modalAlert={modalAlert} title={title} message={message} />
 		</div>
 	);
 }

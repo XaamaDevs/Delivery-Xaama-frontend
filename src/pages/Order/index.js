@@ -153,7 +153,7 @@ export default function AllOrders({ userId, companyInfo }) {
 										<Card text="white" bg="dark">
 											<Card.Header>
 												<Row>
-													<Col sm="3">
+													<Col className="d-flex flex-wrap align-items-center" sm="3">
 														<Image
 															className="w-100"
 															style={{ borderRadius: "50%" }}
@@ -162,7 +162,7 @@ export default function AllOrders({ userId, companyInfo }) {
 															fluid
 														/>
 													</Col>
-													<Col>
+													<Col className="ml-3">
 														<Row>
 															<strong>{order.user.name}</strong>
 														</Row>
