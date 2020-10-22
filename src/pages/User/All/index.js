@@ -9,9 +9,6 @@ import { Button, Modal, Form, Row, Col, Spinner, Container, Image, Card, CardDec
 import Alert from "../../Website/Alert";
 import Push from "../../Website/Push";
 
-// Importing styles
-import "./styles.css";
-
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
 

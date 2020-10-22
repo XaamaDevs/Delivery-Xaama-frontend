@@ -15,9 +15,6 @@ import Push from "../Website/Push";
 // Importing backend api
 import api from "../../services/api";
 
-// Importing styles
-import "./styles.css";
-
 // Importing image from camera
 import camera from "../../assets/camera.svg";
 
@@ -427,7 +424,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 						</Button>
 						<Button
 							onClick ={() => setModal2Show(true)}
-							id="btn-password"
+							id="btn-lightpink"
 							className="my-2"
 						>
 							Trocar senha
@@ -455,7 +452,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 							<Button
 								onClick={() => history.push("/allorders")}
 								className="my-2"
-								id="btn-password"
+								id="btn-lightpink"
 							>
 								Listar pedidos
 							</Button>
@@ -464,7 +461,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 									<Button
 										className="my-2"
 										onClick={() => history.push("/allusers")}
-										id="btn-password"
+										id="btn-lightpink"
 									>
 										Listar usuários
 									</Button>

@@ -73,6 +73,22 @@ body {
 	border-color: #aaaaaa;
 }
 
+/*	Button style	*/
+
+#btn-lightpink {
+  background-color: transparent;
+  color: #f0d890;
+  outline-color: #f0d890;
+  border-width: 1px ;
+  border-color: #f0d890;
+}
+
+#btn-lightpink:hover {
+  background-color: #f0d890;
+  border-color: #f0d890;
+  color: #000000;
+}
+
 /*	Typography sizes	*/
 
 @media (min-width: 0) {
