@@ -33,7 +33,7 @@ import api from "../../../services/api";
 import { useEffect } from "react";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -399,7 +399,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 										Fechar
 									</Button>
 									{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                   || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+                   || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 										<Button variant="warning" type="submit">
 											{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
 										</Button>
@@ -467,7 +467,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 				</Modal.Body>
 				<Modal.Footer>
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-						|| (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button
 							id="btn-open"
 						>

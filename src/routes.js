@@ -35,7 +35,8 @@ export default function Routes() {
 	const [order, setOrder] = useState({});
 
 	//	Company info state variable
-	const [companyInfo, setCompanyInfo] = useState({});
+  const [companyInfo, setCompanyInfo] = useState({});
+  const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState();
 
 	//	Loading state variable
 	const [isLoading, setLoading] = useState(true);
@@ -90,7 +91,8 @@ export default function Routes() {
 				setUser={setUser}
 				order={order}
 				setOrder={setOrder}
-				companyInfo ={companyInfo}
+        companyInfo ={companyInfo}
+        companySystemOpenByHour={companySystemOpenByHour}
 			/>
 			<Switch>
 				<Route exact path="/" render={() => <HomePage companyInfo={companyInfo} />} />
@@ -120,7 +122,9 @@ export default function Routes() {
 								setUserId={setUserId}
 								user={user}
 								setUser={setUser}
-								companyInfo={companyInfo}
+                companyInfo={companyInfo}
+                companySystemOpenByHour={companySystemOpenByHour}
+                setCompanySystemOpenByHour={setCompanySystemOpenByHour}
 							/> : <Auth />;
 					}}
 				/>

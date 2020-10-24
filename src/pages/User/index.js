@@ -19,7 +19,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo }) {
+export default function User({ userId, setUserId, user, setUser, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -43,7 +43,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [c3, setC3] = useState(null);
 	const [companyManual, setCompanyManual] = useState(companyInfo && companyInfo.manual ? companyInfo.manual : false);
 	const [companySystemOpenByAdm, setCompanySystemOpenByAdm] = useState(companyInfo && companyInfo.systemOpenByAdm ? companyInfo.systemOpenByAdm : false);
-	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState(companyInfo && companyInfo.systemOpenByHour ? companyInfo.systemOpenByHour : false);
 	const [companyTimeWithdrawal, setCompanyTimeWithdrawal] = useState(companyInfo && companyInfo.timeWithdrawal ? companyInfo.timeWithdrawal : null);
 	const [companyTimeDeliveryI, setCompanyTimeDeliveryI] = useState(companyInfo ? companyInfo.timeDeliveryI : null);
 	const [companyTimeDeliveryF, setCompanyTimeDeliveryF] = useState(companyInfo ? companyInfo.timeDeliveryF: null);
@@ -64,6 +63,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
 	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
+  //  Defining constants for manipulating the time
+  var data = new Date();
+
+  //  Current day of the week and time
+  const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
@@ -78,7 +83,43 @@ export default function User({ userId, setUserId, user, setUser, companyInfo }) 
 	const [message, setMessage] = useState("");
 
 	//	Defining history to jump through pages
-	const history = useHistory();
+  const history = useHistory();
+
+  function systemOpen() {
+    const openHour = data && data.getDay() && companyInfo && companyInfo.timetable &&
+                      (companyInfo.timetable.length > data.getDay()) &&
+                      companyInfo.timetable[data.getDay()].beginHour ? 
+                      companyInfo.timetable[data.getDay()].beginHour : "";
+    
+    const endHour = data && data.getDay() && companyInfo && companyInfo.timetable &&
+                      (companyInfo.timetable.length > data.getDay()) &&
+                      companyInfo.timetable[data.getDay()].endHour ? 
+                      companyInfo.timetable[data.getDay()].endHour : "";
+    
+    const current = new Date("2020-01-01 " + systemHour);
+    const open = new Date("2020-01-01 " + openHour);
+    const end = new Date("2020-01-01 " + endHour);   
+
+    if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function hourCurrent() {
+    data = new Date();
+    console.log("Entrei");
+  }
+
+  setTimeout(hourCurrent,1000);
+
+  //  Updating system time
+  useEffect(() => {
+    setSystemHour(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+    setCompanySystemOpenByHour(systemOpen() ? true : false);
+    console.log("Essa função deve atualzar a todo momento");
+  }, [data]);
 
 	//	Update user state variables
 	useEffect(() => {
