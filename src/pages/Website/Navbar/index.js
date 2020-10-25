@@ -33,7 +33,7 @@ import api from "../../../services/api";
 import { useEffect } from "react";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour, data }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour, setData, data }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -87,7 +87,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 
   //  Updating system time
   useEffect(() => {
-    setSystemHour(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+    setSystemHour(data ? data.getHours() + ":" + data.getMinutes() : "");
     setCompanySystemOpenByHour(systemOpen() ? true : false);
   }, [data]);
 
@@ -104,7 +104,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
 		event.preventDefault();
-		history.push("/menu");
+    history.push("/menu");
+    
+    setData(new Date());
 
 		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 

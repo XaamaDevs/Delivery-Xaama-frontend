@@ -31,7 +31,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu({ userId, user, order, setOrder, companyInfo, companySystemOpenByHour }) {
+export default function Menu({ userId, user, order, setOrder, setData, companyInfo, companySystemOpenByHour }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
@@ -284,7 +284,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	}
 
 	async function handleProductOrder(event) {
-		event.preventDefault();
+    event.preventDefault();
 
 		if(productOrder.available) {
 			const product = {

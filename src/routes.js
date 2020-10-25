@@ -104,6 +104,7 @@ export default function Routes() {
         companySystemOpenByHour={companySystemOpenByHour}
         setCompanySystemOpenByHour={setCompanySystemOpenByHour}
         data={data}
+        setData={setData}
 			/>
 			<Switch>
 				<Route exact path="/" render={() => <HomePage companyInfo={companyInfo} />} />
@@ -118,7 +119,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/menu"
-          render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder} 
+          render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder}
                           companyInfo={companyInfo} companySystemOpenByHour={companySystemOpenByHour}/>}
 				/>
 				<Route
