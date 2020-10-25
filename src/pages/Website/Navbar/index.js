@@ -54,7 +54,7 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [eventKey, setEventKey] = useState("0");
 
 	//	Defining history to jump through pages
-	const history = useHistory();
+  const history = useHistory();
 
 	useEffect(() => {
 		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));

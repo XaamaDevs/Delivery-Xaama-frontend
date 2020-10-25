@@ -19,7 +19,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour}) {
+export default function User({ userId, setUserId, user, setUser, companyInfo, setCompanySystemOpenByHour, data}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -63,9 +63,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, co
 	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
 	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
-  //  Defining constants for manipulating the time
-  var data = new Date();
-
   //  Current day of the week and time
   const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
 
@@ -98,27 +95,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, co
     
     const current = new Date("2020-01-01 " + systemHour);
     const open = new Date("2020-01-01 " + openHour);
-    const end = new Date("2020-01-01 " + endHour);   
+    const end = new Date("2020-01-01 " + endHour);
 
-    if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
+    if(end.getTime() < open.getTime()) {
+      if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
       return true;
     } else {
       return false;
     }
   }
 
-  function hourCurrent() {
-    data = new Date();
-    console.log("Entrei");
-  }
-
-  setTimeout(hourCurrent,1000);
-
   //  Updating system time
   useEffect(() => {
     setSystemHour(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
     setCompanySystemOpenByHour(systemOpen() ? true : false);
-    console.log("Essa função deve atualzar a todo momento");
   }, [data]);
 
 	//	Update user state variables
@@ -265,7 +260,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, co
 		data.append("productTypes", companyProductTypes);
 		data.append("manual", companyManual);
 		data.append("systemOpenByAdm", companySystemOpenByAdm);
-		data.append("systemOpenByHour", companySystemOpenByHour);
 		data.append("timeDeliveryI", companyTimeDeliveryI);
 		data.append("timeDeliveryF", companyTimeDeliveryF);
 		data.append("timeWithdrawal", companyTimeWithdrawal);

@@ -39,7 +39,16 @@ export default function Routes() {
   const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState();
 
 	//	Loading state variable
-	const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
+  
+  //  Defining constant for manipulating the time
+  const [data, setData] = useState(new Date());
+
+  //  Update system time every 25 minutes
+  function hourCurrent() {
+    setData(new Date());
+  }
+  setTimeout(hourCurrent,1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
@@ -123,8 +132,8 @@ export default function Routes() {
 								user={user}
 								setUser={setUser}
                 companyInfo={companyInfo}
-                companySystemOpenByHour={companySystemOpenByHour}
                 setCompanySystemOpenByHour={setCompanySystemOpenByHour}
+                data={data}
 							/> : <Auth />;
 					}}
 				/>
