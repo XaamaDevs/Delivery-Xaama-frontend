@@ -19,7 +19,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo, setCompanySystemOpenByHour, data}) {
+export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -63,9 +63,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
 	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
-  //  Current day of the week and time
-  const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
-
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modal2Show, setModal2Show] = useState(false);
@@ -81,40 +78,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 	//	Defining history to jump through pages
   const history = useHistory();
-
-  function systemOpen() {
-    const openHour = data && data.getDay() && companyInfo && companyInfo.timetable &&
-                      (companyInfo.timetable.length > data.getDay()) &&
-                      companyInfo.timetable[data.getDay()].beginHour ? 
-                      companyInfo.timetable[data.getDay()].beginHour : "";
-    
-    const endHour = data && data.getDay() && companyInfo && companyInfo.timetable &&
-                      (companyInfo.timetable.length > data.getDay()) &&
-                      companyInfo.timetable[data.getDay()].endHour ? 
-                      companyInfo.timetable[data.getDay()].endHour : "";
-    
-    const current = new Date("2020-01-01 " + systemHour);
-    const open = new Date("2020-01-01 " + openHour);
-    const end = new Date("2020-01-01 " + endHour);
-
-    if(end.getTime() < open.getTime()) {
-      if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  //  Updating system time
-  useEffect(() => {
-    setSystemHour(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
-    setCompanySystemOpenByHour(systemOpen() ? true : false);
-  }, [data]);
 
 	//	Update user state variables
 	useEffect(() => {

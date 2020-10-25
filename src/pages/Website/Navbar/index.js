@@ -33,7 +33,7 @@ import api from "../../../services/api";
 import { useEffect } from "react";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour }) {
+export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour, data }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -51,10 +51,45 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [modalTimetable, setModalTimetable] = useState(false);
 
 	// Tabs settings
-	const [eventKey, setEventKey] = useState("0");
+  const [eventKey, setEventKey] = useState("0");
+  
+  //  Current day of the week and time
+  const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
 
 	//	Defining history to jump through pages
   const history = useHistory();
+
+  function systemOpen() {
+    const openHour = data && companyInfo && companyInfo.timetable && 
+                    companyInfo.timetable[data.getDay()].beginHour ? 
+                    companyInfo.timetable[data.getDay()].beginHour : "";
+
+    const endHour = data && companyInfo && companyInfo.timetable &&
+                    companyInfo.timetable[data.getDay()].endHour ? 
+                    companyInfo.timetable[data.getDay()].endHour : "";
+    
+    const current = new Date("2020-01-01 " + systemHour);
+    const open = new Date("2020-01-01 " + openHour);
+    const end = new Date("2020-01-01 " + endHour);
+
+    if(end.getTime() < open.getTime()) {
+      if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //  Updating system time
+  useEffect(() => {
+    setSystemHour(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+    setCompanySystemOpenByHour(systemOpen() ? true : false);
+  }, [data]);
 
 	useEffect(() => {
 		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));

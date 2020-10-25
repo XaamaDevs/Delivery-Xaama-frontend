@@ -31,7 +31,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu({ userId, user, order, setOrder, companyInfo }) {
+export default function Menu({ userId, user, order, setOrder, companyInfo, companySystemOpenByHour }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
@@ -460,7 +460,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 							:
 							<>
 								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                  || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+                  || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 
 									product.available ?
 										<Button
@@ -944,7 +944,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
 															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                                || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+                                || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 																<Button
 																	className="mx-auto"
 																	size="sm"
@@ -1019,7 +1019,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo }) {
 						Fechar
 					</Button>
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-            || (companyInfo && !companyInfo.manual && companyInfo.systemOpenByHour) ?
+            || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" onClick={handleProductOrder}>
 							{"Adicionar ao carrinho +R$" + productTotal}
 						</Button>
