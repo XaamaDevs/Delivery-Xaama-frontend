@@ -77,7 +77,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	const [message, setMessage] = useState("");
 
 	//	Defining history to jump through pages
-  const history = useHistory();
+	const history = useHistory();
 
 	//	Update user state variables
 	useEffect(() => {
@@ -898,7 +898,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 				<Modal.Body>
 					<Form onSubmit={handleCompanyUpdate}>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control
@@ -910,7 +910,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyEmail">
 									<Form.Label>Email</Form.Label>
 									<Form.Control
@@ -924,7 +924,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyPhone">
 									<Form.Label>Telefone</Form.Label>
 									<Form.Control
@@ -937,7 +937,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyAddress">
 									<Form.Label>Endereço</Form.Label>
 									<Form.Control
@@ -954,7 +954,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyFreight">
 									<Form.Label>Valor do frete</Form.Label>
 									<Form.Control
@@ -966,7 +966,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyProductTypes">
 									<Form.Label>Tipos de produtos</Form.Label>
 									<Form.Control
@@ -983,7 +983,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyTimeWithdrawal">
 									<Form.Label>Tempo para retirada de um pedido</Form.Label>
 									<Form.Control
@@ -997,7 +997,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyTimeDeliveryI">
 									<Form.Label>Tempo mínimo para entrega de um pedido</Form.Label>
 									<Form.Control
@@ -1013,7 +1013,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyManual">
 									<Form.Label align="justify">
                     Controlar sistema aberto/fechado manualmente
@@ -1041,7 +1041,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									null
 								}
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="companyTimeDeliveryF">
 									<Form.Label>Tempo máximo para entrega de um pedido</Form.Label>
 									<Form.Control
