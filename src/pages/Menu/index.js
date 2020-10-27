@@ -284,7 +284,7 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 	}
 
 	async function handleProductOrder(event) {
-    event.preventDefault();
+		event.preventDefault();
 
 		if(productOrder.available) {
 			const product = {
@@ -634,21 +634,6 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 										/>
 									</OverlayTrigger>
 								</Form.Group>
-								<Form.Group controlId="productType">
-									<Form.Label>Tipo</Form.Label>
-									<Form.Control
-										value={productType}
-										onChange={e => setProductType(e.target.value)}
-										as="select"
-										placeholder="Tipo do produto"
-										required
-									>
-										<option></option>
-										{productTypes.map((type, index) => (
-											<option key={index}>{type}</option>
-										))}
-									</Form.Control>
-								</Form.Group>
 							</Col>
 						</Row>
 						<Row>
@@ -667,7 +652,7 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 											value={productIngredients}
 											onChange={(e) => setProductIngredients(e.target.value)}
 											as="textarea"
-											rows="2"
+											rows="3"
 											style={{resize :"none"}}
 											placeholder="Ingredientes do produto"
 											required
@@ -675,17 +660,34 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 									</OverlayTrigger>
 								</Form.Group>
 							</Col>
+							<Col sm>
+								<Form.Group controlId="productType">
+									<Form.Label>Tipo</Form.Label>
+									<Form.Control
+										value={productType}
+										onChange={e => setProductType(e.target.value)}
+										as="select"
+										placeholder="Tipo do produto"
+										required
+									>
+										<option></option>
+										{productTypes.map((type, index) => (
+											<option key={index}>{type}</option>
+										))}
+									</Form.Control>
+								</Form.Group>
+							</Col>
 						</Row>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setProductAddModal(false); setToastShow(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								Adicionar
-							</Button>
-						</Modal.Footer>
 					</Form>
 				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={() => {setProductAddModal(false); setToastShow(false);}}>
+						Fechar
+					</Button>
+					<Button variant="warning" type="submit" onClick={handleProductAdd}>
+						Adicionar
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Modal
@@ -774,6 +776,33 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 										/>
 									</OverlayTrigger>
 								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col sm>
+								<Form.Group controlId="productIngredients">
+									<Form.Label>Ingredientes</Form.Label>
+									<OverlayTrigger
+										placement="top"
+										overlay={
+											<Tooltip>
+												Para múltiplos ingredientes, separe-os entre vírgulas.
+											</Tooltip>
+										}
+									>
+										<Form.Control
+											value={productIngredients}
+											onChange={(e) => setProductIngredients(e.target.value)}
+											as="textarea"
+											rows="3"
+											style={{resize :"none"}}
+											placeholder="Ingredientes do produto"
+											required
+										/>
+									</OverlayTrigger>
+								</Form.Group>
+							</Col>
+							<Col sm>
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
 									<Form.Control
@@ -799,41 +828,16 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 								</Form.Group>
 							</Col>
 						</Row>
-						<Row>
-							<Col sm>
-								<Form.Group controlId="productIngredients">
-									<Form.Label>Ingredientes</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para múltiplos ingredientes, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productIngredients}
-											onChange={(e) => setProductIngredients(e.target.value)}
-											as="textarea"
-											rows="2"
-											style={{resize :"none"}}
-											placeholder="Ingredientes do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								Salvar alterações
-							</Button>
-						</Modal.Footer>
 					</Form>
 				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
+						Fechar
+					</Button>
+					<Button variant="warning" type="submit" onClick={handleProductUpdate}>
+						Salvar alterações
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
