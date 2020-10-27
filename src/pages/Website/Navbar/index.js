@@ -51,45 +51,45 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	const [modalTimetable, setModalTimetable] = useState(false);
 
 	// Tabs settings
-  const [eventKey, setEventKey] = useState("0");
-  
-  //  Current day of the week and time
-  const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+	const [eventKey, setEventKey] = useState("0");
+
+	//  Current day of the week and time
+	const [systemHour, setSystemHour] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
 
 	//	Defining history to jump through pages
-  const history = useHistory();
+	const history = useHistory();
 
-  function systemOpen() {
-    const openHour = data && companyInfo && companyInfo.timetable && 
-                    companyInfo.timetable[data.getDay()].beginHour ? 
-                    companyInfo.timetable[data.getDay()].beginHour : "";
+	function systemOpen() {
+		const openHour = data && companyInfo && companyInfo.timetable &&
+                    companyInfo.timetable[data.getDay()].beginHour ?
+			companyInfo.timetable[data.getDay()].beginHour : "";
 
-    const endHour = data && companyInfo && companyInfo.timetable &&
-                    companyInfo.timetable[data.getDay()].endHour ? 
-                    companyInfo.timetable[data.getDay()].endHour : "";
-    
-    const current = new Date("2020-01-01 " + systemHour);
-    const open = new Date("2020-01-01 " + openHour);
-    const end = new Date("2020-01-01 " + endHour);
+		const endHour = data && companyInfo && companyInfo.timetable &&
+                    companyInfo.timetable[data.getDay()].endHour ?
+			companyInfo.timetable[data.getDay()].endHour : "";
 
-    if(end.getTime() < open.getTime()) {
-      if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+		const current = new Date("2020-01-01 " + systemHour);
+		const open = new Date("2020-01-01 " + openHour);
+		const end = new Date("2020-01-01 " + endHour);
 
-  //  Updating system time
-  useEffect(() => {
-    setSystemHour(data ? data.getHours() + ":" + data.getMinutes() : "");
-    setCompanySystemOpenByHour(systemOpen() ? true : false);
-  }, [data]);
+		if(end.getTime() < open.getTime()) {
+			if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//  Updating system time
+	useEffect(() => {
+		setSystemHour(data ? data.getHours() + ":" + data.getMinutes() : "");
+		setCompanySystemOpenByHour(systemOpen() ? true : false);
+	}, [data]);
 
 	useEffect(() => {
 		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
@@ -104,9 +104,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
 		event.preventDefault();
-    history.push("/menu");
-    
-    setData(new Date());
+		history.push("/menu");
+
+		setData(new Date());
 
 		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
@@ -425,27 +425,6 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 									<Form.Label>Forma de pagamento:</Form.Label>
 									<Payment />
 								</Form.Group>
-								<Modal.Footer>
-									<Button
-										variant="danger"
-										onClick={() => {
-											setToastShow(false);
-											setShoppingBasketModal(false);
-										}}
-									>
-										Fechar
-									</Button>
-									{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                   || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
-										<Button variant="warning" type="submit">
-											{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
-										</Button>
-										:
-										<Button variant="danger">
-                      Estamos fechados
-										</Button>
-									}
-								</Modal.Footer>
 							</Form>
 						</Tab>
 						<Tab eventKey="order" title="Ver pedido">
@@ -453,6 +432,27 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
 						</Tab>
 					</Tabs>
 				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						variant="danger"
+						onClick={() => {
+							setToastShow(false);
+							setShoppingBasketModal(false);
+						}}
+					>
+						Fechar
+					</Button>
+					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
+						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+						<Button variant="warning" type="submit" onClick={handleFinishOrder}>
+							{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+						</Button>
+						:
+						<Button variant="danger">
+							Estamos fechados
+						</Button>
+					}
+				</Modal.Footer>
 			</Modal>
 
 			<Modal

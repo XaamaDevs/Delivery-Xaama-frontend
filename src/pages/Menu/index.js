@@ -927,7 +927,9 @@ export default function Menu({ userId, user, order, setOrder, setData, companyIn
 									</Row>
 								</Card.Header>
 								<Card.Body>
-									<Card.Text>{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}</Card.Text>
+									<Card.Text>
+										{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}
+									</Card.Text>
 									<OverlayTrigger
 										placement="bottom"
 										overlay={
