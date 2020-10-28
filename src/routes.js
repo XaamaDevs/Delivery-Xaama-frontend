@@ -35,20 +35,20 @@ export default function Routes() {
 	const [order, setOrder] = useState({});
 
 	//	Company info state variable
-  const [companyInfo, setCompanyInfo] = useState({});
-  const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState();
+	const [companyInfo, setCompanyInfo] = useState({});
+	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState();
 
 	//	Loading state variable
-  const [isLoading, setLoading] = useState(true);
-  
-  //  Defining constant for manipulating the time
-  const [data, setData] = useState(new Date());
+	const [isLoading, setLoading] = useState(true);
 
-  //  Update system time every 25 minutes
-  function hourCurrent() {
-    setData(new Date());
-  }
-  setTimeout(hourCurrent,1500000);
+	//  Defining constant for manipulating the time
+	const [data, setData] = useState(new Date());
+
+	//  Update system time every 25 minutes
+	function hourCurrent() {
+		setData(new Date());
+	}
+	setTimeout(hourCurrent,1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
@@ -100,11 +100,11 @@ export default function Routes() {
 				setUser={setUser}
 				order={order}
 				setOrder={setOrder}
-        companyInfo ={companyInfo}
-        companySystemOpenByHour={companySystemOpenByHour}
-        setCompanySystemOpenByHour={setCompanySystemOpenByHour}
-        data={data}
-        setData={setData}
+				companyInfo ={companyInfo}
+				companySystemOpenByHour={companySystemOpenByHour}
+				setCompanySystemOpenByHour={setCompanySystemOpenByHour}
+				data={data}
+				setData={setData}
 			/>
 			<Switch>
 				<Route exact path="/" render={() => <HomePage companyInfo={companyInfo} />} />
@@ -119,8 +119,14 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/menu"
-          render={() => <Menu userId={userId} user={user} order={order} setOrder={setOrder}
-                          companyInfo={companyInfo} companySystemOpenByHour={companySystemOpenByHour}/>}
+					render={() => <Menu
+						userId={userId}
+						user={user}
+						order={order}
+						setOrder={setOrder}
+						companyInfo={companyInfo}
+						companySystemOpenByHour={companySystemOpenByHour}
+					/>}
 				/>
 				<Route
 					exact path="/order"
@@ -135,7 +141,7 @@ export default function Routes() {
 								setUserId={setUserId}
 								user={user}
 								setUser={setUser}
-                companyInfo={companyInfo}
+								companyInfo={companyInfo}
 							/> : <Auth />;
 					}}
 				/>

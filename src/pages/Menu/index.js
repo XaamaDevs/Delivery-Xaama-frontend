@@ -1049,5 +1049,7 @@ Menu.propTypes = {
 	user : PropTypes.object.isRequired,
 	companyInfo : PropTypes.object.isRequired,
 	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.any.isRequired
+	setOrder : PropTypes.any.isRequired,
+	setData : PropTypes.any.isRequired,
+	companySystemOpenByHour : PropTypes.any.isRequired
 };

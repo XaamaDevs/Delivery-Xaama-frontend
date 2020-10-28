@@ -33,7 +33,18 @@ import api from "../../../services/api";
 import { useEffect } from "react";
 
 //	Exporting resource to routes.js
-export default function WebsiteNavbar({ userId, setUserId, user, setUser, order, setOrder, companyInfo, companySystemOpenByHour, setCompanySystemOpenByHour, setData, data }) {
+export default function WebsiteNavbar({
+	userId,
+	setUserId,
+	user,
+	setUser,
+	order,
+	setOrder,
+	companyInfo,
+	companySystemOpenByHour,
+	setCompanySystemOpenByHour,
+	setData,
+	data }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -535,5 +546,9 @@ WebsiteNavbar.propTypes = {
 	setUser : PropTypes.any.isRequired,
 	order : PropTypes.object.isRequired,
 	setOrder : PropTypes.any.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	companyInfo : PropTypes.object.isRequired,
+	companySystemOpenByHour : PropTypes.object.isRequired,
+	setCompanySystemOpenByHour : PropTypes.any.isRequired,
+	setData : PropTypes.any.isRequired,
+	data : PropTypes.any.isRequired
 };
