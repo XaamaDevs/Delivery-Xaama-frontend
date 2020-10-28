@@ -68,9 +68,9 @@ export default function WebsiteNavbar({ userId, setUserId, user, setUser, order,
                     companyInfo.timetable[data.getDay()].endHour ?
 			companyInfo.timetable[data.getDay()].endHour : "";
 
-		const current = new Date("2020-01-01 " + systemHour);
-		const open = new Date("2020-01-01 " + openHour);
-		const end = new Date("2020-01-01 " + endHour);
+		const current = new Date("2020-07-28 " + systemHour);
+		const open = new Date("2020-07-28 " + openHour);
+		const end = new Date("2020-07-28 " + endHour);
 
 		if(end.getTime() < open.getTime()) {
 			if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {

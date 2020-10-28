@@ -332,7 +332,7 @@ export default function AllOrders({ userId, companyInfo }) {
 					<Modal.Title>Todos os pedidos serão apagados</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<p>
+					<p align="justify">
 						Atenção! É importante apagar todos os pedidos do dia anterior para não
 						sobrecarregar o banco de dados, mas certifique-se que todos os pedidos foram
 						entregues antes de apagá-los.<br></br><br></br>
