@@ -42,7 +42,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
-	const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState("");
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
@@ -58,23 +58,23 @@ export default function AllOrders({ userId, companyInfo }) {
 		connect();
 	}
 
-	function filterOrders(o) {
-		let resp = o.filter(f => ( f.user._id === userId ));
-		return resp && resp.length ? resp : null;
-	}
-
-	async function newOrders(o) {
-		const resp = await filterOrders(o);
-		if(resp && resp.length) {
-			setOrders([...orders, resp]);
-		}
-	}
-
 	useEffect(() => {
+    function filterOrders(o) {
+      let resp = o.filter(f => ( f.user._id === userId ));
+      return resp && resp.length ? resp : null;
+    }
+  
+    async function newOrders(o) {
+      const resp = await filterOrders(o);
+      if(resp && resp.length) {
+        setOrders([...orders, resp]);
+      }
+    }
+
 		subscribeToNewOrders(o => newOrders(o));
 		subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
 		subscribeToDeleteOrders(o => setOrders(o));
-	}, [orders]);
+	}, [orders, userId]);
 
 	useEffect(() => {
 		async function loadOrder() {
