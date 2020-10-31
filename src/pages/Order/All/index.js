@@ -202,10 +202,13 @@ export default function AllOrders({ userId, companyInfo }) {
 												</Col>
 												<Col className="ml-3">
 													<Row>
-														<strong>{order.user.name}</strong>
+														<strong>{order.user.name ? order.user.name : null}</strong>
 													</Row>
 													<Row>
-														<span>{order.user.email}</span>
+														<span>{order.user.email ? order.user.email : null}</span>
+													</Row>
+                          <Row>
+														<span>{order.creationDate ? order.creationDate : null}</span>
 													</Row>
 												</Col>
 											</Row>

@@ -129,7 +129,7 @@ export default function WebsiteNavbar({
 			phone: deliverPhone,
 			typePayament: type,
 			change: deliverChange,
-			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
+      total: (order.total + (deliverOrder ? companyInfo.freight : 0))
 		};
 
 		await api.post("order", data)
