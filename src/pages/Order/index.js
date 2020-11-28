@@ -42,7 +42,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
-  const [feedback, setFeedback] = useState("");
+	const [feedback, setFeedback] = useState("");
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
@@ -59,17 +59,17 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	useEffect(() => {
-    function filterOrders(o) {
-      let resp = o.filter(f => ( f.user._id === userId ));
-      return resp && resp.length ? resp : null;
-    }
-  
-    async function newOrders(o) {
-      const resp = await filterOrders(o);
-      if(resp && resp.length) {
-        setOrders([...orders, resp]);
-      }
-    }
+		function filterOrders(o) {
+			let resp = o.filter(f => ( f.user._id === userId ));
+			return resp && resp.length ? resp : null;
+		}
+
+		async function newOrders(o) {
+			const resp = await filterOrders(o);
+			if(resp && resp.length) {
+				setOrders([...orders, resp]);
+			}
+		}
 
 		subscribeToNewOrders(o => newOrders(o));
 		subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
@@ -163,15 +163,15 @@ export default function AllOrders({ userId, companyInfo }) {
 														/>
 													</Col>
 													<Col className="ml-3">
-                            <Row>
-                              <strong>{order.user.name ? order.user.name : null}</strong>
-                            </Row>
-                            <Row>
-                              <span>{order.user.email ? order.user.email : null}</span>
-                            </Row>
-                            <Row>
-                              <span>{order.creationDate ? order.creationDate : null}</span>
-                            </Row>
+														<Row>
+															<strong>{order.user.name ? order.user.name : null}</strong>
+														</Row>
+														<Row>
+															<span>{order.user.email ? order.user.email : null}</span>
+														</Row>
+														<Row>
+															<span>{order.creationDate ? order.creationDate : null}</span>
+														</Row>
 													</Col>
 												</Row>
 											</Card.Header>
@@ -199,7 +199,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													</p>
 													<p>
                             Método de pagamento:
-														{order.typePayament === 1 ?
+														{order.typePayment === 1 ?
 															" Cartão"
 															:
 															" Dinheiro"
@@ -209,7 +209,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														{(order.change === order.total) ?
 															"Não precisa de troco"
 															:
-															((order.typePayament === 0) ?
+															((order.typePayment === 0) ?
 																"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
 																:
 																"Pagará na maquininha"

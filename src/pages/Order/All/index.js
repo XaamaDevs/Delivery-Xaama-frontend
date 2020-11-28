@@ -237,7 +237,7 @@ export default function AllOrders({ userId, companyInfo }) {
 												</p>
 												<p>
                             Método de pagamento:
-													{order.typePayament === 1 ?
+													{order.typePayment === 1 ?
 														" Cartão"
 														:
 														" Dinheiro"
@@ -247,7 +247,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													{(order.change === order.total) ?
 														"Não precisa de troco"
 														:
-														((order.typePayament === 0) ?
+														((order.typePayment === 0) ?
 															"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
 															:
 															"Pagará na maquininha"
