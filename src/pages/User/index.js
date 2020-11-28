@@ -325,8 +325,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 				authorization: userId,
 			}
 		}).then(() => {
-			setModal4Show(false);
-			setModalImages(false);
+			setModalTimetable(false);
 			setTitle("Alterações da empresa");
 			setMessage("Alterações feitas com sucesso!");
 			setModalAlert(true);
