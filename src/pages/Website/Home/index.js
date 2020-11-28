@@ -25,32 +25,22 @@ export default function Home({ companyInfo }) {
 					</Link>
 				</p>
 			</Jumbotron>
-			<Carousel className="col-sm-5 m-auto px-5">
-				<Carousel.Item>
-					<Image
-						className="w-100"
-						src={companyInfo.carousel_urls[0]}
-						alt="First slide"
-						fluid
-					/>
-				</Carousel.Item>
-				<Carousel.Item>
-					<Image
-						className="w-100"
-						src={companyInfo.carousel_urls[1]}
-						alt="Second slide"
-						fluid
-					/>
-				</Carousel.Item>
-				<Carousel.Item>
-					<Image
-						className="w-100"
-						src={companyInfo.carousel_urls[2]}
-						alt="Third slide"
-						fluid
-					/>
-				</Carousel.Item>
-			</Carousel>
+			{companyInfo.carousel_urls ?
+				<Carousel className="col-sm-5 m-auto px-5">
+					{companyInfo.carousel_urls.map((url, index) => (
+						<Carousel.Item key={index}>
+							<Image
+								className="w-100"
+								src={url}
+								alt={"Slide " + (index+1)}
+								fluid
+							/>
+						</Carousel.Item>
+					))}
+				</Carousel>
+				:
+				null
+			}
 		</div>
 	);
 }
