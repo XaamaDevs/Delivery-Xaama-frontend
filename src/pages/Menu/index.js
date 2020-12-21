@@ -31,7 +31,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Menu({ userId, user, order, setOrder, setData, companyInfo, companySystemOpenByHour }) {
+export default function Menu({ userId, user, order, setOrder, companyInfo, companySystemOpenByHour }) {
 	//	Product variables
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);

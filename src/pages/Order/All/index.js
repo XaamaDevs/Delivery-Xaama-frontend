@@ -207,7 +207,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													<Row>
 														<span>{order.user.email ? order.user.email : null}</span>
 													</Row>
-                          <Row>
+													<Row>
 														<span>{order.creationDate ? order.creationDate : null}</span>
 													</Row>
 												</Col>
