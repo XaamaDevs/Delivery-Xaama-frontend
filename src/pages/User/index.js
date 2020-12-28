@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal, InputGroup } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../Website/Alert";
@@ -46,6 +46,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	const [companyTimeWithdrawal, setCompanyTimeWithdrawal] = useState(companyInfo && companyInfo.timeWithdrawal ? companyInfo.timeWithdrawal : null);
 	const [companyTimeDeliveryI, setCompanyTimeDeliveryI] = useState(companyInfo ? companyInfo.timeDeliveryI : null);
 	const [companyTimeDeliveryF, setCompanyTimeDeliveryF] = useState(companyInfo ? companyInfo.timeDeliveryF: null);
+	const [cardTypes, setCardTypes] = useState([]);
+	const [companyCards, setCompanyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
 
 	// Timetable variable
 	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
@@ -70,6 +72,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	const [modal4Show, setModal4Show] = useState(false);
 	const [modalImages, setModalImages] = useState(false);
 	const [modalTimetable, setModalTimetable] = useState(false);
+	const [modalCards, setModalCards] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -95,6 +98,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 		setCompanyAddress(companyInfo.address);
 		setCompanyFreight(companyInfo.freight);
 		setCompanyProductTypes(companyInfo.productTypes.join(", "));
+		setCardTypes(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
 	}, [modal4Show, modalImages]);
 
 	//	User image preview
@@ -340,6 +344,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 		});
 	}
 
+	//  Function to change cards
+	async function handleCards(event) {
+		event.preventDefault();
+	}
+
 	return (
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
@@ -474,7 +483,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 										variant="outline-warning"
 										onClick={() => setModalTimetable(true)}
 									>
-										Alterar horário de funcionamento
+										Horário de funcionamento
+									</Button>
+									<Button
+										className="my-2"
+										id="btn-lightpink"
+										onClick={() => setModalCards(true)}
+									>
+										Cartões fidelidade
 									</Button>
 								</>
 								:
@@ -636,10 +652,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 					<Form onSubmit={(e) => handleTimetable(e)}>
 						<Row className="mt-2">
 							<Col className="my-2" sm={2}>
-              Domingo:
+							Domingo:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableSundayI">
@@ -651,7 +667,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableSundayF">
@@ -665,10 +681,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Segunda:
+							Segunda:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableMondayI">
@@ -680,7 +696,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableMondayF">
@@ -694,10 +710,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Terça:
+							Terça:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableTuesdayI">
@@ -709,7 +725,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableTuesdayF">
@@ -723,10 +739,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Quarta:
+							Quarta:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableWednesdayI">
@@ -738,7 +754,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableWednesdayF">
@@ -752,10 +768,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Quinta:
+							Quinta:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableThursdayI">
@@ -767,7 +783,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableThursdayF">
@@ -781,10 +797,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Sexta:
+							Sexta:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableFridayI">
@@ -796,7 +812,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableFridayF">
@@ -810,10 +826,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Row>
 						<Row>
 							<Col className="my-2" sm={2}>
-              Sábado:
+							Sábado:
 							</Col>
 							<Col className="my-2" md="auto">
-                De
+								De
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableSaturdayI">
@@ -825,7 +841,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 								</Form.Group>
 							</Col >
 							<Col className="my-2" md="auto">
-                às
+								às
 							</Col>
 							<Col md="auto">
 								<Form.Group controlId="timetableSaturdayF">
@@ -1015,7 +1031,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 							<Col sm>
 								<Form.Group controlId="companyManual">
 									<Form.Label align="justify">
-                    Controlar sistema aberto/fechado manualmente
+										Controlar sistema aberto/fechado manualmente
 									</Form.Label>
 									<Form.Check
 										type="switch"
@@ -1206,6 +1222,84 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						</Col>
 					</Row>
 				</Modal.Body>
+			</Modal>
+
+			<Modal
+				show={modalCards}
+				onHide={() => { setModalCards(false); setToastShow(false); }}
+				size="lg"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Modificar informações dos cartões fidelidade</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form className="my-3" onSubmit={handleCards}>
+						<Form.Group controlId="cardsUpdate">
+							{cardTypes.map((typesP, index) => (
+								<>
+									<Form.Group controlId="card" key={typesP} eventKey={index}>
+										<Form.Group controlId="types">
+											<Form.Label>Cartão fidelidade para {typesP}:</Form.Label>
+											<br/>
+											<InputGroup size="sm" className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Checkbox
+														checked={companyCards && companyCards[index] && companyCards[index].available ? companyCards[index].available: false}
+														onChange={e => setCompanyCards(e.target.checked)} 
+													/>
+												</InputGroup.Prepend>
+												<InputGroup.Append>
+													<InputGroup.Text>Marque aqui se existe cartão fidelidade para esse produto!</InputGroup.Text>
+												</InputGroup.Append>
+											</InputGroup>
+										</Form.Group>
+										
+										<Row>
+											<Col>
+												<Form.Group controlId="qtdMax">
+													<Form.Label>Quantidade</Form.Label>
+													<Form.Control
+														value={companyCards && companyCards[index] && companyCards[index].qtdMax ? companyCards[index].qtdMax: null}
+														onChange={e => setCompanyCards(e.target.value)} // errado
+														type="number"
+														min="10"
+														max="20"
+														placeholder="Quantidade para obter o desconto"
+														required
+													/>
+												</Form.Group>
+											</Col>
+											<Col>
+												<Form.Group controlId="discount">
+													<Form.Label>Desconto</Form.Label>
+													<Form.Control
+														value={companyCards && companyCards[index] && companyCards[index].discount ? companyCards[index].discount: null}
+														type="number"
+														min="5"
+														max="20"
+														placeholder="Desconto em Reais"
+														required
+													/>
+												</Form.Group>
+											</Col>
+										</Row>
+									</Form.Group>
+								</>
+							))
+							}
+						</Form.Group>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false); }}>
+						Fechar
+					</Button>
+					<Button variant="warning" type="submit">
+						Salvar alterações
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
