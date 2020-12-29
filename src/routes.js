@@ -21,6 +21,7 @@ import Menu from "./pages/Menu";
 import Auth from "./pages/Website/Authentication";
 import Autho from "./pages/Website/Authentication/Authorization";
 import Logged from "./pages/Website/Authentication/Logged";
+import Cards from "./pages/Cards";
 
 //	Importing api to communicate to backend
 import api from "./services/api";
@@ -144,6 +145,10 @@ export default function Routes() {
 								companyInfo={companyInfo}
 							/> : <Auth />;
 					}}
+				/>
+				<Route
+					exact path="/cards"
+					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/additions"
