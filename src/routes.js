@@ -148,7 +148,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/cards"
-					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} /> : <Autho />) : <Auth />}
+					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/additions"

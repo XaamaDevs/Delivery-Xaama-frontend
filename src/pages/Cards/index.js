@@ -18,14 +18,14 @@ import {
 
 //	Importing website utils
 import Alert from "../Website/Alert";
-//import Push from "../Website/Push";
+import Push from "../Website/Push";
 
 //	Importing api to communicate to backend
-//import api from "../../services/api";
+import api from "../../services/api";
 
 
 //	Exporting resource to routes.js
-export default function Menu({ companyInfo }) {
+export default function Menu({ companyInfo, userId }) {
 	
 	// Card variable
 	const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
@@ -38,10 +38,11 @@ export default function Menu({ companyInfo }) {
 	const [cardDiscount, setCardDiscount] = useState(null);
 
 	//	Message settings
-	const [modalAlert] = useState(false);
-	const [title] = useState("");
-	const [message] = useState("");
+	const [modalAlert, setModalAlert] = useState(false);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
 	const [modalCards, setModalCards] = useState(false);
+	const [toastShow, setToastShow] = useState(false);
 
 	const header = (
 		<Card.Header className="pb-3">
@@ -120,6 +121,39 @@ export default function Menu({ companyInfo }) {
 	// Function to change cards
 	async function handleCards(event) {
 		event.preventDefault();
+
+		for(var c of companyCards) {
+			if (c.type == cardType) {
+				c.available = cardAvailable;
+				c.qtdMax = cardQtdMax ? parseInt(cardQtdMax) : 0;
+				c.discount = cardDiscount ? parseInt(cardDiscount) : 0;
+			}
+		}
+		
+		const data = {
+			productTypes: types.join(", "),
+			cards: companyCards
+		};
+	
+		await api.put("companyUpdateCards", data, {
+			headers : {
+				authorization: userId
+			}})
+			.then(() => {
+				setModalCards(false);
+				setTitle("Alterações cartão de fidelidade!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
 	}
 
 	return (
@@ -139,10 +173,11 @@ export default function Menu({ companyInfo }) {
 
 			<Modal
 				show={modalCards}
-				onHide={() => { setModalCards(false);} }
+				onHide={() => { setModalCards(false); setToastShow(false);} }
 				size="lg"
 				centered
 			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Modificar cartão fidelidade</Modal.Title>
 				</Modal.Header>
@@ -199,10 +234,10 @@ export default function Menu({ companyInfo }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={() => { setModalCards(false); }}>
+					<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false);}}>
 						Fechar
 					</Button>
-					<Button variant="warning" type="submit">
+					<Button variant="warning" type="submit" onClick={handleCards}>
 						Salvar alterações
 					</Button>
 				</Modal.Footer>
