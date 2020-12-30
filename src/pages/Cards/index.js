@@ -10,7 +10,7 @@ import {
 	//Tooltip,
 	Nav,
 	Card,
-	//Button,
+	Button,
 	CardDeck,
 	//Form,
 	//Col,
@@ -29,19 +29,19 @@ import Alert from "../Website/Alert";
 export default function Menu({ companyInfo }) {
 	
 	// Card variable
-	//const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
+	const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
 	const [types] = useState(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
+	
 	const [cardType, setCardType] = useState(null);
-	//const [cardAvailable, setCardAvailable] = useState(null);
-	//const [cardQtdMax, setCardQtdMax] = useState(null);
-	//const [cardDiscount, setCardDiscount] = useState(null);
+	const [cardAvailable, setCardAvailable] = useState(null);
+	const [cardQtdMax, setCardQtdMax] = useState(null);
+	const [cardDiscount, setCardDiscount] = useState(null);
 
 	//	Message settings
 	const [modalAlert] = useState(false);
 	const [title] = useState("");
 	const [message] = useState("");
 	//const [modalCards, setModalCards] = useState(false);
-
 
 	const header = (
 		<Card.Header className="pb-3">
@@ -65,118 +65,57 @@ export default function Menu({ companyInfo }) {
 		</Card.Header>
 	);
 
-	// const productCard = (product) => {
-	// 	return (
-	// 		<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-	// 			<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid="true" />
-	// 			<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
-	// 				<Card.Title>{product.name}</Card.Title>
-	// 				<Card.Text>
-	// 					{product.ingredients.map((ingredient, index) => (
-	// 						index === product.ingredients.length-1 ?
-	// 							ingredient
-	// 							:
-	// 							ingredient + ", "
-	// 					))}
-	// 				</Card.Text>
-	// 				{userId ?
-	// 					<div className="d-flex justify-content-between flex-wrap my-auto">
-	// 						<Button
-	// 							variant="warning"
-	// 							size="sm"
-	// 							onClick ={e => handleProductModal(e, 1, product)}
-	// 						>
-	// 							Modificar
-	// 						</Button>
+	const CardC = (
+		<Card className="col-sm-4 my-1 p-0" bg="secondary" key={cardType}>
+			<Card.Body className="d-flex align-content-between flex-column" key={cardType}>
+				<Card.Title>{cardType}</Card.Title>
+				{cardAvailable ?
+					<>
+						<Card.Text>
+							{cardQtdMax ? "Quantidade de pedidos para completar o cartão: " + cardQtdMax: "Quantidade de pedidos desse produto para completar o cartão: Não atribuído"}
+						</Card.Text>
+						<Card.Text>
+							{cardDiscount ? "Desconto aṕos completar o cartão: R$" + cardDiscount: "Desconto aṕos completar o cartão: Não atribuído" }
+						</Card.Text>
+					</>
+					:
+					<Card.Text>
+						Não existe cartão fidelidade para este produto
+					</Card.Text>
+				}
+				
+				<div className="d-flex justify-content-between flex-wrap my-auto">
+					<Button
+						variant="success"
+						size="sm"
+						className="btn"
+						id="btn-available"
+						//onClick ={e => modalCards(e)}
+					>
+						Modificar
+					</Button>
+				</div>
+			</Card.Body>
+			<Card.Footer>
+				<small>
+					OBS: Se o pedido for mais barato que o desconto, o desconto será o valor do pedido. O valor do frete não está incluso!
+				</small>
+			</Card.Footer>
+		</Card>
+	);
 
-	// 						{product.available ?
-	// 							<Button
-	// 								variant="success"
-	// 								size="sm"
-	// 								className="btn"
-	// 								id="btn-available"
-	// 							>
-	// 								Disponível
-	// 							</Button>
-	// 							:
-	// 							<Button
-	// 								variant="dark"
-	// 								size="sm"
-	// 							>
-	// 								Indisponível
-	// 							</Button>
-	// 						}
-
-	// 						<Button
-	// 							variant="danger"
-	// 							size="sm"
-	// 							onClick={e => handleProductModal(e,2, product)}
-	// 						>
-	// 							Remover
-	// 						</Button>
-	// 					</div>
-	// 					:
-	// 					<>
-	// 						{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-	// 							|| (companyInfo && !companyInfo.manual ) ?
-
-	// 							product.available ?
-	// 								<Button
-	// 									className="my-auto"
-	// 									variant="warning"
-	// 									size="sm"
-	// 									onClick ={() => {
-	// 										setProductNote("");
-	// 										setAdditionsOrder([]);
-	// 										setProductSize(0);
-	// 										setProductTotal(0);
-	// 										setProductOrder(product);
-	// 										setProductTotal(product.prices[0]);
-	// 										setProductOrderModal(true);
-	// 									}}
-	// 								>
-	// 									Adicionar aos pedidos
-	// 								</Button>
-	// 								:
-	// 								<Button
-	// 									variant="danger"
-	// 									size="sm"
-	// 								>
-	// 									Indisponível no momento
-	// 								</Button>
-	// 							:
-	// 							<Button
-	// 								variant="danger"
-	// 								size="sm"
-	// 							>
-	// 								Estamos fechados
-	// 							</Button>
-	// 						}
-	// 					</>
-	// 				}
-	// 			</Card.Body>
-	// 			<Card.Footer>
-	// 				<small>
-	// 					{product.prices.length === 1 ?
-	// 						"Preço: "
-	// 						:
-	// 						"Preços por tamanho: "
-	// 					}
-	// 					{product.prices.map((price, index) => (
-	// 						index === product.prices.length-1 ?
-	// 							"R$" + price
-	// 							:
-	// 							"R$" + price + ", "
-	// 					))}
-	// 				</small>
-	// 			</Card.Footer>
-	// 		</Card>
-	// 	);
-	// };
 
 	//	Return a list of cards given type
 	async function handleCardsList(event, typeP) {
 		event.preventDefault();
+		
+		for(const c of companyCards ) {
+			if(c.type == typeP) {
+				setCardAvailable(c.available); 
+				setCardQtdMax(c.qtdMax);
+				setCardDiscount(c.discount);
+			}
+		}
 
 		setCardType(typeP);
 	}
@@ -192,16 +131,9 @@ export default function Menu({ companyInfo }) {
 				{header}
 				{cardType && cardType.length ?
 					<CardDeck className="p-2">
-						{Array(cardType.length).fill(null).map((value, i) => (
-							i%3 === 0 ?
-								<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-									{Array(3).fill(null).map((value, j) => (
-										i+j < cardType.length ? "productCard(cardTypes[i+j])" : null
-									))}
-								</Row>
-								:
-								null
-						))}
+						<Row className="d-flex justify-content-around m-auto w-100" key={cardType}>
+							{CardC}
+						</Row>
 					</CardDeck>
 					:
 					<h1 className="display-5 text-center m-auto p-5">Selecione o cartão fidelidade acima</h1>
