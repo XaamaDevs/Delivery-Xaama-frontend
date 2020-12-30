@@ -106,7 +106,6 @@ export default function Menu({ companyInfo, userId }) {
 	//	Return a list of cards given type
 	async function handleCardsList(event, typeP) {
 		event.preventDefault();
-		
 		for(const c of companyCards ) {
 			if(c.type == typeP) {
 				setCard(c);
@@ -134,6 +133,8 @@ export default function Menu({ companyInfo, userId }) {
 			productTypes: types.join(", "),
 			cards: companyCards
 		};
+
+		console.log(data);
 	
 		await api.put("companyUpdateCards", data, {
 			headers : {
