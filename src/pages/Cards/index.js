@@ -123,9 +123,9 @@ export default function Menu({ companyInfo, userId }) {
 
 		for(var c of companyCards) {
 			if (c.type == cardType) {
-				c.available = cardAvailable;
-				c.qtdMax = cardQtdMax ? parseInt(cardQtdMax) : 0;
-				c.discount = cardDiscount ? parseInt(cardDiscount) : 0;
+				c.available = cardAvailable ? cardAvailable : false;
+				c.qtdMax = cardQtdMax ? cardQtdMax : 0;
+				c.discount = cardDiscount ? cardDiscount : 0;
 			}
 		}
 		
@@ -232,16 +232,16 @@ export default function Menu({ companyInfo, userId }) {
 								</Form.Group>
 							</Col>
 						</Row>
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false);}}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleCards}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
