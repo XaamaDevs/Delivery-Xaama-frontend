@@ -164,5 +164,6 @@ export default function Signup({ setUserId, setUser }) {
 
 Signup.propTypes = {
 	setUserId : PropTypes.any.isRequired,
-	setUser : PropTypes.any.isRequired
+	setUser : PropTypes.any.isRequired,
+	companyInfo : PropTypes.object.isRequired,
 };

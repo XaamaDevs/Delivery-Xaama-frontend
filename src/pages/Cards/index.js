@@ -133,15 +133,16 @@ export default function Menu({ companyInfo, userId }) {
 			productTypes: types.join(", "),
 			cards: companyCards
 		};
-
-		var up = false;
 	
 		await api.put("companyUpdateCards", data, {
 			headers : {
 				authorization: userId
 			}})
 			.then(() => {
-				up = true;
+				setModalCards(false);
+				setTitle("Alterações cartão de fidelidade!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
 			})
 			.catch((error) => {
 				setTitle("Erro!");
@@ -152,32 +153,6 @@ export default function Menu({ companyInfo, userId }) {
 				}
 				setToastShow(true);
 			});
-
-		if(up) {
-			await api.put("userAll", {}, {
-				headers : {
-					authorization: userId
-				}})
-				.then(() => {
-					setModalCards(false);
-					setTitle("Alterações cartão de fidelidade!");
-					setMessage("Alterações feitas com sucesso!");
-					setModalAlert(true);
-				})
-				.catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
-		} else {
-			setTitle("Erro!");
-			setMessage("Erro interno");
-			setToastShow(true);
-		}
 	}
 
 	return (
