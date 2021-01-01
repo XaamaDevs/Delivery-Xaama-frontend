@@ -496,24 +496,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 					<Col className="m-auto p-3" sm="4">
 						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
-							<>
-								<Row key={index}>
-									<Col>
-										<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
-									</Col>
-									<Col>
-										<h6 align="right">Desconto: R${companyInfo.cards[index].discount}*</h6>
-									</Col>
-								</Row>
-					
-								<ProgressBar 
-									variant={(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax < 40 ? "danger" : "warning"} 
-									animated now={(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax} 
-									label={`${(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax}%`} />
-								<br/>
-							</>
+							companyInfo.cards[index].available ?
+								<>
+									<Row key={index}>
+										<Col>
+											<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
+										</Col>
+										<Col>
+											<h6 align="right">Desconto: R${companyInfo.cards[index].discount}*</h6>
+										</Col>
+									</Row>
+						
+									<ProgressBar 
+										variant={(parseInt(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax) < 40 ? "danger" : "warning"} 
+										animated now={parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)} 
+										label={`${parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}%`} />
+									<br/>
+								</>
+								: 
+								null
 						))}
-						<small id="text-OBS">* OBS: Se o pedido for mais barato que o desconto, o desconto será o valor do pedido. O valor do frete não está incluso!</small>
+						<small id="text-OBS">* OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!</small>
 					</Col>
 					:
 					null

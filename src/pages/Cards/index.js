@@ -97,7 +97,7 @@ export default function Menu({ companyInfo, userId }) {
 			</Card.Body>
 			<Card.Footer>
 				<small>
-					OBS: Se o pedido for mais barato que o desconto, o desconto será o valor do pedido. O valor do frete não está incluso!
+          OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
 				</small>
 			</Card.Footer>
 		</Card>
