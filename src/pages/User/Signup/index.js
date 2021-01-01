@@ -125,9 +125,7 @@ export default function Signup({ setUserId, setUser }) {
 							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
-						<Form.Text className="text-muted">
-							Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número
-						</Form.Text>
+						<small>Sua senha deve ter no mínimo oito caracteres, pelo menos uma letra e um número</small>
 					</Form.Group>
 					<Form.Group controlId="passwordC">
 						<Form.Label>Confirmar Senha</Form.Label>

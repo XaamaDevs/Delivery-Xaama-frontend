@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../Website/Alert";
@@ -492,6 +492,32 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						null
 					}
 				</Col>
+				{user.userType === 0 && user.cards && user.cards.length ?
+					<Col className="m-auto p-3" sm="4">
+						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
+						{user.cards.map((card, index) => (
+							<>
+								<Row key={index}>
+									<Col>
+										<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
+									</Col>
+									<Col>
+										<h6 align="right">Desconto: R${companyInfo.cards[index].discount}*</h6>
+									</Col>
+								</Row>
+					
+								<ProgressBar 
+									variant={(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax < 40 ? "danger" : "warning"} 
+									animated now={(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax} 
+									label={`${(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax}%`} />
+								<br/>
+							</>
+						))}
+						<small id="text-OBS">* OBS: Se o pedido for mais barato que o desconto, o desconto será o valor do pedido. O valor do frete não está incluso!</small>
+					</Col>
+					:
+					null
+				}
 			</div>
 
 			<Modal
