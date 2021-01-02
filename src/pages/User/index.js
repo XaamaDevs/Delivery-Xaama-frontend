@@ -270,17 +270,20 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 				data.append("images", new File([blob], "c3." + extension));
 			}
 		}
+		
+		var upCard = false;
+		var t = companyInfo.productTypes.join(", ");
+
+		if(companyProductTypes != t) {
+			upCard = true;
+		}
 
 		await api.post("company", data , {
 			headers : {
 				authorization: userId
 			}
 		}).then(() => {
-			setModal4Show(false);
-			setModalImages(false);
-			setTitle("Alterações da empresa");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+			
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -290,6 +293,35 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 			}
 			setToastShow(true);
 		});
+		
+		if(upCard) {
+			await api.put("userCard", {}, {
+				headers : {
+					authorization: userId
+				}
+			}).then(() => {
+				setModal4Show(false);
+				setModalImages(false);
+				upCard = false;
+				setTitle("Alterações da empresa");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+		} else {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}
 	}
 
 	//  Function to change opening hours
