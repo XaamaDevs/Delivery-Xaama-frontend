@@ -19,7 +19,9 @@ import {
 	Col,
 	Image,
 	FormGroup,
-	FormLabel
+	FormLabel,
+	OverlayTrigger,
+	Tooltip
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -65,7 +67,7 @@ export default function WebsiteNavbar({
 
 	// Aux variables
 	const [noDiscount, setNoDiscount] = useState(true);
-	const [orderType, setOrderType] = useState({});
+	const [orderType, setOrderType] = useState(new Map);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -477,22 +479,51 @@ export default function WebsiteNavbar({
 									:
 									null
 								}
-								<FormGroup>
-									<Form.Label>Descontos por cartão fidelidade:</Form.Label>
-								</FormGroup>
-								{	user.cards && user.cards.length ?
+								<OverlayTrigger
+									placement="top"
+									overlay={
+										<Tooltip>
+											OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
+										</Tooltip>
+									}
+								>
+									<FormGroup>
+										<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+									</FormGroup>
+								</OverlayTrigger>
+								{	user.cards && user.cards.length && orderType ?
 									<FormGroup>
 										{user.cards.map((card,index) => (
-											card.completed && !card.status ?
+											card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
 												<>
-													<FormLabel key={index}>Completou o cartão {card.cardFidelity}, -R${companyInfo.cards[index].discount}</FormLabel>
+													<FormLabel 
+														key={index}>
+															Completou o cartão {card.cardFidelity} -R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? 
+															companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
+													</FormLabel>
 													<br></br>
 												</>
 												:
-												null
+												(!card.completed && orderType.get(card.cardFidelity) ?
+													<>
+														<Form.Label>Seu cartão {card.cardFidelity} não está completo</Form.Label>
+														<br></br>
+													</>
+													:
+													(card.status ?
+														<>
+															<Form.Label>Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado</Form.Label>
+															<br></br>
+														</>
+														:
+														null)
+												)
 										))}
 										{noDiscount ?
-											<Form.Label>Não possui nenhum cartão fidelidade completo!</Form.Label>
+											<>
+												<Form.Label>Não possui nenhum cartão fidelidade completo</Form.Label>
+												<br></br>
+											</>
 											:
 											null
 										}
