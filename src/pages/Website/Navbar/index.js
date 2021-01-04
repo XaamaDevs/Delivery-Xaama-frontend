@@ -17,7 +17,9 @@ import {
 	Form,
 	Row,
 	Col,
-	Image
+	Image,
+	FormGroup,
+	FormLabel
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -61,6 +63,10 @@ export default function WebsiteNavbar({
 	const [message, setMessage] = useState("");
 	const [modalTimetable, setModalTimetable] = useState(false);
 
+	// Aux variables
+	const [noDiscount, setNoDiscount] = useState(true);
+	const [orderType, setOrderType] = useState({});
+
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
 
@@ -74,11 +80,11 @@ export default function WebsiteNavbar({
 	useEffect(() => {
 		function systemOpen() {
 			const openHour = data && companyInfo && companyInfo.timetable &&
-                      companyInfo.timetable[data.getDay()].beginHour ?
+											companyInfo.timetable[data.getDay()].beginHour ?
 				companyInfo.timetable[data.getDay()].beginHour : "";
 
 			const endHour = data && companyInfo && companyInfo.timetable &&
-                      companyInfo.timetable[data.getDay()].endHour ?
+											companyInfo.timetable[data.getDay()].endHour ?
 				companyInfo.timetable[data.getDay()].endHour : "";
 
 			const current = new Date("2020-07-28 " + systemHour);
@@ -111,6 +117,45 @@ export default function WebsiteNavbar({
 		setDeliverAdress(user.address && user.address.length ? user.address.join(", ") : "");
 		setDeliverPhone(user.phone && user.phone.length ? user.phone : "");
 	}, [shoppingBasketModal]);
+
+	useEffect(() => {
+		if(user && user.cards) {
+			user.cards.map((card) => (
+				card.completed && !card.status ? setNoDiscount(false) : null
+			));
+		}
+	}, []);
+
+	useEffect(() => {
+		async function Products() {
+			var myMapTypesProducts = new Map();
+			
+			//	Calculate order total price
+			if(order && order.products){
+				for(var x of order.products) {
+					if(x.size >= 0 && x.size < x.product.prices.length) {
+						myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
+							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) : 
+								x.product.prices[x.size]);
+					}
+
+					if(x.additions && x.additions.length) {
+						for(var y of x.additions) {
+							myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
+								myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + y.price) : 
+									y.price);
+						}
+					}
+				}
+			}
+			
+			setOrderType(myMapTypesProducts);
+		}
+
+		Products();
+	
+		console.log(orderType);
+	}, [order.products, shoppingBasketModal]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
@@ -426,11 +471,36 @@ export default function WebsiteNavbar({
 											required={deliverOrder}
 										/>
 										<Form.Text className="text-muted">
-                      Separe rua, número, bairro e complemento por vírgula
+											Separe rua, número, bairro e complemento por vírgula
 										</Form.Text>
 									</Form.Group>
 									:
 									null
+								}
+								<FormGroup>
+									<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+								</FormGroup>
+								{	user.cards && user.cards.length ?
+									<FormGroup>
+										{user.cards.map((card,index) => (
+											card.completed && !card.status ?
+												<>
+													<FormLabel key={index}>Completou o cartão {card.cardFidelity}, -R${companyInfo.cards[index].discount}</FormLabel>
+													<br></br>
+												</>
+												:
+												null
+										))}
+										{noDiscount ?
+											<Form.Label>Não possui nenhum cartão fidelidade completo!</Form.Label>
+											:
+											null
+										}
+									</FormGroup>
+									:
+									<FormGroup>
+										<Form.Label>Não possui cartão fidelidade!</Form.Label>
+									</FormGroup>
 								}
 								<Form.Group controlId="deliverPayment">
 									<Form.Label>Forma de pagamento:</Form.Label>
@@ -486,13 +556,13 @@ export default function WebsiteNavbar({
 								{(t.beginHour && t.endHour ?
 									<>
 										<Col className="text-center my-2 p-0">
-                      De
+											De
 										</Col>
 										<Col className="text-center my-2 p-0">
 											{t.beginHour}
 										</Col >
 										<Col className="text-center my-2 p-0">
-                      às
+											às
 										</Col>
 										<Col className="text-center my-2 mr-auto p-0 pr-2">
 											{t.endHour}
@@ -500,7 +570,7 @@ export default function WebsiteNavbar({
 									</>
 									:
 									<Col className="text-center my-2 mr-auto p-0 pr-2">
-                    Fechado
+										Fechado
 									</Col>
 								)}
 							</Row>
@@ -508,7 +578,7 @@ export default function WebsiteNavbar({
 							:
 							<Row>
 								<Col className="my-2" md="auto">
-                Horário indisponível
+								Horário indisponível
 								</Col>
 							</Row>
 						)}
