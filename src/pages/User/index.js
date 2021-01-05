@@ -19,7 +19,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo}) {
+export default function User({ userId, setUserId, user, setUser, companyInfo, noCards}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -524,7 +524,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						null
 					}
 				</Col>
-				{user.userType === 0 && user.cards && user.cards.length ?
+				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
 					<Col className="m-auto p-3" sm="4">
 						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
@@ -1292,5 +1292,6 @@ User.propTypes = {
 	setUserId : PropTypes.any.isRequired,
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.any.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	companyInfo : PropTypes.object.isRequired,
+	noCards : PropTypes.object.isRequired
 };

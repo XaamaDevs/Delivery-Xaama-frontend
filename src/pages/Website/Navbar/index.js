@@ -48,7 +48,8 @@ export default function WebsiteNavbar({
 	companySystemOpenByHour,
 	setCompanySystemOpenByHour,
 	setData,
-	data }) {
+	data,
+	noCards }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -66,8 +67,8 @@ export default function WebsiteNavbar({
 	const [modalTimetable, setModalTimetable] = useState(false);
 
 	// Aux variables
-	const [noDiscount, setNoDiscount] = useState(true);
 	const [orderType, setOrderType] = useState(new Map);
+	const [discount, setDiscount] = useState(0);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -111,22 +112,14 @@ export default function WebsiteNavbar({
 	}, [data, setSystemHour, setCompanySystemOpenByHour, companyInfo, systemHour]);
 
 	useEffect(() => {
-		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
-	}, [order.total, deliverOrder, companyInfo.freight]);
+		setDeliverChange((order.total - discount + (deliverOrder ? companyInfo.freight : 0)));
+	}, [order.total, deliverOrder, companyInfo.freight, discount]);
 
 	//	Update order state variables
 	useEffect(() => {
 		setDeliverAdress(user.address && user.address.length ? user.address.join(", ") : "");
 		setDeliverPhone(user.phone && user.phone.length ? user.phone : "");
 	}, [shoppingBasketModal]);
-
-	useEffect(() => {
-		if(user && user.cards) {
-			user.cards.map((card) => (
-				card.completed && !card.status ? setNoDiscount(false) : null
-			));
-		}
-	}, []);
 
 	useEffect(() => {
 		async function Products() {
@@ -156,8 +149,21 @@ export default function WebsiteNavbar({
 
 		Products();
 	
-		console.log(orderType);
 	}, [order.products, shoppingBasketModal]);
+
+	useEffect(() => {
+		var d = 0;
+		if(user && user.cards && companyInfo && companyInfo.cards){
+			user.cards.map((card,index) => {
+				card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
+					d = parseInt(d) + parseInt((companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? 
+						companyInfo.cards[index].discount : orderType.get(card.cardFidelity)))
+					:
+					null;
+			});
+		}
+		setDiscount(d);
+	}, [orderType, shoppingBasketModal]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
@@ -176,7 +182,7 @@ export default function WebsiteNavbar({
 			phone: deliverPhone,
 			typePayment: type,
 			change: deliverChange,
-			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
+			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0))
 		};
 
 		await api.post("order", data)
@@ -226,7 +232,7 @@ export default function WebsiteNavbar({
 					{eventKey === "1" ? setDeliverCash(true) : null}
 					{eventKey === "1" ? setDeliverCard(false): null}
 					<Card>
-						<Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
+						<Card.Body>Total: R${(order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
 							<Form className="mx-auto my-2">
 								<Form.Group controlId="userChange">
 									<Row>
@@ -479,38 +485,44 @@ export default function WebsiteNavbar({
 									:
 									null
 								}
-								<OverlayTrigger
-									placement="top"
-									overlay={
-										<Tooltip>
-											OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
-										</Tooltip>
-									}
-								>
-									<FormGroup>
-										<Form.Label>Descontos por cartão fidelidade:</Form.Label>
-									</FormGroup>
-								</OverlayTrigger>
-								{	user.cards && user.cards.length && orderType ?
+								
+								{ !noCards ?
+									<OverlayTrigger
+										placement="top"
+										overlay={
+											<Tooltip>
+												OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
+											</Tooltip>
+										}
+									>
+										<FormGroup>
+											<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+										</FormGroup>
+									</OverlayTrigger>
+									:
+									null
+								}
+								
+								{	user.cards && user.cards.length && orderType && !noCards ?
 									<FormGroup>
 										{user.cards.map((card,index) => (
-											card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
+											card.completed && !card.status && orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 												<>
-													<FormLabel 
-														key={index}>
-															Completou o cartão {card.cardFidelity} -R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? 
-															companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
-													</FormLabel>
-													<br></br>
+													<Row className="m-auto" key={index}>
+														Completou o cartão {card.cardFidelity}
+														<FormLabel style={{color: "#c83a34"}} >
+															<span>&nbsp;</span>-R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
+														</FormLabel>
+													</Row>
 												</>
 												:
-												(!card.completed && orderType.get(card.cardFidelity) ?
+												(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 													<>
 														<Form.Label>Seu cartão {card.cardFidelity} não está completo</Form.Label>
 														<br></br>
 													</>
 													:
-													(card.status ?
+													(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 														<>
 															<Form.Label>Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado</Form.Label>
 															<br></br>
@@ -519,19 +531,9 @@ export default function WebsiteNavbar({
 														null)
 												)
 										))}
-										{noDiscount ?
-											<>
-												<Form.Label>Não possui nenhum cartão fidelidade completo</Form.Label>
-												<br></br>
-											</>
-											:
-											null
-										}
 									</FormGroup>
 									:
-									<FormGroup>
-										<Form.Label>Não possui cartão fidelidade!</Form.Label>
-									</FormGroup>
+									null
 								}
 								<Form.Group controlId="deliverPayment">
 									<Form.Label>Forma de pagamento:</Form.Label>
@@ -557,7 +559,7 @@ export default function WebsiteNavbar({
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" type="submit" onClick={handleFinishOrder}>
-							{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+							{"Finalizar pedido +R$" + (order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
 						</Button>
 						:
 						<Button variant="danger">
@@ -651,5 +653,6 @@ WebsiteNavbar.propTypes = {
 	companySystemOpenByHour : PropTypes.object.isRequired,
 	setCompanySystemOpenByHour : PropTypes.any.isRequired,
 	setData : PropTypes.any.isRequired,
-	data : PropTypes.any.isRequired
+	data : PropTypes.any.isRequired,
+	noCards : PropTypes.any.isRequired
 };
