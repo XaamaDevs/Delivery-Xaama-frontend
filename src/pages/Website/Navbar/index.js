@@ -189,13 +189,13 @@ export default function WebsiteNavbar({
 		};
 
 		setFinish(true);
+		setLoading(true);
+
+		var orderOk = false;
 
 		await api.post("order", data)
 			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-				setShoppingBasketModal(false);
-				setModalAlert(true);
+				orderOk = true;
 			}).catch((error) => {
 				setTitle("Alerta!");
 				if(error.response && typeof(error.response.data) !== "object") {
@@ -205,6 +205,47 @@ export default function WebsiteNavbar({
 				}
 				setToastShow(true);
 			});
+		
+		// criar atualizar usuario (add Status)
+		var status = [];
+
+		user.cards.map((card,index) => (
+			card.completed && !card.status && orderType && 
+				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ? 
+				status.push(true) : status.push(card.status)
+		));
+
+		console.log(status);
+		
+		if(orderOk) {
+			const u = {
+				name: user.name,
+				email: user.email,
+				address: 	user.address.join(", "),
+				phone: user.phone,
+				status: status
+			};
+
+			await api.put("user", u, {
+				headers : {
+					authorization: user._id
+				}})
+				.then(() => {
+					setTitle("Pedido enviado!");
+					setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
+					setShoppingBasketModal(false);
+					setModalAlert(true);
+				}).catch((error) => {
+					setTitle("Alerta!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+		}
+
 		setLoading(false);
 	}
 
