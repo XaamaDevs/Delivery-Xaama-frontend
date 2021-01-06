@@ -21,7 +21,8 @@ import {
 	FormGroup,
 	FormLabel,
 	OverlayTrigger,
-	Tooltip
+	Tooltip,
+	Spinner
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -69,6 +70,8 @@ export default function WebsiteNavbar({
 	// Aux variables
 	const [orderType, setOrderType] = useState(new Map);
 	const [discount, setDiscount] = useState(0);
+	const [finish, setFinish] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -185,6 +188,8 @@ export default function WebsiteNavbar({
 			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0))
 		};
 
+		setFinish(true);
+
 		await api.post("order", data)
 			.then(() => {
 				setTitle("Pedido enviado!");
@@ -200,6 +205,7 @@ export default function WebsiteNavbar({
 				}
 				setToastShow(true);
 			});
+		setLoading(false);
 	}
 
 	//	Function to handle user logout
@@ -440,6 +446,16 @@ export default function WebsiteNavbar({
 					<Modal.Title>Cesta de compras</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					{isLoading && finish ?
+						<FormGroup className="d-flex justify-content-center">
+							<Spinner
+								animation="border"
+								variant="warning"
+							/>
+						</FormGroup>
+						:
+						null 
+					}
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
