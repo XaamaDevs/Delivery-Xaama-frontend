@@ -206,7 +206,6 @@ export default function WebsiteNavbar({
 				setToastShow(true);
 			});
 		
-		// criar atualizar usuario (add Status)
 		var status = [];
 
 		user.cards.map((card,index) => (
