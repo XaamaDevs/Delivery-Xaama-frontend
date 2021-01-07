@@ -60,7 +60,6 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	useEffect(() => {
 		subscribeToNewOrders(o => setOrders([...orders, o[0]]));
-		console.log("orders: ", orders);
 		subscribeToUpdateOrders(o => setOrders(o));
 		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
@@ -99,12 +98,12 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function handleDeliver(event, order) {
 		event.preventDefault();
+		
+		var orderOK = false;
 
 		await api.put("/order/" + order._id, { status:true })
 			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
+				orderOK = true;
 			})
 			.catch((error) => {
 				setTitle("Erro!");
@@ -115,6 +114,48 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 				setModalAlert(true);
 			});
+			
+		if(orderOK) {
+			var data = [];
+
+			var myMapTypesProducts = new Map();
+
+			if(order && order.products) {
+				for(var p of order.products) {
+					myMapTypesProducts.set(p.product && p.product.type ? p.product.type : "", 
+						myMapTypesProducts.get(p.product.type) ? myMapTypesProducts.get(p.product.type) + 1 : 1);
+				}
+			}
+
+			for(var cards of companyInfo.cards) {
+				var cardsNewQtd = {
+					cardFidelity: cards.type,
+					qtdCurrent: myMapTypesProducts.get(cards.type) ? myMapTypesProducts.get(cards.type) : 0
+				};
+
+				data.push(cardsNewQtd);
+			}
+
+			await api.put("/user/" + order.user._id, {cardsNewQtd: data}, {
+				headers: {
+					authorization : userId
+				}
+			})
+				.then(() => {
+					setTitle("Pedido enviado!");
+					setMessage("Alterações feitas com sucesso!");
+					setModalAlert(true);
+				})
+				.catch((error) => {
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setModalAlert(true);
+				});
+		}
 	}
 
 	async function handleFeedback(event, order) {
@@ -236,7 +277,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													{"Total a pagar R$" + order.total}
 												</p>
 												<p>
-                            Método de pagamento:
+														Método de pagamento:
 													{order.typePayment === 1 ?
 														" Cartão"
 														:
@@ -293,7 +334,7 @@ export default function AllOrders({ userId, companyInfo }) {
 							className="d-flex mx-auto my-4"
 							onClick={() => setModalDeleteOrder(true)}
 						>
-              Apagar todos pedidos
+							Apagar todos pedidos
 						</Button>
 						:
 						null

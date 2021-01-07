@@ -131,7 +131,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		data.append("name", userName);
 		data.append("email", userEmail);
 		data.append("phone", userPhone && userPhone.length ? userPhone : "");
-		data.append("address", userAddress && userAddress.length ? userAddress : "");
+		data.append("address", userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa");
+
+		var s = [];
+		
+		for (var c of user.cards) {
+			s.push(c.status);
+		}
+		
+		data.append("status", s);
 
 		if(action === 0) {
 			if(thumbnail) {

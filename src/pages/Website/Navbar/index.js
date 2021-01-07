@@ -213,19 +213,24 @@ export default function WebsiteNavbar({
 				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ? 
 				status.push(true) : status.push(card.status)
 		));
-
-		console.log(status);
 		
 		if(orderOk) {
-			const u = {
-				name: user.name,
-				email: user.email,
-				address: 	user.address.join(", "),
-				phone: user.phone,
-				status: status
-			};
+			const data = new FormData();
 
-			await api.put("user", u, {
+			data.append("name", user.name);
+			data.append("email", user.email);
+			data.append("phone", user.phone ? user.phone : deliverPhone);
+			data.append("address", user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"));
+			data.append("status", status);
+
+			if(user.thumbnail) {
+				const blob = await fetch(user.thumbnail_url).then(r => r.blob());
+				const token = user.thumbnail_url.split(".");
+				const extension = token[token.length-1];
+				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			}
+
+			await api.put("user", data, {
 				headers : {
 					authorization: user._id
 				}})
