@@ -53,13 +53,16 @@ export default function Routes() {
 	//	Fetching current user data
 	useEffect(() => {
 		async function fetchData() {
-			if(userId) {
-				await api.get("user/" + userId)
-					.then((response) => {
-						if(response && response.data) {
-							setUser(response.data);
-						}
-					});
+			if(!user._id && userId) {
+				await api.get("userData", {
+					headers : {
+						"x-access-token": userId
+					}
+				}).then((response) => {
+					if(response && response.data) {
+						setUser(response.data);
+					}
+				});
 			}
 
 			await api.get("company")
@@ -84,7 +87,7 @@ export default function Routes() {
 	}
 
 	function userAuth() {
-		return (user._id && userId);
+		return userId;
 	}
 
 	if(isLoading) {

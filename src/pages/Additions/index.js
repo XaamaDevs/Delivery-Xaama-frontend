@@ -135,7 +135,7 @@ export default function Additions({ userId }) {
 
 		await api.post("addition", data, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setAdditionAddModal(false);
@@ -187,7 +187,7 @@ export default function Additions({ userId }) {
 
 		await api.put("addition/" + additionId, data, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}
 		}).then(() => {
 			setAdditionUpdateModal(false);
@@ -210,7 +210,7 @@ export default function Additions({ userId }) {
 
 		await api.delete("addition/" + additionId, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setAdditionDeleteModal(false);

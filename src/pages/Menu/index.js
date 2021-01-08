@@ -196,7 +196,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		await api.post("product", data, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setProductAddModal(false);
@@ -240,7 +240,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		await api.put("product/" + productId, data, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setProductUpdateModal(false);
@@ -264,7 +264,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		await api.delete("product/" + productId, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setProductDeleteModal(false);

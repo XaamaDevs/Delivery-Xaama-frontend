@@ -53,10 +53,10 @@ export default function Signup({ setUserId, setUser }) {
 
 		await api.post("user", data)
 			.then((response) => {
-				sessionStorage.setItem("userId", response.data._id);
+				sessionStorage.setItem("userId", response.data.token);
 
 				setUserId(sessionStorage.getItem("userId"));
-				setUser(response.data);
+				setUser(response.data.user);
 
 				history.push("/menu");
 			}).catch((error) => {

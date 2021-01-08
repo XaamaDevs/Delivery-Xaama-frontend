@@ -69,7 +69,7 @@ export default function AllOrders({ userId, companyInfo }) {
 		async function loadOrder() {
 			await api.get("order", {
 				headers : {
-					authorization: userId
+					"x-access-token": userId
 				}
 			}).then((response) => {
 				setOrders(response.data);
@@ -126,7 +126,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function deleteAllSockets() {
 		await api.delete("sockets", {
-			headers: { authorization: userId }
+			headers: { "x-access-token": userId }
 		})
 			.then(() => {
 				//
@@ -147,7 +147,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 		await api.delete("order", {
 			headers : {
-				authorization: userId,
+				"x-access-token": userId,
 				password: userPasswordOnDelete
 			}})
 			.then(() => {

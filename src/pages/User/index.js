@@ -158,7 +158,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 
 		await api.put("user", data , {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setModal1Show(false);
@@ -187,7 +187,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 
 		await api.delete("user", {
 			headers: {
-				authorization: userId,
+				"x-access-token": userId,
 				password: userPasswordOnDelete
 			}})
 			.then((response) => {
@@ -277,7 +277,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 
 		await api.post("company", data , {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}
 		}).then(() => {
 			setModal4Show(false);
@@ -326,7 +326,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 
 		await api.put("companyUpdateTimetable", {timetable}, {
 			headers : {
-				authorization: userId,
+				"x-access-token": userId,
 			}
 		}).then(() => {
 			setModalTimetable(false);
@@ -1247,7 +1247,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 												<InputGroup.Prepend>
 													<InputGroup.Checkbox
 														checked={companyCards && companyCards[index] && companyCards[index].available ? companyCards[index].available: false}
-														onChange={e => setCompanyCards(e.target.checked)} 
+														onChange={e => setCompanyCards(e.target.checked)}
 													/>
 												</InputGroup.Prepend>
 												<InputGroup.Append>
@@ -1255,7 +1255,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 												</InputGroup.Append>
 											</InputGroup>
 										</Form.Group>
-										
+
 										<Row>
 											<Col>
 												<Form.Group controlId="qtdMax">
