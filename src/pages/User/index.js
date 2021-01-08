@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal, InputGroup } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../Website/Alert";
@@ -19,7 +19,7 @@ import api from "../../services/api";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo}) {
+export default function User({ userId, setUserId, user, setUser, companyInfo, noCards}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -46,8 +46,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	const [companyTimeWithdrawal, setCompanyTimeWithdrawal] = useState(companyInfo && companyInfo.timeWithdrawal ? companyInfo.timeWithdrawal : null);
 	const [companyTimeDeliveryI, setCompanyTimeDeliveryI] = useState(companyInfo ? companyInfo.timeDeliveryI : null);
 	const [companyTimeDeliveryF, setCompanyTimeDeliveryF] = useState(companyInfo ? companyInfo.timeDeliveryF: null);
-	const [cardTypes, setCardTypes] = useState([]);
-	const [companyCards, setCompanyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
 
 	// Timetable variable
 	const [timetableSundayI, setTimetableSundayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[0] && companyInfo.timetable[0].beginHour ? companyInfo.timetable[0].beginHour : undefined);
@@ -72,7 +70,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 	const [modal4Show, setModal4Show] = useState(false);
 	const [modalImages, setModalImages] = useState(false);
 	const [modalTimetable, setModalTimetable] = useState(false);
-	const [modalCards, setModalCards] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
@@ -98,7 +95,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 		setCompanyAddress(companyInfo.address);
 		setCompanyFreight(companyInfo.freight);
 		setCompanyProductTypes(companyInfo.productTypes.join(", "));
-		setCardTypes(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
 	}, [modal4Show, modalImages]);
 
 	//	User image preview
@@ -135,7 +131,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 		data.append("name", userName);
 		data.append("email", userEmail);
 		data.append("phone", userPhone && userPhone.length ? userPhone : "");
-		data.append("address", userAddress && userAddress.length ? userAddress : "");
+		data.append("address", userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa");
+
+		var s = [];
+
+		for (var c of user.cards) {
+			s.push(c.status);
+		}
+
+		data.append("status", s);
 
 		if(action === 0) {
 			if(thumbnail) {
@@ -275,16 +279,19 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 			}
 		}
 
+		var upCard = false;
+		var t = companyInfo.productTypes.join(", ");
+
+		if(companyProductTypes != t) {
+			upCard = true;
+		}
+
 		await api.post("company", data , {
 			headers : {
 				"x-access-token": userId
 			}
 		}).then(() => {
-			setModal4Show(false);
-			setModalImages(false);
-			setTitle("Alterações da empresa");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -294,6 +301,35 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 			}
 			setToastShow(true);
 		});
+
+		if(upCard) {
+			await api.put("userCard", {}, {
+				headers : {
+					authorization: userId
+				}
+			}).then(() => {
+				setModal4Show(false);
+				setModalImages(false);
+				upCard = false;
+				setTitle("Alterações da empresa");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+		} else {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}
 	}
 
 	//  Function to change opening hours
@@ -342,11 +378,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 			}
 			setToastShow(true);
 		});
-	}
-
-	//  Function to change cards
-	async function handleCards(event) {
-		event.preventDefault();
 	}
 
 	return (
@@ -488,7 +519,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 									<Button
 										className="my-2"
 										id="btn-lightpink"
-										onClick={() => setModalCards(true)}
+										onClick={() => history.push("/cards")}
 									>
 										Cartões fidelidade
 									</Button>
@@ -501,6 +532,35 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 						null
 					}
 				</Col>
+				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
+					<Col className="m-auto p-3" sm="4">
+						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
+						{user.cards.map((card, index) => (
+							companyInfo.cards[index].available ?
+								<>
+									<Row key={index}>
+										<Col>
+											<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
+										</Col>
+										<Col>
+											<h6 align="right">Desconto: R${companyInfo.cards[index].discount}*</h6>
+										</Col>
+									</Row>
+
+									<ProgressBar
+										variant={(parseInt(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax) < 40 ? "danger" : "warning"}
+										animated now={parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}
+										label={`${parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}%`} />
+									<br/>
+								</>
+								:
+								null
+						))}
+						<small id="text-OBS">* OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!</small>
+					</Col>
+					:
+					null
+				}
 			</div>
 
 			<Modal
@@ -1224,84 +1284,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo}) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal
-				show={modalCards}
-				onHide={() => { setModalCards(false); setToastShow(false); }}
-				size="lg"
-				centered
-			>
-				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
-				<Modal.Header closeButton>
-					<Modal.Title>Modificar informações dos cartões fidelidade</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form className="my-3" onSubmit={handleCards}>
-						<Form.Group controlId="cardsUpdate">
-							{cardTypes.map((typesP, index) => (
-								<>
-									<Form.Group controlId="card" key={typesP} eventKey={index}>
-										<Form.Group controlId="types">
-											<Form.Label>Cartão fidelidade para {typesP}:</Form.Label>
-											<br/>
-											<InputGroup size="sm" className="mb-3">
-												<InputGroup.Prepend>
-													<InputGroup.Checkbox
-														checked={companyCards && companyCards[index] && companyCards[index].available ? companyCards[index].available: false}
-														onChange={e => setCompanyCards(e.target.checked)}
-													/>
-												</InputGroup.Prepend>
-												<InputGroup.Append>
-													<InputGroup.Text>Marque aqui se existe cartão fidelidade para esse produto!</InputGroup.Text>
-												</InputGroup.Append>
-											</InputGroup>
-										</Form.Group>
-
-										<Row>
-											<Col>
-												<Form.Group controlId="qtdMax">
-													<Form.Label>Quantidade</Form.Label>
-													<Form.Control
-														value={companyCards && companyCards[index] && companyCards[index].qtdMax ? companyCards[index].qtdMax: null}
-														onChange={e => setCompanyCards(e.target.value)} // errado
-														type="number"
-														min="10"
-														max="20"
-														placeholder="Quantidade para obter o desconto"
-														required
-													/>
-												</Form.Group>
-											</Col>
-											<Col>
-												<Form.Group controlId="discount">
-													<Form.Label>Desconto</Form.Label>
-													<Form.Control
-														value={companyCards && companyCards[index] && companyCards[index].discount ? companyCards[index].discount: null}
-														type="number"
-														min="5"
-														max="20"
-														placeholder="Desconto em Reais"
-														required
-													/>
-												</Form.Group>
-											</Col>
-										</Row>
-									</Form.Group>
-								</>
-							))
-							}
-						</Form.Group>
-					</Form>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false); }}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit">
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
-			</Modal>
-
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 			<Alert.Close
 				modalAlert={modalAlertThumbnail}
@@ -1318,5 +1300,6 @@ User.propTypes = {
 	setUserId : PropTypes.any.isRequired,
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.any.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	companyInfo : PropTypes.object.isRequired,
+	noCards : PropTypes.object.isRequired
 };

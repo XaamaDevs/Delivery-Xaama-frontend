@@ -21,6 +21,7 @@ import Menu from "./pages/Menu";
 import Auth from "./pages/Website/Authentication";
 import Autho from "./pages/Website/Authentication/Authorization";
 import Logged from "./pages/Website/Authentication/Logged";
+import Cards from "./pages/Cards";
 
 //	Importing api to communicate to backend
 import api from "./services/api";
@@ -43,6 +44,9 @@ export default function Routes() {
 
 	//  Defining constant for manipulating the time
 	const [data, setData] = useState(new Date());
+	
+	// Aux Variables
+	const [noCards, setNoCards] = useState(true);
 
 	//  Update system time every 25 minutes
 	function hourCurrent() {
@@ -77,6 +81,14 @@ export default function Routes() {
 
 		fetchData();
 	}, [userId, order]);
+	
+	useEffect(() => {
+		if(companyInfo && companyInfo.cards) {
+			companyInfo.cards.map((card) => (
+				card.available ? setNoCards(false) : null
+			));
+		}
+	}, [companyInfo]);
 
 	function adminAuth() {
 		return (user && (user.userType === 2));
@@ -108,6 +120,7 @@ export default function Routes() {
 				setCompanySystemOpenByHour={setCompanySystemOpenByHour}
 				data={data}
 				setData={setData}
+				noCards={noCards}
 			/>
 			<Switch>
 				<Route exact path="/" render={() => <HomePage companyInfo={companyInfo} />} />
@@ -145,8 +158,13 @@ export default function Routes() {
 								user={user}
 								setUser={setUser}
 								companyInfo={companyInfo}
+								noCards={noCards}
 							/> : <Auth />;
 					}}
+				/>
+				<Route
+					exact path="/cards"
+					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/additions"

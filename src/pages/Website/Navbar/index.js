@@ -17,7 +17,12 @@ import {
 	Form,
 	Row,
 	Col,
-	Image
+	Image,
+	FormGroup,
+	FormLabel,
+	OverlayTrigger,
+	Tooltip,
+	Spinner
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -44,7 +49,8 @@ export default function WebsiteNavbar({
 	companySystemOpenByHour,
 	setCompanySystemOpenByHour,
 	setData,
-	data }) {
+	data,
+	noCards }) {
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
@@ -61,6 +67,12 @@ export default function WebsiteNavbar({
 	const [message, setMessage] = useState("");
 	const [modalTimetable, setModalTimetable] = useState(false);
 
+	// Aux variables
+	const [orderType, setOrderType] = useState(new Map);
+	const [discount, setDiscount] = useState(0);
+	const [finish, setFinish] = useState(false);
+	const [isLoading, setLoading] = useState(true);
+
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
 
@@ -74,11 +86,11 @@ export default function WebsiteNavbar({
 	useEffect(() => {
 		function systemOpen() {
 			const openHour = data && companyInfo && companyInfo.timetable &&
-                      companyInfo.timetable[data.getDay()].beginHour ?
+											companyInfo.timetable[data.getDay()].beginHour ?
 				companyInfo.timetable[data.getDay()].beginHour : "";
 
 			const endHour = data && companyInfo && companyInfo.timetable &&
-                      companyInfo.timetable[data.getDay()].endHour ?
+											companyInfo.timetable[data.getDay()].endHour ?
 				companyInfo.timetable[data.getDay()].endHour : "";
 
 			const current = new Date("2020-07-28 " + systemHour);
@@ -103,14 +115,58 @@ export default function WebsiteNavbar({
 	}, [data, setSystemHour, setCompanySystemOpenByHour, companyInfo, systemHour]);
 
 	useEffect(() => {
-		setDeliverChange((order.total + (deliverOrder ? companyInfo.freight : 0)));
-	}, [order.total, deliverOrder, companyInfo.freight]);
+		setDeliverChange((order.total - discount + (deliverOrder ? companyInfo.freight : 0)));
+	}, [order.total, deliverOrder, companyInfo.freight, discount]);
 
 	//	Update order state variables
 	useEffect(() => {
 		setDeliverAdress(user.address && user.address.length ? user.address.join(", ") : "");
 		setDeliverPhone(user.phone && user.phone.length ? user.phone : "");
 	}, [shoppingBasketModal]);
+
+	useEffect(() => {
+		async function Products() {
+			var myMapTypesProducts = new Map();
+			
+			//	Calculate order total price
+			if(order && order.products){
+				for(var x of order.products) {
+					if(x.size >= 0 && x.size < x.product.prices.length) {
+						myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
+							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) : 
+								x.product.prices[x.size]);
+					}
+
+					if(x.additions && x.additions.length) {
+						for(var y of x.additions) {
+							myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
+								myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + y.price) : 
+									y.price);
+						}
+					}
+				}
+			}
+			
+			setOrderType(myMapTypesProducts);
+		}
+
+		Products();
+	
+	}, [order.products, shoppingBasketModal]);
+
+	useEffect(() => {
+		var d = 0;
+		if(user && user.cards && companyInfo && companyInfo.cards){
+			user.cards.map((card,index) => {
+				card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
+					d = parseInt(d) + parseInt((companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? 
+						companyInfo.cards[index].discount : orderType.get(card.cardFidelity)))
+					:
+					null;
+			});
+		}
+		setDiscount(d);
+	}, [orderType, shoppingBasketModal]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
@@ -129,15 +185,17 @@ export default function WebsiteNavbar({
 			phone: deliverPhone,
 			typePayment: type,
 			change: deliverChange,
-			total: (order.total + (deliverOrder ? companyInfo.freight : 0))
+			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0))
 		};
+
+		setFinish(true);
+		setLoading(true);
+
+		var orderOk = false;
 
 		await api.post("order", data)
 			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-				setShoppingBasketModal(false);
-				setModalAlert(true);
+				orderOk = true;
 			}).catch((error) => {
 				setTitle("Alerta!");
 				if(error.response && typeof(error.response.data) !== "object") {
@@ -147,6 +205,52 @@ export default function WebsiteNavbar({
 				}
 				setToastShow(true);
 			});
+		
+		var status = [];
+
+		user.cards.map((card,index) => (
+			card.completed && !card.status && orderType && 
+				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ? 
+				status.push(true) : status.push(card.status)
+		));
+		
+		if(orderOk) {
+			const data = new FormData();
+
+			data.append("name", user.name);
+			data.append("email", user.email);
+			data.append("phone", user.phone ? user.phone : deliverPhone);
+			data.append("address", user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"));
+			data.append("status", status);
+
+			if(user.thumbnail) {
+				const blob = await fetch(user.thumbnail_url).then(r => r.blob());
+				const token = user.thumbnail_url.split(".");
+				const extension = token[token.length-1];
+				data.append("thumbnail", new File([blob], "thumbnail." + extension));
+			}
+
+			await api.put("user", data, {
+				headers : {
+					authorization: user._id
+				}})
+				.then(() => {
+					setTitle("Pedido enviado!");
+					setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
+					setShoppingBasketModal(false);
+					setModalAlert(true);
+				}).catch((error) => {
+					setTitle("Alerta!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+		}
+
+		setLoading(false);
 	}
 
 	//	Function to handle user logout
@@ -179,7 +283,7 @@ export default function WebsiteNavbar({
 					{eventKey === "1" ? setDeliverCash(true) : null}
 					{eventKey === "1" ? setDeliverCard(false): null}
 					<Card>
-						<Card.Body>Total: R${(order.total + (deliverOrder ? companyInfo.freight : 0))}
+						<Card.Body>Total: R${(order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
 							<Form className="mx-auto my-2">
 								<Form.Group controlId="userChange">
 									<Row>
@@ -387,6 +491,16 @@ export default function WebsiteNavbar({
 					<Modal.Title>Cesta de compras</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					{isLoading && finish ?
+						<FormGroup className="d-flex justify-content-center">
+							<Spinner
+								animation="border"
+								variant="warning"
+							/>
+						</FormGroup>
+						:
+						null 
+					}
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
@@ -426,9 +540,59 @@ export default function WebsiteNavbar({
 											required={deliverOrder}
 										/>
 										<Form.Text className="text-muted">
-                      Separe rua, número, bairro e complemento por vírgula
+											Separe rua, número, bairro e complemento por vírgula
 										</Form.Text>
 									</Form.Group>
+									:
+									null
+								}
+								
+								{ !noCards ?
+									<OverlayTrigger
+										placement="top"
+										overlay={
+											<Tooltip>
+												OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
+											</Tooltip>
+										}
+									>
+										<FormGroup>
+											<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+										</FormGroup>
+									</OverlayTrigger>
+									:
+									null
+								}
+								
+								{	user.cards && user.cards.length && orderType && !noCards ?
+									<FormGroup>
+										{user.cards.map((card,index) => (
+											card.completed && !card.status && orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+												<>
+													<Row className="m-auto" key={index}>
+														Completou o cartão {card.cardFidelity}
+														<FormLabel style={{color: "#c83a34"}} >
+															<span>&nbsp;</span>-R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
+														</FormLabel>
+													</Row>
+												</>
+												:
+												(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+													<>
+														<Form.Label>Seu cartão {card.cardFidelity} não está completo</Form.Label>
+														<br></br>
+													</>
+													:
+													(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+														<>
+															<Form.Label>Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado</Form.Label>
+															<br></br>
+														</>
+														:
+														null)
+												)
+										))}
+									</FormGroup>
 									:
 									null
 								}
@@ -456,7 +620,7 @@ export default function WebsiteNavbar({
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" type="submit" onClick={handleFinishOrder}>
-							{"Finalizar pedido +R$" + (order.total + (deliverOrder ? companyInfo.freight : 0))}
+							{"Finalizar pedido +R$" + (order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
 						</Button>
 						:
 						<Button variant="danger">
@@ -486,13 +650,13 @@ export default function WebsiteNavbar({
 								{(t.beginHour && t.endHour ?
 									<>
 										<Col className="text-center my-2 p-0">
-                      De
+											De
 										</Col>
 										<Col className="text-center my-2 p-0">
 											{t.beginHour}
 										</Col >
 										<Col className="text-center my-2 p-0">
-                      às
+											às
 										</Col>
 										<Col className="text-center my-2 mr-auto p-0 pr-2">
 											{t.endHour}
@@ -500,7 +664,7 @@ export default function WebsiteNavbar({
 									</>
 									:
 									<Col className="text-center my-2 mr-auto p-0 pr-2">
-                    Fechado
+										Fechado
 									</Col>
 								)}
 							</Row>
@@ -508,7 +672,7 @@ export default function WebsiteNavbar({
 							:
 							<Row>
 								<Col className="my-2" md="auto">
-                Horário indisponível
+								Horário indisponível
 								</Col>
 							</Row>
 						)}
@@ -550,5 +714,6 @@ WebsiteNavbar.propTypes = {
 	companySystemOpenByHour : PropTypes.object.isRequired,
 	setCompanySystemOpenByHour : PropTypes.any.isRequired,
 	setData : PropTypes.any.isRequired,
-	data : PropTypes.any.isRequired
+	data : PropTypes.any.isRequired,
+	noCards : PropTypes.any.isRequired
 };
