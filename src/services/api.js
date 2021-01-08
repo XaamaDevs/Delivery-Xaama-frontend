@@ -3,5 +3,5 @@ import axios from "axios";
 
 //	Exporting connection to backend
 export default axios.create({
-	baseURL: "http://localhost:4000"
+	baseURL: "https://delivery-xaama-backend.herokuapp.com/"
 });
