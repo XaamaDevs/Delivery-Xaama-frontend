@@ -78,7 +78,10 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	useEffect(() => {
 		async function loadOrder() {
-			await api.get("order/" + userId)
+			await api.get("order", {
+				headers : {
+					"x-access-token": userId
+				}})
 				.then((response) => {
 					setOrders(response.data);
 					setupWebSocket();

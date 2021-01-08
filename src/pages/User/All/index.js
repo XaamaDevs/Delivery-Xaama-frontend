@@ -53,7 +53,7 @@ export default function AllUsers({ userId }) {
 		async function loadUser() {
 			await api.get("user", {
 				headers : {
-					authorization: userId
+					"x-access-token": userId
 				}
 			}).then((response) => {
 				setUsers(response.data);
@@ -82,7 +82,7 @@ export default function AllUsers({ userId }) {
 			password: userPassword
 		}, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}
 		}).then(() => {
 			setModal1Show(false);

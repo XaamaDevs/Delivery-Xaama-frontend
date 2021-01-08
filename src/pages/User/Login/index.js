@@ -36,10 +36,11 @@ export default function Login({ setUserId, setUser }) {
 			email,
 			password
 		}).then((response) => {
-			sessionStorage.setItem("userId", response.data._id);
+			sessionStorage.setItem("userId", response.data.token);
 
 			setUserId(sessionStorage.getItem("userId"));
-			setUser(response.data);
+			setUser(response.data.user);
+			console.log(response.data.user);
 
 			history.push("/menu");
 		}).catch((error) => {

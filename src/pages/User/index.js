@@ -134,11 +134,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		data.append("address", userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa");
 
 		var s = [];
-		
+
 		for (var c of user.cards) {
 			s.push(c.status);
 		}
-		
+
 		data.append("status", s);
 		
 		if(action === 0 || action === 1) {
@@ -168,7 +168,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		data.append("delImg", delImg);
 		await api.put("user", data , {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setModal1Show(false);
@@ -197,7 +197,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		await api.delete("user", {
 			headers: {
-				authorization: userId,
+				"x-access-token": userId,
 				password: userPasswordOnDelete
 			}})
 			.then((response) => {
@@ -284,7 +284,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				data.append("images", new File([blob], "c3." + extension));
 			}
 		}
-		
+
 		var upCard = false;
 		var t = companyInfo.productTypes.join(", ");
 
@@ -294,10 +294,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		await api.post("company", data , {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}
 		}).then(() => {
-			
+
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -307,7 +307,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 			setToastShow(true);
 		});
-		
+
 		if(upCard) {
 			await api.put("userCard", {}, {
 				headers : {
@@ -368,7 +368,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		await api.put("companyUpdateTimetable", {timetable}, {
 			headers : {
-				authorization: userId,
+				"x-access-token": userId,
 			}
 		}).then(() => {
 			setModalTimetable(false);
@@ -552,14 +552,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 											<h6 align="right">Desconto: R${companyInfo.cards[index].discount}*</h6>
 										</Col>
 									</Row>
-						
-									<ProgressBar 
-										variant={(parseInt(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax) < 40 ? "danger" : "warning"} 
-										animated now={parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)} 
+
+									<ProgressBar
+										variant={(parseInt(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax) < 40 ? "danger" : "warning"}
+										animated now={parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}
 										label={`${parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}%`} />
 									<br/>
 								</>
-								: 
+								:
 								null
 						))}
 						<small id="text-OBS">* OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!</small>
