@@ -325,7 +325,7 @@ export default function WebsiteNavbar({
 						<Image
 							className={"border-0 m-auto"}
 							width="100px"
-							src={companyInfo.logo_url}
+							src={process.env.REACT_APP_API_URL + companyInfo.logo_url}
 							alt="Logo"
 							fluid
 						/>

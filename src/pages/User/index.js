@@ -401,7 +401,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 						<Image
 							id={user.thumbnail || preview ? "thumbnail" : "camera"}
 							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-							src={preview ? preview : (user.thumbnail ? user.thumbnail_url : camera)}
+							src={preview ? preview : (user.thumbnail ? process.env.REACT_APP_API_URL + user.thumbnail_url : camera)}
 							alt="Selecione sua imagem"
 							onClick={() => document.getElementById("inputImage").click()}
 							rounded
@@ -1182,7 +1182,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									<Image
 										id={companyInfo.logo || logoPreview ? "thumbnail" : "camera"}
 										className={companyInfo.logo || logoPreview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-										src={logoPreview ? logoPreview : (companyInfo.logo ? companyInfo.logo_url : camera)}
+										src={logoPreview ? logoPreview : (companyInfo.logo ? process.env.REACT_APP_API_URL + companyInfo.logo_url : camera)}
 										alt="Selecione sua logo"
 										onClick={() => document.getElementById("inputLogo").click()}
 										rounded
@@ -1235,7 +1235,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										<Image
 											id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
 											className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? companyInfo.carousel_urls[0] : camera)}
+											src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[0] : camera)}
 											alt="Selecione sua imagem para o carrossel"
 											onClick={() => document.getElementById("inputCarousel").click()}
 											rounded
@@ -1246,7 +1246,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										<Image
 											id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
 											className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? companyInfo.carousel_urls[1] : camera)}
+											src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[1] : camera)}
 											alt="Selecione sua imagem para o carrossel"
 											onClick={() => document.getElementById("inputCarousel").click()}
 											rounded
@@ -1257,7 +1257,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										<Image
 											id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
 											className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? companyInfo.carousel_urls[2] : camera)}
+											src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[2] : camera)}
 											alt="Selecione sua imagem para o carrossel"
 											onClick={() => document.getElementById("inputCarousel").click()}
 											rounded

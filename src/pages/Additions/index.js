@@ -282,7 +282,11 @@ export default function Additions({ userId }) {
 	const additionCard = (addition) => {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={addition._id}>
-				<Card.Img variant="top" src={addition.thumbnail ? addition.thumbnail_url : camera} fluid="true" />
+				<Card.Img
+					variant="top"
+					src={addition.thumbnail ? process.env.REACT_APP_API_URL + addition.thumbnail_url : camera}
+					fluid="true"
+				/>
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
 					<div className="d-flex justify-content-between flex-wrap my-auto">
@@ -383,7 +387,10 @@ export default function Additions({ userId }) {
 								<Image
 									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
+									src={preview ?
+										preview
+										:
+										(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
 									rounded
@@ -464,7 +471,7 @@ export default function Additions({ userId }) {
 								<Image
 									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={preview ? preview : (additionThumbnail_url ? additionThumbnail_url : camera)}
+									src={preview ? preview : (additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
 									rounded

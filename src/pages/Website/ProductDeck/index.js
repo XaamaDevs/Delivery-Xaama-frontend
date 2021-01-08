@@ -17,7 +17,7 @@ export default function ProductDeck({ products }) {
 						<Row>
 							<Col sm>
 								<Image
-									src={product.product.thumbnail_url ? product.product.thumbnail_url : camera}
+									src={product.product.thumbnail_url ? process.env.REACT_APP_API_URL + product.product.thumbnail_url : camera}
 									alt="thumbnail"
 									fluid
 									rounded

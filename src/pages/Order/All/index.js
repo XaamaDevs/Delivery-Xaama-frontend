@@ -236,7 +236,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													<Image
 														className="w-100"
 														style={{ borderRadius: "50%" }}
-														src={order.user.thumbnail ? order.user.thumbnail_url: camera}
+														src={order.user.thumbnail ? process.env.REACT_APP_API_URL + order.user.thumbnail_url: camera}
 														alt="thumbnail"
 														fluid
 													/>

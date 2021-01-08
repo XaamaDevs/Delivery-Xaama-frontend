@@ -31,7 +31,7 @@ export default function Home({ companyInfo }) {
 						<Carousel.Item key={index}>
 							<Image
 								className="w-100"
-								src={url}
+								src={process.env.REACT_APP_API_URL + url}
 								alt={"Slide " + (index+1)}
 								fluid
 							/>

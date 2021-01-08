@@ -409,7 +409,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const productCard = (product) => {
 		return (
 			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-				<Card.Img variant="top" src={product.thumbnail ? product.thumbnail_url : camera} fluid="true" />
+				<Card.Img variant="top" src={product.thumbnail ? process.env.REACT_APP_API_URL + product.thumbnail_url : camera} fluid="true" />
 				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
 					<Card.Title>{product.name}</Card.Title>
 					<Card.Text>
@@ -571,7 +571,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								<Image
 									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+									src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
 									rounded
@@ -713,7 +713,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								<Image
 									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
 									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={preview ? preview : (productThumbnail_url ? productThumbnail_url : camera)}
+									src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={inputImage}
 									rounded
@@ -881,7 +881,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							<Image
 								id="thumbnail"
 								className={preview || productOrder.thumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
-								src={preview ? preview : (productOrder.thumbnail_url ? productOrder.thumbnail_url : camera)}
+								src={preview ? preview : (productOrder.thumbnail_url ? process.env.REACT_APP_API_URL + productOrder.thumbnail_url : camera)}
 								alt="Imagem do produto"
 								rounded
 								fluid
@@ -945,7 +945,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 														<Image
 															className="d-block m-auto"
 															style={{height: "100px"}}
-															src={add.thumbnail_url ? add.thumbnail_url : camera}
+															src={add.thumbnail_url ? process.env.REACT_APP_API_URL + add.thumbnail_url : camera}
 															alt="Adição"
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">

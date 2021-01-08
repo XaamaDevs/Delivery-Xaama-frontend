@@ -127,7 +127,7 @@ export default function AllUsers({ userId }) {
 												<Image
 													className="w-100"
 													style={{ borderRadius: "50%" }}
-													src={user.thumbnail ? user.thumbnail_url: camera }
+													src={user.thumbnail ? process.env.REACT_APP_API_URL + user.thumbnail_url: camera }
 													alt="thumbnail"
 													fluid
 												/>
