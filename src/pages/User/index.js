@@ -140,8 +140,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		}
 		
 		data.append("status", s);
-
-		if(action === 0) {
+		
+		if(action === 0 || action === 1) {
 			if(thumbnail) {
 				data.append("thumbnail", thumbnail);
 			} else {
@@ -152,6 +152,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 					data.append("thumbnail", new File([blob], "thumbnail." + extension));
 				}
 			}
+		}
+		var delImg = false;
+		
+		if(action === null) {
+			delImg = true;
 		} else if(action === 1) {
 			data.append("passwordN", userPasswordN);
 			data.append("passwordO", userPasswordO);
@@ -160,6 +165,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			setUserPasswordN("");
 		}
 
+		data.append("delImg", delImg);
 		await api.put("user", data , {
 			headers : {
 				authorization: userId
