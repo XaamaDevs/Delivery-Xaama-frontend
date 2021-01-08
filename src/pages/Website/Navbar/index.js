@@ -127,31 +127,31 @@ export default function WebsiteNavbar({
 	useEffect(() => {
 		async function Products() {
 			var myMapTypesProducts = new Map();
-			
+
 			//	Calculate order total price
 			if(order && order.products){
 				for(var x of order.products) {
 					if(x.size >= 0 && x.size < x.product.prices.length) {
-						myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
-							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) : 
+						myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
+							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) :
 								x.product.prices[x.size]);
 					}
 
 					if(x.additions && x.additions.length) {
 						for(var y of x.additions) {
-							myMapTypesProducts.set(x && x.product.type ? x.product.type : "", 
-								myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + y.price) : 
+							myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
+								myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + y.price) :
 									y.price);
 						}
 					}
 				}
 			}
-			
+
 			setOrderType(myMapTypesProducts);
 		}
 
 		Products();
-	
+
 	}, [order.products, shoppingBasketModal]);
 
 	useEffect(() => {
@@ -159,7 +159,7 @@ export default function WebsiteNavbar({
 		if(user && user.cards && companyInfo && companyInfo.cards){
 			user.cards.map((card,index) => {
 				card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
-					d = parseInt(d) + parseInt((companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? 
+					d = parseInt(d) + parseInt((companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ?
 						companyInfo.cards[index].discount : orderType.get(card.cardFidelity)))
 					:
 					null;
@@ -205,15 +205,15 @@ export default function WebsiteNavbar({
 				}
 				setToastShow(true);
 			});
-		
+
 		var status = [];
 
 		user.cards.map((card,index) => (
-			card.completed && !card.status && orderType && 
-				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ? 
+			card.completed && !card.status && orderType &&
+				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 				status.push(true) : status.push(card.status)
 		));
-		
+
 		if(orderOk) {
 			const data = new FormData();
 
@@ -232,7 +232,7 @@ export default function WebsiteNavbar({
 
 			await api.put("user", data, {
 				headers : {
-					authorization: user._id
+					"x-access-token": userId
 				}})
 				.then(() => {
 					setTitle("Pedido enviado!");
@@ -499,7 +499,7 @@ export default function WebsiteNavbar({
 							/>
 						</FormGroup>
 						:
-						null 
+						null
 					}
 					<Tabs fill defaultActiveKey="finishOrder" id="uncontrolled-tab-example">
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
@@ -546,7 +546,7 @@ export default function WebsiteNavbar({
 									:
 									null
 								}
-								
+
 								{ !noCards ?
 									<OverlayTrigger
 										placement="top"
@@ -563,7 +563,7 @@ export default function WebsiteNavbar({
 									:
 									null
 								}
-								
+
 								{	user.cards && user.cards.length && orderType && !noCards ?
 									<FormGroup>
 										{user.cards.map((card,index) => (

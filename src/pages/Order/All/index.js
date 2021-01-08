@@ -66,7 +66,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	useEffect(() => {
 		async function loadOrder() {
-			await api.get("order", {
+			await api.get("orderAll", {
 				headers : {
 					"x-access-token": userId
 				}
@@ -98,7 +98,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function handleDeliver(event, order) {
 		event.preventDefault();
-		
+
 		var orderOK = false;
 
 		await api.put("/order/" + order._id, { status:true })
@@ -114,7 +114,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 				setModalAlert(true);
 			});
-			
+
 		if(orderOK) {
 			var data = [];
 
@@ -122,7 +122,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 			if(order && order.products) {
 				for(var p of order.products) {
-					myMapTypesProducts.set(p.product && p.product.type ? p.product.type : "", 
+					myMapTypesProducts.set(p.product && p.product.type ? p.product.type : "",
 						myMapTypesProducts.get(p.product.type) ? myMapTypesProducts.get(p.product.type) + 1 : 1);
 				}
 			}
@@ -136,11 +136,11 @@ export default function AllOrders({ userId, companyInfo }) {
 				data.push(cardsNewQtd);
 			}
 
-			await api.put("/user/" + order.user._id, {cardsNewQtd: data}, {
-				headers: {
-					authorization : userId
-				}
-			})
+			await api.put("/userUpdateCard", { cardsNewQtd: data }, {
+				headers : {
+					"x-access-token": userId,
+					"order-user-id": order.user._id
+				}})
 				.then(() => {
 					setTitle("Pedido enviado!");
 					setMessage("Alterações feitas com sucesso!");

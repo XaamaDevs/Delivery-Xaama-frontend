@@ -160,7 +160,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			setUserPasswordN("");
 		}
 
-		await api.put("user", data , {
+		await api.put("user", data, {
 			headers : {
 				"x-access-token": userId
 			}})
