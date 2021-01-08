@@ -140,7 +140,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		}
 
 		data.append("status", s);
-		
+
 		if(action === 0 || action === 1) {
 			if(thumbnail) {
 				data.append("thumbnail", thumbnail);
@@ -154,7 +154,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 		}
 		var delImg = false;
-		
+
 		if(action === null) {
 			delImg = true;
 		} else if(action === 1) {
