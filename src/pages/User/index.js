@@ -126,22 +126,61 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	async function handleUserUpdate(event, action = null) {
 		event.preventDefault();
 
-		const data = new FormData();
-
-		data.append("name", userName);
-		data.append("email", userEmail);
-		data.append("phone", userPhone && userPhone.length ? userPhone : "99999999999");
-		data.append("address", userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa");
-
 		var s = [];
 
 		for (var c of user.cards) {
 			s.push(c.status);
 		}
 
-		data.append("status", s);
+		var data = {
+			name: userName,
+			email: userEmail,
+			phone: userPhone && userPhone.length ? userPhone : "99999999999",
+			address: userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa",
+			status: s,
+		};
 
-		if(action === 0 || action === 1) {
+		if(action === 1) {
+			data["passwordN"] = userPasswordN;
+			data["passwordO"] = userPasswordO;
+
+			setUserPasswordO("");
+			setUserPasswordN("");
+		}
+
+		await api.put("user", data , {
+			headers : {
+				"x-access-token": userId
+			}})
+			.then(() => {
+				setModal1Show(false);
+				setModal2Show(false);
+				setTitle("Alterações de usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				if(!action) {
+					setModalAlertThumbnail(true);
+				} else {
+					setToastShow(true);
+				}
+			});
+	}
+	
+	//	Function to handle update user
+	async function handleUserThumbnailUpdate(event, action = null) {
+		event.preventDefault();
+
+		const data = new FormData();
+
+		if(action === 0) {
 			if(thumbnail) {
 				data.append("thumbnail", thumbnail);
 			} else {
@@ -157,16 +196,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		if(action === null) {
 			delImg = true;
-		} else if(action === 1) {
-			data.append("passwordN", userPasswordN);
-			data.append("passwordO", userPasswordO);
-
-			setUserPasswordO("");
-			setUserPasswordN("");
 		}
 
 		data.append("delImg", delImg);
-		await api.put("user", data , {
+
+		await api.put("userThumbnail", data , {
 			headers : {
 				"x-access-token": userId
 			}})
@@ -390,7 +424,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		<div className="user-container h-100">
 			<div className="d-flex flex-row flex-wrap h-100">
 				<Col className="m-auto p-3" sm="4">
-					<Form className="d-flex flex-column" onSubmit={(e) => handleUserUpdate(e, 0)}>
+					<Form className="d-flex flex-column" onSubmit={(e) => handleUserThumbnailUpdate(e, 0)}>
 						<Form.Control
 							id="inputImage"
 							className="d-none"
@@ -418,7 +452,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 								</Button>
 								<Button
 									className="my-1 mx-2"
-									onClick={handleUserUpdate}
+									onClick={handleUserThumbnailUpdate}
 									variant="outline-danger"
 								>
 									Apagar foto
@@ -580,7 +614,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 					<Modal.Title>Modificar usuário</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={(e) => handleUserUpdate(e, 0)}>
+					<Form onSubmit={(e) => handleUserUpdate(e)}>
 						<Row>
 							<Col sm>
 								<Form.Group controlId="userName">

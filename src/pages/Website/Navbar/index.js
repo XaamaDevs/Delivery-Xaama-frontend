@@ -177,7 +177,7 @@ export default function WebsiteNavbar({
 
 		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
-		const data = {
+		var data = {
 			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
@@ -214,23 +214,15 @@ export default function WebsiteNavbar({
 				status.push(true) : status.push(card.status)
 		));
 
-		if(orderOk) {
-			const data = new FormData();
-
-			data.append("name", user.name);
-			data.append("email", user.email);
-			data.append("phone", user.phone ? user.phone : deliverPhone);
-			data.append("address", user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"));
-			data.append("status", status);
-			data.append("delImg", "false");
-
-			if(user.thumbnail) {
-				const blob = await fetch(user.thumbnail_url).then(r => r.blob());
-				const token = user.thumbnail_url.split(".");
-				const extension = token[token.length-1];
-				data.append("thumbnail", new File([blob], "thumbnail." + extension));
-			}
-
+		if(orderOk) {    
+			data = {
+				name: user.name,
+				email: user.email,
+				phone: user.phone ? user.phone : deliverPhone,
+				address: user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"),
+				status: status,
+			};
+			
 			await api.put("user", data, {
 				headers : {
 					"x-access-token": userId
