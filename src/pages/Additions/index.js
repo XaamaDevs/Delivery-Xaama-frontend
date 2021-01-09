@@ -546,10 +546,9 @@ export default function Additions({ userId }) {
 			<Modal show={additionDeleteModal} onHide={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Remover adição</Modal.Title>
+					<Modal.Title>Remover adição {additionName}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<h3>{additionName}</h3>
 					Você tem certeza que deseja remover esta adição?
 				</Modal.Body>
 				<Modal.Footer>

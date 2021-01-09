@@ -438,14 +438,14 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										className="btn"
 										id="btn-available"
 									>
-                    Disponível
+										Disponível
 									</Button>
 									:
 									<Button
 										variant="dark"
 										size="sm"
 									>
-                    Indisponível
+										Indisponível
 									</Button>
 								}
 
@@ -460,7 +460,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							:
 							<>
 								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                  || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+									|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 
 									product.available ?
 										<Button
@@ -477,14 +477,14 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 												setProductOrderModal(true);
 											}}
 										>
-                      Adicionar aos pedidos
+											Adicionar aos pedidos
 										</Button>
 										:
 										<Button
 											variant="danger"
 											size="sm"
 										>
-                      Indisponível no momento
+											Indisponível no momento
 										</Button>
 									:
 									<Button
@@ -843,16 +843,14 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Remover produto</Modal.Title>
+					<Modal.Title>Remover {productName && productType ? 
+						productType[0].toUpperCase() + productType.slice(1) + " " + productName
+						:
+						null
+					}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<h3>
-						{productName && productType ?
-							productType[0].toUpperCase() + productType.slice(1) + " " + productName
-							:
-							null
-						}
-					</h3>
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
@@ -950,7 +948,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
 															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-                                || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+																|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 																<Button
 																	className="mx-auto"
 																	size="sm"
@@ -1025,7 +1023,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						Fechar
 					</Button>
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-            || (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" onClick={handleProductOrder}>
 							{"Adicionar ao carrinho +R$" + productTotal}
 						</Button>
@@ -1033,7 +1031,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						<Button
 							variant="danger"
 						>
-              Estamos fechados
+							Estamos fechados
 						</Button>
 					}
 				</Modal.Footer>
