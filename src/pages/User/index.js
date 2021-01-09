@@ -1041,8 +1041,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									<Form.Control
 										value={companyFreight}
 										onChange={e => setCompanyFreight(e.target.value)}
-										type="text"
+										type="number"
 										placeholder="Valor do frete"
+										min="1"
+										max="10"
 										required
 									/>
 								</Form.Group>
