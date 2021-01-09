@@ -214,7 +214,7 @@ export default function WebsiteNavbar({
 				status.push(true) : status.push(card.status)
 		));
 
-		if(orderOk) {    
+		if(orderOk) {
 			data = {
 				name: user.name,
 				email: user.email,
@@ -222,7 +222,7 @@ export default function WebsiteNavbar({
 				address: user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"),
 				status: status,
 			};
-			
+
 			await api.put("user", data, {
 				headers : {
 					"x-access-token": userId
