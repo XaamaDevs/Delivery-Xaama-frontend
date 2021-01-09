@@ -222,6 +222,7 @@ export default function WebsiteNavbar({
 			data.append("phone", user.phone ? user.phone : deliverPhone);
 			data.append("address", user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"));
 			data.append("status", status);
+			data.append("delImg", "false");
 
 			if(user.thumbnail) {
 				const blob = await fetch(user.thumbnail_url).then(r => r.blob());

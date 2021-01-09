@@ -130,7 +130,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		data.append("name", userName);
 		data.append("email", userEmail);
-		data.append("phone", userPhone && userPhone.length ? userPhone : "");
+		data.append("phone", userPhone && userPhone.length ? userPhone : "99999999999");
 		data.append("address", userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa");
 
 		var s = [];
