@@ -73,30 +73,6 @@ export default function About({ companyInfo }) {
 							</Col>
 						</Row>
 					</Card.Body>
-					<Card.Header>
-						<Row>
-							<Col className="text-center">
-								Copyright &#169; {" " + (new Date).getFullYear() + " Criado por "}
-								<a
-									className="text-warning"
-									href="https://github.com/DiegoTeixeira7"
-									target="_blank"
-									rel="noreferrer"
-								>
-									Diêgo Teixeira
-								</a>
-								{" e "}
-								<a
-									className="text-warning"
-									href="https://github.com/ThiagoPereiraUFV"
-									target="_blank"
-									rel="noreferrer"
-								>
-									Thiago Pereira
-								</a>
-							</Col>
-						</Row>
-					</Card.Header>
 				</Card>
 			</Container>
 		</div>

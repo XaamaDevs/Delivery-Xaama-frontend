@@ -9,6 +9,7 @@ import HomePage from "./pages/Website/Home";
 import NotFoundPage from "./pages/Website/NotFound";
 import About from "./pages/Website/About";
 import Navbar from "./pages/Website/Navbar";
+import Footer from "./pages/Website/Footer";
 import Loading from "./pages/Website/Loading";
 import User from "./pages/User";
 import AllUsers from "./pages/User/All";
@@ -44,7 +45,7 @@ export default function Routes() {
 
 	//  Defining constant for manipulating the time
 	const [data, setData] = useState(new Date());
-	
+
 	// Aux Variables
 	const [noCards, setNoCards] = useState(true);
 
@@ -81,7 +82,7 @@ export default function Routes() {
 
 		fetchData();
 	}, [userId, order]);
-	
+
 	useEffect(() => {
 		if(companyInfo && companyInfo.cards) {
 			companyInfo.cards.map((card) => (
@@ -182,6 +183,7 @@ export default function Routes() {
 				/>
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
+			<Footer />
 		</BrowserRouter>
 	);
 }
