@@ -136,7 +136,7 @@ export default function Menu({ companyInfo, userId }) {
 	
 		await api.put("companyUpdateCards", data, {
 			headers : {
-				authorization: userId
+				"x-access-token": userId
 			}})
 			.then(() => {
 				setModalCards(false);

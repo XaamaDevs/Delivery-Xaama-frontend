@@ -261,30 +261,118 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	async function handleCompanyUpdate(event) {
 		event.preventDefault();
 
+		const data = {
+			name: companyName,
+			email: companyEmail,
+			address: companyAddress,
+			phone: companyPhone,
+			freight: companyFreight,
+			productTypes: companyProductTypes,
+			manual: companyManual,
+			systemOpenByAdm: companySystemOpenByAdm,
+			timeDeliveryI: companyTimeDeliveryI,
+			timeDeliveryF: companyTimeDeliveryF,
+			timeWithdrawal: companyTimeWithdrawal
+		};
+
+		var upCard = false;
+		var upCompany = false;
+		var t = companyInfo.productTypes.join(", ");
+
+		if(companyProductTypes != t) {
+			upCard = true;
+		}
+
+		await api.put("company", data , {
+			headers : {
+				"x-access-token": userId
+			}
+		}).then(() => {
+			upCompany = true;
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
+
+		if(upCard && upCompany) {
+			await api.put("userCard", {}, {
+				headers : {
+					"x-access-token": userId
+				}
+			}).then(() => {
+				setModal4Show(false);
+				setModalImages(false);
+				upCard = false;
+				upCompany = false;
+				setTitle("Alterações da empresa");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+		} else if(!upCard && upCompany) {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}
+	}
+
+	//	Function to handle update company logo
+	async function handleCompanyLogoUpdate(event) {
+		event.preventDefault();
+
 		const data = new FormData();
 
-		data.append("name", companyName);
-		data.append("email", companyEmail);
-		data.append("address", companyAddress);
-		data.append("phone", companyPhone);
-		data.append("freight", companyFreight);
-		data.append("productTypes", companyProductTypes);
-		data.append("manual", companyManual);
-		data.append("systemOpenByAdm", companySystemOpenByAdm);
-		data.append("timeDeliveryI", companyTimeDeliveryI);
-		data.append("timeDeliveryF", companyTimeDeliveryF);
-		data.append("timeWithdrawal", companyTimeWithdrawal);
-
 		if(logo) {
-			data.append("images", logo);
+			data.append("logo", logo);
 		} else {
 			if(companyInfo.logo) {
 				const blob = await fetch(companyInfo.logo_url).then(r => r.blob());
 				const token = companyInfo.logo_url.split(".");
 				const extension = token[token.length-1];
-				data.append("images", new File([blob], "logo." + extension));
+				data.append("logo", new File([blob], "logo." + extension));
 			}
 		}
+
+		await api.post("companyLogo", data , {
+			headers : {
+				"x-access-token": userId
+			}
+		}).then(() => {
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
+	}
+	
+	//	Function to handle update company images carousel
+	async function handleCompanyCarouselUpdate(event) {
+		event.preventDefault();
+
+		const data = new FormData();
 
 		if(c1) {
 			data.append("images", c1);
@@ -319,19 +407,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 		}
 
-		var upCard = false;
-		var t = companyInfo.productTypes.join(", ");
-
-		if(companyProductTypes != t) {
-			upCard = true;
-		}
-
-		await api.post("company", data , {
+		await api.post("companyCarousel", data , {
 			headers : {
 				"x-access-token": userId
 			}
 		}).then(() => {
-
+			setModal4Show(false);
+			setModalImages(false);
+			setTitle("Alterações da empresa");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -341,35 +426,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 			setToastShow(true);
 		});
-
-		if(upCard) {
-			await api.put("userCard", {}, {
-				headers : {
-					authorization: userId
-				}
-			}).then(() => {
-				setModal4Show(false);
-				setModalImages(false);
-				upCard = false;
-				setTitle("Alterações da empresa");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			}).catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
-		} else {
-			setModal4Show(false);
-			setModalImages(false);
-			setTitle("Alterações da empresa");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
-		}
 	}
 
 	//  Function to change opening hours
@@ -1204,7 +1260,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				<Modal.Body>
 					<Row>
 						<Col sm>
-							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
+							<Form className="d-flex flex-column" onSubmit={handleCompanyLogoUpdate}>
 								<Form.Group controlId="inputLogo">
 									<Form.Label>Logo da empresa</Form.Label>
 									<Form.Control
@@ -1249,7 +1305,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 					</Row>
 					<Row>
 						<Col sm>
-							<Form className="d-flex flex-column" onSubmit={handleCompanyUpdate}>
+							<Form className="d-flex flex-column" onSubmit={handleCompanyCarouselUpdate}>
 								<Form.Label>Imagens do carrossel</Form.Label>
 								<Form.Control
 									id="inputCarousel"

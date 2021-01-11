@@ -76,7 +76,7 @@ export default function AllUsers({ userId }) {
 	async function handleTypeUser(event) {
 		event.preventDefault();
 
-		await api.put("/company", {
+		await api.put("/companyUser", {
 			userUpdateId,
 			type: newType,
 			password: userPassword
