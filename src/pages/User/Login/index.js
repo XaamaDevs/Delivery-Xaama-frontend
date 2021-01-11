@@ -40,7 +40,6 @@ export default function Login({ setUserId, setUser }) {
 
 			setUserId(sessionStorage.getItem("userId"));
 			setUser(response.data.user);
-			console.log(response.data.user);
 
 			history.push("/menu");
 		}).catch((error) => {

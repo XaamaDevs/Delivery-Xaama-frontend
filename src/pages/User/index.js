@@ -347,7 +347,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 		}
 
-		await api.post("companyLogo", data , {
+		await api.put("companyLogo", data , {
 			headers : {
 				"x-access-token": userId
 			}
@@ -407,7 +407,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			}
 		}
 
-		await api.post("companyCarousel", data , {
+		await api.put("companyCarousel", data , {
 			headers : {
 				"x-access-token": userId
 			}
