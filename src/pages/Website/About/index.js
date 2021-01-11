@@ -23,7 +23,8 @@ export default function About({ companyInfo }) {
 								<h5 className="text-center">
 									<a
 										href={"tel:" + companyInfo.phone}
-										className="text-white">
+										className="text-white"
+									>
 										<Row><Col><RiPhoneLine size="50"/></Col></Row>
 										<Row><Col>{companyInfo.phone}</Col></Row>
 									</a>
@@ -33,7 +34,8 @@ export default function About({ companyInfo }) {
 								<h5 className="text-center">
 									<a
 										href={"mailto:" + companyInfo.email}
-										className="text-white">
+										className="text-white"
+									>
 										<Row><Col><RiMailLine size="50"/></Col></Row>
 										<Row><Col>{companyInfo.email}</Col></Row>
 									</a>
@@ -43,7 +45,10 @@ export default function About({ companyInfo }) {
 								<h5 className="text-center">
 									<a
 										href={"https://wa.me/+55" + companyInfo.phone}
-										className="text-white">
+										className="text-white"
+										target="_blank"
+										rel="noreferrer"
+									>
 										<Row><Col><RiWhatsappLine size="50"/></Col></Row>
 										<Row><Col>{"Whatsapp"}</Col></Row>
 									</a>
@@ -68,6 +73,30 @@ export default function About({ companyInfo }) {
 							</Col>
 						</Row>
 					</Card.Body>
+					<Card.Header>
+						<Row>
+							<Col className="text-center">
+								Copyright &#169; {" " + (new Date).getFullYear() + " Criado por "}
+								<a
+									className="text-warning"
+									href="https://github.com/DiegoTeixeira7"
+									target="_blank"
+									rel="noreferrer"
+								>
+									Diêgo Teixeira
+								</a>
+								{" e "}
+								<a
+									className="text-warning"
+									href="https://github.com/ThiagoPereiraUFV"
+									target="_blank"
+									rel="noreferrer"
+								>
+									Thiago Pereira
+								</a>
+							</Col>
+						</Row>
+					</Card.Header>
 				</Card>
 			</Container>
 		</div>
