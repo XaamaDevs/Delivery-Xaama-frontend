@@ -219,7 +219,7 @@ export default function WebsiteNavbar({
 				name: user.name,
 				email: user.email,
 				phone: user.phone ? user.phone : deliverPhone,
-				address: user.address.join(", ") ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"),
+				address: user.address ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"),
 				status: status,
 			};
 
@@ -481,7 +481,7 @@ export default function WebsiteNavbar({
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Cesta de compras</Modal.Title>
+					<Modal.Title><RiShoppingBasketLine size="25" /> Cesta de compras</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					{isLoading && finish ?
