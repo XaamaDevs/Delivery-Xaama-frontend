@@ -9,7 +9,7 @@ export default function Footer() {
 	return (
 		<Col className="d-flex text-light justify-content-center align-items-end my-3">
 			<span>
-			Copyright &#169; {" " + (new Date).getFullYear() + " Criado por "}
+			Copyright &#169; {" " + (new Date).getFullYear() + " | Criado por "}
 				<a
 					className="text-warning"
 					href="https://github.com/DiegoTeixeira7"
