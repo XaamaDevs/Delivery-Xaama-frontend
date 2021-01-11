@@ -5,6 +5,9 @@ import PropTypes from "prop-types";
 //	Importing React Bootstrap features
 import { Container, Row, Col, Card } from "react-bootstrap";
 
+//	Importing React icons features
+import { RiWhatsappLine, RiPhoneLine, RiMailLine } from "react-icons/ri";
+
 //	Exporting resource to routes.js
 export default function About({ companyInfo }) {
 	return (
@@ -20,8 +23,10 @@ export default function About({ companyInfo }) {
 								<h5 className="text-center">
 									<a
 										href={"tel:" + companyInfo.phone}
-										className="text-white">
-										{companyInfo.phone}
+										className="text-white"
+									>
+										<Row><Col><RiPhoneLine size="50"/></Col></Row>
+										<Row><Col>{companyInfo.phone}</Col></Row>
 									</a>
 								</h5>
 							</Col>
@@ -29,8 +34,23 @@ export default function About({ companyInfo }) {
 								<h5 className="text-center">
 									<a
 										href={"mailto:" + companyInfo.email}
-										className="text-white">
-										{companyInfo.email}
+										className="text-white"
+									>
+										<Row><Col><RiMailLine size="50"/></Col></Row>
+										<Row><Col>{companyInfo.email}</Col></Row>
+									</a>
+								</h5>
+							</Col>
+							<Col sm>
+								<h5 className="text-center">
+									<a
+										href={"https://wa.me/+55" + companyInfo.phone}
+										className="text-white"
+										target="_blank"
+										rel="noreferrer"
+									>
+										<Row><Col><RiWhatsappLine size="50"/></Col></Row>
+										<Row><Col>{"Whatsapp"}</Col></Row>
 									</a>
 								</h5>
 							</Col>
@@ -42,15 +62,14 @@ export default function About({ companyInfo }) {
 					<Card.Body className="p-0">
 						<Row className="text-center m-5">
 							<Col sm>
-								<a
-									href={"https://www.google.com/maps/search/" + companyInfo.address}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-white"
-								>
-									<h5 className="text-center">{companyInfo.address}</h5>
-									<p className="m-0">(Clique para abrir o Google Maps)</p>
-								</a>
+								<iframe
+									width="100%"
+									height="400"
+									id="gmap_canvas"
+									src={"https://maps.google.com/maps?q=" + companyInfo.address + "&t=&z=18&ie=UTF8&iwloc=&output=embed"}
+									frameBorder="0"
+									scrolling="no"
+								></iframe>
 							</Col>
 						</Row>
 					</Card.Body>

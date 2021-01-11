@@ -53,21 +53,16 @@ h6 {
   color: #f0d890;
 }
 
-#btn-available {
+#btn-custom {
   background-color: #f0d890;
   color: #000000;
-  outline-color: #f0d890;
+  outline: none;
   border-width: 1px ;
   border-color: #f0d890;
 }
 
-#btn-open {
-  background-color: #f0d890;
-  color: #000000;
-  font-size: 15px;
-  outline-color: #f0d890;
-  border-width: 4px ;
-  border-color: #f0d890;
+#btn-custom:hover {
+  background-color: #f0d890c2;
 }
 
 #root {

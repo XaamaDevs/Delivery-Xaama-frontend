@@ -433,10 +433,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 								{product.available ?
 									<Button
-										variant="success"
+										variant="light"
 										size="sm"
 										className="btn"
-										id="btn-available"
+										id="btn-custom"
 									>
 										Disponível
 									</Button>
@@ -843,7 +843,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Remover {productName && productType ? 
+					<Modal.Title>Remover {productName && productType ?
 						productType[0].toUpperCase() + productType.slice(1) + " " + productName
 						:
 						null
