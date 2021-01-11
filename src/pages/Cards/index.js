@@ -26,11 +26,11 @@ import api from "../../services/api";
 
 //	Exporting resource to routes.js
 export default function Menu({ companyInfo, userId }) {
-	
+
 	// Card variable
 	const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
 	const [types] = useState(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
-	
+
 	const [card, setCard] = useState(null);
 	const [cardType, setCardType] = useState(null);
 	const [cardAvailable, setCardAvailable] = useState(null);
@@ -85,10 +85,10 @@ export default function Menu({ companyInfo, userId }) {
 				}
 				<div className="d-flex justify-content-between flex-wrap my-auto">
 					<Button
-						variant="success"
+						variant="light"
 						size="sm"
 						className="btn"
-						id="btn-available"
+						id="btn-custom"
 						onClick ={e => setModalCards(e)}
 					>
 						Modificar
@@ -110,7 +110,7 @@ export default function Menu({ companyInfo, userId }) {
 			if(c.type == typeP) {
 				setCard(c);
 				setCardType(typeP);
-				setCardAvailable(c.available); 
+				setCardAvailable(c.available);
 				setCardQtdMax(c.qtdMax);
 				setCardDiscount(c.discount);
 			}
@@ -128,12 +128,12 @@ export default function Menu({ companyInfo, userId }) {
 				c.discount = cardDiscount ? cardDiscount : 0;
 			}
 		}
-		
+
 		const data = {
 			productTypes: types.join(", "),
 			cards: companyCards
 		};
-	
+
 		await api.put("companyUpdateCards", data, {
 			headers : {
 				authorization: userId
@@ -190,7 +190,7 @@ export default function Menu({ companyInfo, userId }) {
 										<InputGroup.Prepend>
 											<InputGroup.Checkbox
 												checked={cardAvailable ? cardAvailable : false}
-												onChange={e => setCardAvailable(e.target.checked)} 
+												onChange={e => setCardAvailable(e.target.checked)}
 											/>
 										</InputGroup.Prepend>
 										<InputGroup.Append>
@@ -198,7 +198,7 @@ export default function Menu({ companyInfo, userId }) {
 										</InputGroup.Append>
 									</InputGroup>
 								</Form.Group>
-							</Col>	
+							</Col>
 						</Row>
 						<Row>
 							<Col>

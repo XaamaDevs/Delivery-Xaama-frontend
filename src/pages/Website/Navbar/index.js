@@ -674,7 +674,10 @@ export default function WebsiteNavbar({
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button
-							id="btn-open"
+							variant="light"
+							size="md"
+							className="btn"
+							id="btn-custom"
 						>
 							Aberto agora
 						</Button>

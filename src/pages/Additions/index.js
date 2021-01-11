@@ -300,10 +300,10 @@ export default function Additions({ userId }) {
 
 						{addition.available ?
 							<Button
-								variant="success"
+								variant="light"
 								size="sm"
 								className="btn"
-								id="btn-available"
+								id="btn-custom"
 							>
                 Disponível
 							</Button>
