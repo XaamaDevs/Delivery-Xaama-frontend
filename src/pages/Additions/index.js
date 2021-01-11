@@ -302,7 +302,6 @@ export default function Additions({ userId }) {
 							<Button
 								variant="light"
 								size="sm"
-								className="btn"
 								id="btn-custom"
 							>
                 Disponível

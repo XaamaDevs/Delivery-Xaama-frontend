@@ -53,18 +53,6 @@ h6 {
   color: #f0d890;
 }
 
-#btn-custom {
-  background-color: #f0d890;
-  color: #000000;
-  outline: none;
-  border-width: 1px ;
-  border-color: #f0d890;
-}
-
-#btn-custom:hover {
-  background-color: #f0d890c2;
-}
-
 #root {
 	overflow-y: auto;
 
@@ -82,7 +70,19 @@ h6 {
 
 /*	Button style	*/
 
-#btn-lightpink {
+#btn-custom {
+  background-color: #f0d890;
+  color: #000000;
+  outline: none;
+  border-width: 1px ;
+  border-color: #f0d890;
+}
+
+#btn-custom:hover {
+  background-color: #f0d890c2;
+}
+
+#btn-custom-outline {
   background-color: transparent;
   color: #f0d890;
   outline-color: #f0d890;
@@ -90,7 +90,7 @@ h6 {
   border-color: #f0d890;
 }
 
-#btn-lightpink:hover {
+#btn-custom-outline:hover {
   background-color: #f0d890;
   border-color: #f0d890;
   color: #000000;

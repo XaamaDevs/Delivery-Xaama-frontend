@@ -298,7 +298,8 @@ export default function AllOrders({ userId, companyInfo }) {
 											</Card.Text>
 											<Row className="d-flex justify-content-between">
 												<Button
-													id="btn-lightpink"
+													variant="light"
+													id="btn-custom-outline"
 													className="m-1"
 													onClick={e => handleSetOrder(e, order)}
 												>

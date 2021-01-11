@@ -7,9 +7,14 @@ import { Col } from "react-bootstrap";
 //	Exporting resource to routes.js
 export default function Footer() {
 	return (
-		<Col className="d-flex text-light justify-content-center align-items-end my-3">
-			<span>
-			Copyright &#169; {" " + (new Date).getFullYear() + " | Criado por "}
+		<div className="d-flex justify-content-center align-items-end flex-row flex-wrap text-light mt-auto mb-3">
+			<Col className="text-center p-0 m-0" sm={"auto"}>
+				Copyright &#169; {" " + (new Date).getFullYear() + " |"}
+			</Col>
+			<Col className="text-center p-0 m-0 ml-1" sm={"auto"}>
+				{"Criado por "}
+			</Col>
+			<Col className="text-center p-0 m-0 ml-1" sm={"auto"}>
 				<a
 					className="text-warning"
 					href="https://github.com/DiegoTeixeira7"
@@ -27,7 +32,7 @@ export default function Footer() {
 				>
 					Thiago Pereira
 				</a>
-			</span>
-		</Col>
+			</Col>
+		</div>
 	);
 }

@@ -435,7 +435,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									<Button
 										variant="light"
 										size="sm"
-										className="btn"
 										id="btn-custom"
 									>
 										Disponível
