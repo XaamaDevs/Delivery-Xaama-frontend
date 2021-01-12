@@ -12,8 +12,7 @@ import {
 	CardDeck,
 	Form,
 	Col,
-	Row,
-	InputGroup
+	Row
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -54,7 +53,7 @@ export default function Menu({ companyInfo, userId }) {
 								className="btn-outline-warning rounded"
 								href={"#" + index}
 								onClick={e => handleCardsList(e, typeP)}>
-								{typeP}
+								{typeP[0].toUpperCase() + typeP.slice(1)}
 							</Nav.Link>
 						</Nav.Item>
 					))
@@ -68,7 +67,7 @@ export default function Menu({ companyInfo, userId }) {
 	const CardC = (
 		<Card className="col-sm-4 my-1 p-0" bg="secondary" key={card && card.type ? card.type : null}>
 			<Card.Body className="d-flex align-content-between flex-column" key={card && card.type ? card.type : null}>
-				<Card.Title>{card && card.type ? card.type : null}</Card.Title>
+				<Card.Title>{card && card.type ? card.type[0].toUpperCase() + card.type.slice(1) : null}</Card.Title>
 				{card && card.available ?
 					<>
 						<Card.Text>
@@ -185,17 +184,12 @@ export default function Menu({ companyInfo, userId }) {
 						<Row>
 							<Col>
 								<Form.Group controlId="type">
-									<InputGroup size="sm" className="mb-3">
-										<InputGroup.Prepend>
-											<InputGroup.Checkbox
-												checked={cardAvailable ? cardAvailable : false}
-												onChange={e => setCardAvailable(e.target.checked)}
-											/>
-										</InputGroup.Prepend>
-										<InputGroup.Append>
-											<InputGroup.Text>Marque aqui se existe cartão fidelidade para esse produto!</InputGroup.Text>
-										</InputGroup.Append>
-									</InputGroup>
+									<Form.Check
+										type={"checkbox"}
+										checked={cardAvailable ? cardAvailable : false}
+										onChange={e => setCardAvailable(e.target.checked)}
+										label={"Marque aqui se existe cartão fidelidade para esse produto!"}
+									/>
 								</Form.Group>
 							</Col>
 						</Row>

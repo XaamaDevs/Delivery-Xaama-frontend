@@ -19,7 +19,7 @@ export default function About({ companyInfo }) {
 					</Card.Header>
 					<Card.Body className="p-0">
 						<Row className="text-center m-5">
-							<Col sm>
+							<Col className="my-3" sm>
 								<h5 className="text-center">
 									<a
 										href={"tel:" + companyInfo.phone}
@@ -30,7 +30,7 @@ export default function About({ companyInfo }) {
 									</a>
 								</h5>
 							</Col>
-							<Col sm>
+							<Col className="my-3" sm>
 								<h5 className="text-center">
 									<a
 										href={"mailto:" + companyInfo.email}
@@ -41,7 +41,7 @@ export default function About({ companyInfo }) {
 									</a>
 								</h5>
 							</Col>
-							<Col sm>
+							<Col className="my-3" sm>
 								<h5 className="text-center">
 									<a
 										href={"https://wa.me/+55" + companyInfo.phone}
@@ -60,7 +60,7 @@ export default function About({ companyInfo }) {
 						<h1 className="display-5 text-center m-3">Nosso Endereço</h1>
 					</Card.Header>
 					<Card.Body className="p-0">
-						<Row className="text-center m-5">
+						<Row className="text-center m-0">
 							<Col sm>
 								<iframe
 									width="100%"
