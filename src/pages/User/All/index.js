@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 import { Button, Modal, Form, Row, Col, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../../Website/Alert";
-import Push from "../../Website/Push";
+import Alert from "../../../components/Alert";
+import Push from "../../../components/Push";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";

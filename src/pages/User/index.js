@@ -9,8 +9,8 @@ import { useHistory } from "react-router-dom";
 import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../Website/Alert";
-import Push from "../Website/Push";
+import Alert from "../../components/Alert";
+import Push from "../../components/Push";
 
 // Importing backend api
 import api from "../../services/api";

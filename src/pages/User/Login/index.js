@@ -9,7 +9,7 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Button, Col, Row } from "react-bootstrap";
 
 //	Importing website utils
-import Push from "../../Website/Push";
+import Push from "../../../components/Push";
 
 //	Importing api to communicate to backend
 import api from "../../../services/api";

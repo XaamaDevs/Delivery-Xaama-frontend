@@ -17,9 +17,9 @@ import {
 } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../Website/Alert";
-import Push from "../Website/Push";
-import ProductDeck from "../Website/ProductDeck";
+import Alert from "../../components/Alert";
+import Push from "../../components/Push";
+import ProductDeck from "../../components/ProductDeck";
 
 // Importing image from camera
 import camera from "../../assets/camera.svg";
