@@ -218,14 +218,40 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	async function handleProductUpdate(event) {
 		event.preventDefault();
 
-		const data = new FormData();
+		const data = {
+			name: productName,
+			ingredients: productIngredients,
+			prices: productPrices,
+			type: productType,
+			sizes: productSizes,
+			available: productAvailable
+		};
 
-		data.append("name", productName);
-		data.append("ingredients", productIngredients);
-		data.append("prices", productPrices);
-		data.append("type", productType);
-		data.append("sizes", productSizes);
-		data.append("available", productAvailable);
+		await api.put("product/" + productId, data, {
+			headers : {
+				"x-access-token": userId
+			}})
+			.then(() => {
+				setProductUpdateModal(false);
+				setTitle("Alterações produto!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+	}
+	
+	async function handleProductThumbnailUpdate(event) {
+		event.preventDefault();
+
+		const data = new FormData();
 
 		if(productThumbnail) {
 			data.append("thumbnail", productThumbnail);
@@ -238,7 +264,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			}
 		}
 
-		await api.put("product/" + productId, data, {
+		await api.put("productThumbnail/" + productId, data, {
 			headers : {
 				"x-access-token": userId
 			}})
@@ -704,14 +730,15 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleProductUpdate}>
-						<Row>
-							<Col className="d-flex m-auto" sm>
+					<Row>
+						<Col className="d-flex m-auto" sm>
+							<Form onSubmit={handleProductThumbnailUpdate}>
 								<Form.Control
 									id="inputImage"
 									className="d-none"
 									type="file"
 									onChange={event => setProductThumbnail(event.target.files[0])}
+									required
 								/>
 								<Image
 									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
@@ -722,8 +749,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									rounded
 									fluid
 								/>
-							</Col>
-							<Col sm>
+
+								{productThumbnail_url ? 
+									<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+										Alterar imagem
+									</Button>
+									:
+									<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+										Adicionar imagem
+									</Button>
+								}
+							
+							</Form>
+						</Col>
+						<Col sm>
+							<Form onSubmit={handleProductUpdate}>
 								<Form.Group controlId="productName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control
@@ -779,10 +819,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										/>
 									</OverlayTrigger>
 								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm>
 								<Form.Group controlId="productIngredients">
 									<Form.Label>Ingredientes</Form.Label>
 									<OverlayTrigger
@@ -804,8 +840,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										/>
 									</OverlayTrigger>
 								</Form.Group>
-							</Col>
-							<Col sm>
+						
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
 									<Form.Control
@@ -829,18 +864,18 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										onChange={e => setProductAvailable(e.target.checked)}
 									/>
 								</Form.Group>
-							</Col>
-						</Row>
-					</Form>
+								<Modal.Footer>
+									<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
+										Fechar
+									</Button>
+									<Button variant="warning" type="submit">
+										Salvar alterações
+									</Button>
+								</Modal.Footer>
+							</Form>
+						</Col>
+					</Row>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleProductUpdate}>
-						Salvar alterações
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
