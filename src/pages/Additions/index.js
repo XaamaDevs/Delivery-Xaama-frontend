@@ -123,15 +123,7 @@ export default function Additions({ userId }) {
 		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
 
 		data.append("type", addTypes);
-
-		if(additionThumbnail) {
-			data.append("thumbnail", additionThumbnail);
-		} else if(additionThumbnail_url) {
-			const blob = await fetch(additionThumbnail_url).then(r => r.blob());
-			const token = additionThumbnail_url.split(".");
-			const extension = token[token.length-1];
-			data.append("thumbnail", new File([blob], "thumbnail." + extension));
-		}
+		data.append("thumbnail", additionThumbnail);
 
 		await api.post("addition", data, {
 			headers : {
@@ -200,15 +192,8 @@ export default function Additions({ userId }) {
 
 		const data = new FormData();
 
-		if(additionThumbnail) {
-			data.append("thumbnail", additionThumbnail);
-		} else if(additionThumbnail_url) {
-			const blob = await fetch(additionThumbnail_url).then(r => r.blob());
-			const token = additionThumbnail_url.split(".");
-			const extension = token[token.length-1];
-			data.append("thumbnail", new File([blob], "thumbnail." + extension));
-		}
-
+		data.append("thumbnail", additionThumbnail);
+		
 		await api.put("additionThumbnail/" + additionId, data, {
 			headers : {
 				"x-access-token": userId
