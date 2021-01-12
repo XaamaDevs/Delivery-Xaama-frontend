@@ -14,8 +14,8 @@ import {
 } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../Website/Alert";
-import Push from "../Website/Push";
+import Alert from "../../components/Alert";
+import Push from "../../components/Push";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";

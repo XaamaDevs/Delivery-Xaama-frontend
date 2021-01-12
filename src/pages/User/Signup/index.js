@@ -12,7 +12,7 @@ import { Link, useHistory } from "react-router-dom";
 import { Image, Form, Button, Col, Row } from "react-bootstrap";
 
 //	Importing website utils
-import Push from "../../Website/Push";
+import Push from "../../../components/Push";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";

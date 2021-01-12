@@ -26,15 +26,15 @@ import {
 } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../../Website/Alert";
-import Push from "../../Website/Push";
-import ProductDeck from "../../Website/ProductDeck";
+import Alert from "../Alert";
+import Push from "../Push";
+import ProductDeck from "../ProductDeck";
 
 //	Importing React icons features
 import { RiShoppingBasketLine } from "react-icons/ri";
 
 // Importing backend api
-import api from "../../../services/api";
+import api from "../../services/api";
 import { useEffect } from "react";
 
 //	Exporting resource to routes.js

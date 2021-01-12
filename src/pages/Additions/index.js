@@ -18,8 +18,8 @@ import {
 } from "react-bootstrap";
 
 //	Importing website utils
-import Alert from "../Website/Alert";
-import Push from "../Website/Push";
+import Alert from "../../components/Alert";
+import Push from "../../components/Push";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -167,7 +167,7 @@ export default function Additions({ userId }) {
 		}
 
 		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
-		
+
 		const data = {
 			name: additionName,
 			price: additionPrice,
@@ -194,7 +194,7 @@ export default function Additions({ userId }) {
 			setToastShow(true);
 		});
 	}
-	
+
 	async function handleAdditionThumbnailUpdate(event) {
 		event.preventDefault();
 
@@ -505,13 +505,13 @@ export default function Additions({ userId }) {
 									rounded
 									fluid
 								/>
-								
+
 								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
 									Alterar imagem
 								</Button>
 							</Form>
 						</Col>
-						<Col sm>			
+						<Col sm>
 							<Form onSubmit={handleAdditionUpdate}>
 								<Form.Group controlId="additionName">
 									<Form.Label>Nome</Form.Label>

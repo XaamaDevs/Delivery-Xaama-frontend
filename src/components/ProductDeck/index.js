@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Card, Tabs, Tab, Col, Row, Image } from "react-bootstrap";
 
 // Importing image from camera
-import camera from "../../../assets/camera.svg";
+import camera from "../../assets/camera.svg";
 
 export default function ProductDeck({ products }) {
 	return (
