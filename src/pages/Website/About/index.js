@@ -15,10 +15,10 @@ export default function About({ companyInfo }) {
 			<Container className="w-100">
 				<Card text="light" bg="transparent">
 					<Card.Header>
-						<h1 className="display-5 text-center m-3">Entre em contato conosco</h1>
+						<h1 className="display-5 text-center">Entre em contato conosco</h1>
 					</Card.Header>
 					<Card.Body className="p-0">
-						<Row className="text-center m-5">
+						<Row className="text-center m-4">
 							<Col className="my-3" sm>
 								<h5 className="text-center">
 									<a
