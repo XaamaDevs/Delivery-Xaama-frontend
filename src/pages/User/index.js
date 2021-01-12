@@ -31,6 +31,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
 	const [userCep, setUserCep] = useState("");
+	const [userNumber, setUserNumber] = useState("");
+	const [userComplement, setUserComplement] = useState("");
 
 	//	Company variable
 	const [companyName, setCompanyName] = useState("");
@@ -87,6 +89,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		setUserEmail(user.email);
 		setUserPhone(user.phone ? user.phone : "");
 		setUserAddress(user.address ? user.address.join(", ") : "");
+		setUserNumber("");
+		setUserCep("");
+		setUserComplement("");
 	}, [modal1Show, modal2Show]);
 
 	//	Update company state variables
@@ -465,12 +470,37 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(userCep.length) {
+		if(!userNumber.length) {
+			setTitle("Erro!");
+			setMessage("Número da residência inválido!");
+			setToastShow(true);
+		} else if(userCep.length != 8) {
+			setTitle("Erro!");
+			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
+			setToastShow(true);
+		} else {
 			apicep.get(userCep + "/json")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data.erro) {
+						setTitle("Erro!");
+						setMessage("CEP inexistente! Tente outro valor.");
+						setToastShow(true);
+					} else if(!response.data.logradouro) {
+						setTitle("Incompleto!");
+						setMessage("O CEP não contém todas as informações! Digite o endereço manualmente.");
+						setToastShow(true);
+					}	else {
+						const complement = userComplement.length ? ", " + userComplement : "";
+						setUserAddress(`${response.data.logradouro}, ${userNumber}, ${response.data.bairro}${complement}`);
+					}
 				}).catch((error) => {
-					console.log(error);
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
 				});
 		}
 	}
@@ -710,6 +740,65 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 						</Row>
 						<Row>
 							<Col sm>
+								<Form.Group controlId="userNumber">
+									<Form.Label>Número da residência</Form.Label>
+									<Form.Control
+										value={userNumber}
+										onChange={e => setUserNumber(e.target.value)}
+										type="number"
+										min="0"
+										placeholder="Número"
+									/>
+								</Form.Group>
+							</Col>
+							<Col sm>
+								<Form.Group controlId="userComplement">
+									<Form.Label>Complemento</Form.Label>
+									<Form.Control
+										value={userComplement}
+										onChange={e => setUserComplement(e.target.value)}
+										type="text"
+										placeholder="Complemento (opcional)"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col sm>
+								<Form.Group controlId="userCep">
+									<Form.Label>CEP</Form.Label>
+									<Form.Control
+										value={userCep}
+										onChange={e => setUserCep(e.target.value)}
+										type="number"
+										min="0"
+										max="99999999"
+										placeholder="CEP"
+									/>
+									<Button
+										size="sm"
+										className="my-2"
+										onClick={getAddressInfo}
+									>
+										Verificar CEP
+									</Button>
+								</Form.Group>
+							</Col>
+							<Col sm>
+								<Form.Group controlId="userPhone">
+									<Form.Label>Telefone</Form.Label>
+									<Form.Control
+										value={userPhone}
+										onChange={e => setUserPhone(e.target.value)}
+										type="tel"
+										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+										placeholder="(__) _ ____-____"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col sm>
 								<Form.Group controlId="userAddress">
 									<Form.Label>Endereço</Form.Label>
 									<Form.Control
@@ -722,40 +811,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									<Form.Text className="text-muted">
 										Separe rua, número, bairro e complemento por vírgula
 									</Form.Text>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="userCep">
-									<Form.Label>CEP</Form.Label>
-									<Form.Control
-										value={userCep}
-										onChange={e => setUserCep(e.target.value)}
-										type="number"
-										min="00000000"
-										max="99999999"
-										placeholder="CEP"
-									/>
-									<Button
-										size="sm"
-										className="my-2"
-										onClick={getAddressInfo}
-									>
-										Verificar
-									</Button>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm>
-								<Form.Group controlId="userPhone">
-									<Form.Label>Telefone</Form.Label>
-									<Form.Control
-										value={userPhone}
-										onChange={e => setUserPhone(e.target.value)}
-										type="tel"
-										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
-										placeholder="(__) _ ____-____"
-									/>
 								</Form.Group>
 							</Col>
 						</Row>
