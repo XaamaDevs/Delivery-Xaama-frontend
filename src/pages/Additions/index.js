@@ -157,12 +157,6 @@ export default function Additions({ userId }) {
 	async function handleAdditionUpdate(event) {
 		event.preventDefault();
 
-		const data = new FormData();
-
-		data.append("name", additionName);
-		data.append("price", additionPrice);
-		data.append("available", additionAvailable);
-
 		const addTypesElem = document.getElementById("additionType").children;
 		var addTypes = "";
 
@@ -173,8 +167,38 @@ export default function Additions({ userId }) {
 		}
 
 		addTypes = addTypes.length ? addTypes.slice(0, -2) : addTypes;
+		
+		const data = {
+			name: additionName,
+			price: additionPrice,
+			available: additionAvailable,
+			type: addTypes
+		};
 
-		data.append("type", addTypes);
+		await api.put("addition/" + additionId, data, {
+			headers : {
+				"x-access-token": userId
+			}
+		}).then(() => {
+			setAdditionUpdateModal(false);
+			setTitle("Alterações de adição!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
+	}
+	
+	async function handleAdditionThumbnailUpdate(event) {
+		event.preventDefault();
+
+		const data = new FormData();
 
 		if(additionThumbnail) {
 			data.append("thumbnail", additionThumbnail);
@@ -185,7 +209,7 @@ export default function Additions({ userId }) {
 			data.append("thumbnail", new File([blob], "thumbnail." + extension));
 		}
 
-		await api.put("addition/" + additionId, data, {
+		await api.put("additionThumbnail/" + additionId, data, {
 			headers : {
 				"x-access-token": userId
 			}
@@ -306,7 +330,7 @@ export default function Additions({ userId }) {
 								size="sm"
 								id="btn-custom"
 							>
-                Disponível
+								Disponível
 							</Button>
 							:
 							<Button
@@ -314,7 +338,7 @@ export default function Additions({ userId }) {
 								variant="dark"
 								size="sm"
 							>
-                Indisponível
+								Indisponível
 							</Button>
 						}
 
@@ -462,14 +486,15 @@ export default function Additions({ userId }) {
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleAdditionUpdate}>
-						<Row>
-							<Col className="d-flex m-auto" sm>
+					<Row>
+						<Col className="d-flex m-auto" sm>
+							<Form onSubmit={handleAdditionThumbnailUpdate}>
 								<Form.Control
 									id="inputImage"
 									className="d-none"
 									type="file"
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
+									required
 								/>
 								<Image
 									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
@@ -480,8 +505,14 @@ export default function Additions({ userId }) {
 									rounded
 									fluid
 								/>
-							</Col>
-							<Col sm>
+								
+								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+									Alterar imagem
+								</Button>
+							</Form>
+						</Col>
+						<Col sm>			
+							<Form onSubmit={handleAdditionUpdate}>
 								<Form.Group controlId="additionName">
 									<Form.Label>Nome</Form.Label>
 									<Form.Control
@@ -532,17 +563,17 @@ export default function Additions({ userId }) {
 										onChange={e => setAdditionAvailable(e.target.checked)}
 									/>
 								</Form.Group>
-							</Col>
-						</Row>
-						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setAdditionUpdateModal(false); setToastShow(false);}}>
-								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
-								Salvar alterações
-							</Button>
-						</Modal.Footer>
-					</Form>
+								<Modal.Footer>
+									<Button variant="danger" onClick={() => {setAdditionUpdateModal(false); setToastShow(false);}}>
+										Fechar
+									</Button>
+									<Button variant="warning" type="submit">
+										Salvar alterações
+									</Button>
+								</Modal.Footer>
+							</Form>
+						</Col>
+					</Row>
 				</Modal.Body>
 			</Modal>
 
