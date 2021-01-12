@@ -173,7 +173,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				}
 			});
 	}
-	
+
 	//	Function to handle update user
 	async function handleUserThumbnailUpdate(event, action = null) {
 		event.preventDefault();
@@ -460,8 +460,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	}
 
 	return (
-		<div className="user-container h-100">
-			<div className="d-flex flex-row flex-wrap h-100">
+		<>
+			<div className="d-flex flex-row flex-wrap my-auto">
 				<Col className="m-auto p-3" sm="4">
 					<Form className="d-flex flex-column" onSubmit={(e) => handleUserThumbnailUpdate(e, 0)}>
 						<Form.Control
@@ -510,7 +510,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 						}
 					</Form>
 				</Col>
-				<Col className="m-auto p-3" sm="4">
+				<Col className="m-auto p-3" sm="auto">
 					<Card text="light" bg="dark">
 						<Card.Header >{user.name}</Card.Header>
 						<Card.Body>
@@ -528,88 +528,96 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										"Não informado"
 								)}
 							</Card.Text>
-						</Card.Body>
-					</Card>
-					<Row className="d-flex justify-content-around flex-row flex-wrap">
-						<Button
-							variant="outline-warning"
-							className="my-2"
-							onClick={() => setModal1Show(true)}
-						>
-							Editar perfil
-						</Button>
-						<Button
-							onClick ={() => setModal2Show(true)}
-							id="btn-lightpink"
-							className="my-2"
-						>
-							Trocar senha
-						</Button>
-						{user.userType === 2 ?
-							<Button
-								onClick = {() => setModal4Show(true)}
-								variant="outline-warning"
-								className="my-2"
-							>
-								Info da empresa
-							</Button>
-							:
-							<Button
-								onClick = {() => setModal3Show(true)}
-								variant="outline-danger"
-								className="my-2"
-							>
-								Apagar perfil
-							</Button>
-						}
-					</Row>
-					{user.userType === 1 || user.userType === 2 ?
-						<Row className="d-flex justify-content-around flex-row flex-wrap">
-							<Button
-								onClick={() => history.push("/allorders")}
-								className="my-2"
-								id="btn-lightpink"
-							>
-								Listar pedidos
-							</Button>
-							{user.userType === 2 ?
+							<Row className="d-flex justify-content-around flex-row flex-wrap">
+								<Button
+									variant="outline-warning"
+									className="mx-1 my-2"
+									onClick={() => setModal1Show(true)}
+								>
+									Editar perfil
+								</Button>
+								<Button
+									variant="light"
+									onClick ={() => setModal2Show(true)}
+									id="btn-custom-outline"
+									className="mx-1 my-2"
+								>
+									Trocar senha
+								</Button>
+								{user.userType === 2 ?
+									<Button
+										onClick = {() => setModal4Show(true)}
+										variant="outline-warning"
+										className="mx-1 my-2"
+									>
+										Info da empresa
+									</Button>
+									:
+									<Button
+										onClick = {() => setModal3Show(true)}
+										variant="outline-danger"
+										className="mx-1 my-2"
+									>
+										Apagar perfil
+									</Button>
+								}
+							</Row>
+							{user.userType === 1 || user.userType === 2 ?
 								<>
-									<Button
-										className="my-2"
-										onClick={() => history.push("/allusers")}
-										id="btn-lightpink"
-									>
-										Listar usuários
-									</Button>
-									<Button
-										className="my-2"
-										variant="outline-warning"
-										onClick={() => setModalImages(true)}
-									>
-										Editar imagens
-									</Button>
-									<Button
-										className="my-2"
-										variant="outline-warning"
-										onClick={() => setModalTimetable(true)}
-									>
+									<Row className="d-flex justify-content-around flex-row flex-wrap">
+										<Button
+											variant="light"
+											onClick={() => history.push("/allorders")}
+											className="mx-1 my-2"
+											id="btn-custom-outline"
+										>
+										Listar pedidos
+										</Button>
+										{user.userType === 2 ?
+											<>
+												<Button
+													variant="light"
+													className="mx-1 my-2"
+													onClick={() => history.push("/allusers")}
+													id="btn-custom-outline"
+												>
+												Listar usuários
+												</Button>
+												<Button
+													className="mx-1 my-2"
+													variant="outline-warning"
+													onClick={() => setModalImages(true)}
+												>
+												Editar imagens
+												</Button>
+											</>
+											:
+											null
+										}
+									</Row>
+									<Row className="d-flex justify-content-around flex-row flex-wrap">
+										<Button
+											className="mx-1 my-2"
+											variant="outline-warning"
+											onClick={() => setModalTimetable(true)}
+										>
 										Horário de funcionamento
-									</Button>
-									<Button
-										className="my-2"
-										id="btn-lightpink"
-										onClick={() => history.push("/cards")}
-									>
+										</Button>
+										<Button
+											variant="light"
+											className="mx-1 my-2"
+											id="btn-custom-outline"
+											onClick={() => history.push("/cards")}
+										>
 										Cartões fidelidade
-									</Button>
+										</Button>
+									</Row>
 								</>
 								:
 								null
 							}
-						</Row>
-						:
-						null
-					}
+						</Card.Body>
+					</Card>
 				</Col>
 				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
 					<Col className="m-auto p-3" sm="4">
@@ -1384,7 +1392,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				title={title}
 				message={message}
 			/>
-		</div>
+		</>
 	);
 }
 

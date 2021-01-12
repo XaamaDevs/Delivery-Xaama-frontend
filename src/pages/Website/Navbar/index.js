@@ -676,7 +676,6 @@ export default function WebsiteNavbar({
 						<Button
 							variant="light"
 							size="md"
-							className="btn"
 							id="btn-custom"
 						>
 							Aberto agora

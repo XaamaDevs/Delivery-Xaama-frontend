@@ -87,7 +87,6 @@ export default function Menu({ companyInfo, userId }) {
 					<Button
 						variant="light"
 						size="sm"
-						className="btn"
 						id="btn-custom"
 						onClick ={e => setModalCards(e)}
 					>
