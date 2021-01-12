@@ -422,8 +422,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					</Card.Text>
 					{userId && user ?
 						user.userType === 1 || user.userType === 2 ?
-							<div className="d-flex justify-content-between flex-wrap my-auto">
+							<div className="d-flex justify-content-around flex-wrap my-auto">
 								<Button
+									className="my-1"
 									variant="warning"
 									size="sm"
 									onClick ={e => handleProductModal(e, 1, product)}
@@ -433,6 +434,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 								{product.available ?
 									<Button
+										className="my-1"
 										variant="light"
 										size="sm"
 										id="btn-custom"
@@ -441,6 +443,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									</Button>
 									:
 									<Button
+										className="my-1"
 										variant="dark"
 										size="sm"
 									>
@@ -449,6 +452,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								}
 
 								<Button
+									className="my-1"
 									variant="danger"
 									size="sm"
 									onClick={e => handleProductModal(e,2, product)}

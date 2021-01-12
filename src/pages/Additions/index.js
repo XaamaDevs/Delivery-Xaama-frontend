@@ -289,8 +289,9 @@ export default function Additions({ userId }) {
 				/>
 				<Card.Body key={addition._id}>
 					<Card.Title>{addition.name}</Card.Title>
-					<div className="d-flex justify-content-between flex-wrap my-auto">
+					<div className="d-flex justify-content-around flex-wrap my-auto">
 						<Button
+							className="my-1"
 							variant="warning"
 							size="sm"
 							onClick ={e => handleAdditionModal(e, 1, addition)}
@@ -300,6 +301,7 @@ export default function Additions({ userId }) {
 
 						{addition.available ?
 							<Button
+								className="my-1"
 								variant="light"
 								size="sm"
 								id="btn-custom"
@@ -308,6 +310,7 @@ export default function Additions({ userId }) {
 							</Button>
 							:
 							<Button
+								className="my-1"
 								variant="dark"
 								size="sm"
 							>
@@ -316,6 +319,7 @@ export default function Additions({ userId }) {
 						}
 
 						<Button
+							className="my-1"
 							variant="danger"
 							size="sm"
 							onClick={e => handleAdditionModal(e, 2, addition)}
