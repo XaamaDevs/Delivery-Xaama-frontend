@@ -181,9 +181,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		const data = new FormData();
 
 		if(action === 0) {
-			if(thumbnail) {
-				data.append("thumbnail", thumbnail);
-			}
+			data.append("thumbnail", thumbnail);
 		}
 		var delImg = false;
 
@@ -331,31 +329,19 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		if(action === "logo") {
 			data.append("op", "logo");
+			data.append("image", logo);
 			
-			if(logo) {
-				data.append("image", logo);
-			}
-
 		} else if(action === "c1") {
 			data.append("op", "c1");
-
-			if(c1) {
-				data.append("image", c1);
-			}
+			data.append("image", c1);
 
 		} else if(action === "c2") {
 			data.append("op", "c2");
-
-			if(c2) {
-				data.append("image", c2);
-			}
+			data.append("image", c2);
 
 		} else if(action === "c3") {
 			data.append("op", "c3");
-
-			if(c3) {
-				data.append("image", c3);
-			}
+			data.append("image", c3);
 		}
 
 		await api.put("companyImages", data , {
