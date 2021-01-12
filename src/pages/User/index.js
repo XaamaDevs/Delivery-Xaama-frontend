@@ -571,7 +571,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 											className="mx-1 my-2"
 											id="btn-custom-outline"
 										>
-										Listar pedidos
+											Listar pedidos
 										</Button>
 										{user.userType === 2 ?
 											<>
@@ -581,37 +581,41 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 													onClick={() => history.push("/allusers")}
 													id="btn-custom-outline"
 												>
-												Listar usuários
+													Listar usuários
 												</Button>
 												<Button
 													className="mx-1 my-2"
 													variant="outline-warning"
 													onClick={() => setModalImages(true)}
 												>
-												Editar imagens
+													Editar imagens
 												</Button>
 											</>
 											:
 											null
 										}
 									</Row>
-									<Row className="d-flex justify-content-around flex-row flex-wrap">
-										<Button
-											className="mx-1 my-2"
-											variant="outline-warning"
-											onClick={() => setModalTimetable(true)}
-										>
-										Horário de funcionamento
-										</Button>
-										<Button
-											variant="light"
-											className="mx-1 my-2"
-											id="btn-custom-outline"
-											onClick={() => history.push("/cards")}
-										>
-										Cartões fidelidade
-										</Button>
-									</Row>
+									{user.userType === 2 ?
+										<Row className="d-flex justify-content-around flex-row flex-wrap">
+											<Button
+												className="mx-1 my-2"
+												variant="outline-warning"
+												onClick={() => setModalTimetable(true)}
+											>
+														Horário de funcionamento
+											</Button>
+											<Button
+												variant="light"
+												className="mx-1 my-2"
+												id="btn-custom-outline"
+												onClick={() => history.push("/cards")}
+											>
+														Cartões fidelidade
+											</Button>
+										</Row>
+										:
+										null
+									}
 								</>
 								:
 								null
