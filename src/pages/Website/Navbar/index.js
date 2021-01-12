@@ -498,7 +498,7 @@ export default function WebsiteNavbar({
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
 								<Row>
-									<Form.Group as={Col} controlId="userPhone">
+									<Form.Group as={Col} controlId="userPhone" setShoppingBasketModal>
 										<Form.Label>Telefone para contato: </Form.Label>
 										<Form.Control
 											value={deliverPhone}
@@ -510,7 +510,7 @@ export default function WebsiteNavbar({
 											autoFocus
 										/>
 									</Form.Group>
-									<Form.Group as={Col} controlId="deliverAddress">
+									<Form.Group as={Col} controlId="deliverAddress" sm>
 										<Form.Label>Entregar pedido?</Form.Label>
 										<Form.Check
 											type="switch"
