@@ -422,7 +422,7 @@ export default function WebsiteNavbar({
 											<NavLink
 												style={{color: "#ffbf00"}}
 												to="#"
-												className="nav-link"
+												className="nav-link mx-2"
 												onClick={() => setShoppingBasketModal(true)}
 											>
 												<RiShoppingBasketLine size="25" />
