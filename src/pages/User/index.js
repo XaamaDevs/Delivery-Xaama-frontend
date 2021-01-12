@@ -183,13 +183,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		if(action === 0) {
 			if(thumbnail) {
 				data.append("thumbnail", thumbnail);
-			} else {
-				if(user.thumbnail) {
-					const blob = await fetch(user.thumbnail_url).then(r => r.blob());
-					const token = user.thumbnail_url.split(".");
-					const extension = token[token.length-1];
-					data.append("thumbnail", new File([blob], "thumbnail." + extension));
-				}
 			}
 		}
 		var delImg = false;
@@ -338,28 +331,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 		if(action === "logo") {
 			data.append("op", "logo");
+			
 			if(logo) {
 				data.append("image", logo);
-			} else {
-				if(companyInfo.logo) {
-					const blob = await fetch(companyInfo.logo_url).then(r => r.blob());
-					const token = companyInfo.logo_url.split(".");
-					const extension = token[token.length-1];
-					data.append("image", new File([blob], "logo." + extension));
-				}
 			}
+
 		} else if(action === "c1") {
 			data.append("op", "c1");
 
 			if(c1) {
 				data.append("image", c1);
-			} else {
-				if(companyInfo.carousel[0]) {
-					const blob = await fetch(companyInfo.carousel_urls[0]).then(r => r.blob());
-					const token = companyInfo.carousel_urls[0].split(".");
-					const extension = token[token.length-1];
-					data.append("image", new File([blob], "c1." + extension));
-				}
 			}
 
 		} else if(action === "c2") {
@@ -367,26 +348,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 			if(c2) {
 				data.append("image", c2);
-			} else {
-				if(companyInfo.carousel[1]) {
-					const blob = await fetch(companyInfo.carousel_urls[1]).then(r => r.blob());
-					const token = companyInfo.carousel_urls[1].split(".");
-					const extension = token[token.length-1];
-					data.append("image", new File([blob], "c2." + extension));
-				}
 			}
 
 		} else if(action === "c3") {
 			data.append("op", "c3");
+
 			if(c3) {
 				data.append("image", c3);
-			} else {
-				if(companyInfo.carousel[2]) {
-					const blob = await fetch(companyInfo.carousel_urls[2]).then(r => r.blob());
-					const token = companyInfo.carousel_urls[2].split(".");
-					const extension = token[token.length-1];
-					data.append("image", new File([blob], "c3." + extension));
-				}
 			}
 		}
 
@@ -1298,10 +1266,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 							</Form>
 						</Col>
 					</Row>
+					<Row className="mx-1">
+						Imagens do carrossel
+					</Row>
 					<Row>
-						<Col sm>
-							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e)}>
-								<Form.Label>Imagens do carrossel</Form.Label>
+						<Col className="text-center mx-auto" sm="4">
+							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c1")}>
 								<Form.Control
 									id="inputCarouselC1"
 									className="d-none"
@@ -1309,6 +1279,39 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									onChange={event => {setC1(event.target.files[0]);}}
 									required
 								/>
+								<Image
+									id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[0] : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarouselC1").click()}
+									rounded
+									fluid
+								/>
+							
+								{companyInfo.carousel[0] ?
+									<Button
+										className="d-flex my-3 mx-auto"
+										type="submit"
+										variant="warning"
+									>
+										Trocar foto 1
+									</Button>
+									:
+									<div className="d-flex">
+										<Button
+											className="my-3 mx-auto"
+											type="submit"
+											variant="warning"
+										>
+											Adicionar foto 1
+										</Button>
+									</div>
+								}
+							</Form>
+						</Col>
+						<Col className="text-center mx-auto" sm="4">
+							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c2")}>
 								<Form.Control
 									id="inputCarouselC2"
 									className="d-none"
@@ -1316,6 +1319,39 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									onChange={event => {setC2(event.target.files[0]);}}
 									required
 								/>
+								<Image
+									id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[1] : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarouselC2").click()}
+									rounded
+									fluid
+								/>
+						
+								{companyInfo.carousel[1] ?
+									<Button
+										className="d-flex my-3 mx-auto"
+										type="submit"
+										variant="warning"
+									>
+										Trocar foto 2
+									</Button>
+									:
+									<div className="d-flex">
+										<Button
+											className="my-3 mx-auto"
+											type="submit"
+											variant="warning"
+										>
+											Adicionar foto 2
+										</Button>
+									</div>
+								}
+							</Form>
+						</Col>
+						<Col className="text-center mx-auto" sm="4">
+							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c3")}>
 								<Form.Control
 									id="inputCarouselC3"
 									className="d-none"
@@ -1323,66 +1359,35 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									onChange={event => {setC3(event.target.files[0]);}}
 									required
 								/>
-								<Row>
-									<Col className="text-center mx-auto" sm="4">
-										<Image
-											id={companyInfo.carousel[0] || c1Preview ? "thumbnail" : "camera"}
-											className={companyInfo.carousel[0] || c1Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c1Preview ? c1Preview : (companyInfo.carousel[0] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[0] : camera)}
-											alt="Selecione sua imagem para o carrossel"
-											onClick={() => document.getElementById("inputCarouselC1").click()}
-											rounded
-											fluid
-										/>
-									</Col>
-									<Col className="text-center mx-auto" sm="4">
-										<Image
-											id={companyInfo.carousel[1] || c2Preview ? "thumbnail" : "camera"}
-											className={companyInfo.carousel[1] || c2Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c2Preview ? c2Preview : (companyInfo.carousel[1] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[1] : camera)}
-											alt="Selecione sua imagem para o carrossel"
-											onClick={() => document.getElementById("inputCarouselC2").click()}
-											rounded
-											fluid
-										/>
-									</Col>
-									<Col className="text-center mx-auto" sm="4">
-										<Image
-											id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
-											className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
-											src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[2] : camera)}
-											alt="Selecione sua imagem para o carrossel"
-											onClick={() => document.getElementById("inputCarouselC3").click()}
-											rounded
-											fluid
-										/>
-									</Col>
-								</Row>
-								<Row >
-									{companyInfo.carousel.map((c, index) => (
-										<Col key={index} sm="4">
-											{c && c.length ?
-												<Button
-													className="d-flex my-3 mx-auto"
-													onClick={(e) => handleCompanyImageUpdate(e, "c"+(index+1))}
-													variant="warning"
-												>
-													Trocar foto {(index+1)}
-												</Button>
-												:
-												<div className="d-flex">
-													<Button
-														className="my-3 mx-auto"
-														onClick={(e) => handleCompanyImageUpdate(e, "c"+(index+1))}
-														variant="warning"
-													>
-														Adicionar foto {(index+1)}
-													</Button>
-												</div>
-											}
-										</Col>
-									))}
-								</Row>
+								<Image
+									id={companyInfo.carousel[2] || c3Preview ? "thumbnail" : "camera"}
+									className={companyInfo.carousel[2] || c3Preview ? "btn border-0 m-auto" : "btn w-50 m-auto"}
+									src={c3Preview ? c3Preview : (companyInfo.carousel[2] ? process.env.REACT_APP_API_URL + companyInfo.carousel_urls[2] : camera)}
+									alt="Selecione sua imagem para o carrossel"
+									onClick={() => document.getElementById("inputCarouselC3").click()}
+									rounded
+									fluid
+								/>
+						
+								{companyInfo.carousel[2] ?
+									<Button
+										className="d-flex my-3 mx-auto"
+										type="submit"
+										variant="warning"
+									>
+										Trocar foto 3
+									</Button>
+									:
+									<div className="d-flex">
+										<Button
+											className="my-3 mx-auto"
+											type="submit"
+											variant="warning"
+										>
+											Adicionar foto 3
+										</Button>
+									</div>
+								}
 							</Form>
 						</Col>
 					</Row>
