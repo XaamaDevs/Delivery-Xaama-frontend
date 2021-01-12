@@ -1,4 +1,4 @@
-//	Importing axios main module to connect frontend to backend
+//	Importing axios main module to connect frontend to CEP API
 import axios from "axios";
 
 //	Exporting connection to CEP API
