@@ -1,12 +1,10 @@
 //	Importing React main module and its features
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Bootstrap features
 import {
-	Container,
 	Modal,
-	Nav,
 	Card,
 	Button,
 	CardDeck,
@@ -43,84 +41,20 @@ export default function Menu({ companyInfo, userId }) {
 	const [modalCards, setModalCards] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 
-	const header = (
-		<Card.Header className="pb-3">
-			<Nav fill variant="tabs">
-				{types && types.length ?
-					types.map((typeP, index) => (
-						<Nav.Item key={index}>
-							<Nav.Link
-								className="btn-outline-warning rounded"
-								href={"#" + index}
-								onClick={e => handleCardsList(e, typeP)}>
-								{typeP[0].toUpperCase() + typeP.slice(1)}
-							</Nav.Link>
-						</Nav.Item>
-					))
-					:
-					null
-				}
-			</Nav>
-		</Card.Header>
-	);
-
-	const CardC = (
-		<Card className="col-sm-4 my-1 p-0" bg="secondary" key={card && card.type ? card.type : null}>
-			<Card.Body className="d-flex align-content-between flex-column" key={card && card.type ? card.type : null}>
-				<Card.Title>{card && card.type ? card.type[0].toUpperCase() + card.type.slice(1) : null}</Card.Title>
-				{card && card.available ?
-					<>
-						<Card.Text>
-							{card && card.qtdMax ? "Quantidade de pedidos para completar o cartão: " + card.qtdMax : "Quantidade de pedidos desse produto para completar o cartão: Não atribuído"}
-						</Card.Text>
-						<Card.Text>
-							{card && card.discount ? "Desconto aṕos completar o cartão: R$" + card.discount : "Desconto aṕos completar o cartão: Não atribuído" }
-						</Card.Text>
-					</>
-					:
-					<Card.Text>
-						Não existe cartão fidelidade para este produto
-					</Card.Text>
-				}
-				<div className="d-flex justify-content-between flex-wrap my-auto">
-					<Button
-						variant="light"
-						size="sm"
-						id="btn-custom"
-						onClick ={e => setModalCards(e)}
-					>
-						Modificar
-					</Button>
-				</div>
-			</Card.Body>
-			<Card.Footer>
-				<small>
-          OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
-				</small>
-			</Card.Footer>
-		</Card>
-	);
-
-	//	Return a list of cards given type
-	async function handleCardsList(event, typeP) {
-		event.preventDefault();
-		for(const c of companyCards ) {
-			if(c.type == typeP) {
-				setCard(c);
-				setCardType(typeP);
-				setCardAvailable(c.available);
-				setCardQtdMax(c.qtdMax);
-				setCardDiscount(c.discount);
-			}
-		}
-	}
+	//	Update card state variables
+	useEffect(() => {
+		setCardType(card ? card.type : null);
+		setCardAvailable(card ? card.available : null);
+		setCardQtdMax(card ? card.qtdMax : null);
+		setCardDiscount(card ? card.discount : null);
+	}, [modalCards]);
 
 	// Function to change cards
 	async function handleCards(event) {
 		event.preventDefault();
 
 		for(var c of companyCards) {
-			if (c.type == cardType) {
+			if(c.type == cardType) {
 				c.available = cardAvailable ? cardAvailable : false;
 				c.qtdMax = cardQtdMax ? cardQtdMax : 0;
 				c.discount = cardDiscount ? cardDiscount : 0;
@@ -154,47 +88,73 @@ export default function Menu({ companyInfo, userId }) {
 	}
 
 	return (
-		<Container className="product-container w-100">
-			<Card className="px-3" text="light" bg="dark">
-				{header}
-				{cardType && cardType.length ?
-					<CardDeck className="p-2">
-						<Row className="d-flex justify-content-around m-auto w-100" key={cardType}>
-							{CardC}
-						</Row>
-					</CardDeck>
-					:
-					<h1 className="display-5 text-center m-auto p-5">Selecione o cartão fidelidade acima</h1>
-				}
-			</Card>
+		<>
+			<CardDeck className="mx-3">
+				<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
+					{companyCards.map((cardI, index) => (
+						<Col key={index} className="my-2">
+							<Card text="white" bg="dark">
+								<Card.Header>
+									{cardI.type[0].toUpperCase() + cardI.type.slice(1)}
+								</Card.Header>
+								<Card.Body>
+									{cardI && cardI.available ?
+										<>
+											<Card.Text>
+												{cardI && cardI.qtdMax ? "Quantidade de pedidos para completar o cartão: " + cardI.qtdMax : "Quantidade de pedidos desse produto para completar o cartão: Não atribuído"}
+											</Card.Text>
+											<Card.Text>
+												{cardI && cardI.discount ? "Desconto aṕos completar o cartão: R$" + cardI.discount : "Desconto aṕos completar o cartão: Não atribuído" }
+											</Card.Text>
+										</>
+										:
+										<Card.Text>
+											Não existe cartão fidelidade para este produto
+										</Card.Text>
+									}
+									<Button
+										variant="light"
+										size="sm"
+										id="btn-custom"
+										onClick ={() => { setCard(cardI); setModalCards(true); } }
+									>
+										Modificar
+									</Button>
+								</Card.Body>
+							</Card>
+						</Col>
+					))}
+				</Row>
+			</CardDeck>
 
 			<Modal
 				show={modalCards}
-				onHide={() => { setModalCards(false); setToastShow(false);} }
+				onHide={() => { setCard(null); setModalCards(false); setToastShow(false);} }
 				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Modificar cartão fidelidade</Modal.Title>
+					<Modal.Title>
+						Modificar cartão fidelidade - {cardType ? cardType[0].toUpperCase() + cardType.slice(1) : null}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form className="my-3" onSubmit={handleCards}>
-						<Form.Label>Cartão fidelidade {cardType}</Form.Label>
+					<Form onSubmit={handleCards}>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="type">
 									<Form.Check
 										type={"checkbox"}
 										checked={cardAvailable ? cardAvailable : false}
 										onChange={e => setCardAvailable(e.target.checked)}
-										label={"Marque aqui se existe cartão fidelidade para esse produto!"}
+										label={"Disponibilizar cartão fidelidade para esse produto?"}
 									/>
 								</Form.Group>
 							</Col>
 						</Row>
 						<Row>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="qtdMax">
 									<Form.Label>Quantidade</Form.Label>
 									<Form.Control
@@ -208,7 +168,7 @@ export default function Menu({ companyInfo, userId }) {
 									/>
 								</Form.Group>
 							</Col>
-							<Col>
+							<Col sm>
 								<Form.Group controlId="discount">
 									<Form.Label>Desconto</Form.Label>
 									<Form.Control
@@ -224,7 +184,7 @@ export default function Menu({ companyInfo, userId }) {
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setModalCards(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setCard(null); setModalCards(false); setToastShow(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -236,7 +196,7 @@ export default function Menu({ companyInfo, userId }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
-		</Container>
+		</>
 	);
 }
 
