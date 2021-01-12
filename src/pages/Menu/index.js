@@ -182,17 +182,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		data.append("type", productType);
 		data.append("prices", productPrices);
 		data.append("sizes", productSizes);
-
-		if(productThumbnail) {
-			data.append("thumbnail", productThumbnail);
-		} else {
-			if(productThumbnail_url){
-				const blob = await fetch(productThumbnail_url).then(r => r.blob());
-				const token = productThumbnail_url.split(".");
-				const extension = token[token.length-1];
-				data.append("thumbnail", new File([blob], "thumbnail." + extension));
-			}
-		}
+		data.append("thumbnail", productThumbnail);
 
 		await api.post("product", data, {
 			headers : {
@@ -253,17 +243,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		const data = new FormData();
 
-		if(productThumbnail) {
-			data.append("thumbnail", productThumbnail);
-		} else {
-			if(productThumbnail_url){
-				const blob = await fetch(productThumbnail_url).then(r => r.blob());
-				const token = productThumbnail_url.split(".");
-				const extension = token[token.length-1];
-				data.append("thumbnail", new File([blob], "thumbnail." + extension));
-			}
-		}
-
+		data.append("thumbnail", productThumbnail);
+		
 		await api.put("productThumbnail/" + productId, data, {
 			headers : {
 				"x-access-token": userId
