@@ -8,9 +8,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomePage from "./pages/Website/Home";
 import NotFoundPage from "./pages/Website/NotFound";
 import About from "./pages/Website/About";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Loading from "./components/Loading";
 import User from "./pages/User";
 import AllUsers from "./pages/User/All";
 import Login from "./pages/User/Login";
@@ -19,10 +16,15 @@ import Additions from "./pages/Additions";
 import Order from "./pages/Order";
 import AllOrders from "./pages/Order/All";
 import Menu from "./pages/Menu";
+import Cards from "./pages/Cards";
+
+//	Importing all app components
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Loading from "./components/Loading";
 import Auth from "./components/Authentication";
 import Autho from "./components/Authentication/Authorization";
 import Logged from "./components/Authentication/Logged";
-import Cards from "./pages/Cards";
 
 //	Importing api to communicate to backend
 import api from "./services/api";
