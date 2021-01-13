@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState  } from "react";
+import React, { useState, useEffect  } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -33,9 +33,9 @@ import ProductDeck from "../ProductDeck";
 //	Importing React icons features
 import { RiShoppingBasketLine } from "react-icons/ri";
 
-// Importing backend api
+// Importing backend api and cep api
 import api from "../../services/api";
-import { useEffect } from "react";
+import apicep from "../../services/apicep";
 
 //	Exporting resource to routes.js
 export default function WebsiteNavbar({
@@ -54,6 +54,9 @@ export default function WebsiteNavbar({
 	//	Order state variables
 	const [deliverAddress, setDeliverAdress] = useState("");
 	const [deliverPhone, setDeliverPhone] = useState("");
+	const [deliverAddressNumber, setDeliverAddressNumber] = useState("");
+	const [deliverAddressCep, setDeliverAddressCep] = useState("");
+	const [deliverAddressComplement, setDeliverAddressComplement] = useState("");
 	const [deliverOrder, setDeliverOrder] = useState(false);
 	const [deliverChange, setDeliverChange] = useState();
 	const [deliverCash, setDeliverCash] = useState(false);
@@ -310,6 +313,45 @@ export default function WebsiteNavbar({
 		);
 	}
 
+	//	Function to get address info via cep api
+	async function getAddressInfo(event) {
+		event.preventDefault();
+
+		if(!deliverAddressNumber.length) {
+			setTitle("Erro!");
+			setMessage("Número da residência inválido!");
+			setToastShow(true);
+		} else if(deliverAddressCep.length != 8) {
+			setTitle("Erro!");
+			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
+			setToastShow(true);
+		} else {
+			apicep.get(deliverAddressCep + "/json")
+				.then((response) => {
+					if(response.data.erro) {
+						setTitle("Erro!");
+						setMessage("CEP inexistente! Tente outro valor.");
+						setToastShow(true);
+					} else if(!response.data.logradouro) {
+						setTitle("Incompleto!");
+						setMessage("O CEP não contém todas as informações! Digite o endereço manualmente.");
+						setToastShow(true);
+					}	else {
+						const complement = deliverAddressComplement.length ? ", " + deliverAddressComplement : "";
+						setDeliverAdress(`${response.data.logradouro}, ${deliverAddressNumber}, ${response.data.bairro}${complement}`);
+					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+		}
+	}
+
 	return (
 		<>
 			<Navbar className="py-5 px-3" bg="transparent" expand="lg">
@@ -521,21 +563,66 @@ export default function WebsiteNavbar({
 									</Form.Group>
 								</Row>
 								{deliverOrder ?
-									<Form.Group controlId="deliverAddress">
-										<Form.Label>Endereço de entrega:</Form.Label>
-										<Form.Control
-											value={deliverAddress}
-											onChange={e => setDeliverAdress(e.target.value)}
-											type="text"
-											pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-											placeholder="Rua, Número, Bairro, Complemento (opcional)"
-											disabled={!deliverOrder}
-											required={deliverOrder}
-										/>
-										<Form.Text className="text-muted">
-											Separe rua, número, bairro e complemento por vírgula
-										</Form.Text>
-									</Form.Group>
+									<>
+										<Row>
+											<Form.Group as={Col} controlId="deliverAddressNumber" sm>
+												<Form.Label>Número da residência</Form.Label>
+												<Form.Control
+													value={deliverAddressNumber}
+													onChange={e => setDeliverAddressNumber(e.target.value)}
+													type="number"
+													min="0"
+													placeholder="Número"
+												/>
+											</Form.Group>
+											<Form.Group as={Col} controlId="deliverAddressComplement" sm>
+												<Form.Label>Complemento</Form.Label>
+												<Form.Control
+													value={deliverAddressComplement}
+													onChange={e => setDeliverAddressComplement(e.target.value)}
+													type="text"
+													placeholder="Complemento (opcional)"
+												/>
+											</Form.Group>
+										</Row>
+										<Row>
+											<Form.Group as={Col} controlId="deliverAddressCep" sm>
+												<Form.Label>CEP</Form.Label>
+												<Form.Control
+													value={deliverAddressCep}
+													onChange={e => setDeliverAddressCep(e.target.value)}
+													type="number"
+													min="0"
+													max="99999999"
+													placeholder="CEP"
+												/>
+												<Button
+													variant="light"
+													id="btn-custom"
+													size="sm"
+													className="my-2"
+													onClick={getAddressInfo}
+												>
+													Verificar CEP
+												</Button>
+											</Form.Group>
+											<Form.Group as={Col} controlId="deliverAddress" sm>
+												<Form.Label>Endereço de entrega:</Form.Label>
+												<Form.Control
+													value={deliverAddress}
+													onChange={e => setDeliverAdress(e.target.value)}
+													type="text"
+													pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
+													placeholder="Rua, Número, Bairro, Complemento (opcional)"
+													disabled={!deliverOrder}
+													required={deliverOrder}
+												/>
+												<Form.Text className="text-muted">
+													Separe rua, número, bairro e complemento por vírgula
+												</Form.Text>
+											</Form.Group>
+										</Row>
+									</>
 									:
 									null
 								}
