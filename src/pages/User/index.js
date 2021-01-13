@@ -200,9 +200,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			headers : {
 				"x-access-token": userId
 			}})
-			.then(() => {
+			.then((response) => {
 				setModal1Show(false);
 				setModal2Show(false);
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
 				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
