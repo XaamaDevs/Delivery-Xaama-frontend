@@ -237,14 +237,14 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				setToastShow(true);
 			});
 	}
-	
+
 	async function handleProductThumbnailUpdate(event) {
 		event.preventDefault();
 
 		const data = new FormData();
 
 		data.append("thumbnail", productThumbnail);
-		
+
 		await api.put("productThumbnail/" + productId, data, {
 			headers : {
 				"x-access-token": userId
@@ -444,7 +444,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										className="my-1"
 										variant="light"
 										size="sm"
-										id="btn-custom"
+										id="btn-custom-outline"
 									>
 										Disponível
 									</Button>
@@ -731,7 +731,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									fluid
 								/>
 
-								{productThumbnail_url ? 
+								{productThumbnail_url ?
 									<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
 										Alterar imagem
 									</Button>
@@ -740,7 +740,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										Adicionar imagem
 									</Button>
 								}
-							
+
 							</Form>
 						</Col>
 						<Col sm>
@@ -821,7 +821,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										/>
 									</OverlayTrigger>
 								</Form.Group>
-						
+
 								<Form.Group controlId="productType">
 									<Form.Label>Tipo</Form.Label>
 									<Form.Control
@@ -969,9 +969,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 																|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 																<Button
+																	variant="light"
+																	id="btn-custom"
 																	className="mx-auto"
 																	size="sm"
-																	variant="primary"
 																	onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
 																>
 																	{add.name + " +R$" + add.price}
@@ -1015,6 +1016,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 										<Row className="d-flex flex-row flex-wrap justify-content-start">
 											{additionsOrder.map((add, index) =>(
 												<Button
+													variant="light"
+													id="btn-custom"
 													size="sm"
 													key={index}
 													className="m-1"

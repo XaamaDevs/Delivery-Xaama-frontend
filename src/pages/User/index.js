@@ -510,7 +510,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 						}
 					</Form>
 				</Col>
-				<Col className="m-auto p-3" sm="auto">
+				<Col className="m-auto p-3" sm="4">
 					<Card text="light" bg="dark">
 						<Card.Header >{user.name}</Card.Header>
 						<Card.Body>
