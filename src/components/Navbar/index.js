@@ -354,7 +354,7 @@ export default function WebsiteNavbar({
 
 	return (
 		<>
-			<Navbar className="py-5 px-3" bg="transparent" expand="lg">
+			<Navbar className="py-4 px-3" bg="transparent" expand="lg">
 				<NavLink to="/" className="navbar-brand text-warning mx-5 p-0">
 					{companyInfo.logo ?
 						<Image

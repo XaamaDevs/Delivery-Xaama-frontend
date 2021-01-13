@@ -462,73 +462,79 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	return (
 		<>
 			<div className="d-flex flex-row flex-wrap my-auto">
-				<Col className="m-auto p-2" sm="3">
-					<Form className="d-flex flex-column" onSubmit={(e) => handleUserThumbnailUpdate(e, 0)}>
-						<Form.Control
-							id="inputImage"
-							className="d-none"
-							type="file"
-							onChange={event => setThumbnail(event.target.files[0])}
-							required
-						/>
-						<Image
-							id={user.thumbnail || preview ? "thumbnail" : "camera"}
-							className={user.thumbnail || preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-							src={preview ? preview : (user.thumbnail ? process.env.REACT_APP_API_URL + user.thumbnail_url : camera)}
-							alt="Selecione sua imagem"
-							onClick={() => document.getElementById("inputImage").click()}
-							rounded
-							fluid
-						/>
-						{user.thumbnail ?
-							<div className="d-flex justify-content-center flex-wrap my-auto">
-								<Button
-									className="my-1 mx-2"
-									type="submit"
-									variant="outline-warning"
-								>
-									Trocar foto
-								</Button>
-								<Button
-									className="my-1 mx-2"
-									onClick={handleUserThumbnailUpdate}
-									variant="outline-danger"
-								>
-									Apagar foto
-								</Button>
-							</div>
-							:
-							<div className="d-flex">
-								<Button
-									className="my-3 mx-auto"
-									type="submit"
-									variant="outline-warning"
-								>
-									Adicionar foto
-								</Button>
-							</div>
-						}
-					</Form>
-				</Col>
-				<Col className="m-auto p-2" sm="5">
+				<Col className="m-auto" sm="7">
 					<Card text="light" bg="dark">
 						<Card.Header >{user.name}</Card.Header>
-						<Card.Body>
-							<Card.Text>{"Email: " + user.email}</Card.Text>
-						</Card.Body>
-						<Card.Body>
-							<Card.Text>{"Telefone: " + (user.phone ? user.phone: "Não informado")}</Card.Text>
-						</Card.Body>
-						<Card.Body>
-							<Card.Text>
-								{"Endereço: " + (
-									(user.address && user.address.length) ?
-										user.address.join(", ")
-										:
-										"Não informado"
-								)}
-							</Card.Text>
-							<Row className="d-flex justify-content-around flex-row flex-wrap">
+						<Card.Body className="py-0">
+							<Row>
+								<Col sm>
+									<Form className="d-flex flex-column" onSubmit={(e) => handleUserThumbnailUpdate(e, 0)}>
+										<Form.Control
+											id="inputImage"
+											className="d-none"
+											type="file"
+											onChange={event => setThumbnail(event.target.files[0])}
+											required
+										/>
+										<Image
+											id={user.thumbnail || preview ? "thumbnail" : "camera"}
+											className={user.thumbnail || preview ? "btn border-0 m-auto p-0" : "btn w-75 m-auto p-0"}
+											src={preview ? preview : (user.thumbnail ? process.env.REACT_APP_API_URL + user.thumbnail_url : camera)}
+											alt="Selecione sua imagem"
+											onClick={() => document.getElementById("inputImage").click()}
+											rounded
+											fluid
+										/>
+										{user.thumbnail ?
+											<div className="d-flex justify-content-center flex-wrap my-auto">
+												<Button
+													className="my-1 mx-2"
+													type="submit"
+													variant="outline-warning"
+												>
+													Trocar foto
+												</Button>
+												<Button
+													className="my-1 mx-2"
+													onClick={handleUserThumbnailUpdate}
+													variant="outline-danger"
+												>
+													Apagar foto
+												</Button>
+											</div>
+											:
+											<div className="d-flex">
+												<Button
+													className="my-3 mx-auto"
+													type="submit"
+													variant="outline-warning"
+												>
+													Adicionar foto
+												</Button>
+											</div>
+										}
+									</Form>
+								</Col>
+								<Col sm>
+									<Card.Body>
+										<Card.Text>{"Email: " + user.email}</Card.Text>
+									</Card.Body>
+									<Card.Body>
+										<Card.Text>{"Telefone: " + (user.phone ? user.phone: "Não informado")}</Card.Text>
+									</Card.Body>
+									<Card.Body>
+										<Card.Text>
+											{"Endereço: " + (
+												(user.address && user.address.length) ?
+													user.address.join(", ")
+													:
+													"Não informado"
+											)}
+										</Card.Text>
+									</Card.Body>
+								</Col>
+							</Row>
+							<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
 								<Button
 									as={Col}
 									variant="outline-warning"
@@ -556,7 +562,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										className="mx-1 my-2 w-100"
 										sm="4"
 									>
-										Info da empresa
+									Info da empresa
 									</Button>
 									:
 									<Button
@@ -566,7 +572,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										className="mx-1 my-2 w-100"
 										sm="4"
 									>
-										Apagar perfil
+									Apagar perfil
 									</Button>
 								}
 							</Row>
@@ -616,7 +622,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 												className="mx-1 my-2 w-100"
 												variant="outline-warning"
 												onClick={() => setModalTimetable(true)}
-												sm="6"
+												sm="5"
 											>
 												Horário de funcionamento
 											</Button>
@@ -626,7 +632,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 												className="mx-1 my-2 w-100"
 												id="btn-custom-outline"
 												onClick={() => history.push("/cards")}
-												sm="5"
+												sm="6"
 											>
 												Cartões fidelidade
 											</Button>
@@ -642,7 +648,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 					</Card>
 				</Col>
 				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
-					<Col className="m-auto p-2" sm="3">
+					<Col className="m-auto p-2" sm="4">
 						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
 							companyInfo.cards[index].available ?
