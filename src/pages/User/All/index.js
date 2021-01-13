@@ -51,7 +51,7 @@ export default function AllUsers({ userId }) {
 
 	useEffect(() => {
 		async function loadUser() {
-			await api.get("user", {
+			await api.get("userAll", {
 				headers : {
 					"x-access-token": userId
 				}

@@ -61,7 +61,7 @@ export default function Routes() {
 	useEffect(() => {
 		async function fetchData() {
 			if(!user._id && userId) {
-				await api.get("userData", {
+				await api.get("user", {
 					headers : {
 						"x-access-token": userId
 					}
@@ -161,6 +161,7 @@ export default function Routes() {
 								user={user}
 								setUser={setUser}
 								companyInfo={companyInfo}
+								setCompanyInfo={setCompanyInfo}
 								noCards={noCards}
 							/> : <Auth />;
 					}}

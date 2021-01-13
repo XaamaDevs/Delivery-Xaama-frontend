@@ -20,7 +20,7 @@ import apicep from "../../services/apicep";
 import camera from "../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function User({ userId, setUserId, user, setUser, companyInfo, noCards}) {
+export default function User({ userId, setUserId, user, setUser, companyInfo, setCompanyInfo, noCards}) {
 	//	User variables
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
@@ -75,7 +75,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	const [modalImages, setModalImages] = useState(false);
 	const [modalTimetable, setModalTimetable] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
-	const [modalAlertThumbnail, setModalAlertThumbnail] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
@@ -142,8 +141,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		var data = {
 			name: userName,
 			email: userEmail,
-			phone: userPhone && userPhone.length ? userPhone : "99999999999",
-			address: userAddress && userAddress.length ? userAddress : "Rua, 1, Bairro, Casa",
+			phone: userPhone && userPhone.length ? userPhone : "",
+			address: userAddress && userAddress.length ? userAddress : "",
 			status: s,
 		};
 
@@ -159,9 +158,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			headers : {
 				"x-access-token": userId
 			}})
-			.then(() => {
+			.then((response) => {
 				setModal1Show(false);
 				setModal2Show(false);
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
 				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
@@ -173,11 +175,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				} else {
 					setMessage(error.message);
 				}
-				if(!action) {
-					setModalAlertThumbnail(true);
-				} else {
-					setToastShow(true);
-				}
+				setToastShow(true);
 			});
 	}
 
@@ -216,11 +214,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 				} else {
 					setMessage(error.message);
 				}
-				if(!action) {
-					setModalAlertThumbnail(true);
-				} else {
-					setToastShow(true);
-				}
+				setToastShow(true);
 			});
 	}
 
@@ -285,7 +279,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
+		}).then((response) => {
+			setCompanyInfo(response.data.company);
 			upCompany = true;
 		}).catch((error) => {
 			setTitle("Erro!");
@@ -1501,8 +1496,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 			<Alert.Close
-				modalAlert={modalAlertThumbnail}
-				setModalAlert={setModalAlertThumbnail}
+				modalAlert={modalAlert}
+				setModalAlert={setModalAlert}
 				title={title}
 				message={message}
 			/>
@@ -1516,5 +1511,6 @@ User.propTypes = {
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.any.isRequired,
 	companyInfo : PropTypes.object.isRequired,
+	setCompanyInfo : PropTypes.any.isRequired,
 	noCards : PropTypes.object.isRequired
 };
