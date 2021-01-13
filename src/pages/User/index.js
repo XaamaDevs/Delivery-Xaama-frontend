@@ -462,7 +462,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 	return (
 		<>
 			<div className="d-flex flex-row flex-wrap my-auto">
-				<Col className="m-auto p-3" sm="4">
+				<Col className="m-auto p-2" sm="3">
 					<Form className="d-flex flex-column" onSubmit={(e) => handleUserThumbnailUpdate(e, 0)}>
 						<Form.Control
 							id="inputImage"
@@ -510,7 +510,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 						}
 					</Form>
 				</Col>
-				<Col className="m-auto p-3" sm="4">
+				<Col className="m-auto p-2" sm="5">
 					<Card text="light" bg="dark">
 						<Card.Header >{user.name}</Card.Header>
 						<Card.Body>
@@ -530,33 +530,41 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 							</Card.Text>
 							<Row className="d-flex justify-content-around flex-row flex-wrap">
 								<Button
+									as={Col}
 									variant="outline-warning"
-									className="mx-1 my-2"
+									className="mx-1 my-2 w-100"
 									onClick={() => setModal1Show(true)}
+									sm="4"
 								>
 									Editar perfil
 								</Button>
 								<Button
+									as={Col}
 									variant="light"
 									onClick ={() => setModal2Show(true)}
 									id="btn-custom-outline"
-									className="mx-1 my-2"
+									className="mx-1 my-2 w-100"
+									sm="3"
 								>
 									Trocar senha
 								</Button>
 								{user.userType === 2 ?
 									<Button
+										as={Col}
 										onClick = {() => setModal4Show(true)}
 										variant="outline-warning"
-										className="mx-1 my-2"
+										className="mx-1 my-2 w-100"
+										sm="4"
 									>
 										Info da empresa
 									</Button>
 									:
 									<Button
+										as={Col}
 										onClick = {() => setModal3Show(true)}
 										variant="outline-danger"
-										className="mx-1 my-2"
+										className="mx-1 my-2 w-100"
+										sm="4"
 									>
 										Apagar perfil
 									</Button>
@@ -566,29 +574,35 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 								<>
 									<Row className="d-flex justify-content-around flex-row flex-wrap">
 										<Button
+											as={Col}
 											variant="light"
 											onClick={() => history.push("/allorders")}
-											className="mx-1 my-2"
+											className="mx-1 my-2 w-100"
 											id="btn-custom-outline"
+											sm="3"
 										>
 											Listar pedidos
 										</Button>
 										{user.userType === 2 ?
 											<>
 												<Button
-													variant="light"
-													className="mx-1 my-2"
-													onClick={() => history.push("/allusers")}
-													id="btn-custom-outline"
-												>
-													Listar usuários
-												</Button>
-												<Button
-													className="mx-1 my-2"
+													as={Col}
+													className="mx-1 my-2 w-100"
 													variant="outline-warning"
 													onClick={() => setModalImages(true)}
+													sm="4"
 												>
 													Editar imagens
+												</Button>
+												<Button
+													as={Col}
+													variant="light"
+													className="mx-1 my-2 w-100"
+													onClick={() => history.push("/allusers")}
+													id="btn-custom-outline"
+													sm="4"
+												>
+													Listar usuários
 												</Button>
 											</>
 											:
@@ -598,19 +612,23 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									{user.userType === 2 ?
 										<Row className="d-flex justify-content-around flex-row flex-wrap">
 											<Button
-												className="mx-1 my-2"
+												as={Col}
+												className="mx-1 my-2 w-100"
 												variant="outline-warning"
 												onClick={() => setModalTimetable(true)}
+												sm="6"
 											>
-														Horário de funcionamento
+												Horário de funcionamento
 											</Button>
 											<Button
+												as={Col}
 												variant="light"
-												className="mx-1 my-2"
+												className="mx-1 my-2 w-100"
 												id="btn-custom-outline"
 												onClick={() => history.push("/cards")}
+												sm="5"
 											>
-														Cartões fidelidade
+												Cartões fidelidade
 											</Button>
 										</Row>
 										:
@@ -624,7 +642,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 					</Card>
 				</Col>
 				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
-					<Col className="m-auto p-3" sm="4">
+					<Col className="m-auto p-2" sm="3">
 						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
 							companyInfo.cards[index].available ?
