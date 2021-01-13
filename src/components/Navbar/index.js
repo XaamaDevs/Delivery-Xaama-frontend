@@ -181,7 +181,6 @@ export default function WebsiteNavbar({
 		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
 		var data = {
-			user: order.user,
 			products: order.products,
 			deliver: deliverOrder,
 			address: deliverAddress,
@@ -196,7 +195,10 @@ export default function WebsiteNavbar({
 
 		var orderOk = false;
 
-		await api.post("order", data)
+		await api.post("order", data, {
+			headers : {
+				"x-access-token": userId
+			}})
 			.then(() => {
 				orderOk = true;
 			}).catch((error) => {

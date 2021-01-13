@@ -308,7 +308,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 				setOrder(newOrder);
 			} else {
-				setOrder({ products: [product], user, deliver: false, total: productTotal, address: user.address });
+				setOrder({ products: [product], deliver: false, total: productTotal, address: user.address });
 			}
 
 			setProductOrderModal(false);
