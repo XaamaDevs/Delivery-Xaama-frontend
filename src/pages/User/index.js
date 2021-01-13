@@ -337,7 +337,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 		if(action === "logo") {
 			data.append("op", "logo");
 			data.append("image", logo);
-			
+
 		} else if(action === "c1") {
 			data.append("op", "c1");
 			data.append("image", c1);
@@ -730,6 +730,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 										placeholder="CEP"
 									/>
 									<Button
+										variant="light"
+										id="btn-custom"
 										size="sm"
 										className="my-2"
 										onClick={getAddressInfo}
@@ -1367,7 +1369,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									rounded
 									fluid
 								/>
-							
+
 								{companyInfo.carousel[0] ?
 									<Button
 										className="d-flex my-3 mx-auto"
@@ -1407,7 +1409,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									rounded
 									fluid
 								/>
-						
+
 								{companyInfo.carousel[1] ?
 									<Button
 										className="d-flex my-3 mx-auto"
@@ -1447,7 +1449,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, no
 									rounded
 									fluid
 								/>
-						
+
 								{companyInfo.carousel[2] ?
 									<Button
 										className="d-flex my-3 mx-auto"
