@@ -119,15 +119,15 @@ export default function Coupons({ userId }) {
 						<Col key={index} className="my-2">
 							<Card text="white" bg="dark">
 								<Card.Header>
-									{couponI.name[0].toUpperCase() + couponI.name.slice(1)}
+									{couponI && couponI.name ? couponI.name : null}
 								</Card.Header>
 								<Card.Body>
 									<Card.Text>
-										{couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
+										{couponI && couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
 									</Card.Text>
 									<Card.Text>
-										{couponI.discount ?
-											"Desconto:" (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
+										{couponI && couponI.discount ?
+											"Desconto:" + (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
 											:
 											"Desconto: Não atribuído"
 										}
