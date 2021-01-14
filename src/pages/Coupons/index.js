@@ -10,7 +10,10 @@ import {
 	CardDeck,
 	Form,
 	Col,
-	Row
+	Row,
+	Nav,
+	Container,
+	Spinner
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -23,8 +26,10 @@ import api from "../../services/api";
 //	Exporting resource to routes.js
 export default function Coupons({ userId }) {
 	//	Coupon state variables
+	const couponTypes = ["qty", "private", "value", "freight"];
 	const [coupons, setCoupons] = useState([]);
 	const [coupon, setCoupon] = useState([]);
+	const [couponsByType, setCouponsByType] = useState({});
 	const [couponUserId, setCouponUserId] = useState([]);
 	const [couponName, setCouponName] = useState("");
 	const [couponType, setCouponType] = useState("");
@@ -39,6 +44,7 @@ export default function Coupons({ userId }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [toastShow, setToastShow] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 
 	//	Update card state variables
 	useEffect(() => {
@@ -51,6 +57,7 @@ export default function Coupons({ userId }) {
 		setCouponAvailable(coupon ? coupon.available : false);
 	}, [modalCoupon]);
 
+	//	Loading coupons list by type
 	useEffect(() => {
 		async function fetchData() {
 			api.get("couponAll", {
@@ -58,9 +65,21 @@ export default function Coupons({ userId }) {
 					"x-access-token": userId
 				}})
 				.then((response) => {
-					if(response.data) {
-						setCoupons(response.data);
+					var cpnsByType = {};
+
+					for(var type of couponTypes) {
+						var cpns = [];
+
+						for(var cpn of response.data) {
+							if(cpn.type === type) {
+								cpns.push(cpn);
+							}
+						}
+
+						cpnsByType[type] = cpns;
 					}
+
+					setCouponsByType(cpnsByType);
 				})
 				.catch((error) => {
 					setTitle("Erro!");
@@ -71,10 +90,19 @@ export default function Coupons({ userId }) {
 					}
 					setToastShow(true);
 				});
+
+			setLoading(false);
 		}
 
 		fetchData();
 	});
+
+	//	Return a list of coupons given type
+	async function handleCouponsList(event, type) {
+		event.preventDefault();
+
+		setCoupons(couponsByType[type]);
+	}
 
 	//	Function to update coupons
 	async function handleCoupons(event) {
@@ -111,41 +139,90 @@ export default function Coupons({ userId }) {
 			});
 	}
 
-	return (
-		<>
-			<CardDeck className="mx-3">
-				<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-					{coupons.map((couponI, index) => (
-						<Col key={index} className="my-2">
-							<Card text="white" bg="dark">
-								<Card.Header>
-									{couponI && couponI.name ? couponI.name : null}
-								</Card.Header>
-								<Card.Body>
-									<Card.Text>
-										{couponI && couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
-									</Card.Text>
-									<Card.Text>
-										{couponI && couponI.discount ?
-											"Desconto:" + (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
-											:
-											"Desconto: Não atribuído"
-										}
-									</Card.Text>
-									<Button
-										variant="light"
-										size="sm"
-										id="btn-custom"
-										onClick ={() => { setCoupon(couponI); setModalCoupon(true); } }
-									>
+	const header = (
+		<Card.Header className="pb-3">
+			<Nav fill variant="tabs">
+				{Object.keys(couponsByType).map((type, index) => (
+					couponsByType[type] && couponsByType[type].length ?
+						<Nav.Item key={index}>
+							<Nav.Link
+								className="btn-outline-warning rounded"
+								href={"#" + index}
+								onClick={e => handleCouponsList(e, type)}>
+								{type[0].toUpperCase() + type.slice(1)}
+							</Nav.Link>
+						</Nav.Item>
+						:
+						null
+				))}
+				<Nav.Item>
+					<Nav.Link
+						className="btn-outline-warning rounded"
+						onClick={null}>
+						Adicionar novo cupom
+					</Nav.Link>
+				</Nav.Item>
+			</Nav>
+		</Card.Header>
+	);
+
+	const couponCard = (couponI) => (
+		<Card text="white" bg="dark">
+			<Card.Header>
+				{couponI && couponI.name ? couponI.name : null}
+			</Card.Header>
+			<Card.Body>
+				<Card.Text>
+					{couponI && couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
+				</Card.Text>
+				<Card.Text>
+					{couponI && couponI.discount ?
+						"Desconto:" + (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
+						:
+						"Desconto: Não atribuído"
+					}
+				</Card.Text>
+				<Button
+					variant="light"
+					size="sm"
+					id="btn-custom"
+					onClick ={() => { setCoupon(couponI); setModalCoupon(true); } }
+				>
 										Modificar
-									</Button>
-								</Card.Body>
-							</Card>
-						</Col>
-					))}
-				</Row>
-			</CardDeck>
+				</Button>
+			</Card.Body>
+		</Card>
+	);
+
+	return (
+		<Container className="product-container w-100">
+			<Card className="px-3" text="light" bg="dark">
+				{header}
+				{isLoading ?
+					<Spinner
+						className="my-5 mx-auto"
+						style={{width: "5rem", height: "5rem"}}
+						animation="grow"
+						variant="warning"
+					/>
+					:
+					coupons && coupons.length ?
+						<CardDeck className="p-2">
+							{Array(coupons.length).fill(null).map((value, i) => (
+								i%3 === 0 ?
+									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
+										{Array(3).fill(null).map((value, j) => (
+											i+j < coupons.length ? couponCard(coupons[i+j]) : null
+										))}
+									</Row>
+									:
+									null
+							))}
+						</CardDeck>
+						:
+						<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima</h1>
+				}
+			</Card>
 
 			<Modal
 				show={modalCoupon}
@@ -212,7 +289,7 @@ export default function Coupons({ userId }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
-		</>
+		</Container>
 	);
 }
 
