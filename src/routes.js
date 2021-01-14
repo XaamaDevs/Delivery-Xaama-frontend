@@ -17,6 +17,7 @@ import Order from "./pages/Order";
 import AllOrders from "./pages/Order/All";
 import Menu from "./pages/Menu";
 import Cards from "./pages/Cards";
+import Coupons from "./pages/Coupons";
 
 //	Importing all app components
 import Navbar from "./components/Navbar";
@@ -169,6 +170,10 @@ export default function Routes() {
 				<Route
 					exact path="/cards"
 					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
+				/>
+				<Route
+					exact path="/coupons"
+					render={() => userId ? (adminAuth() ? <Coupons userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/additions"

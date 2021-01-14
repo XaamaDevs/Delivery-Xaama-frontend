@@ -620,7 +620,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 												className="mx-1 my-2 w-100"
 												variant="outline-warning"
 												onClick={() => setModalTimetable(true)}
-												sm="5"
+												sm="4"
 											>
 												Horário de funcionamento
 											</Button>
@@ -630,9 +630,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 												className="mx-1 my-2 w-100"
 												id="btn-custom-outline"
 												onClick={() => history.push("/cards")}
-												sm="6"
+												sm="3"
 											>
 												Cartões fidelidade
+											</Button>
+											<Button
+												as={Col}
+												variant="outline-warning"
+												className="mx-1 my-2 w-100"
+												onClick={() => history.push("/coupons")}
+												sm="4"
+											>
+												Cupons
 											</Button>
 										</Row>
 										:

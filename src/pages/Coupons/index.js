@@ -21,56 +21,82 @@ import Push from "../../components/Push";
 import api from "../../services/api";
 
 //	Exporting resource to routes.js
-export default function Coupons({ companyInfo, userId }) {
-	// Card variable
-	const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
-	const [types] = useState(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
-
-	const [card, setCard] = useState(null);
-	const [cardType, setCardType] = useState(null);
-	const [cardAvailable, setCardAvailable] = useState(null);
-	const [cardQtdMax, setCardQtdMax] = useState(null);
-	const [cardDiscount, setCardDiscount] = useState(null);
+export default function Coupons({ userId }) {
+	//	Coupon state variables
+	const [coupons, setCoupons] = useState([]);
+	const [coupon, setCoupon] = useState([]);
+	const [couponUserId, setCouponUserId] = useState([]);
+	const [couponName, setCouponName] = useState("");
+	const [couponType, setCouponType] = useState("");
+	const [couponQty, setCouponQty] = useState("");
+	const [couponMethod, setCouponMethod] = useState("");
+	const [couponDiscount, setCouponDiscount] = useState(0);
+	const [couponAvailable, setCouponAvailable] = useState(false);
+	const [modalCoupon, setModalCoupon] = useState(false);
 
 	//	Message settings
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [modalCards, setModalCards] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 
 	//	Update card state variables
 	useEffect(() => {
-		setCardType(card ? card.type : null);
-		setCardAvailable(card ? card.available : null);
-		setCardQtdMax(card ? card.qtdMax : null);
-		setCardDiscount(card ? card.discount : null);
-	}, [modalCards]);
+		setCouponUserId(coupon ? coupon.userId : []);
+		setCouponName(coupon ? coupon.name : "");
+		setCouponType(coupon ? coupon.type : "");
+		setCouponQty(coupon ? coupon.qty : "");
+		setCouponMethod(coupon ? coupon.method : "");
+		setCouponDiscount(coupon ? coupon.discount : 0);
+		setCouponAvailable(coupon ? coupon.available : false);
+	}, [modalCoupon]);
 
-	// Function to change cards
-	async function handleCards(event) {
-		event.preventDefault();
-
-		for(var c of companyCards) {
-			if(c.type == cardType) {
-				c.available = cardAvailable ? cardAvailable : false;
-				c.qtdMax = cardQtdMax ? cardQtdMax : 0;
-				c.discount = cardDiscount ? cardDiscount : 0;
-			}
+	useEffect(() => {
+		async function fetchData() {
+			api.get("couponAll", {
+				headers: {
+					"x-access-token": userId
+				}})
+				.then((response) => {
+					if(response.data) {
+						setCoupons(response.data);
+					}
+				})
+				.catch((error) => {
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
 		}
 
+		fetchData();
+	});
+
+	//	Function to update coupons
+	async function handleCoupons(event) {
+		event.preventDefault();
+
 		const data = {
-			productTypes: types.join(", "),
-			cards: companyCards
+			userId: couponUserId,
+			name: couponName,
+			type: couponType,
+			qty: couponQty,
+			method: couponMethod,
+			discount: couponDiscount,
+			available: couponAvailable,
 		};
 
-		await api.put("companyUpdateCards", data, {
+		await api.put("coupon/" + coupon._id, data, {
 			headers : {
 				"x-access-token": userId
 			}})
 			.then(() => {
-				setModalCards(false);
-				setTitle("Alterações cartão de fidelidade!");
+				setModalCoupon(false);
+				setTitle("Alterações de cupom");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
 			})
@@ -89,32 +115,28 @@ export default function Coupons({ companyInfo, userId }) {
 		<>
 			<CardDeck className="mx-3">
 				<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-					{companyCards.map((cardI, index) => (
+					{coupons.map((couponI, index) => (
 						<Col key={index} className="my-2">
 							<Card text="white" bg="dark">
 								<Card.Header>
-									{cardI.type[0].toUpperCase() + cardI.type.slice(1)}
+									{couponI.name[0].toUpperCase() + couponI.name.slice(1)}
 								</Card.Header>
 								<Card.Body>
-									{cardI && cardI.available ?
-										<>
-											<Card.Text>
-												{cardI && cardI.qtdMax ? "Quantidade de pedidos para completar o cartão: " + cardI.qtdMax : "Quantidade de pedidos desse produto para completar o cartão: Não atribuído"}
-											</Card.Text>
-											<Card.Text>
-												{cardI && cardI.discount ? "Desconto aṕos completar o cartão: R$" + cardI.discount : "Desconto aṕos completar o cartão: Não atribuído" }
-											</Card.Text>
-										</>
-										:
-										<Card.Text>
-											Não existe cartão fidelidade para este produto
-										</Card.Text>
-									}
+									<Card.Text>
+										{couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
+									</Card.Text>
+									<Card.Text>
+										{couponI.discount ?
+											"Desconto:" (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
+											:
+											"Desconto: Não atribuído"
+										}
+									</Card.Text>
 									<Button
 										variant="light"
 										size="sm"
 										id="btn-custom"
-										onClick ={() => { setCard(cardI); setModalCards(true); } }
+										onClick ={() => { setCoupon(couponI); setModalCoupon(true); } }
 									>
 										Modificar
 									</Button>
@@ -126,42 +148,40 @@ export default function Coupons({ companyInfo, userId }) {
 			</CardDeck>
 
 			<Modal
-				show={modalCards}
-				onHide={() => { setCard(null); setModalCards(false); setToastShow(false);} }
+				show={modalCoupon}
+				onHide={() => { setCoupon(null); setModalCoupon(false); setToastShow(false);} }
 				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>
-						Modificar cartão fidelidade - {cardType ? cardType[0].toUpperCase() + cardType.slice(1) : null}
+						Modificar cupom - {couponName ? couponName[0].toUpperCase() + couponName.slice(1) : null}
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleCards}>
+					<Form onSubmit={handleCoupons}>
 						<Row>
 							<Col sm>
 								<Form.Group controlId="type">
 									<Form.Check
 										type={"checkbox"}
-										checked={cardAvailable ? cardAvailable : false}
-										onChange={e => setCardAvailable(e.target.checked)}
-										label={"Disponibilizar cartão fidelidade para esse produto?"}
+										checked={couponAvailable ? couponAvailable : false}
+										onChange={e => setCouponAvailable(e.target.checked)}
+										label={"Disponibilizar cupom?"}
 									/>
 								</Form.Group>
 							</Col>
 						</Row>
 						<Row>
 							<Col sm>
-								<Form.Group controlId="qtdMax">
+								<Form.Group controlId="qty">
 									<Form.Label>Quantidade</Form.Label>
 									<Form.Control
-										value={cardQtdMax}
-										onChange={e => setCardQtdMax(e.target.value)}
+										value={couponQty}
+										onChange={e => setCouponQty(e.target.value)}
 										type="number"
-										min="10"
-										max="20"
-										placeholder="Quantidade para obter o desconto"
+										placeholder="Quantidade"
 										required
 									/>
 								</Form.Group>
@@ -170,19 +190,17 @@ export default function Coupons({ companyInfo, userId }) {
 								<Form.Group controlId="discount">
 									<Form.Label>Desconto</Form.Label>
 									<Form.Control
-										value={cardDiscount}
-										onChange={e => setCardDiscount(e.target.value)}
+										value={couponDiscount}
+										onChange={e => setCouponDiscount(e.target.value)}
 										type="number"
-										min="5"
-										max="20"
-										placeholder="Desconto em Reais"
+										placeholder="Desconto"
 										required
 									/>
 								</Form.Group>
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setCard(null); setModalCards(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setCoupon(null); setModalCoupon(false); setToastShow(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -199,6 +217,5 @@ export default function Coupons({ companyInfo, userId }) {
 }
 
 Coupons.propTypes = {
-	userId : PropTypes.string,
-	companyInfo : PropTypes.object.isRequired,
+	userId : PropTypes.string
 };
