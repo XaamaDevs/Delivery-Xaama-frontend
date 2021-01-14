@@ -140,7 +140,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 		var data = {
 			name: userName,
-			email: userEmail,
+			email: userEmail.toLowerCase(),
 			phone: userPhone && userPhone.length ? userPhone : "",
 			address: userAddress && userAddress.length ? userAddress : "",
 			status: s,

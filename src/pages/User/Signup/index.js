@@ -46,7 +46,7 @@ export default function Signup({ setUserId, setUser }) {
 		const data = new FormData();
 
 		data.append("name", name);
-		data.append("email", email);
+		data.append("email", email.toLowerCase());
 		data.append("password", password);
 		data.append("passwordC", passwordC);
 		data.append("thumbnail", thumbnail);

@@ -33,7 +33,7 @@ export default function Login({ setUserId, setUser }) {
 		event.preventDefault();
 
 		await api.post("session", {
-			email,
+			email: email.toLowerCase(),
 			password
 		}).then((response) => {
 			sessionStorage.setItem("userId", response.data.token);
