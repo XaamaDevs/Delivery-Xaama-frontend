@@ -21,7 +21,7 @@ import Push from "../../components/Push";
 import api from "../../services/api";
 
 //	Exporting resource to routes.js
-export default function Cards({ companyInfo, userId }) {
+export default function Coupons({ companyInfo, userId }) {
 	// Card variable
 	const [companyCards] = useState(companyInfo && companyInfo.cards ? companyInfo.cards : null);
 	const [types] = useState(companyInfo && companyInfo.productTypes ? companyInfo.productTypes : null);
@@ -198,7 +198,7 @@ export default function Cards({ companyInfo, userId }) {
 	);
 }
 
-Cards.propTypes = {
+Coupons.propTypes = {
 	userId : PropTypes.string,
 	companyInfo : PropTypes.object.isRequired,
 };
