@@ -340,7 +340,7 @@ export default function Coupons({ userId, companyInfo }) {
 					/>
 				</Form.Group>
 				<Form.Group as={Col} controlId="couponMinValue" sm>
-					<Form.Label>Valor mínimo (em reais)</Form.Label>
+					<Form.Label>Valor mínimo (em reais R$)</Form.Label>
 					<Form.Control
 						value={couponMinValue}
 						onChange={e => setCouponMinValue(e.target.value)}
