@@ -24,10 +24,10 @@ import Push from "../../components/Push";
 import api from "../../services/api";
 
 //	Exporting resource to routes.js
-export default function Coupons({ userId }) {
+export default function Coupons({ userId, companyInfo }) {
 	//	Coupon state variables
-	const couponTypes = ["qty", "private", "value", "freight"];
-	const couponTypesptbr = ["quantidade", "privado", "valor", "frete"];
+	const couponTypes = ["quantidade", "privado", "valor", "frete"];
+	const couponMethods = ["dinheiro", "porcentagem"];
 	const [coupons, setCoupons] = useState([]);
 	const [coupon, setCoupon] = useState([]);
 	const [couponsByType, setCouponsByType] = useState({});
@@ -38,7 +38,8 @@ export default function Coupons({ userId }) {
 	const [couponMethod, setCouponMethod] = useState("");
 	const [couponDiscount, setCouponDiscount] = useState(0);
 	const [couponAvailable, setCouponAvailable] = useState(false);
-	const [modalCoupon, setModalCoupon] = useState(false);
+	const [modalCouponAdd, setModalCouponAdd] = useState(false);
+	const [modalCouponUpdate, setModalCouponUpdate] = useState(false);
 
 	//	Message settings
 	const [modalAlert, setModalAlert] = useState(false);
@@ -47,7 +48,7 @@ export default function Coupons({ userId }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setLoading] = useState(true);
 
-	//	Update card state variables
+	//	Update coupon state variables
 	useEffect(() => {
 		setCouponUserId(coupon ? coupon.userId : []);
 		setCouponName(coupon ? coupon.name : "");
@@ -56,7 +57,7 @@ export default function Coupons({ userId }) {
 		setCouponMethod(coupon ? coupon.method : "");
 		setCouponDiscount(coupon ? coupon.discount : 0);
 		setCouponAvailable(coupon ? coupon.available : false);
-	}, [modalCoupon]);
+	}, [modalCouponAdd, modalCouponUpdate]);
 
 	//	Loading coupons list by type
 	useEffect(() => {
@@ -105,8 +106,43 @@ export default function Coupons({ userId }) {
 		setCoupons(couponsByType[type]);
 	}
 
+	//	Function to create a new coupon
+	async function handleCouponAdd(event) {
+		event.preventDefault();
+
+		const data = {
+			userId: couponUserId,
+			name: couponName,
+			type: couponType,
+			qty: couponQty,
+			method: couponMethod,
+			discount: couponDiscount,
+			available: couponAvailable,
+		};
+
+		await api.post("coupon", data, {
+			headers : {
+				"x-access-token": userId
+			}})
+			.then(() => {
+				setModalCouponAdd(false);
+				setTitle("Alterações de cupom");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+	}
+
 	//	Function to update coupons
-	async function handleCoupons(event) {
+	async function handleCouponUpdate(event) {
 		event.preventDefault();
 
 		const data = {
@@ -124,7 +160,7 @@ export default function Coupons({ userId }) {
 				"x-access-token": userId
 			}})
 			.then(() => {
-				setModalCoupon(false);
+				setModalCouponUpdate(false);
 				setTitle("Alterações de cupom");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
@@ -143,7 +179,7 @@ export default function Coupons({ userId }) {
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav fill variant="tabs">
-				{couponTypesptbr.map((type, index) => (
+				{couponTypes.map((type, index) => (
 					type && type.length ?
 						<Nav.Item key={index}>
 							<Nav.Link
@@ -159,7 +195,8 @@ export default function Coupons({ userId }) {
 				<Nav.Item>
 					<Nav.Link
 						className="btn-outline-warning rounded"
-						onClick={null}>
+						onClick={() => setModalCouponAdd(true)}
+					>
 						Adicionar novo cupom
 					</Nav.Link>
 				</Nav.Item>
@@ -187,12 +224,110 @@ export default function Coupons({ userId }) {
 					variant="light"
 					size="sm"
 					id="btn-custom"
-					onClick ={() => { setCoupon(couponI); setModalCoupon(true); } }
+					onClick ={() => { setCoupon(couponI); setModalCouponUpdate(true); } }
 				>
 										Modificar
 				</Button>
 			</Card.Body>
 		</Card>
+	);
+
+	const couponformBody = (
+		<>
+			<Row>
+				<Col sm>
+					<Form.Group controlId="productName">
+						<Form.Label>Nome</Form.Label>
+						<Form.Control
+							value={couponName}
+							onChange={e => setCouponName(e.target.value)}
+							type="text"
+							placeholder="Nome do cupom"
+							required
+						/>
+					</Form.Group>
+				</Col>
+				<Col sm>
+					<Form.Group controlId="type">
+						<Form.Label>Disponibilizar cupom?</Form.Label>
+						<Form.Check
+							type={"checkbox"}
+							checked={couponAvailable ? couponAvailable : false}
+							className="my-2"
+							onChange={e => setCouponAvailable(e.target.checked)}
+							label={couponAvailable ? "Disponibilizar" : "Não disponibilizar"}
+						/>
+					</Form.Group>
+				</Col>
+			</Row>
+			<Row>
+				<Col sm>
+					<Form.Group controlId="qty">
+						<Form.Label>Quantidade</Form.Label>
+						<Form.Control
+							value={couponQty}
+							onChange={e => setCouponQty(e.target.value)}
+							type="number"
+							placeholder="Quantidade"
+							required
+						/>
+					</Form.Group>
+				</Col>
+				<Col sm>
+					<Form.Group controlId="discount">
+						<Form.Label>Desconto</Form.Label>
+						<Form.Control
+							value={couponType === "frete" ? companyInfo.freight : couponDiscount}
+							onChange={e => setCouponDiscount(e.target.value)}
+							type="number"
+							placeholder="Desconto"
+							required
+							disabled={couponType === "frete"}
+						/>
+					</Form.Group>
+				</Col>
+			</Row>
+			<Row>
+				<Col sm>
+					<Form.Group controlId="productType">
+						<Form.Label>Tipo</Form.Label>
+						<Form.Control
+							value={couponType}
+							onChange={e =>  {
+								setCouponType(e.target.value);
+								setCouponMethod(couponType === "frete" ? "dinheiro" : couponMethod);
+							}}
+							as="select"
+							placeholder="Tipo do cupom"
+							required
+						>
+							<option>Selecione o tipo do cupom</option>
+							{couponTypes.map((type, index) => (
+								<option key={index}>{type}</option>
+							))}
+						</Form.Control>
+					</Form.Group>
+				</Col>
+				<Col sm>
+					<Form.Group controlId="productType">
+						<Form.Label>Método</Form.Label>
+						<Form.Control
+							value={couponType === "frete" ? "dinheiro" : couponMethod}
+							onChange={e => setCouponMethod(e.target.value)}
+							as="select"
+							placeholder="Método do cupom"
+							required
+							disabled={couponType === "frete"}
+						>
+							<option>Selecione o método de desconto</option>
+							{couponMethods.map((type, index) => (
+								<option key={index}>{type}</option>
+							))}
+						</Form.Control>
+					</Form.Group>
+				</Col>
+			</Row>
+		</>
 	);
 
 	return (
@@ -226,8 +361,33 @@ export default function Coupons({ userId }) {
 			</Card>
 
 			<Modal
-				show={modalCoupon}
-				onHide={() => { setCoupon(null); setModalCoupon(false); setToastShow(false);} }
+				show={modalCouponAdd}
+				onHide={() => { setCoupon(null); setModalCouponAdd(false); setToastShow(false);} }
+				size="lg"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Adicionar cupom</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form onSubmit={handleCouponAdd}>
+						{couponformBody}
+						<Modal.Footer>
+							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponAdd(false); setToastShow(false);}}>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
+					</Form>
+				</Modal.Body>
+			</Modal>
+
+			<Modal
+				show={modalCouponUpdate}
+				onHide={() => { setCoupon(null); setModalCouponUpdate(false); setToastShow(false);} }
 				size="lg"
 				centered
 			>
@@ -238,47 +398,10 @@ export default function Coupons({ userId }) {
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleCoupons}>
-						<Row>
-							<Col sm>
-								<Form.Group controlId="type">
-									<Form.Check
-										type={"checkbox"}
-										checked={couponAvailable ? couponAvailable : false}
-										onChange={e => setCouponAvailable(e.target.checked)}
-										label={"Disponibilizar cupom?"}
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm>
-								<Form.Group controlId="qty">
-									<Form.Label>Quantidade</Form.Label>
-									<Form.Control
-										value={couponQty}
-										onChange={e => setCouponQty(e.target.value)}
-										type="number"
-										placeholder="Quantidade"
-										required
-									/>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="discount">
-									<Form.Label>Desconto</Form.Label>
-									<Form.Control
-										value={couponDiscount}
-										onChange={e => setCouponDiscount(e.target.value)}
-										type="number"
-										placeholder="Desconto"
-										required
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
+					<Form onSubmit={handleCouponUpdate}>
+						{couponformBody}
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setCoupon(null); setModalCoupon(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponUpdate(false); setToastShow(false);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -295,5 +418,6 @@ export default function Coupons({ userId }) {
 }
 
 Coupons.propTypes = {
-	userId : PropTypes.string
+	userId : PropTypes.string.required,
+	companyInfo : PropTypes.object.required
 };
