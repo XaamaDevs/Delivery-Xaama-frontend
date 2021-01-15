@@ -74,6 +74,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [modal4Show, setModal4Show] = useState(false);
 	const [modalImages, setModalImages] = useState(false);
 	const [modalTimetable, setModalTimetable] = useState(false);
+	const [modalMyCoupons, setModalMyCoupons] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
@@ -530,6 +531,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											)}
 										</Card.Text>
 									</Card.Body>
+									{user.userType === 0 ?
+										<Button
+											variant="outline-warning"
+											className="mx-1 my-3 w-100"
+											onClick={() => setModalMyCoupons(true)}
+											sm="4"
+										>
+											Cupons disponíveis
+										</Button>
+										:
+										null
+									}
 								</Col>
 							</Row>
 							<Row className="d-flex justify-content-around flex-row flex-wrap my-2">
@@ -1504,6 +1517,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 						</Col>
 					</Row>
 				</Modal.Body>
+			</Modal>
+
+			<Modal
+				show={modalMyCoupons}
+				onHide={() => { setModalMyCoupons(false); setToastShow(false); }}
+				size="md"
+				centered
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Cupons disponíveis</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+				
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="warning" onClick={() => { setModalMyCoupons(false); setToastShow(false); history.push("/menu");}}>
+						Cardápio
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
