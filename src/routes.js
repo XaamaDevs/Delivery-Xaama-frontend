@@ -173,7 +173,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/coupons"
-					render={() => userId ? (adminAuth() ? <Coupons userId={userId} /> : <Autho />) : <Auth />}
+					render={() => userId ? (adminAuth() ? <Coupons companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/additions"
