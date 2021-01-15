@@ -283,7 +283,7 @@ export default function Coupons({ userId, companyInfo }) {
 							setCouponType(e.target.value);
 							setCouponMethod(e.target.value === "frete" ? "dinheiro" : couponMethod);
 							setCouponDiscount(companyInfo.freight);
-							setCouponPrivate(e.target.value === "quantidade" ? false : true);
+							setCouponPrivate(e.target.value === "quantidade" ? false : couponPrivate);
 						}}
 						as="select"
 						placeholder="Tipo do cupom"
