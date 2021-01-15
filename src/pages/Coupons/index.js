@@ -29,7 +29,7 @@ export default function Coupons({ userId, companyInfo }) {
 	const couponTypes = ["quantidade", "privado", "valor", "frete"];
 	const couponMethods = ["dinheiro", "porcentagem"];
 	const [coupons, setCoupons] = useState([]);
-	const [coupon, setCoupon] = useState([]);
+	const [coupon, setCoupon] = useState({});
 	const [couponsByType, setCouponsByType] = useState({});
 	const [couponUserId, setCouponUserId] = useState([]);
 	const [couponName, setCouponName] = useState("");
@@ -55,7 +55,7 @@ export default function Coupons({ userId, companyInfo }) {
 		setCouponType(coupon ? coupon.type : "");
 		setCouponQty(coupon ? coupon.qty : "");
 		setCouponMethod(coupon ? coupon.method : "");
-		setCouponDiscount(coupon ? coupon.discount : 0);
+		setCouponDiscount(coupon ? coupon.discount : null);
 		setCouponAvailable(coupon ? coupon.available : false);
 	}, [modalCouponAdd, modalCouponUpdate]);
 
@@ -119,6 +119,8 @@ export default function Coupons({ userId, companyInfo }) {
 			discount: couponDiscount,
 			available: couponAvailable,
 		};
+
+		console.log(data);
 
 		await api.post("coupon", data, {
 			headers : {
@@ -215,7 +217,7 @@ export default function Coupons({ userId, companyInfo }) {
 				</Card.Text>
 				<Card.Text>
 					{couponI && couponI.discount ?
-						"Desconto:" + (couponI.method === "cash" ? "R$" + couponI.discount : couponI.discount + "%")
+						"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")
 						:
 						"Desconto: Não atribuído"
 					}
@@ -226,7 +228,7 @@ export default function Coupons({ userId, companyInfo }) {
 					id="btn-custom"
 					onClick ={() => { setCoupon(couponI); setModalCouponUpdate(true); } }
 				>
-										Modificar
+					Modificar
 				</Button>
 			</Card.Body>
 		</Card>
@@ -235,103 +237,94 @@ export default function Coupons({ userId, companyInfo }) {
 	const couponformBody = (
 		<>
 			<Row>
-				<Col sm>
-					<Form.Group controlId="productName">
-						<Form.Label>Nome</Form.Label>
-						<Form.Control
-							value={couponName}
-							onChange={e => setCouponName(e.target.value)}
-							type="text"
-							placeholder="Nome do cupom"
-							required
-						/>
-					</Form.Group>
-				</Col>
-				<Col sm>
-					<Form.Group controlId="type">
-						<Form.Label>Disponibilizar cupom?</Form.Label>
-						<Form.Check
-							type={"checkbox"}
-							checked={couponAvailable ? couponAvailable : false}
-							className="my-2"
-							onChange={e => setCouponAvailable(e.target.checked)}
-							label={couponAvailable ? "Disponibilizar" : "Não disponibilizar"}
-						/>
-					</Form.Group>
-				</Col>
+				<Form.Group as={Col} controlId="couponName" sm>
+					<Form.Label>Nome</Form.Label>
+					<Form.Control
+						value={couponName}
+						onChange={e => setCouponName(e.target.value)}
+						type="text"
+						placeholder="Nome do cupom"
+						required
+					/>
+				</Form.Group>
+				<Form.Group as={Col} controlId="couponType" sm>
+					<Form.Label>Tipo</Form.Label>
+					<Form.Control
+						value={couponType}
+						onChange={e =>  {
+							setCouponType(e.target.value);
+							setCouponMethod(e.target.value === "frete" ? "dinheiro" : couponMethod);
+							setCouponDiscount(companyInfo.freight);
+						}}
+						as="select"
+						placeholder="Tipo do cupom"
+						required
+					>
+						<option>Selecione o tipo do cupom</option>
+						{couponTypes.map((type, index) => (
+							<option key={index}>{type}</option>
+						))}
+					</Form.Control>
+				</Form.Group>
 			</Row>
 			<Row>
-				<Col sm>
-					<Form.Group controlId="qty">
-						<Form.Label>Quantidade</Form.Label>
-						<Form.Control
-							value={couponQty}
-							onChange={e => setCouponQty(e.target.value)}
-							type="number"
-							placeholder="Quantidade"
-							required
-						/>
-					</Form.Group>
-				</Col>
-				<Col sm>
-					<Form.Group controlId="discount">
-						<Form.Label>Desconto</Form.Label>
-						<Form.Control
-							value={couponType === "frete" ? companyInfo.freight : couponDiscount}
-							onChange={e => setCouponDiscount(e.target.value)}
-							type="number"
-							placeholder="Desconto"
-							required
-							disabled={couponType === "frete"}
-						/>
-					</Form.Group>
-				</Col>
+				<Form.Group as={Col} controlId="couponType" sm>
+					<Form.Label>Método</Form.Label>
+					<Form.Control
+						value={couponType === "frete" ? "dinheiro" : couponMethod}
+						onChange={e => setCouponMethod(e.target.value)}
+						as="select"
+						placeholder="Método do cupom"
+						required
+						disabled={couponType === "frete"}
+					>
+						<option>Selecione o método de desconto</option>
+						{couponMethods.map((type, index) => (
+							<option key={index}>{type}</option>
+						))}
+					</Form.Control>
+				</Form.Group>
+				<Form.Group as={Col} controlId="discount" sm>
+					<Form.Label>
+						{"Desconto " + (couponMethod === "porcentagem" ? "(em porcentagem %)" : "(em reais R$)")}
+					</Form.Label>
+					<Form.Control
+						value={couponType === "frete" ? companyInfo.freight : couponDiscount}
+						onChange={e => setCouponDiscount(e.target.value)}
+						type="number"
+						placeholder="Desconto"
+						required
+						disabled={couponType === "frete"}
+					/>
+				</Form.Group>
 			</Row>
 			<Row>
-				<Col sm>
-					<Form.Group controlId="productType">
-						<Form.Label>Tipo</Form.Label>
-						<Form.Control
-							value={couponType}
-							onChange={e =>  {
-								setCouponType(e.target.value);
-								setCouponMethod(couponType === "frete" ? "dinheiro" : couponMethod);
-							}}
-							as="select"
-							placeholder="Tipo do cupom"
-							required
-						>
-							<option>Selecione o tipo do cupom</option>
-							{couponTypes.map((type, index) => (
-								<option key={index}>{type}</option>
-							))}
-						</Form.Control>
-					</Form.Group>
-				</Col>
-				<Col sm>
-					<Form.Group controlId="productType">
-						<Form.Label>Método</Form.Label>
-						<Form.Control
-							value={couponType === "frete" ? "dinheiro" : couponMethod}
-							onChange={e => setCouponMethod(e.target.value)}
-							as="select"
-							placeholder="Método do cupom"
-							required
-							disabled={couponType === "frete"}
-						>
-							<option>Selecione o método de desconto</option>
-							{couponMethods.map((type, index) => (
-								<option key={index}>{type}</option>
-							))}
-						</Form.Control>
-					</Form.Group>
-				</Col>
+				<Form.Group as={Col} controlId="qty" sm>
+					<Form.Label>Quantidade</Form.Label>
+					<Form.Control
+						value={couponQty}
+						onChange={e => setCouponQty(e.target.value)}
+						type="number"
+						placeholder="Quantidade"
+						required
+					/>
+				</Form.Group>
+				<Form.Group as={Col} className={modalCouponAdd ? "d-none" : null} controlId="type" sm>
+					<Form.Label>Disponibilizar cupom?</Form.Label>
+					<Form.Check
+						type={"checkbox"}
+						checked={couponAvailable ? couponAvailable : false}
+						className="my-2"
+						onChange={e => setCouponAvailable(e.target.checked)}
+						label={couponAvailable ? "Disponibilizar" : "Não disponibilizar"}
+					/>
+				</Form.Group>
 			</Row>
 		</>
 	);
 
 	return (
-		<Container className="product-container w-100">
+		<Container className="w-100">
 			<Card className="px-3" text="light" bg="dark">
 				{header}
 				{isLoading ?
