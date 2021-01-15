@@ -457,6 +457,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				});
 		}
 	}
+	
+	// Function to get coupons available for user
+	async function handleShowCoupons(event) {
+		event.preventDefault();
+
+		
+	}
 
 	return (
 		<>
@@ -535,7 +542,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										<Button
 											variant="outline-warning"
 											className="mx-1 my-3 w-100"
-											onClick={() => setModalMyCoupons(true)}
+											onClick={handleShowCoupons}
 											sm="4"
 										>
 											Cupons disponíveis
@@ -1530,7 +1537,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					<Modal.Title>Cupons disponíveis</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-				
+							
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => { setModalMyCoupons(false); setToastShow(false); history.push("/menu");}}>
