@@ -596,7 +596,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											onClick={() => history.push("/allorders")}
 											className="mx-1 my-2 w-100"
 											id="btn-custom-outline"
-											sm="3"
+											sm="4"
 										>
 											Listar pedidos
 										</Button>
@@ -607,7 +607,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 													className="mx-1 my-2 w-100"
 													variant="outline-warning"
 													onClick={() => setModalImages(true)}
-													sm="4"
+													sm="3"
 												>
 													Editar imagens
 												</Button>

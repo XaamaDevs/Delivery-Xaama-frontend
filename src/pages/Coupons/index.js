@@ -27,6 +27,7 @@ import api from "../../services/api";
 export default function Coupons({ userId }) {
 	//	Coupon state variables
 	const couponTypes = ["qty", "private", "value", "freight"];
+	const couponTypesptbr = ["quantidade", "privado", "valor", "frete"];
 	const [coupons, setCoupons] = useState([]);
 	const [coupon, setCoupon] = useState([]);
 	const [couponsByType, setCouponsByType] = useState({});
@@ -142,13 +143,13 @@ export default function Coupons({ userId }) {
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav fill variant="tabs">
-				{Object.keys(couponsByType).map((type, index) => (
-					couponsByType[type] && couponsByType[type].length ?
+				{couponTypesptbr.map((type, index) => (
+					type && type.length ?
 						<Nav.Item key={index}>
 							<Nav.Link
 								className="btn-outline-warning rounded"
 								href={"#" + index}
-								onClick={e => handleCouponsList(e, type)}>
+								onClick={e => handleCouponsList(e, couponTypes[index])}>
 								{type[0].toUpperCase() + type.slice(1)}
 							</Nav.Link>
 						</Nav.Item>
