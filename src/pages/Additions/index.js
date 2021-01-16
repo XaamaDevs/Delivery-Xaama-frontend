@@ -32,6 +32,7 @@ export default function Additions({ userId }) {
 	//	Addition variables
 	const [productTypes, setProductTypes] = useState([]);
 	const [additions, setAdditions] = useState([]);
+	const [addition, setAddition] = useState(null);
 	const [additionId, setAdditionId] = useState("");
 	const [additionName, setAdditionName] = useState("");
 	const [additionPrice, setAdditionPrice] = useState("");
@@ -40,15 +41,33 @@ export default function Additions({ userId }) {
 	const [additionThumbnail, setAdditionThumbnail] = useState(null);
 	const [additionAvailable, setAdditionAvailable] = useState();
 
-	//	Message settings
+	//	Modal state variables
+	const [modalAlert, setModalAlert] = useState(false);
 	const [additionAddModal, setAdditionAddModal] = useState(false);
 	const [additionUpdateModal, setAdditionUpdateModal] = useState(false);
 	const [additionDeleteModal, setAdditionDeleteModal] = useState(false);
-	const [modalAlert, setModalAlert] = useState(false);
+
+	//	Message settings
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setLoading] = useState(true);
+
+	//	Update addition state variables
+	useEffect(() => {
+		setAdditionId(addition ? addition._id : "");
+		setAdditionName(addition ? addition.name : "");
+		setAdditionPrice(addition ? addition.price : "");
+		setAdditionType(addition ? addition.type : "");
+		setAdditionThumbnail(null);
+		setAdditionThumbnail_url(addition ? addition.thumbnail_url : null);
+		setAdditionAvailable(addition ? addition.available : true);
+	}, [additionAddModal, additionUpdateModal, additionDeleteModal]);
+
+	//	Addition image preview
+	const preview = useMemo(() => {
+		return additionThumbnail ? URL.createObjectURL(additionThumbnail) : null;
+	}, [additionThumbnail]);
 
 	//	Loading current user info and addition list
 	useEffect(() => {
@@ -89,19 +108,7 @@ export default function Additions({ userId }) {
 		}
 
 		fetchData();
-	}, [userId]);
-
-	//	Addition image preview
-	const preview = useMemo(() => {
-		return additionThumbnail ? URL.createObjectURL(additionThumbnail) : null;
-	}, [additionThumbnail]);
-
-	//	Function to handle input addition thumbnail
-	async function inputImage(event) {
-		event.preventDefault();
-
-		document.getElementById("inputImage").click();
-	}
+	}, [productTypes, modalAlert]);
 
 	async function handleAdditionAdd(event) {
 		event.preventDefault();
@@ -193,7 +200,7 @@ export default function Additions({ userId }) {
 		const data = new FormData();
 
 		data.append("thumbnail", additionThumbnail);
-		
+
 		await api.put("additionThumbnail/" + additionId, data, {
 			headers : {
 				"x-access-token": userId
@@ -238,40 +245,6 @@ export default function Additions({ userId }) {
 			});
 	}
 
-	async function handleAdditionModal(event, modal, addition = null) {
-		event.preventDefault();
-
-		setAdditionId(addition ? addition._id : "");
-		setAdditionName(addition ? addition.name : "");
-		setAdditionPrice(addition ? addition.price : "");
-		setAdditionType(addition ? addition.type : "");
-		setAdditionThumbnail(null);
-		setAdditionThumbnail_url(addition ? addition.thumbnail_url : null);
-		setAdditionAvailable(addition ? addition.available : true);
-
-		switch(modal) {
-		case 0:
-			setAdditionAddModal(true);
-			break;
-		case 1:
-			setAdditionUpdateModal(true);
-			break;
-		case 2:
-			setAdditionDeleteModal(true);
-			break;
-		case 3:
-			setAdditionAvailable(false);
-			handleAdditionUpdate(event);
-			break;
-		case 4:
-			setAdditionAvailable(true);
-			handleAdditionUpdate(event);
-			break;
-		default:
-			break;
-		}
-	}
-
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav variant="tabs" defaultActiveKey="#">
@@ -279,7 +252,7 @@ export default function Additions({ userId }) {
 					<Nav.Link
 						href="#"
 						className="btn-outline-warning rounded"
-						onClick={e => handleAdditionModal(e, 0)}
+						onClick={() => { setAddition(null); setAdditionAddModal(true); }}
 					>
 						Nova adição
 					</Nav.Link>
@@ -288,27 +261,27 @@ export default function Additions({ userId }) {
 		</Card.Header>
 	);
 
-	const additionCard = (addition) => {
+	const additionCard = (additionI) => {
 		return (
-			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={addition._id}>
+			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={additionI._id}>
 				<Card.Img
 					variant="top"
-					src={addition.thumbnail ? process.env.REACT_APP_API_URL + addition.thumbnail_url : camera}
+					src={additionI.thumbnail ? process.env.REACT_APP_API_URL + additionI.thumbnail_url : camera}
 					fluid="true"
 				/>
-				<Card.Body key={addition._id}>
-					<Card.Title>{addition.name}</Card.Title>
+				<Card.Body key={additionI._id}>
+					<Card.Title>{additionI.name}</Card.Title>
 					<div className="d-flex justify-content-around flex-wrap my-auto">
 						<Button
 							className="my-1"
 							variant="warning"
 							size="sm"
-							onClick ={e => handleAdditionModal(e, 1, addition)}
+							onClick ={() => { setAddition(additionI); setAdditionUpdateModal(true); }}
 						>
-								Modificar
+							Modificar
 						</Button>
 
-						{addition.available ?
+						{additionI.available ?
 							<Button
 								className="my-1"
 								variant="light"
@@ -320,8 +293,9 @@ export default function Additions({ userId }) {
 							:
 							<Button
 								className="my-1"
-								variant="dark"
+								variant="light"
 								size="sm"
+								id="btn-custom-outline"
 							>
 								Indisponível
 							</Button>
@@ -331,7 +305,7 @@ export default function Additions({ userId }) {
 							className="my-1"
 							variant="danger"
 							size="sm"
-							onClick={e => handleAdditionModal(e, 2, addition)}
+							onClick={() => { setAddition(additionI); setAdditionDeleteModal(true); }}
 						>
 							Remover
 						</Button>
@@ -339,12 +313,120 @@ export default function Additions({ userId }) {
 				</Card.Body>
 				<Card.Footer>
 					<small>
-						{"Preço: R$" + addition.price}
+						{"Preço: R$" + additionI.price}
 					</small>
 				</Card.Footer>
 			</Card>
 		);
 	};
+
+	const additionFormBody = (
+		<Row>
+			<Col className="d-flex" sm>
+				{additionUpdateModal ?
+					<Form onSubmit={handleAdditionThumbnailUpdate}>
+						<Form.Control
+							id="inputImage"
+							className="d-none"
+							type="file"
+							onChange={event => setAdditionThumbnail(event.target.files[0])}
+							required
+						/>
+						<Image
+							id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
+							className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+							src={preview ?
+								preview
+								:
+								(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)
+							}
+							alt="Selecione sua imagem"
+							onClick={() => document.getElementById("inputImage").click()}
+							rounded
+							fluid
+						/>
+
+						<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+							Alterar imagem
+						</Button>
+					</Form>
+					:
+					<>
+						<Form.Control
+							id="inputImage"
+							className="d-none"
+							type="file"
+							onChange={event => setAdditionThumbnail(event.target.files[0])}
+						/>
+						<Image
+							id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
+							className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+							src={preview ?
+								preview
+								:
+								(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
+							alt="Selecione sua imagem"
+							onClick={() => document.getElementById("inputImage").click()}
+							rounded
+							fluid
+						/>
+					</>
+				}
+			</Col>
+			<Col sm>
+				<Form.Group controlId="additionName">
+					<Form.Label>Nome</Form.Label>
+					<Form.Control
+						value={additionName}
+						onChange={e => setAdditionName(e.target.value)}
+						type="text"
+						placeholder="Nome da adição"
+						required
+					/>
+				</Form.Group>
+				<Form.Group controlId="additionPrice">
+					<Form.Label>
+						Preço
+					</Form.Label>
+					<Form.Control
+						value={additionPrice}
+						onChange={e => {
+							e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
+							setAdditionPrice(e.target.value);
+						}}
+						pattern="^[0-9]+(\.[0-9]+)*$"
+						type="text"
+						placeholder="Preço da adição"
+						required
+					/>
+				</Form.Group>
+				<Form.Group controlId="additionType">
+					<Form.Label>Tipo</Form.Label>
+					<Form.Control as="select" htmlSize="2" multiple required>
+						{productTypes.map((type, index) => (
+							<option
+								key={index}
+								selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
+								{type}
+							</option>
+						))}
+					</Form.Control>
+					<Form.Text className="text-muted">
+						Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
+					</Form.Text>
+				</Form.Group>
+				<Form.Group className={additionAddModal ? "d-none" : null} controlId="additionAvailable">
+					<Form.Check
+						type="switch"
+						id="custom-switch2"
+						label={additionAvailable ? "Disponível" : "Indisponível"}
+						checked={additionAvailable}
+						onChange={e => setAdditionAvailable(e.target.checked)}
+					/>
+				</Form.Group>
+			</Col>
+		</Row>
+	);
 
 	return (
 		<Container className="addition-container w-100">
@@ -378,7 +460,7 @@ export default function Additions({ userId }) {
 
 			<Modal
 				show={additionAddModal}
-				onHide={() =>  {setAdditionAddModal(false); setToastShow(false);}}
+				onHide={() =>  { setAddition(null); setAdditionAddModal(false); setToastShow(false); }}
 				size="lg"
 				centered
 			>
@@ -388,69 +470,16 @@ export default function Additions({ userId }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={handleAdditionAdd}>
-						<Row>
-							<Col className="d-flex m-auto" sm>
-								<Form.Control
-									id="inputImage"
-									className="d-none"
-									type="file"
-									onChange={event => setAdditionThumbnail(event.target.files[0])}
-								/>
-								<Image
-									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
-									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-									src={preview ?
-										preview
-										:
-										(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
-									alt="Selecione sua imagem"
-									onClick={inputImage}
-									rounded
-									fluid
-								/>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="additionName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control
-										value={additionName}
-										onChange={e => setAdditionName(e.target.value)}
-										type="text"
-										placeholder="Nome da adição"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="additionPrice">
-									<Form.Label>
-										Preço
-									</Form.Label>
-									<Form.Control
-										value={additionPrice}
-										onChange={e => {
-											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
-											setAdditionPrice(e.target.value);
-										}}
-										pattern="^[0-9]+(\.[0-9]+)*$"
-										type="text"
-										placeholder="Preço da adição"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="additionType">
-									<Form.Label>Tipo</Form.Label>
-									<Form.Control as="select" htmlSize="2" multiple required>
-										{productTypes.map((type, index) => (
-											<option key={index}>{type}</option>
-										))}
-									</Form.Control>
-									<Form.Text className="text-muted">
-										Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
-									</Form.Text>
-								</Form.Group>
-							</Col>
-						</Row>
+						{additionFormBody}
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setAdditionAddModal(false); setToastShow(false);}}>
+							<Button
+								variant="danger"
+								onClick={() => {
+									setAddition(null);
+									setAdditionAddModal(false);
+									setToastShow(false);
+								}}
+							>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -463,7 +492,7 @@ export default function Additions({ userId }) {
 
 			<Modal
 				show={additionUpdateModal}
-				onHide={() => {setAdditionUpdateModal(false); setToastShow(false);}}
+				onHide={() => { setAddition(null); setAdditionUpdateModal(false); setToastShow(false); }}
 				size="lg" centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -471,98 +500,35 @@ export default function Additions({ userId }) {
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Row>
-						<Col className="d-flex m-auto" sm>
-							<Form onSubmit={handleAdditionThumbnailUpdate}>
-								<Form.Control
-									id="inputImage"
-									className="d-none"
-									type="file"
-									onChange={event => setAdditionThumbnail(event.target.files[0])}
-									required
-								/>
-								<Image
-									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
-									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={preview ? preview : (additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
-									alt="Selecione sua imagem"
-									onClick={inputImage}
-									rounded
-									fluid
-								/>
-
-								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
-									Alterar imagem
-								</Button>
-							</Form>
-						</Col>
-						<Col sm>
-							<Form onSubmit={handleAdditionUpdate}>
-								<Form.Group controlId="additionName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control
-										value={additionName}
-										onChange={e => setAdditionName(e.target.value)}
-										type="text"
-										placeholder="Nome do adicional"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="additionPrice">
-									<Form.Label>
-										Preço
-									</Form.Label>
-									<Form.Control
-										value={additionPrice}
-										onChange={e => {
-											e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
-											setAdditionPrice(e.target.value);
-										}}
-										pattern="^[0-9]+(\.[0-9]+)*$"
-										type="text"
-										placeholder="Preço da adição"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="additionType">
-									<Form.Label>Tipo</Form.Label>
-									<Form.Control as="select" htmlSize="2" multiple required>
-										{productTypes.map((type, index) => (
-											<option
-												key={index}
-												selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
-												{type}
-											</option>
-										))}
-									</Form.Control>
-									<Form.Text className="text-muted">
-										Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
-									</Form.Text>
-								</Form.Group>
-								<Form.Group controlId="additionAvailable">
-									<Form.Check
-										type="switch"
-										id="custom-switch2"
-										label={additionAvailable ? "Disponível" : "Indisponível"}
-										checked={additionAvailable}
-										onChange={e => setAdditionAvailable(e.target.checked)}
-									/>
-								</Form.Group>
-								<Modal.Footer>
-									<Button variant="danger" onClick={() => {setAdditionUpdateModal(false); setToastShow(false);}}>
-										Fechar
-									</Button>
-									<Button variant="warning" type="submit">
-										Salvar alterações
-									</Button>
-								</Modal.Footer>
-							</Form>
-						</Col>
-					</Row>
+					<Form onSubmit={handleAdditionUpdate}>
+						{additionFormBody}
+						<Modal.Footer>
+							<Button
+								variant="danger"
+								onClick={() => {
+									setAddition(null);
+									setAdditionUpdateModal(false);
+									setToastShow(false);
+								}}
+							>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
+					</Form>
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={additionDeleteModal} onHide={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
+			<Modal
+				show={additionDeleteModal}
+				onHide={() => {
+					setAddition(null);
+					setAdditionDeleteModal(false);
+					setToastShow(false);
+				}}
+			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Remover adição {additionName}</Modal.Title>
@@ -571,7 +537,14 @@ export default function Additions({ userId }) {
 					Você tem certeza que deseja remover esta adição?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => {setAdditionDeleteModal(false); setToastShow(false);}}>
+					<Button
+						variant="warning"
+						onClick={() => {
+							setAddition(null);
+							setAdditionDeleteModal(false);
+							setToastShow(false);
+						}}
+					>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleAdditionDelete}>
@@ -580,14 +553,11 @@ export default function Additions({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
+			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</Container>
 	);
 }
 
 Additions.propTypes = {
-	userId : PropTypes.string.isRequired,
-	user : PropTypes.object.isRequired,
-	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.any.isRequired
+	userId : PropTypes.string.isRequired
 };

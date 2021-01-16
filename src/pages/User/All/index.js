@@ -223,7 +223,7 @@ export default function AllUsers({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Close setModalAlert={setModalAlert} modalAlert={modalAlert} title={title} message={message} />
+			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</div>
 	);
 }

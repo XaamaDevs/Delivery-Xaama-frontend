@@ -36,6 +36,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const [productsByType, setProductsByType] = useState({});
 	const [productTypes, setProductTypes] = useState([]);
 	const [products, setProducts] = useState([]);
+	const [product, setProduct] = useState(null);
 	const [productId, setProductId] = useState("");
 	const [productName, setProductName] = useState("");
 	const [productIngredients, setProductIngredients] = useState("");
@@ -57,29 +58,43 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const [additionsOrder, setAdditionsOrder] = useState([]);
 	const [productTotal, setProductTotal] = useState(0);
 
-	//	Message settings
+	//	Modal state variables
+	const [modalAlert, setModalAlert] = useState(false);
 	const [productAddModal, setProductAddModal] = useState(false);
 	const [productUpdateModal, setProductUpdateModal] = useState(false);
 	const [productDeleteModal, setProductDeleteModal] = useState(false);
 	const [productOrderModal, setProductOrderModal] = useState(false);
-	const [modalAlert, setModalAlert] = useState(false);
+
+	//	Message settings
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setLoading] = useState(true);
+
+	//	Update product state variables
+	useEffect(() => {
+		setProductId(product ? product._id : "");
+		setProductName(product ? product.name : "");
+		setProductIngredients(product ? product.ingredients.join(", ") : "");
+		setProductPrices(product ? product.prices.join(", ") : "");
+		setProductSizes(product ? product.sizes.join(", ") : "");
+		setProductType(product ? product.type : "");
+		setProductThumbnail(null);
+		setProductThumbnail_url(product ? product.thumbnail_url : null);
+		setProductAvailable(product ? product.available : true);
+	}, [productAddModal, productUpdateModal, productDeleteModal]);
+
+	//	Product image preview
+	const preview = useMemo(() => {
+		return productThumbnail ? URL.createObjectURL(productThumbnail) : null;
+	}, [productThumbnail]);
 
 	//	Loading current user info and products list by type
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("productTypes")
 				.then((response) => {
-					if(response.data && response.data.length) {
-						setProductTypes(response.data);
-					} else {
-						setTitle("Erro!");
-						setMessage("Não há tipos de produtos cadastrados");
-						setToastShow(true);
-					}
+					setProductTypes(response.data);
 				}).catch((error) => {
 					setTitle("Erro!");
 					if(error.response && typeof(error.response.data) !== "object") {
@@ -150,27 +165,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}
 
 		fetchData();
-	}, [productTypes, userId]);
-
-	//	Product image preview
-	const preview = useMemo(() => {
-		return productThumbnail ? URL.createObjectURL(productThumbnail) : null;
-	}, [productThumbnail]);
-
-	//	Function to handle input product thumbnail
-	async function inputImage(event) {
-		event.preventDefault();
-
-		document.getElementById("inputImage").click();
-	}
-
-	//	Return a list of products given type
-	async function handleProductsList(event, type) {
-		event.preventDefault();
-
-		setProducts(productsByType[type]);
-		setAdditions(additionsByType[type]);
-	}
+	}, [productTypes]);
 
 	async function handleProductAdd(event) {
 		event.preventDefault();
@@ -346,64 +341,29 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}
 	}
 
-	async function handleProductModal(event, modal, product = null) {
-		event.preventDefault();
-
-		setProductId(product ? product._id : "");
-		setProductName(product ? product.name : "");
-		setProductIngredients(product ? product.ingredients.join(", ") : "");
-		setProductPrices(product ? product.prices.join(", ") : "");
-		setProductSizes(product ? product.sizes.join(", ") : "");
-		setProductType(product ? product.type : "");
-		setProductThumbnail(null);
-		setProductThumbnail_url(product ? product.thumbnail_url : null);
-		setProductAvailable(product ? product.available : true);
-
-		switch(modal) {
-		case 0:
-			setProductAddModal(true);
-			break;
-		case 1:
-			setProductUpdateModal(true);
-			break;
-		case 2:
-			setProductDeleteModal(true);
-			break;
-		case 3:
-			setProductAvailable(false);
-			handleProductUpdate(event);
-			break;
-		case 4:
-			setProductAvailable(true);
-			handleProductUpdate(event);
-			break;
-		default:
-			break;
-		}
-	}
-
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav fill variant="tabs">
-				{Object.keys(productsByType).map((type, index) => (
-					productsByType[type] && productsByType[type].length ?
-						<Nav.Item key={index}>
-							<Nav.Link
-								className="btn-outline-warning rounded"
-								href={"#" + index}
-								onClick={e => handleProductsList(e, type)}>
-								{type[0].toUpperCase() + type.slice(1)}
-							</Nav.Link>
-						</Nav.Item>
-						:
-						null
+				{productTypes.map((type, index) => (
+					<Nav.Item key={index}>
+						<Nav.Link
+							className="btn-outline-warning rounded"
+							href={"#" + index}
+							onClick={() => {
+								setProducts(productsByType[type]);
+								setAdditions(additionsByType[type]);
+							}}
+						>
+							{type[0].toUpperCase() + type.slice(1)}
+						</Nav.Link>
+					</Nav.Item>
 				))}
 				{user.userType === 1 || user.userType === 2 ?
 					<Nav.Item>
 						<Nav.Link
 							className="btn-outline-warning rounded"
-							onClick={e => handleProductModal(e, 0)}>
-							Adicionar novo produto
+							onClick={() => setProductAddModal(true)}>
+								Adicionar novo produto
 						</Nav.Link>
 					</Nav.Item>
 					:
@@ -413,15 +373,15 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		</Card.Header>
 	);
 
-	const productCard = (product) => {
+	const productCard = (productI) => {
 		return (
-			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={product._id}>
-				<Card.Img variant="top" src={product.thumbnail ? process.env.REACT_APP_API_URL + product.thumbnail_url : camera} fluid="true" />
-				<Card.Body className="d-flex align-content-between flex-column" key={product._id}>
-					<Card.Title>{product.name}</Card.Title>
+			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={productI._id}  sm="4">
+				<Card.Img variant="top" src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera} fluid="true" />
+				<Card.Body className="d-flex align-content-between flex-column" key={productI._id}>
+					<Card.Title>{productI.name}</Card.Title>
 					<Card.Text>
-						{product.ingredients.map((ingredient, index) => (
-							index === product.ingredients.length-1 ?
+						{productI.ingredients.map((ingredient, index) => (
+							index === productI.ingredients.length-1 ?
 								ingredient
 								:
 								ingredient + ", "
@@ -434,25 +394,26 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									className="my-1"
 									variant="warning"
 									size="sm"
-									onClick ={e => handleProductModal(e, 1, product)}
+									onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
 								>
 									Modificar
 								</Button>
 
-								{product.available ?
+								{productI.available ?
 									<Button
 										className="my-1"
 										variant="light"
 										size="sm"
-										id="btn-custom-outline"
+										id="btn-custom"
 									>
 										Disponível
 									</Button>
 									:
 									<Button
 										className="my-1"
-										variant="dark"
+										variant="light"
 										size="sm"
+										id="btn-custom-outline"
 									>
 										Indisponível
 									</Button>
@@ -462,7 +423,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									className="my-1"
 									variant="danger"
 									size="sm"
-									onClick={e => handleProductModal(e,2, product)}
+									onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
 								>
 									Remover
 								</Button>
@@ -472,7 +433,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 									|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 
-									product.available ?
+									productI.available ?
 										<Button
 											className="my-auto"
 											variant="warning"
@@ -482,8 +443,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 												setAdditionsOrder([]);
 												setProductSize(0);
 												setProductTotal(0);
-												setProductOrder(product);
-												setProductTotal(product.prices[0]);
+												setProductOrder(productI);
+												setProductTotal(productI.prices[0]);
 												setProductOrderModal(true);
 											}}
 										>
@@ -511,13 +472,13 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Card.Body>
 				<Card.Footer>
 					<small>
-						{product.prices.length === 1 ?
+						{productI.prices.length === 1 ?
 							"Preço: "
 							:
 							"Preços por tamanho: "
 						}
-						{product.prices.map((price, index) => (
-							index === product.prices.length-1 ?
+						{productI.prices.map((price, index) => (
+							index === productI.prices.length-1 ?
 								"R$" + price
 								:
 								"R$" + price + ", "
@@ -527,6 +488,173 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			</Card>
 		);
 	};
+
+	const productFormBody = (
+		<>
+			<Row>
+				<Col className="d-flex m-auto" sm>
+					{productUpdateModal ?
+						<Form onSubmit={handleProductThumbnailUpdate}>
+							<Form.Control
+								id="inputImage"
+								className="d-none"
+								type="file"
+								onChange={event => setProductThumbnail(event.target.files[0])}
+								required
+							/>
+							<Image
+								id={preview || productThumbnail_url ? "thumbnail" : "camera"}
+								className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+								src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
+								alt="Selecione sua imagem"
+								onClick={() => document.getElementById("inputImage").click()}
+								rounded
+								fluid
+							/>
+
+							{productThumbnail_url ?
+								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+									Alterar imagem
+								</Button>
+								:
+								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+									Adicionar imagem
+								</Button>
+							}
+						</Form>
+						:
+						<>
+							<Form.Control
+								id="inputImage"
+								className="d-none"
+								type="file"
+								onChange={event => setProductThumbnail(event.target.files[0])}
+							/>
+							<Image
+								id={preview || productThumbnail_url ? "thumbnail" : "camera"}
+								className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+								src={preview ?
+									preview
+									:
+									(productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)
+								}
+								alt="Selecione sua imagem"
+								onClick={() => document.getElementById("inputImage").click()}
+								rounded
+								fluid
+							/>
+						</>
+					}
+				</Col>
+				<Col sm>
+					<Form.Group controlId="productName">
+						<Form.Label>Nome</Form.Label>
+						<Form.Control
+							value={productName}
+							onChange={e => setProductName(e.target.value)}
+							type="text"
+							placeholder="Nome do produto"
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="productPrices">
+						<Form.Label>
+							Preço
+						</Form.Label>
+						<OverlayTrigger
+							placement="top"
+							overlay={
+								<Tooltip>
+									Para múltiplos tamanhos, separe-os entre vírgulas.
+								</Tooltip>
+							}
+						>
+							<Form.Control
+								value={productPrices}
+								onChange={(e) => setProductPrices(e.target.value)}
+								pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
+								type="text"
+								placeholder="Preço do produto"
+								required
+							/>
+						</OverlayTrigger>
+					</Form.Group>
+					<Form.Group controlId="productSizes">
+						<Form.Label>
+							Tamanho
+						</Form.Label>
+						<OverlayTrigger
+							placement="top"
+							overlay={
+								<Tooltip>
+									Para tamanho único, digite único,
+									para múltiplos tamanhos, separe-os entre vírgulas.
+								</Tooltip>
+							}
+						>
+							<Form.Control
+								value={productSizes}
+								onChange={(e) => setProductSizes(e.target.value)}
+								pattern="^[^\s,]+(\s[^\s,]+)*(,\s?[^\s,]+(\s[^\s,]+)*)*$"
+								type="text"
+								placeholder="Tamanho do produto"
+								required
+							/>
+						</OverlayTrigger>
+					</Form.Group>
+				</Col>
+			</Row>
+			<Row>
+				<Form.Group as={Col} controlId="productIngredients">
+					<Form.Label>Ingredientes</Form.Label>
+					<OverlayTrigger
+						placement="top"
+						overlay={
+							<Tooltip>
+								Para múltiplos ingredientes, separe-os entre vírgulas.
+							</Tooltip>
+						}
+					>
+						<Form.Control
+							value={productIngredients}
+							onChange={(e) => setProductIngredients(e.target.value)}
+							as="textarea"
+							rows="3"
+							style={{resize :"none"}}
+							placeholder="Ingredientes do produto"
+							required
+						/>
+					</OverlayTrigger>
+				</Form.Group>
+				<Col sm>
+					<Form.Group controlId="productType">
+						<Form.Label>Tipo</Form.Label>
+						<Form.Control
+							value={productType}
+							onChange={e => setProductType(e.target.value)}
+							as="select"
+							placeholder="Tipo do produto"
+							required
+						>
+							<option disabled>Selecione o tipo</option>
+							{productTypes.map((type, index) => (
+								<option key={index}>{type}</option>
+							))}
+						</Form.Control>
+					</Form.Group>
+					<Form.Group className={productAddModal ? "d-none" : null}  controlId="productAvailable">
+						<Form.Check
+							type="switch"
+							id="custom-switch"
+							label={productAvailable ? "Disponível" : "Indisponível"}
+							checked={productAvailable}
+							onChange={e => setProductAvailable(e.target.checked)}
+						/>
+					</Form.Group>
+				</Col>
+			</Row>
+		</>
+	);
 
 	return (
 		<Container className="product-container w-100">
@@ -560,7 +688,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 			<Modal
 				show={productAddModal}
-				onHide={() => {setProductAddModal(false); setToastShow(false);}}
+				onHide={() => { setProduct(null); setProductAddModal(false); setToastShow(false); }}
 				size="lg"
 				centered
 			>
@@ -570,139 +698,29 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={handleProductAdd}>
-						<Row>
-							<Col className="d-flex m-auto" sm>
-								<Form.Control
-									id="inputImage"
-									className="d-none"
-									type="file"
-									onChange={event => setProductThumbnail(event.target.files[0])}
-								/>
-								<Image
-									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
-									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-									src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
-									alt="Selecione sua imagem"
-									onClick={inputImage}
-									rounded
-									fluid
-								/>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="productName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control
-										value={productName}
-										onChange={e => setProductName(e.target.value)}
-										type="text"
-										placeholder="Nome do produto"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="productPrices">
-									<Form.Label>
-										Preço
-									</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para múltiplos tamanhos, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productPrices}
-											onChange={(e) => setProductPrices(e.target.value)}
-											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
-											type="text"
-											placeholder="Preço do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-								<Form.Group controlId="productSizes">
-									<Form.Label>
-										Tamanho
-									</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para tamanho único, digite único,
-												para múltiplos tamanhos, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productSizes}
-											onChange={(e) => setProductSizes(e.target.value)}
-											pattern="^[^\s,]+(\s[^\s,]+)*(,\s?[^\s,]+(\s[^\s,]+)*)*$"
-											type="text"
-											placeholder="Tamanho do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm>
-								<Form.Group controlId="productIngredients">
-									<Form.Label>Ingredientes</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para múltiplos ingredientes, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productIngredients}
-											onChange={(e) => setProductIngredients(e.target.value)}
-											as="textarea"
-											rows="3"
-											style={{resize :"none"}}
-											placeholder="Ingredientes do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="productType">
-									<Form.Label>Tipo</Form.Label>
-									<Form.Control
-										value={productType}
-										onChange={e => setProductType(e.target.value)}
-										as="select"
-										placeholder="Tipo do produto"
-										required
-									>
-										<option></option>
-										{productTypes.map((type, index) => (
-											<option key={index}>{type}</option>
-										))}
-									</Form.Control>
-								</Form.Group>
-							</Col>
-						</Row>
+						{productFormBody}
+						<Modal.Footer>
+							<Button
+								variant="danger"
+								onClick={() => {
+									setProduct(null);
+									setProductAddModal(false);
+									setToastShow(false);
+								}}
+							>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Adicionar
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="danger" onClick={() => {setProductAddModal(false); setToastShow(false);}}>
-						Fechar
-					</Button>
-					<Button variant="warning" type="submit" onClick={handleProductAdd}>
-						Adicionar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Modal
 				show={productUpdateModal}
-				onHide={() => {setProductUpdateModal(false); setToastShow(false);}}
+				onHide={() => { setProduct(null); setProductUpdateModal(false); setToastShow(false); }}
 				size="lg"
 				centered
 			>
@@ -711,151 +729,24 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					<Modal.Title>Modificar produto</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Row>
-						<Col className="d-flex m-auto" sm>
-							<Form onSubmit={handleProductThumbnailUpdate}>
-								<Form.Control
-									id="inputImage"
-									className="d-none"
-									type="file"
-									onChange={event => setProductThumbnail(event.target.files[0])}
-									required
-								/>
-								<Image
-									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
-									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-									src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
-									alt="Selecione sua imagem"
-									onClick={inputImage}
-									rounded
-									fluid
-								/>
-
-								{productThumbnail_url ?
-									<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
-										Alterar imagem
-									</Button>
-									:
-									<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
-										Adicionar imagem
-									</Button>
-								}
-
-							</Form>
-						</Col>
-						<Col sm>
-							<Form onSubmit={handleProductUpdate}>
-								<Form.Group controlId="productName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control
-										value={productName}
-										onChange={e => setProductName(e.target.value)}
-										type="text"
-										placeholder="Nome do produto"
-										required
-									/>
-								</Form.Group>
-								<Form.Group controlId="productPrices">
-									<Form.Label>
-										Preço
-									</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para múltiplos tamanhos, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productPrices}
-											onChange={(e) => setProductPrices(e.target.value)}
-											pattern="^[0-9]+(\.[0-9]+)*(,\s?[0-9]+(\.?[0-9]+)*)*$"
-											type="text"
-											placeholder="Preço do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-								<Form.Group controlId="productSizes">
-									<Form.Label>
-										Tamanho
-									</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para tamanho único, digite único,
-												para múltiplos tamanhos, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productSizes}
-											onChange={(e) => setProductSizes(e.target.value)}
-											pattern="^[^\s,]+(\s[^\s,]+)*(,\s?[^\s,]+(\s[^\s,]+)*)*$"
-											type="text"
-											placeholder="Tamanho do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-								<Form.Group controlId="productIngredients">
-									<Form.Label>Ingredientes</Form.Label>
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												Para múltiplos ingredientes, separe-os entre vírgulas.
-											</Tooltip>
-										}
-									>
-										<Form.Control
-											value={productIngredients}
-											onChange={(e) => setProductIngredients(e.target.value)}
-											as="textarea"
-											rows="3"
-											style={{resize :"none"}}
-											placeholder="Ingredientes do produto"
-											required
-										/>
-									</OverlayTrigger>
-								</Form.Group>
-
-								<Form.Group controlId="productType">
-									<Form.Label>Tipo</Form.Label>
-									<Form.Control
-										value={productType}
-										onChange={e => setProductType(e.target.value)}
-										as="select"
-										placeholder="Tipo do produto"
-										required
-									>
-										{productTypes.map((type, index) => (
-											<option key={index}>{type}</option>
-										))}
-									</Form.Control>
-								</Form.Group>
-								<Form.Group controlId="productAvailable">
-									<Form.Check
-										type="switch"
-										id="custom-switch"
-										label={productAvailable ? "Disponível" : "Indisponível"}
-										checked={productAvailable}
-										onChange={e => setProductAvailable(e.target.checked)}
-									/>
-								</Form.Group>
-								<Modal.Footer>
-									<Button variant="danger" onClick={() => {setProductUpdateModal(false); setToastShow(false);}}>
-										Fechar
-									</Button>
-									<Button variant="warning" type="submit">
-										Salvar alterações
-									</Button>
-								</Modal.Footer>
-							</Form>
-						</Col>
-					</Row>
+					<Form onSubmit={handleProductUpdate}>
+						{productFormBody}
+						<Modal.Footer>
+							<Button
+								variant="danger"
+								onClick={() => {
+									setProduct(null);
+									setProductUpdateModal(false);
+									setToastShow(false);
+								}}
+							>
+								Fechar
+							</Button>
+							<Button variant="warning" type="submit">
+								Salvar alterações
+							</Button>
+						</Modal.Footer>
+					</Form>
 				</Modal.Body>
 			</Modal>
 
@@ -932,6 +823,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 														as="select"
 														required
 													>
+														<option disabled>Selecione o tamanho</option>
 														{productOrder.sizes.map((size, index) => (
 															<option key={index}>{size}</option>
 														))}
@@ -1059,7 +951,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</Container>
 	);
 }
@@ -1070,6 +962,5 @@ Menu.propTypes = {
 	companyInfo : PropTypes.object.isRequired,
 	order : PropTypes.object.isRequired,
 	setOrder : PropTypes.any.isRequired,
-	setData : PropTypes.any.isRequired,
-	companySystemOpenByHour : PropTypes.any.isRequired
+	companySystemOpenByHour : PropTypes.bool
 };

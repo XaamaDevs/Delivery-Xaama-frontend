@@ -524,7 +524,14 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form onSubmit={handleCouponAdd}>
 						{couponFormBody}
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponAdd(false); setToastShow(false);}}>
+							<Button
+								variant="danger"
+								onClick={() => {
+									setCoupon(null);
+									setModalCouponAdd(false);
+									setToastShow(false);
+								}}
+							>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">

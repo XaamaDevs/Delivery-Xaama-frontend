@@ -48,7 +48,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [orderListingModal, setOrderListingModal] = useState(false);
 	const [feedbackModal, setFeedbackModal] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
-	const [modalClose, setModalClose] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setLoading] = useState(true);
@@ -117,7 +117,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			setFeedbackModal(false);
 			setTitle("Avaliação enviada!");
 			setMessage("Obrigado pelo seu feedback!");
-			setModalClose(true);
+			setModalAlert(true);
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {
@@ -333,7 +333,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				</Modal.Body>
 			</Modal>
 
-			<Alert.Close modalClose={modalClose} title={title} message={message} setModalClose={setModalClose} />
+			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</div>
 	);
 }

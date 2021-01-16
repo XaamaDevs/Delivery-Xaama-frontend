@@ -795,7 +795,7 @@ WebsiteNavbar.propTypes = {
 	order : PropTypes.object.isRequired,
 	setOrder : PropTypes.any.isRequired,
 	companyInfo : PropTypes.object.isRequired,
-	companySystemOpenByHour : PropTypes.object.isRequired,
+	companySystemOpenByHour : PropTypes.bool,
 	setCompanySystemOpenByHour : PropTypes.any.isRequired,
 	setData : PropTypes.any.isRequired,
 	data : PropTypes.any.isRequired,
