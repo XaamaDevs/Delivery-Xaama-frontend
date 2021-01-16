@@ -790,15 +790,15 @@ export default function WebsiteNavbar({
 
 WebsiteNavbar.propTypes = {
 	userId : PropTypes.string,
-	setUserId : PropTypes.any.isRequired,
+	setUserId : PropTypes.func.isRequired,
 	user : PropTypes.object.isRequired,
-	setUser : PropTypes.any.isRequired,
+	setUser : PropTypes.func.isRequired,
 	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.any.isRequired,
+	setOrder : PropTypes.func.isRequired,
 	companyInfo : PropTypes.object.isRequired,
 	companySystemOpenByHour : PropTypes.bool,
-	setCompanySystemOpenByHour : PropTypes.any.isRequired,
-	setData : PropTypes.any.isRequired,
-	data : PropTypes.any.isRequired,
-	noCards : PropTypes.any.isRequired
+	setCompanySystemOpenByHour : PropTypes.func.isRequired,
+	setData : PropTypes.func.isRequired,
+	data : PropTypes.object.isRequired,
+	noCards : PropTypes.bool.isRequired
 };

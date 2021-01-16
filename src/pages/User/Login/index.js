@@ -100,6 +100,6 @@ export default function Login({ setUserId, setUser }) {
 }
 
 Login.propTypes = {
-	setUserId : PropTypes.any.isRequired,
-	setUser : PropTypes.any.isRequired
+	setUserId : PropTypes.func.isRequired,
+	setUser : PropTypes.func.isRequired
 };

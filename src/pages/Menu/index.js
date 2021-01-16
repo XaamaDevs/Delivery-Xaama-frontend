@@ -961,6 +961,6 @@ Menu.propTypes = {
 	user : PropTypes.object.isRequired,
 	companyInfo : PropTypes.object.isRequired,
 	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.any.isRequired,
+	setOrder : PropTypes.func.isRequired,
 	companySystemOpenByHour : PropTypes.bool
 };

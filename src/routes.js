@@ -61,30 +61,26 @@ export default function Routes() {
 	//	Fetching current user data
 	useEffect(() => {
 		async function fetchData() {
-			if(!user._id && userId) {
+			if(userId) {
 				await api.get("user", {
 					headers : {
 						"x-access-token": userId
 					}
 				}).then((response) => {
-					if(response && response.data) {
-						setUser(response.data);
-					}
+					setUser(response.data);
 				});
 			}
 
 			await api.get("company")
 				.then((response) => {
-					if(response && response.data) {
-						setCompanyInfo(response.data);
-					}
+					setCompanyInfo(response.data);
 				});
 
 			setLoading(false);
 		}
 
 		fetchData();
-	}, [userId, order]);
+	}, [userId]);
 
 	useEffect(() => {
 		if(companyInfo && companyInfo.cards) {

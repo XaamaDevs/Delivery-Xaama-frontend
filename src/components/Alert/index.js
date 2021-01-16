@@ -54,7 +54,7 @@ Alert.Refresh.propTypes = {
 
 Alert.Close.propTypes = {
 	modalAlert : PropTypes.bool.isRequired,
-	setModalAlert : PropTypes.any.isRequired,
+	setModalAlert : PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	message: PropTypes.string.isRequired
 };

@@ -29,7 +29,7 @@ export default function Push({ toastShow, setToastShow, title, message }) {
 
 Push.propTypes = {
 	toastShow : PropTypes.bool.isRequired,
-	setToastShow : PropTypes.any.isRequired,
+	setToastShow : PropTypes.func.isRequired,
 	title : PropTypes.string.isRequired,
 	message : PropTypes.string.isRequired
 };

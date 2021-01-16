@@ -464,7 +464,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				});
 		}
 	}
-	
+
 	// Function to get coupons available for user
 	async function handleShowCoupons(event) {
 		event.preventDefault();
@@ -495,7 +495,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				id="uncontrolled-tabs"
 				activeKey={eventKey}
 				onSelect={(k) => setEventKey(k)} >
-				
+
 				{couponTypes.map((type, index) => (
 					type && type.length ?
 						<Tab eventKey={index} title={type[0].toUpperCase() + type.slice(1)}>
@@ -1602,10 +1602,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 User.propTypes = {
 	userId : PropTypes.string.isRequired,
-	setUserId : PropTypes.any.isRequired,
+	setUserId : PropTypes.func.isRequired,
 	user : PropTypes.object.isRequired,
-	setUser : PropTypes.any.isRequired,
+	setUser : PropTypes.func.isRequired,
 	companyInfo : PropTypes.object.isRequired,
-	setCompanyInfo : PropTypes.any.isRequired,
-	noCards : PropTypes.object.isRequired
+	setCompanyInfo : PropTypes.func.isRequired,
+	noCards : PropTypes.bool.isRequired
 };
