@@ -29,7 +29,7 @@ export default function Coupons({ userId, companyInfo }) {
 	const couponTypes = ["quantidade", "valor", "frete"];
 	const couponMethods = ["dinheiro", "porcentagem"];
 	const [coupons, setCoupons] = useState([]);
-	const [coupon, setCoupon] = useState({});
+	const [coupon, setCoupon] = useState(null);
 	const [couponsByType, setCouponsByType] = useState({});
 	const [couponUserId, setCouponUserId] = useState("");
 	const [couponName, setCouponName] = useState("");
@@ -143,10 +143,11 @@ export default function Coupons({ userId, companyInfo }) {
 			method: couponMethod,
 			discount: couponDiscount,
 			minValue: couponMinValue,
-			available: couponAvailable,
 			private: couponPrivate,
 			userId: couponPrivate ? users.find(u => u.email === couponUserId)._id : null
 		};
+
+		console.log(data);
 
 		await api.post("coupon", data, {
 			headers : {
@@ -358,9 +359,8 @@ export default function Coupons({ userId, companyInfo }) {
 						type={"checkbox"}
 						checked={couponPrivate ? couponPrivate : false}
 						className="my-2"
-						onChange={e => setCouponPrivate(e.target.checked)}
+						onChange={e => setCouponPrivate(e.target.checked ? e.target.checked : couponPrivate)}
 						label={couponPrivate ? "Privado" : "Público"}
-						required={couponType !== "quantidade"}
 						disabled={couponType === "quantidade"}
 					/>
 				</Form.Group>
