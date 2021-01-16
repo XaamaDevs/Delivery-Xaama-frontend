@@ -57,11 +57,12 @@ export default function Coupons({ userId, companyInfo }) {
 
 	//	Update coupon state variables
 	useEffect(() => {
-		setCouponUserId(coupon ? coupon.private ? users.find(u => u._id === coupon.userId).email : null  : "");
+		const uId = null;
+		setCouponUserId(coupon ? (coupon.private ? (uId ? uId : null) : null) : users[0]);
 		setCouponName(coupon ? coupon.name : "");
-		setCouponType(coupon ? coupon.type : "");
+		setCouponType(coupon ? coupon.type : couponTypes[0]);
 		setCouponQty(coupon ? coupon.qty : null);
-		setCouponMethod(coupon ? coupon.method : "");
+		setCouponMethod(coupon ? coupon.method : couponMethods[0]);
 		setCouponDiscount(coupon ? coupon.discount : null);
 		setCouponMinValue(coupon ? coupon.minValue : null);
 		setCouponAvailable(coupon ? coupon.available : false);
@@ -290,7 +291,7 @@ export default function Coupons({ userId, companyInfo }) {
 						placeholder="Tipo do cupom"
 						required
 					>
-						<option>Selecione o tipo do cupom</option>
+						<option selected disabled>Selecione o tipo do cupom</option>
 						{couponTypes.map((type, index) => (
 							<option key={index}>{type}</option>
 						))}
@@ -308,7 +309,7 @@ export default function Coupons({ userId, companyInfo }) {
 						required
 						disabled={couponType === "frete"}
 					>
-						<option>Selecione o método de desconto</option>
+						<option selected disabled>Selecione o método de desconto</option>
 						{couponMethods.map((method, index) => (
 							<option key={index}>{method}</option>
 						))}
@@ -359,7 +360,7 @@ export default function Coupons({ userId, companyInfo }) {
 						type={"checkbox"}
 						checked={couponPrivate ? couponPrivate : false}
 						className="my-2"
-						onChange={e => setCouponPrivate(e.target.checked ? e.target.checked : couponPrivate)}
+						onChange={e => setCouponPrivate(e.target.checked !== undefined ? e.target.checked : couponPrivate)}
 						label={couponPrivate ? "Privado" : "Público"}
 						disabled={couponType === "quantidade"}
 					/>
@@ -386,7 +387,7 @@ export default function Coupons({ userId, companyInfo }) {
 						required={couponPrivate}
 						disabled={!couponPrivate}
 					>
-						<option>Selecione o email do usuário</option>
+						<option selected disabled>Selecione o email do usuário</option>
 						{users.map((user, index) => (
 							<option key={index}>{user.email}</option>
 						))}
