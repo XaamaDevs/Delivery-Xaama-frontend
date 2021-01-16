@@ -60,7 +60,7 @@ export default function Coupons({ userId, companyInfo }) {
 		setCouponUserId(coupon ? coupon.private ? users.find(u => u._id === coupon.userId).email : null  : "");
 		setCouponName(coupon ? coupon.name : "");
 		setCouponType(coupon ? coupon.type : "");
-		setCouponQty(coupon ? coupon.qty : "");
+		setCouponQty(coupon ? coupon.qty : null);
 		setCouponMethod(coupon ? coupon.method : "");
 		setCouponDiscount(coupon ? coupon.discount : null);
 		setCouponMinValue(coupon ? coupon.minValue : null);
