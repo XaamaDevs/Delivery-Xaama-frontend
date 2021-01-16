@@ -347,7 +347,7 @@ export default function Coupons({ userId, companyInfo }) {
 			null
 	);
 
-	const couponformBody = (
+	const couponFormBody = (
 		<>
 			<Row>
 				<Form.Group as={Col} controlId="couponName" sm>
@@ -522,7 +522,7 @@ export default function Coupons({ userId, companyInfo }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={handleCouponAdd}>
-						{couponformBody}
+						{couponFormBody}
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponAdd(false); setToastShow(false);}}>
 								Fechar
@@ -549,7 +549,7 @@ export default function Coupons({ userId, companyInfo }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={handleCouponUpdate}>
-						{couponformBody}
+						{couponFormBody}
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponUpdate(false); setToastShow(false);}}>
 								Fechar
