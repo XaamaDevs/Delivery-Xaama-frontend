@@ -57,8 +57,14 @@ export default function Coupons({ userId, companyInfo }) {
 
 	//	Update coupon state variables
 	useEffect(() => {
-		const uId = null;
-		setCouponUserId(coupon ? (coupon.private ? (uId ? uId : null) : null) : users[0]);
+		setCouponUserId(coupon && coupon.private && couponUserId && users ?
+			users.find(u => u._id === coupon.userId).email
+			:
+			users && users[0] ?
+				users[0].email
+				:
+				""
+		);
 		setCouponName(coupon ? coupon.name : "");
 		setCouponType(coupon ? coupon.type : couponTypes[0]);
 		setCouponQty(coupon ? coupon.qty : null);
@@ -148,8 +154,6 @@ export default function Coupons({ userId, companyInfo }) {
 			userId: couponPrivate ? users.find(u => u.email === couponUserId)._id : null
 		};
 
-		console.log(data);
-
 		await api.post("coupon", data, {
 			headers : {
 				"x-access-token": userId
@@ -184,10 +188,35 @@ export default function Coupons({ userId, companyInfo }) {
 			minValue: couponMinValue,
 			available: couponAvailable,
 			private: couponPrivate,
-			userId: couponPrivate ? users.find(u => u.email === userId)._id : null
+			userId: couponPrivate ? users.find(u => u.email === couponUserId)._id : null
 		};
 
 		await api.put("coupon/" + coupon._id, data, {
+			headers : {
+				"x-access-token": userId
+			}})
+			.then(() => {
+				setModalCouponUpdate(false);
+				setTitle("Alterações de cupom");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			})
+			.catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
+	}
+
+	//	Function to delete coupons
+	async function handleCouponDelete(event, couponId) {
+		event.preventDefault();
+
+		await api.delete("coupon/" + couponId, {
 			headers : {
 				"x-access-token": userId
 			}})
@@ -237,31 +266,78 @@ export default function Coupons({ userId, companyInfo }) {
 	);
 
 	const couponCard = (couponI) => (
-		<Card text="white" bg="dark">
-			<Card.Header>
-				{couponI && couponI.name ? couponI.name : null}
-			</Card.Header>
-			<Card.Body>
-				<Card.Text>
-					{couponI && couponI.qty ? "Quantidade: " + couponI.qty : "Quantidade: Não atribuído"}
-				</Card.Text>
-				<Card.Text>
-					{couponI && couponI.discount ?
-						"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")
+		couponI ?
+			<Card as={Col} className="p-0 m-2" text="white" bg="dark"sm="4">
+				<Card.Header>
+					{couponI.name ? couponI.name : null}
+				</Card.Header>
+				<Card.Body>
+					{couponI.discount ?
+						<Card.Text>
+							{"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")}
+						</Card.Text>
 						:
-						"Desconto: Não atribuído"
+						null
 					}
-				</Card.Text>
-				<Button
-					variant="light"
-					size="sm"
-					id="btn-custom"
-					onClick ={() => { setCoupon(couponI); setModalCouponUpdate(true); } }
-				>
-					Modificar
-				</Button>
-			</Card.Body>
-		</Card>
+					{couponI.minValue ?
+						<Card.Text>
+							{"Valor mínimo para o desconto: R$ " + couponI.minValue}
+						</Card.Text>
+						:
+						null
+					}
+					{!couponI.private ?
+						<Card.Text>
+							{"Quantidade: " + (couponI.qty ?  couponI.qty : "Não atribuído")}
+						</Card.Text>
+						:
+						null
+					}
+					<Card.Text>
+						{"Cupom: " + (couponI.private ? "privado" : "público")}
+					</Card.Text>
+					<div className="d-flex justify-content-around flex-wrap my-auto">
+						<Button
+							className="my-1"
+							variant="warning"
+							size="sm"
+							onClick ={() => { setCoupon(couponI); setModalCouponUpdate(true); } }
+						>
+							Modificar
+						</Button>
+
+						{couponI.available ?
+							<Button
+								className="my-1"
+								variant="light"
+								size="sm"
+								id="btn-custom"
+							>
+								Disponível
+							</Button>
+							:
+							<Button
+								className="my-1"
+								variant="light"
+								size="sm"
+								id="btn-custom-outline"
+							>
+								Indisponível
+							</Button>
+						}
+						<Button
+							className="my-1"
+							variant="danger"
+							size="sm"
+							onClick={(e) => handleCouponDelete(e, couponI._id)}
+						>
+							Remover
+						</Button>
+					</div>
+				</Card.Body>
+			</Card>
+			:
+			null
 	);
 
 	const couponformBody = (
@@ -284,7 +360,7 @@ export default function Coupons({ userId, companyInfo }) {
 						onChange={e =>  {
 							setCouponType(e.target.value);
 							setCouponMethod(e.target.value === "frete" ? "dinheiro" : couponMethod);
-							setCouponDiscount(companyInfo.freight);
+							setCouponDiscount(e.target.value === "frete" ? companyInfo.freight : couponDiscount);
 							setCouponPrivate(e.target.value === "quantidade" ? false : couponPrivate);
 						}}
 						as="select"
