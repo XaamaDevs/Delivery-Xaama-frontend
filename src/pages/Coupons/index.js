@@ -31,6 +31,7 @@ export default function Coupons({ userId, companyInfo }) {
 	const [coupons, setCoupons] = useState([]);
 	const [coupon, setCoupon] = useState(null);
 	const [couponsByType, setCouponsByType] = useState({});
+	const [couponId, setCouponId] = useState("");
 	const [couponUserId, setCouponUserId] = useState("");
 	const [couponName, setCouponName] = useState("");
 	const [couponType, setCouponType] = useState("");
@@ -48,6 +49,7 @@ export default function Coupons({ userId, companyInfo }) {
 	const [modalAlert, setModalAlert] = useState(false);
 	const [modalCouponAdd, setModalCouponAdd] = useState(false);
 	const [modalCouponUpdate, setModalCouponUpdate] = useState(false);
+	const [modalCouponDelete, setModalCouponDelete] = useState(false);
 
 	//	Message settings
 	const [title, setTitle] = useState("");
@@ -65,6 +67,7 @@ export default function Coupons({ userId, companyInfo }) {
 				:
 				""
 		);
+		setCouponId(coupon ? coupon._id : "");
 		setCouponName(coupon ? coupon.name : "");
 		setCouponType(coupon ? coupon.type : couponTypes[0]);
 		setCouponQty(coupon ? coupon.qty : null);
@@ -213,7 +216,7 @@ export default function Coupons({ userId, companyInfo }) {
 	}
 
 	//	Function to delete coupons
-	async function handleCouponDelete(event, couponId) {
+	async function handleCouponDelete(event) {
 		event.preventDefault();
 
 		await api.delete("coupon/" + couponId, {
@@ -221,7 +224,7 @@ export default function Coupons({ userId, companyInfo }) {
 				"x-access-token": userId
 			}})
 			.then(() => {
-				setModalCouponUpdate(false);
+				setModalCouponDelete(false);
 				setTitle("Alterações de cupom");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
@@ -267,7 +270,7 @@ export default function Coupons({ userId, companyInfo }) {
 
 	const couponCard = (couponI) => (
 		couponI ?
-			<Card as={Col} className="p-0 m-2" text="white" bg="dark"sm="4">
+			<Card as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
 				<Card.Header>
 					{couponI.name ? couponI.name : null}
 				</Card.Header>
@@ -329,7 +332,11 @@ export default function Coupons({ userId, companyInfo }) {
 							className="my-1"
 							variant="danger"
 							size="sm"
-							onClick={(e) => handleCouponDelete(e, couponI._id)}
+							onClick={() => {
+								setCouponId(couponI._id);
+								setCouponName(couponI.name);
+								setModalCouponDelete(true);
+							}}
 						>
 							Remover
 						</Button>
@@ -553,6 +560,24 @@ export default function Coupons({ userId, companyInfo }) {
 						</Modal.Footer>
 					</Form>
 				</Modal.Body>
+			</Modal>
+
+			<Modal show={modalCouponDelete} onHide={() => { setModalCouponDelete(false); setToastShow(false); }}>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>{"Remover cupom " + couponName}</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Você tem certeza que deseja remover este cupom?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="warning" onClick={() => { setModalCouponDelete(false); setToastShow(false); }}>
+						Voltar
+					</Button>
+					<Button variant="danger" onClick={handleCouponDelete}>
+						Remover
+					</Button>
+				</Modal.Footer>
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
