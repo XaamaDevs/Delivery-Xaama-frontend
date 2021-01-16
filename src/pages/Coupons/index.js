@@ -283,7 +283,7 @@ export default function Coupons({ userId, companyInfo }) {
 							setCouponType(e.target.value);
 							setCouponMethod(e.target.value === "frete" ? "dinheiro" : couponMethod);
 							setCouponDiscount(companyInfo.freight);
-							setCouponPrivate(e.target.value === "quantidade" ? false : true);
+							setCouponPrivate(e.target.value === "quantidade" ? false : couponPrivate);
 						}}
 						as="select"
 						placeholder="Tipo do cupom"
@@ -340,7 +340,7 @@ export default function Coupons({ userId, companyInfo }) {
 					/>
 				</Form.Group>
 				<Form.Group as={Col} controlId="couponMinValue" sm>
-					<Form.Label>Valor mínimo (em reais)</Form.Label>
+					<Form.Label>Valor mínimo (em reais R$)</Form.Label>
 					<Form.Control
 						value={couponMinValue}
 						onChange={e => setCouponMinValue(e.target.value)}
