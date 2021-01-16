@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar } from "react-bootstrap";
+import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs, Tab } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../components/Alert";
@@ -66,6 +66,13 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [timetableFridayF, setTimetableFridayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[5] && companyInfo.timetable[5].endHour ? companyInfo.timetable[5].endHour : undefined);
 	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
 	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
+
+	// Coupons for user
+	const couponTypes = ["quantidade", "valor", "frete"];
+	const [coupons, setCoupons] = useState([]);
+
+	// Tabs settings
+	const [eventKey, setEventKey] = useState("0");
 
 	//	Message settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -462,7 +469,43 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	async function handleShowCoupons(event) {
 		event.preventDefault();
 
-		
+		await api.get("coupon", {
+			headers : {
+				"x-access-token": userId,
+			}
+		}).then((response) => {
+			setCoupons(response.data);
+			setModalMyCoupons(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
+	}
+
+	function AllCoupons() {
+		return (
+			<Tabs
+				fill
+				defaultActiveKey="1"
+				id="uncontrolled-tabs"
+				activeKey={eventKey}
+				onSelect={(k) => setEventKey(k)} >
+				
+				{couponTypes.map((type, index) => (
+					type && type.length ?
+						<Tab eventKey={index} title={type[0].toUpperCase() + type.slice(1)}>
+							{console.log(coupons)}
+						</Tab>
+						:
+						null
+				))}
+			</Tabs>
+		);
 	}
 
 	return (
@@ -1537,7 +1580,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					<Modal.Title>Cupons disponíveis</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-							
+					<AllCoupons />
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => { setModalMyCoupons(false); setToastShow(false); history.push("/menu");}}>
