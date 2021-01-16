@@ -187,7 +187,8 @@ export default function WebsiteNavbar({
 			phone: deliverPhone,
 			typePayment: type,
 			change: deliverChange,
-			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0))
+			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0)),
+			//couponId: "6002e4c8658f760017958f5b"
 		};
 
 		setFinish(true);
