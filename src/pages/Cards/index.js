@@ -200,5 +200,5 @@ export default function Cards({ companyInfo, userId }) {
 
 Cards.propTypes = {
 	userId : PropTypes.string,
-	companyInfo : PropTypes.object.isRequired,
+	companyInfo : PropTypes.object,
 };

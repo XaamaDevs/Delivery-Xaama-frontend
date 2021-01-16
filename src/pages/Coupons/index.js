@@ -593,6 +593,6 @@ export default function Coupons({ userId, companyInfo }) {
 }
 
 Coupons.propTypes = {
-	userId : PropTypes.string.required,
-	companyInfo : PropTypes.object.required
+	userId : PropTypes.string,
+	companyInfo : PropTypes.object
 };
