@@ -14,7 +14,7 @@ const Alert = {
 		const history = useHistory();
 
 		return (
-			<Modal show={modalAlert} onHide={() => history.go()}>
+			<Modal backdrop="static" show={modalAlert} onHide={() => history.go()}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
@@ -29,7 +29,7 @@ const Alert = {
 	},
 	Close: function Close({ modalAlert, setModalAlert, title, message }) {
 		return (
-			<Modal show={modalAlert} onHide={() => setModalAlert(false)}>
+			<Modal backdrop="static" show={modalAlert} onHide={() => setModalAlert(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
