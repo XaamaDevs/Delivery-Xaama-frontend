@@ -344,19 +344,22 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const header = (
 		<Card.Header className="pb-3">
 			<Nav fill variant="tabs">
-				{productTypes.map((type, index) => (
-					<Nav.Item key={index}>
-						<Nav.Link
-							className="btn-outline-warning rounded"
-							href={"#" + index}
-							onClick={() => {
-								setProducts(productsByType[type]);
-								setAdditions(additionsByType[type]);
-							}}
-						>
-							{type[0].toUpperCase() + type.slice(1)}
-						</Nav.Link>
-					</Nav.Item>
+				{Object.keys(productsByType).map((type, index) => (
+					productsByType[type].length ?
+						<Nav.Item key={index}>
+							<Nav.Link
+								className="btn-outline-warning rounded"
+								href={"#" + index}
+								onClick={() => {
+									setProducts(productsByType[type]);
+									setAdditions(additionsByType[type]);
+								}}
+							>
+								{type[0].toUpperCase() + type.slice(1)}
+							</Nav.Link>
+						</Nav.Item>
+						:
+						null
 				))}
 				{user.userType === 1 || user.userType === 2 ?
 					<Nav.Item>
