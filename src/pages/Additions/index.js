@@ -321,60 +321,9 @@ export default function Additions({ userId }) {
 	};
 
 	const additionFormBody = (
-		<Row>
-			<Col className="d-flex" sm>
-				{additionUpdateModal ?
-					<Form onSubmit={handleAdditionThumbnailUpdate}>
-						<Form.Control
-							id="inputImage"
-							className="d-none"
-							type="file"
-							onChange={event => setAdditionThumbnail(event.target.files[0])}
-							required
-						/>
-						<Image
-							id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
-							className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-							src={preview ?
-								preview
-								:
-								(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)
-							}
-							alt="Selecione sua imagem"
-							onClick={() => document.getElementById("inputImage").click()}
-							rounded
-							fluid
-						/>
-
-						<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
-							Alterar imagem
-						</Button>
-					</Form>
-					:
-					<>
-						<Form.Control
-							id="inputImage"
-							className="d-none"
-							type="file"
-							onChange={event => setAdditionThumbnail(event.target.files[0])}
-						/>
-						<Image
-							id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
-							className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
-							src={preview ?
-								preview
-								:
-								(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
-							alt="Selecione sua imagem"
-							onClick={() => document.getElementById("inputImage").click()}
-							rounded
-							fluid
-						/>
-					</>
-				}
-			</Col>
-			<Col sm>
-				<Form.Group controlId="additionName">
+		<>
+			<Row>
+				<Form.Group as={Col} controlId="additionName" sm>
 					<Form.Label>Nome</Form.Label>
 					<Form.Control
 						value={additionName}
@@ -384,7 +333,7 @@ export default function Additions({ userId }) {
 						required
 					/>
 				</Form.Group>
-				<Form.Group controlId="additionPrice">
+				<Form.Group as={Col} controlId="additionPrice" sm>
 					<Form.Label>
 						Preço
 					</Form.Label>
@@ -400,32 +349,32 @@ export default function Additions({ userId }) {
 						required
 					/>
 				</Form.Group>
-				<Form.Group controlId="additionType">
-					<Form.Label>Tipo</Form.Label>
-					<Form.Control as="select" htmlSize="2" multiple required>
-						{productTypes.map((type, index) => (
-							<option
-								key={index}
-								selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
-								{type}
-							</option>
-						))}
-					</Form.Control>
-					<Form.Text className="text-muted">
-						Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
-					</Form.Text>
-				</Form.Group>
-				<Form.Group className={additionAddModal ? "d-none" : null} controlId="additionAvailable">
-					<Form.Check
-						type="switch"
-						id="custom-switch2"
-						label={additionAvailable ? "Disponível" : "Indisponível"}
-						checked={additionAvailable}
-						onChange={e => setAdditionAvailable(e.target.checked)}
-					/>
-				</Form.Group>
-			</Col>
-		</Row>
+			</Row>
+			<Form.Group controlId="additionType">
+				<Form.Label>Tipo</Form.Label>
+				<Form.Control as="select" htmlSize="2" multiple required>
+					{productTypes.map((type, index) => (
+						<option
+							key={index}
+							selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
+							{type}
+						</option>
+					))}
+				</Form.Control>
+				<Form.Text className="text-muted">
+					Selecione mais de uma opção segurando ctrl e clicando nos tipos desejados
+				</Form.Text>
+			</Form.Group>
+			<Form.Group className={additionAddModal ? "d-none" : null} controlId="additionAvailable">
+				<Form.Check
+					type="switch"
+					id="custom-switch2"
+					label={additionAvailable ? "Disponível" : "Indisponível"}
+					checked={additionAvailable}
+					onChange={e => setAdditionAvailable(e.target.checked)}
+				/>
+			</Form.Group>
+		</>
 	);
 
 	return (
@@ -470,7 +419,31 @@ export default function Additions({ userId }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={handleAdditionAdd}>
-						{additionFormBody}
+						<Row>
+							<Col className="d-flex m-auto" sm="7">
+								<Form.Control
+									id="inputImage"
+									className="d-none"
+									type="file"
+									onChange={event => setAdditionThumbnail(event.target.files[0])}
+								/>
+								<Image
+									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
+									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+									src={preview ?
+										preview
+										:
+										(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)}
+									alt="Selecione sua imagem"
+									onClick={() => document.getElementById("inputImage").click()}
+									rounded
+									fluid
+								/>
+							</Col>
+							<Col>
+								{additionFormBody}
+							</Col>
+						</Row>
 						<Modal.Footer>
 							<Button
 								variant="danger"
@@ -500,24 +473,56 @@ export default function Additions({ userId }) {
 					<Modal.Title>Modificar adição</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form onSubmit={handleAdditionUpdate}>
-						{additionFormBody}
-						<Modal.Footer>
-							<Button
-								variant="danger"
-								onClick={() => {
-									setAddition(null);
-									setAdditionUpdateModal(false);
-									setToastShow(false);
-								}}
-							>
+					<Row>
+						<Col className="d-flex justify-content-center m-auto" sm="6">
+							<Form onSubmit={handleAdditionThumbnailUpdate}>
+								<Form.Control
+									id="inputImage"
+									className="d-none"
+									type="file"
+									onChange={event => setAdditionThumbnail(event.target.files[0])}
+									required
+								/>
+								<Image
+									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
+									className={preview || additionThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
+									src={preview ?
+										preview
+										:
+										(additionThumbnail_url ? process.env.REACT_APP_API_URL + additionThumbnail_url : camera)
+									}
+									alt="Selecione sua imagem"
+									onClick={() => document.getElementById("inputImage").click()}
+									rounded
+									fluid
+								/>
+
+								<Button variant="warning" type="submit" className="d-flex mx-auto my-2">
+									Alterar imagem
+								</Button>
+							</Form>
+						</Col>
+						<Col sm>
+							<Form onSubmit={handleAdditionUpdate}>
+								{additionFormBody}
+								<Modal.Footer>
+									<Button
+										variant="danger"
+										onClick={() => {
+											setAddition(null);
+											setAdditionUpdateModal(false);
+											setToastShow(false);
+										}}
+									>
 								Fechar
-							</Button>
-							<Button variant="warning" type="submit">
+									</Button>
+									<Button variant="warning" type="submit">
 								Salvar alterações
-							</Button>
-						</Modal.Footer>
-					</Form>
+									</Button>
+								</Modal.Footer>
+							</Form>
+						</Col>
+					</Row>
 				</Modal.Body>
 			</Modal>
 
@@ -553,7 +558,7 @@ export default function Additions({ userId }) {
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</Container>
 	);
 }

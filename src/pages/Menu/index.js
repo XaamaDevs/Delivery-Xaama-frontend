@@ -699,7 +699,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Header>
 				<Modal.Body>
 					<Row>
-						<Col className="d-flex justify-content-center m-auto"sm>
+						<Col className="d-flex justify-content-center m-auto" sm="6">
 							<Form onSubmit={handleProductThumbnailUpdate}>
 								<Form.Control
 									id="inputImage"
@@ -729,7 +729,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							</Form>
 						</Col>
 						<Col sm>
-							<Form onSubmit={handleProductUpdate} sm>
+							<Form onSubmit={handleProductUpdate}>
 								{productFormBody}
 								<Modal.Footer>
 									<Button
@@ -740,10 +740,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 											setToastShow(false);
 										}}
 									>
-								Fechar
+										Fechar
 									</Button>
 									<Button variant="warning" type="submit">
-								Salvar alterações
+										Salvar alterações
 									</Button>
 								</Modal.Footer>
 							</Form>
