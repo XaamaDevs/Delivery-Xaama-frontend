@@ -44,7 +44,7 @@ export default function About({ companyInfo }) {
 							<Col className="my-3" sm>
 								<h5 className="text-center">
 									<a
-										href={"https://wa.me/+55" + companyInfo.phone}
+										href={"https://wa.me/55" + companyInfo.phone.split(/[()+-\s]+/).join("") + "?text=Olá!"}
 										className="text-white"
 										target="_blank"
 										rel="noreferrer"
