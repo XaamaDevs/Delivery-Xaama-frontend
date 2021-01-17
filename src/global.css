@@ -96,6 +96,13 @@ h6 {
   color: #000000;
 }
 
+/*	Modal custom size	*/
+
+.modal-custom {
+	margin: auto auto;
+	max-width: 80vw;
+}
+
 /*	Typography sizes	*/
 
 @media (min-width: 0) {
