@@ -7,7 +7,7 @@ import { Col } from "react-bootstrap";
 //	Exporting resource to routes.js
 export default function Footer() {
 	return (
-		<div className="d-flex justify-content-center align-items-end flex-row flex-wrap text-light mt-auto py-3">
+		<div className="d-flex justify-content-center align-items-end flex-row flex-wrap text-light mt-auto py-1">
 			<Col className="text-center p-0 m-0" sm={"auto"}>
 				Copyright &#169; {" " + (new Date).getFullYear() + " |"}
 			</Col>
