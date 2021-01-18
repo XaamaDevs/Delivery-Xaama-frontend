@@ -507,9 +507,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	}
 
 	//	Return a list of coupons given type
-	async function handleCouponsList(event, type) {
-		event.preventDefault();
-		
+	async function handleCouponsList(type) {
 		setCoupons(couponsByType[type]);
 	}
 
@@ -517,17 +515,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		return (
 			<Tabs
 				fill
-				defaultActiveKey="1"
 				id="uncontrolled-tabs"
 				activeKey={eventKey}
-				onSelect={(k) => setEventKey(k)} >
+				defaultActiveKey="0"
+				onSelect={(k) => {setEventKey(k); handleCouponsList(couponTypes[k]);} } >
 
 				{couponTypes.map((type, index) => (
 					type && type.length ?
-						<Tab 
+						<Tab
 							eventKey={index} 
-							title={type[0].toUpperCase() + type.slice(1)}
-							onClick={e => handleCouponsList(e, couponTypes[index])}>
+							title={type[0].toUpperCase() + type.slice(1)}>
 						</Tab>
 						:
 						null
@@ -538,9 +535,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 	const couponCard = (couponI) => (
 		couponI ?
-			<Card as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
+			<Card as={Col} className="p-0 m-2" text="white" bg="dark" sm="4">
 				<Card.Header>
-					{couponI.name ? couponI.name : null}
+					Nome: {couponI.name ? couponI.name : null}
 				</Card.Header>
 				<Card.Body>
 					{couponI.discount ?
@@ -1637,7 +1634,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			<Modal
 				show={modalMyCoupons}
 				onHide={() => { setModalMyCoupons(false); setToastShow(false); }}
-				size="md"
+				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -1646,7 +1643,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Modal.Header>
 				<Modal.Body>
 					<AllCoupons />
-					<Card className="px-3" text="light" bg="dark">
+					<Card className="px-3" text="dark" bg="ligth">
 						{isLoading ?
 							<Spinner
 								className="my-5 mx-auto"
@@ -1669,7 +1666,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									))}
 								</CardDeck>
 								:
-								<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima</h1>
+								couponsByType[(couponTypes[eventKey])] && couponsByType[(couponTypes[eventKey])].length ? 
+									<h4 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima!</h4>
+									:
+									<h4 className="display-5 text-center m-auto p-5">Você não possui cupom desse tipo!</h4>
 						}
 					</Card>
 				</Modal.Body>
