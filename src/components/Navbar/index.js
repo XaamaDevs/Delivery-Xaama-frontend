@@ -52,15 +52,18 @@ export default function WebsiteNavbar({
 	data,
 	noCards }) {
 	//	Order state variables
-	const [deliverAddress, setDeliverAdress] = useState("");
-	const [deliverPhone, setDeliverPhone] = useState("");
-	const [deliverAddressNumber, setDeliverAddressNumber] = useState("");
-	const [deliverAddressCep, setDeliverAddressCep] = useState("");
-	const [deliverAddressComplement, setDeliverAddressComplement] = useState("");
-	const [deliverOrder, setDeliverOrder] = useState(false);
-	const [deliverChange, setDeliverChange] = useState();
+	const [orderDeliverAddress, setDeliverAddress] = useState("");
+	const [orderDeliverPhone, setDeliverPhone] = useState("");
+	const [orderDeliverAddressNumber, setDeliverAddressNumber] = useState("");
+	const [orderDeliverAddressCep, setDeliverAddressCep] = useState("");
+	const [orderDeliverAddressComplement, setDeliverAddressComplement] = useState("");
+	const [orderDeliver, setDeliverOrder] = useState(false);
+	const [orderDeliverCoupon, setDeliverCoupon] = useState(null);
 	const [deliverCash, setDeliverCash] = useState(false);
 	const [deliverCard, setDeliverCard] = useState(false);
+	const [orderDeliverChange, setDeliverChange] = useState(null);
+	const [orderDeliverDiscount, setDeliverDiscount] = useState("");
+	//const [deliverTotal, setDeliverTotal] = useState(null);
 
 	//	Message settings
 	const [shoppingBasketModal, setShoppingBasketModal] = useState(false);
@@ -75,6 +78,7 @@ export default function WebsiteNavbar({
 	const [discount, setDiscount] = useState(0);
 	const [finish, setFinish] = useState(false);
 	const [isLoading, setLoading] = useState(true);
+	const [userCoupons, setUserCoupons] = useState([]);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -118,13 +122,33 @@ export default function WebsiteNavbar({
 	}, [data, setSystemHour, setCompanySystemOpenByHour, companyInfo, systemHour]);
 
 	useEffect(() => {
-		setDeliverChange((order.total - discount + (deliverOrder ? companyInfo.freight : 0)));
-	}, [order.total, deliverOrder, companyInfo.freight, discount]);
+		setDeliverChange((order.total - discount + (orderDeliver ? companyInfo.freight : 0)));
+	}, [order.total, orderDeliver, companyInfo.freight, discount]);
 
 	//	Update order state variables
 	useEffect(() => {
-		setDeliverAdress(user.address && user.address.length ? user.address.join(", ") : "");
+		async function fetchData() {
+			await api.get("coupon", {
+				headers : {
+					"x-access-token": userId
+				}})
+				.then((response) => {
+					setUserCoupons(response.data);
+				}).catch((error) => {
+					setTitle("Alerta!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+		}
+		setDeliverAddress(user.address && user.address.length ? user.address.join(", ") : "");
 		setDeliverPhone(user.phone && user.phone.length ? user.phone : "");
+		setDeliverCoupon(null);
+		setDeliverDiscount("");
+		fetchData();
 	}, [shoppingBasketModal]);
 
 	useEffect(() => {
@@ -182,13 +206,13 @@ export default function WebsiteNavbar({
 
 		var data = {
 			products: order.products,
-			deliver: deliverOrder,
-			address: deliverAddress,
-			phone: deliverPhone,
+			deliver: orderDeliver,
+			address: orderDeliverAddress,
+			phone: orderDeliverPhone,
 			typePayment: type,
-			change: deliverChange,
-			total: (order.total - discount + (deliverOrder ? companyInfo.freight : 0)),
-			//couponId: "6002e4c8658f760017958f5b"
+			change: orderDeliverChange,
+			total: (order.total - discount + (orderDeliver ? companyInfo.freight : 0)),
+			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
 		};
 
 		setFinish(true);
@@ -224,8 +248,8 @@ export default function WebsiteNavbar({
 			data = {
 				name: user.name,
 				email: user.email,
-				phone: user.phone ? user.phone : deliverPhone,
-				address: user.address ? user.address.join(", ") : (deliverAddress ? deliverAddress : "Rua, 1, Bairro, Casa"),
+				phone: user.phone ? user.phone : orderDeliverPhone,
+				address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : "Rua, 1, Bairro, Casa"),
 				status: status,
 			};
 
@@ -282,7 +306,7 @@ export default function WebsiteNavbar({
 					{eventKey === "1" ? setDeliverCash(true) : null}
 					{eventKey === "1" ? setDeliverCard(false): null}
 					<Card>
-						<Card.Body>Total: R${(order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
+						<Card.Body>Total: R${(order.total - discount + (orderDeliver ? companyInfo.freight : 0))}
 							<Form className="mx-auto my-2">
 								<Form.Group controlId="userChange">
 									<Row>
@@ -291,10 +315,10 @@ export default function WebsiteNavbar({
 										</Col>
 										<Col>
 											<Form.Control
-												value={deliverChange}
+												value={orderDeliverChange}
 												onChange={e => setDeliverChange(e.target.value)}
 												type="number"
-												min={deliverChange}
+												min={orderDeliverChange}
 												required={deliverCash}
 												autoFocus
 											/>
@@ -317,19 +341,54 @@ export default function WebsiteNavbar({
 	}
 
 	//	Function to get address info via cep api
+	async function validateCoupon(event) {
+		event.preventDefault();
+
+		if(!orderDeliverCoupon) {
+			setTitle("Erro!");
+			setMessage("Nenhum cupom selecionado!");
+			setToastShow(true);
+		} else {
+			await api.put("couponUser/" + orderDeliverCoupon._id, null, {
+				headers : {
+					"x-access-token": userId
+				}})
+				.then((response) => {
+					if(response.status === 200) {
+						setTitle("Sucesso!");
+						setMessage("Cupom validado.");
+						setToastShow(true);
+					} else {
+						setTitle("Erro!");
+						setMessage("Não foi possível validar o cupom.");
+						setToastShow(true);
+					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+		}
+	}
+
+	//	Function to get address info via cep api
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(!deliverAddressNumber.length) {
+		if(!orderDeliverAddressNumber.length) {
 			setTitle("Erro!");
 			setMessage("Número da residência inválido!");
 			setToastShow(true);
-		} else if(deliverAddressCep.length != 8) {
+		} else if(orderDeliverAddressCep.length != 8) {
 			setTitle("Erro!");
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
 		} else {
-			apicep.get(deliverAddressCep + "/json")
+			apicep.get(orderDeliverAddressCep + "/json")
 				.then((response) => {
 					if(response.data.erro) {
 						setTitle("Erro!");
@@ -340,8 +399,8 @@ export default function WebsiteNavbar({
 						setMessage("O CEP não contém todas as informações! Digite o endereço manualmente.");
 						setToastShow(true);
 					}	else {
-						const complement = deliverAddressComplement.length ? ", " + deliverAddressComplement : "";
-						setDeliverAdress(`${response.data.logradouro}, ${deliverAddressNumber}, ${response.data.bairro}${complement}`);
+						const complement = orderDeliverAddressComplement.length ? ", " + orderDeliverAddressComplement : "";
+						setDeliverAddress(`${response.data.logradouro}, ${orderDeliverAddressNumber}, ${response.data.bairro}${complement}`);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -543,10 +602,10 @@ export default function WebsiteNavbar({
 						<Tab eventKey="finishOrder" title="Finalizar pedido">
 							<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
 								<Row>
-									<Form.Group as={Col} controlId="userPhone" setShoppingBasketModal>
+									<Form.Group as={Col} controlId="orderPhone" setShoppingBasketModal sm>
 										<Form.Label>Telefone para contato: </Form.Label>
 										<Form.Control
-											value={deliverPhone}
+											value={orderDeliverPhone}
 											onChange={e => setDeliverPhone(e.target.value)}
 											type="text"
 											pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
@@ -555,33 +614,33 @@ export default function WebsiteNavbar({
 											autoFocus
 										/>
 									</Form.Group>
-									<Form.Group as={Col} controlId="deliverAddress" sm>
+									<Form.Group as={Col} controlId="orderDeliverAddress" sm>
 										<Form.Label>Entregar pedido?</Form.Label>
 										<Form.Check
 											type="switch"
 											label={"+ R$" + companyInfo.freight + " de taxa de entrega"}
-											checked={deliverOrder}
+											checked={orderDeliver}
 											onChange={e => setDeliverOrder(e.target.checked)}
 										/>
 									</Form.Group>
 								</Row>
-								{deliverOrder ?
+								{orderDeliver ?
 									<>
 										<Row>
-											<Form.Group as={Col} controlId="deliverAddressNumber" sm>
+											<Form.Group as={Col} controlId="orderDeliverAddressNumber" sm>
 												<Form.Label>Número da residência</Form.Label>
 												<Form.Control
-													value={deliverAddressNumber}
+													value={orderDeliverAddressNumber}
 													onChange={e => setDeliverAddressNumber(e.target.value)}
 													type="number"
 													min="0"
 													placeholder="Número"
 												/>
 											</Form.Group>
-											<Form.Group as={Col} controlId="deliverAddressComplement" sm>
+											<Form.Group as={Col} controlId="orderDeliverAddressComplement" sm>
 												<Form.Label>Complemento</Form.Label>
 												<Form.Control
-													value={deliverAddressComplement}
+													value={orderDeliverAddressComplement}
 													onChange={e => setDeliverAddressComplement(e.target.value)}
 													type="text"
 													placeholder="Complemento (opcional)"
@@ -589,10 +648,10 @@ export default function WebsiteNavbar({
 											</Form.Group>
 										</Row>
 										<Row>
-											<Form.Group as={Col} controlId="deliverAddressCep" sm>
+											<Form.Group as={Col} controlId="orderDeliverAddressCep" sm>
 												<Form.Label>CEP</Form.Label>
 												<Form.Control
-													value={deliverAddressCep}
+													value={orderDeliverAddressCep}
 													onChange={e => setDeliverAddressCep(e.target.value)}
 													type="number"
 													min="0"
@@ -609,16 +668,16 @@ export default function WebsiteNavbar({
 													Verificar CEP
 												</Button>
 											</Form.Group>
-											<Form.Group as={Col} controlId="deliverAddress" sm>
+											<Form.Group as={Col} controlId="orderDeliverAddress" sm>
 												<Form.Label>Endereço de entrega:</Form.Label>
 												<Form.Control
-													value={deliverAddress}
-													onChange={e => setDeliverAdress(e.target.value)}
+													value={orderDeliverAddress}
+													onChange={e => setDeliverAddress(e.target.value)}
 													type="text"
 													pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
 													placeholder="Rua, Número, Bairro, Complemento (opcional)"
-													disabled={!deliverOrder}
-													required={deliverOrder}
+													disabled={!orderDeliver}
+													required={orderDeliver}
 												/>
 												<Form.Text className="text-muted">
 													Separe rua, número, bairro e complemento por vírgula
@@ -629,56 +688,98 @@ export default function WebsiteNavbar({
 									:
 									null
 								}
-
-								{ !noCards ?
-									<OverlayTrigger
-										placement="top"
-										overlay={
-											<Tooltip>
-												OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
-											</Tooltip>
-										}
-									>
-										<FormGroup>
-											<Form.Label>Descontos por cartão fidelidade:</Form.Label>
-										</FormGroup>
-									</OverlayTrigger>
-									:
-									null
-								}
-
-								{	user.cards && user.cards.length && orderType && !noCards ?
-									<FormGroup>
-										{user.cards.map((card,index) => (
-											card.completed && !card.status && orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-												<>
-													<Row className="m-auto" key={index}>
-														Completou o cartão {card.cardFidelity}
-														<FormLabel style={{color: "#c83a34"}} >
-															<span>&nbsp;</span>-R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
-														</FormLabel>
-													</Row>
-												</>
-												:
-												(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-													<>
-														<Form.Label>Seu cartão {card.cardFidelity} não está completo</Form.Label>
-														<br></br>
-													</>
+								<Row>
+									{!noCards ?
+										user.cards && user.cards.length && orderType ?
+											<OverlayTrigger
+												placement="top"
+												overlay={
+													<Tooltip>
+													OBS: Se o pedido de um produto for mais barato que o desconto desse produto,
+													o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
+													</Tooltip>
+												}
+											>
+												<FormGroup as={Col} controlId="deliverCard" sm>
+													<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+													{user.cards.map((card,index) => (
+														card.completed && !card.status && orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+															<Row className="m-auto" key={index}>
+															Completou o cartão {card.cardFidelity}
+																<FormLabel style={{color: "#c83a34"}} >
+																	<span>&nbsp;</span>-R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
+																</FormLabel>
+															</Row>
+															:
+															(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+																<Row>
+																	<Form.Label as={Col}>Seu cartão {card.cardFidelity} não está completo</Form.Label>
+																</Row>
+																:
+																(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+																	<Row>
+																		<Form.Label as={Col}>
+																			Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado
+																		</Form.Label>
+																	</Row>
+																	:
+																	null
+																)
+															)
+													))}
+												</FormGroup>
+											</OverlayTrigger>
+											:
+											null
+										:
+										null
+									}
+									<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
+										<Form.Label>Cupons</Form.Label>
+										<Form.Control
+											value={null}
+											onChange={e => {
+												const c = userCoupons.find(c => c.name === e.target.value);
+												setDeliverCoupon(c ? c : null);
+												setDeliverDiscount(c.method === "dinheiro" ? "R$ " + c.discount : c.discount + "%");
+											}}
+											as="select"
+											placeholder="Cupons"
+											required
+										>
+											<option disabled>Selecione o cupom desejado</option>
+											<option>Sem cupom</option>
+											{userCoupons.map((coupon, index) => (
+												<option key={index}>{coupon.name}</option>
+											))}
+										</Form.Control>
+										<Form.Text muted>
+											{orderDeliverCoupon ?
+												orderDeliverCoupon.type === "frete" ?
+													"Cupom de frete - Seu pedido chegará em sua casa com frete grátis"
 													:
-													(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-														<>
-															<Form.Label>Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado</Form.Label>
-															<br></br>
-														</>
+													orderDeliverCoupon.type === "valor" ?
+														`Cupom de valor - Como seu pedido atingiu o valor mínimo, você tem ${orderDeliverDiscount} de desconto`
 														:
-														null)
-												)
-										))}
-									</FormGroup>
-									:
-									null
-								}
+														orderDeliverCoupon.type === "quantidade" ?
+															`Cupom de quantidade - Seu pedido tem ${orderDeliverDiscount} de desconto`
+															:
+															null
+												:
+												"Nenhum cupom selecionado"
+											}
+										</Form.Text>
+										<Button
+											variant="light"
+											id="btn-custom"
+											size="sm"
+											className="my-2"
+											onClick={validateCoupon}
+										>
+											Validar cupom
+										</Button>
+									</Form.Group>
+								</Row>
 								<Form.Group controlId="deliverPayment">
 									<Form.Label>Forma de pagamento:</Form.Label>
 									<Payment />
@@ -703,7 +804,7 @@ export default function WebsiteNavbar({
 					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
 						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" type="submit" onClick={handleFinishOrder}>
-							{"Finalizar pedido +R$" + (order.total - discount + (deliverOrder ? companyInfo.freight : 0))}
+							{"Finalizar pedido +R$" + (order.total - discount + (orderDeliver ? companyInfo.freight : 0))}
 						</Button>
 						:
 						<Button variant="danger">
