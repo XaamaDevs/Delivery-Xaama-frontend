@@ -147,6 +147,7 @@ export default function WebsiteNavbar({
 	//	Update order delivery state variables
 	useEffect(() => {
 		var cardsDiscount = 0.0;
+
 		if(user && user.cards && companyInfo && companyInfo.cards){
 			user.cards.map((card,index) => {
 				card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
@@ -169,7 +170,7 @@ export default function WebsiteNavbar({
 		setOrderDeliverTotal(order.total - cardsDiscount);
 		setOrderDeliverChange(order.total - cardsDiscount);
 		setCouponDiscountText("");
-	}, [shoppingBasketModal]);
+	}, [orderType, shoppingBasketModal]);
 
 	//	Update order total and change when coupon is added or updated
 	useEffect(() => {
