@@ -167,25 +167,29 @@ export default function WebsiteNavbar({
 		setOrderDeliverChange(null);
 		setOrderDeliverCardsDiscount(cardsDiscount);
 		setOrderDeliverTotal(order.total - cardsDiscount);
+		setOrderDeliverChange(order.total - cardsDiscount);
 		setCouponDiscountText("");
 	}, [shoppingBasketModal]);
 
-	//	Update order total when coupon is added or updated
+	//	Update order total and change when coupon is added or updated
 	useEffect(() => {
 		const freight = orderDeliver ? companyInfo.freight : 0;
 
 		if(orderDeliverCoupon) {
 			if(orderDeliverCoupon.type === "frete") {
 				setOrderDeliverTotal(order.total - orderDeliverCardsDiscount);
+				setOrderDeliverChange(order.total - orderDeliverCardsDiscount);
 			} else if(orderDeliverCoupon.type === "valor" || orderDeliverCoupon.type === "quantidade") {
 				const total = orderDeliverCoupon.method === "dinheiro" ?
 					order.total - orderDeliverCardsDiscount - orderDeliverCoupon.discount + freight
 					:
 					order.total - orderDeliverCardsDiscount - (order.total*(orderDeliverCoupon.discount/100)) + freight;
 				setOrderDeliverTotal(total < 0 ? 0 : total);
+				setOrderDeliverChange(total < 0 ? 0 : total);
 			}
 		} else {
 			setOrderDeliverTotal(order.total - orderDeliverCardsDiscount + freight);
+			setOrderDeliverChange(order.total - orderDeliverCardsDiscount + freight);
 		}
 	}, [orderDeliverCoupon, orderDeliver]);
 
