@@ -17,7 +17,7 @@ export default function Logged() {
 			<Modal.Body>Saia da sua conta para ver este conteúdo!</Modal.Body>
 			<Modal.Footer>
 				<Link className="btn btn-warning" to="/user">
-					<small>Fechar</small>
+					Fechar
 				</Link>
 			</Modal.Footer>
 		</Modal>

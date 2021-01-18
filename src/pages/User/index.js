@@ -523,7 +523,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				{couponTypes.map((type, index) => (
 					type && type.length ?
 						<Tab
-							eventKey={index} 
+							eventKey={index}
 							title={type[0].toUpperCase() + type.slice(1)}>
 						</Tab>
 						:
@@ -781,10 +781,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Col>
 				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
 					<Col className="m-auto p-2" sm="4">
-						<h3 className="display-5 text-center m-auto p-3">Cartões Fidelidade:</h3>
+						<h3 className="display-5 text-center text-light m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
 							companyInfo.cards[index].available ?
-								<>
+								<Col className="p-0 m-0" style={{ color: "#f0d890" }}>
 									<Row key={index}>
 										<Col>
 											<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
@@ -795,15 +795,19 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									</Row>
 
 									<ProgressBar
+										className="mb-3"
 										variant={(parseInt(card.qtdCurrent*100)/companyInfo.cards[index].qtdMax) < 40 ? "danger" : "warning"}
 										animated now={parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}
-										label={`${parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}%`} />
-									<br/>
-								</>
+										label={`${parseInt((card.qtdCurrent*100)/companyInfo.cards[index].qtdMax)}%`}
+									/>
+								</Col>
 								:
 								null
 						))}
-						<small id="text-OBS">* OBS: Se o pedido de um produto for mais barato que o desconto desse produto, o desconto será o valor do pedido desse produto. O valor do frete não está incluso!</small>
+						<small style={{ color: "#f0d890" }}>
+							* OBS: Se o pedido de um produto for mais barato que o desconto desse produto,
+							o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
+						</small>
 					</Col>
 					:
 					null
@@ -1666,7 +1670,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									))}
 								</CardDeck>
 								:
-								couponsByType[(couponTypes[eventKey])] && couponsByType[(couponTypes[eventKey])].length ? 
+								couponsByType[(couponTypes[eventKey])] && couponsByType[(couponTypes[eventKey])].length ?
 									<h4 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima!</h4>
 									:
 									<h4 className="display-5 text-center m-auto p-5">Você não possui cupom desse tipo!</h4>

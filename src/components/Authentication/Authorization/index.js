@@ -17,7 +17,7 @@ export default function Authorization() {
 			<Modal.Body>Você não tem permissão para acessar este conteúdo!</Modal.Body>
 			<Modal.Footer>
 				<Link className="btn btn-warning" to="/">
-					<small>Fechar</small>
+					Fechar
 				</Link>
 			</Modal.Footer>
 		</Modal>

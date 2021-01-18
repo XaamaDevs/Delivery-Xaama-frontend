@@ -26,14 +26,6 @@ body {
 	background-position: center;
 }
 
-h3 {
-  color: #ffffff;
-}
-
-h6 {
-  color: #f0d890;
-}
-
 /* Settings scroll bar */
 
 ::-webkit-scrollbar {

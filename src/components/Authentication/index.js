@@ -17,7 +17,7 @@ export default function Authentication() {
 			<Modal.Body>Você precisa acessar sua conta para ver este conteúdo!</Modal.Body>
 			<Modal.Footer>
 				<Link className="btn btn-warning" to="/login">
-					<small>Fechar</small>
+					Fechar
 				</Link>
 			</Modal.Footer>
 		</Modal>
