@@ -764,7 +764,7 @@ export default function WebsiteNavbar({
 										null
 									}
 									<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
-										<Form.Label>Cupons</Form.Label>
+										<Form.Label>Cupons:</Form.Label>
 										<Form.Control
 											value={null}
 											onChange={e => {
