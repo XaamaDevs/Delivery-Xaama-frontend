@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs, Tab } from "react-bootstrap";
+import { Card, CardDeck, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs, Tab, Spinner } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../components/Alert";
@@ -70,6 +70,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	// Coupons for user
 	const couponTypes = ["quantidade", "valor", "frete"];
 	const [coupons, setCoupons] = useState([]);
+	const [couponsByType, setCouponsByType] = useState(null);
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -86,6 +87,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
+	const [isLoading, setLoading] = useState(true);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -110,6 +112,45 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		setCompanyFreight(companyInfo.freight);
 		setCompanyProductTypes(companyInfo.productTypes.join(", "));
 	}, [modal4Show, modalImages]);
+
+	//	Loading coupons list by type and all users
+	useEffect(() => {
+		async function fetchData() {
+			await api.get("coupon", {
+				headers : {
+					"x-access-token": userId,
+				}})
+				.then((response) => {
+					var cpnsByType = {};
+
+					for(var type of couponTypes) {
+						var cpns = [];
+
+						for(var cpn of response.data) {
+							if(cpn.type === type) {
+								cpns.push(cpn);
+							}
+						}
+
+						cpnsByType[type] = cpns;
+					}
+
+					setCouponsByType(cpnsByType);
+				})
+				.catch((error) => {
+					setTitle("Erro!");
+					if(error.response && typeof(error.response.data) !== "object") {
+						setMessage(error.response.data);
+					} else {
+						setMessage(error.message);
+					}
+					setToastShow(true);
+				});
+
+			setLoading(false);
+		}
+		fetchData();
+	}, []);
 
 	//	User image preview
 	const preview = useMemo(() => {
@@ -465,26 +506,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		}
 	}
 
-	// Function to get coupons available for user
-	async function handleShowCoupons(event) {
+	//	Return a list of coupons given type
+	async function handleCouponsList(event, type) {
 		event.preventDefault();
-
-		await api.get("coupon", {
-			headers : {
-				"x-access-token": userId,
-			}
-		}).then((response) => {
-			setCoupons(response.data);
-			setModalMyCoupons(true);
-		}).catch((error) => {
-			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
-				setMessage(error.response.data);
-			} else {
-				setMessage(error.message);
-			}
-			setToastShow(true);
-		});
+		
+		setCoupons(couponsByType[type]);
 	}
 
 	function AllCoupons() {
@@ -498,8 +524,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 				{couponTypes.map((type, index) => (
 					type && type.length ?
-						<Tab eventKey={index} title={type[0].toUpperCase() + type.slice(1)}>
-							{console.log(coupons)}
+						<Tab 
+							eventKey={index} 
+							title={type[0].toUpperCase() + type.slice(1)}
+							onClick={e => handleCouponsList(e, couponTypes[index])}>
 						</Tab>
 						:
 						null
@@ -507,6 +535,43 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			</Tabs>
 		);
 	}
+
+	const couponCard = (couponI) => (
+		couponI ?
+			<Card as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
+				<Card.Header>
+					{couponI.name ? couponI.name : null}
+				</Card.Header>
+				<Card.Body>
+					{couponI.discount ?
+						<Card.Text>
+							{"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")}
+						</Card.Text>
+						:
+						null
+					}
+					{couponI.minValue ?
+						<Card.Text>
+							{"Valor mínimo para o desconto: R$ " + couponI.minValue}
+						</Card.Text>
+						:
+						null
+					}
+					{!couponI.private ?
+						<Card.Text>
+							{"Quantidade: " + (couponI.qty ?  couponI.qty : "Não atribuído")}
+						</Card.Text>
+						:
+						null
+					}
+					<Card.Text>
+						{"Cupom: " + (couponI.private ? "privado" : "público")}
+					</Card.Text>
+				</Card.Body>
+			</Card>
+			:
+			null
+	);
 
 	return (
 		<>
@@ -585,7 +650,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										<Button
 											variant="outline-warning"
 											className="mx-1 my-3 w-100"
-											onClick={handleShowCoupons}
+											onClick={() => setModalMyCoupons(true)}
 											sm="4"
 										>
 											Cupons disponíveis
@@ -1581,6 +1646,32 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Modal.Header>
 				<Modal.Body>
 					<AllCoupons />
+					<Card className="px-3" text="light" bg="dark">
+						{isLoading ?
+							<Spinner
+								className="my-5 mx-auto"
+								style={{width: "5rem", height: "5rem"}}
+								animation="grow"
+								variant="warning"
+							/>
+							:
+							coupons && coupons.length ?
+								<CardDeck className="p-2">
+									{Array(coupons.length).fill(null).map((value, i) => (
+										i%3 === 0 ?
+											<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
+												{Array(3).fill(null).map((value, j) => (
+													i+j < coupons.length ? couponCard(coupons[i+j]) : null
+												))}
+											</Row>
+											:
+											null
+									))}
+								</CardDeck>
+								:
+								<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima</h1>
+						}
+					</Card>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="warning" onClick={() => { setModalMyCoupons(false); setToastShow(false); history.push("/menu");}}>
