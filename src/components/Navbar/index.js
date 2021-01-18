@@ -124,21 +124,23 @@ export default function WebsiteNavbar({
 	//	Fetch user coupons data
 	useEffect(() => {
 		async function fetchData() {
-			await api.get("coupon", {
-				headers : {
-					"x-access-token": userId
-				}})
-				.then((response) => {
-					setUserCoupons(response.data);
-				}).catch((error) => {
-					setTitle("Alerta!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
+			if(userId) {
+				await api.get("coupon", {
+					headers : {
+						"x-access-token": userId
+					}})
+					.then((response) => {
+						setUserCoupons(response.data);
+					}).catch((error) => {
+						setTitle("Alerta!");
+						if(error.response && typeof(error.response.data) !== "object") {
+							setMessage(error.response.data);
+						} else {
+							setMessage(error.message);
+						}
+						setToastShow(true);
+					});
+			}
 		}
 
 		fetchData();
