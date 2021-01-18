@@ -182,7 +182,7 @@ export default function WebsiteNavbar({
 					order.total - orderDeliverCardsDiscount - orderDeliverCoupon.discount + freight
 					:
 					order.total - orderDeliverCardsDiscount - (order.total*(orderDeliverCoupon.discount/100)) + freight;
-				setOrderDeliverTotal(total);
+				setOrderDeliverTotal(total < 0 ? 0 : total);
 			}
 		} else {
 			setOrderDeliverTotal(order.total - orderDeliverCardsDiscount + freight);
@@ -765,7 +765,14 @@ export default function WebsiteNavbar({
 											onChange={e => {
 												const cpn = userCoupons.find(c => c.name === e.target.value);
 												setOrderDeliverCoupon(cpn ? cpn : null);
-												setCouponDiscountText(cpn && cpn.method === "dinheiro" ? "R$ " + cpn.discount : cpn.discount + "%");
+												setCouponDiscountText(cpn && cpn.method === "dinheiro" ?
+													"R$ " + cpn.discount
+													:
+													cpn && cpn.method === "porcentagem" ?
+														cpn.discount + "%"
+														:
+														null
+												);
 												setOrderDeliver(cpn && cpn.type === "frete" ? true : orderDeliver);
 											}}
 											as="select"
