@@ -798,7 +798,7 @@ export default function WebsiteNavbar({
 													"Cupom de frete - Seu pedido chegará em sua casa com frete grátis"
 													:
 													orderDeliverCoupon.type === "valor" ?
-														`Cupom de valor - Como seu pedido atingiu o valor mínimo, você tem ${couponDiscountText} de desconto`
+														`Cupom de valor - Como seu pedido atingiu o valor mínimo (R$ ${orderDeliverCoupon.minValue}), você tem ${couponDiscountText} de desconto`
 														:
 														orderDeliverCoupon.type === "quantidade" ?
 															`Cupom de quantidade - Seu pedido tem ${couponDiscountText} de desconto`
