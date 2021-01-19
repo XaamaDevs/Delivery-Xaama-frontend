@@ -523,6 +523,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				{couponTypes.map((type, index) => (
 					type && type.length ?
 						<Tab
+							key={index}
 							eventKey={index}
 							title={type[0].toUpperCase() + type.slice(1)}>
 						</Tab>
@@ -533,9 +534,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		);
 	}
 
-	const couponCard = (couponI) => (
+	const couponCard = (couponI, j) => (
 		couponI ?
-			<Card as={Col} className="p-0 m-2" text="white" bg="dark" sm="4">
+			<Card key={j} as={Col} className="p-0 m-2" text="white" bg="dark" sm="4">
 				<Card.Header>
 					Nome: {couponI.name ? couponI.name : null}
 				</Card.Header>
@@ -784,8 +785,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 						<h3 className="display-5 text-center text-light m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
 							companyInfo.cards[index].available ?
-								<Col className="p-0 m-0" style={{ color: "#f0d890" }}>
-									<Row key={index}>
+								<Col key={index} className="p-0 m-0" style={{ color: "#f0d890" }}>
+									<Row >
 										<Col>
 											<h6>{card.cardFidelity}: {card.qtdCurrent}/{companyInfo.cards[index].qtdMax}</h6>
 										</Col>
@@ -1662,7 +1663,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										i%3 === 0 ?
 											<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
 												{Array(3).fill(null).map((value, j) => (
-													i+j < coupons.length ? couponCard(coupons[i+j]) : null
+													
+													i+j < coupons.length ? couponCard(coupons[i+j], j) : null
+												
 												))}
 											</Row>
 											:
