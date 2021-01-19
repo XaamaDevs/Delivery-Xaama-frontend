@@ -8,14 +8,14 @@ import { Card, Tabs, Tab, Col, Row, Image } from "react-bootstrap";
 // Importing image from camera
 import camera from "../../assets/camera.svg";
 
-export default function ProductDeck({ products }) {
+export default function ProductDeck({ bg, text, products }) {
 	return (
 		<Tabs fill defaultActiveKey={0} id="productDeck">
 			{products.map((product, index) => (
 				<Tab key={index} eventKey={index} title={product.product.name}>
-					<Card className="h-100 p-1" text="dark" bg="light" key={product._id}>
+					<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
 						<Row>
-							<Col sm>
+							<Col sm="6">
 								<Image
 									src={product.product.thumbnail_url ? process.env.REACT_APP_API_URL + product.product.thumbnail_url : camera}
 									alt="thumbnail"
@@ -95,5 +95,7 @@ export default function ProductDeck({ products }) {
 }
 
 ProductDeck.propTypes = {
+	bg : PropTypes.string,
+	text : PropTypes.string,
 	products : PropTypes.array
 };
