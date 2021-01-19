@@ -246,7 +246,7 @@ export default function WebsiteNavbar({
 			name: user.name,
 			email: user.email,
 			phone: user.phone ? user.phone : orderDeliverPhone,
-			address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : "Rua, 1, Bairro, Casa"),
+			address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : ""),
 			status: status,
 		};
 
