@@ -180,46 +180,45 @@ export default function AllOrders({ userId, companyInfo }) {
 											</Card.Header>
 											<Card.Body>
 												<Card.Text>
-													<p>
-														{order.phone ? "Telefone para contato: " + order.phone : "Telefone não informado"}
-													</p>
-													<p>
-														{order.deliver ?
-															"Endereço de entrega: " + order.address.join(", ")
-															:
-															"Irá retirar no balcão!"
-														}
-													</p>
-													<p>
-														{order.deliver ?
-															"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
-															:
-															"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
-														}
-													</p>
-													<p>
-														{"Total a pagar R$" + order.total}
-													</p>
-													<p>
-                            Método de pagamento:
-														{order.typePayment === 1 ?
-															" Cartão"
-															:
-															" Dinheiro"
-														}
-													</p>
-													<p>
-														{(order.change === order.total) ?
-															"Não precisa de troco"
-															:
-															((order.typePayment === 0) ?
-																"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
-																:
-																"Pagará na maquininha"
-															)
-														}
-													</p>
+													{order.phone ? "Telefone para contato: " + order.phone : "Telefone não informado"}
 												</Card.Text>
+												<Card.Text>
+													{order.deliver ?
+														"Endereço de entrega: " + order.address.join(", ")
+														:
+														"Irá retirar no balcão!"
+													}
+												</Card.Text>
+												<Card.Text>
+													{order.deliver ?
+														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+														:
+														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+													}
+												</Card.Text>
+												<Card.Text>
+													Total a pagar R$ {order.total}
+												</Card.Text>
+												<Card.Text>
+													Método de pagamento:
+													{order.typePayment === 1 ?
+														" Cartão"
+														:
+														" Dinheiro"
+													}
+												</Card.Text>
+												<Card.Text>
+													{(order.change === order.total) ?
+														"Não precisa de troco"
+														:
+														((order.typePayment === 0) ?
+															"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
+															:
+															"Pagará na maquininha"
+														)
+													}
+												</Card.Text>
+												
 												<Row className="d-flex justify-content-between">
 													<Button
 														variant="light"
@@ -227,14 +226,14 @@ export default function AllOrders({ userId, companyInfo }) {
 														className="m-1 mx-auto"
 														onClick={e => handleSetOrder(e, order)}
 													>
-                            Ver pedido
+														Ver pedido
 													</Button>
 													{!order.status ?
 														<Button
 															variant="danger"
 															className="m-1 mx-auto"
 														>
-                              Pedido sendo preparado
+															Pedido sendo preparado
 														</Button>
 														:
 														<>
@@ -244,14 +243,14 @@ export default function AllOrders({ userId, companyInfo }) {
 																		variant="warning"
 																		className="m-1 mx-auto"
 																	>
-                                    Pedido a caminho
+																		Pedido a caminho
 																	</Button>
 																	<Button
 																		variant="outline-warning"
 																		className="m-1 mx-auto"
 																		onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
 																	>
-                                    Recebeu seu pedido? Avalie!
+																		Recebeu seu pedido? Avalie!
 																	</Button>
 																</>
 																:
@@ -259,7 +258,7 @@ export default function AllOrders({ userId, companyInfo }) {
 																	variant="warning"
 																	className="m-1 mx-auto"
 																>
-                                  Pedido entregue
+																	Pedido entregue
 																</Button>
 															}
 														</>
