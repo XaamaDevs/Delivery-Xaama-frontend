@@ -14,6 +14,7 @@ import Login from "./pages/User/Login";
 import Signup from "./pages/User/Signup";
 import Additions from "./pages/Additions";
 import Order from "./pages/Order";
+import FinishOrder from "./pages/Order/Finish";
 import AllOrders from "./pages/Order/All";
 import Menu from "./pages/Menu";
 import Cards from "./pages/Cards";
@@ -135,18 +136,38 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/menu"
-					render={() => <Menu
-						userId={userId}
-						user={user}
-						order={order}
-						setOrder={setOrder}
-						companyInfo={companyInfo}
-						companySystemOpenByHour={companySystemOpenByHour}
-					/>}
+					render={() =>
+						<Menu
+							userId={userId}
+							user={user}
+							order={order}
+							setOrder={setOrder}
+							companyInfo={companyInfo}
+							companySystemOpenByHour={companySystemOpenByHour}
+						/>
+					}
 				/>
 				<Route
 					exact path="/order"
 					render={() => { return userAuth() ? <Order userId={userId} companyInfo={companyInfo} /> : <Auth />; }}
+				/>
+				<Route
+					exact path="/finishOrder"
+					render={() => {
+						return userAuth() ?
+							<FinishOrder
+								userId={userId}
+								setUserId={setUserId}
+								user={user}
+								setUser={setUser}
+								setData={setData}
+								order={order}
+								companyInfo={companyInfo}
+								companySystemOpenByHour={companySystemOpenByHour}
+								noCards={noCards}
+							/>
+							: <Auth />;
+					}}
 				/>
 				<Route
 					exact path="/user"
