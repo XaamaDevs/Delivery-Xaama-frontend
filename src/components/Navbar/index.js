@@ -408,7 +408,7 @@ export default function WebsiteNavbar({
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(!orderDeliverAddressNumber.length) {
+		if(!orderDeliverAddressNumber || !orderDeliverAddressNumber.length) {
 			setTitle("Erro!");
 			setMessage("Número da residência inválido!");
 			setToastShow(true);
