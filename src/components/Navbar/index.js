@@ -231,32 +231,33 @@ export default function WebsiteNavbar({
 		event.preventDefault();
 		history.push("/menu");
 
-		setData(new Date());
-
-		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
-
-		var data = {
-			products: order.products,
-			deliver: orderDeliver,
-			address: orderDeliverAddress,
-			phone: orderDeliverPhone,
-			typePayment: type,
-			change: orderDeliverChange,
-			total: orderDeliverTotal,
-			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
-		};
-
 		setFinish(true);
 		setLoading(true);
 
-		var orderOk = false;
+		var status = [];
 
-		await api.post("order", data, {
+		user.cards.map((card,index) => (
+			card.completed && !card.status && orderType &&
+				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+				status.push(true) : status.push(card.status)
+		));
+
+		var data = {
+			name: user.name,
+			email: user.email,
+			phone: user.phone ? user.phone : orderDeliverPhone,
+			address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : "Rua, 1, Bairro, Casa"),
+			status: status,
+		};
+
+		await api.put("user", data, {
 			headers : {
 				"x-access-token": userId
 			}})
-			.then(() => {
-				orderOk = true;
+			.then((response) => {
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
 			}).catch((error) => {
 				setTitle("Alerta!");
 				if(error.response && typeof(error.response.data) !== "object") {
@@ -267,42 +268,39 @@ export default function WebsiteNavbar({
 				setToastShow(true);
 			});
 
-		var status = [];
+		setData(new Date());
 
-		user.cards.map((card,index) => (
-			card.completed && !card.status && orderType &&
-				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-				status.push(true) : status.push(card.status)
-		));
+		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
-		if(orderOk) {
-			data = {
-				name: user.name,
-				email: user.email,
-				phone: user.phone ? user.phone : orderDeliverPhone,
-				address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : "Rua, 1, Bairro, Casa"),
-				status: status,
-			};
+		data = {
+			products: order.products,
+			deliver: orderDeliver,
+			address: orderDeliverAddress,
+			phone: orderDeliverPhone,
+			typePayment: type,
+			change: orderDeliverChange,
+			total: orderDeliverTotal,
+			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
+		};
 
-			await api.put("user", data, {
-				headers : {
-					"x-access-token": userId
-				}})
-				.then(() => {
-					setTitle("Pedido enviado!");
-					setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-					setShoppingBasketModal(false);
-					setModalAlert(true);
-				}).catch((error) => {
-					setTitle("Alerta!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
-		}
+		await api.post("order", data, {
+			headers : {
+				"x-access-token": userId
+			}})
+			.then(() => {
+				setTitle("Pedido enviado!");
+				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
+				setShoppingBasketModal(false);
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Alerta!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setToastShow(true);
+			});
 
 		setLoading(false);
 	}
