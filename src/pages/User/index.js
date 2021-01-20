@@ -12,6 +12,11 @@ import { Card, CardDeck, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
 
+//	Importing React icons features
+import {
+	ImFire
+} from "react-icons/im";
+
 // Importing backend api and cep api
 import api from "../../services/api";
 import apicep from "../../services/apicep";
@@ -576,7 +581,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			<div className="d-flex flex-row flex-wrap my-auto">
 				<Col className="m-auto" sm="7">
 					<Card text="light" bg="dark">
-						<Card.Header >{user.name}</Card.Header>
+						<Card.Header>
+							<ImFire className="my-0 mx-2 text-warning" size="20" />
+							{user.name}
+						</Card.Header>
 						<Card.Body className="py-0">
 							<Row>
 								<Col sm>

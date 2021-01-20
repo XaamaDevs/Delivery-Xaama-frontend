@@ -16,6 +16,14 @@ import {
 	Image,
 } from "react-bootstrap";
 
+//	Importing Material-ui features
+import Rating from "@material-ui/lab/Rating";
+import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@material-ui/icons/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@material-ui/icons/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@material-ui/icons/SentimentSatisfiedAltOutlined";
+import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
+
 //	Importing website utils
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
@@ -43,7 +51,6 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
 	const [feedback, setFeedback] = useState(null);
-	const [stars, setStars] = useState(0);
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
@@ -53,6 +60,41 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+
+	const [value, setValue] = useState(3);
+	
+	const customIcons = {
+		1: {
+			icon: <SentimentVeryDissatisfiedIcon />,
+			label: "Very Dissatisfied",
+		},
+		2: {
+			icon: <SentimentDissatisfiedIcon />,
+			label: "Dissatisfied",
+		},
+		3: {
+			icon: <SentimentSatisfiedIcon />,
+			label: "Neutral",
+		},
+		4: {
+			icon: <SentimentSatisfiedAltIcon />,
+			label: "Satisfied",
+		},
+		5: {
+			icon: <SentimentVerySatisfiedIcon />,
+			label: "Very Satisfied",
+		},
+	};
+
+	function IconContainer(props) {
+		const { value, ...other } = props;
+		return <span {...other}>{customIcons[value].icon}</span>;
+	}
+
+	IconContainer.propTypes = {
+		value: PropTypes.number.isRequired,
+	};
+	
 
 	function setupWebSocket() {
 		disconnect();
@@ -110,16 +152,12 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function handleFeedback(event) {
 		event.preventDefault();
-		
-		setStars(3);
-
+	
 		var data = {
 			orderId: orderId,
 			feedback: feedback,
-			stars: 2
+			stars: value
 		};
-		console.log(stars);
-		console.log(data);
 
 		await api.post("assessments", data, {
 			headers: {
@@ -128,7 +166,6 @@ export default function AllOrders({ userId, companyInfo }) {
 			.then(() => {
 				setFeedbackModal(false);
 				setFeedback(null);
-				setStars(0);
 				setTitle("Avaliação enviada!");
 				setMessage("Obrigado pelo seu feedback!");
 				setModalAlert(true);
@@ -326,11 +363,24 @@ export default function AllOrders({ userId, companyInfo }) {
 										value={feedback}
 										onChange={e => setFeedback(e.target.value)}
 										as="textarea"
-										rows="12"
+										rows="5"
 										placeholder="Avaliação sobre o pedido e atendimento"
 										required
 									/>
 								</Form.Group>
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<Rating
+									name="customized-icons"
+									value={value}
+									onChange={(event, newValue) => {
+										setValue(newValue);
+									}}
+									getLabelText={(value) => customIcons[value].label}
+									IconContainerComponent={IconContainer}
+								/>
 							</Col>
 						</Row>
 						<Modal.Footer>
@@ -352,5 +402,5 @@ export default function AllOrders({ userId, companyInfo }) {
 
 AllOrders.propTypes = {
 	userId : PropTypes.string.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	companyInfo : PropTypes.object.isRequired,
 };
