@@ -42,7 +42,8 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
 	const [orderA, setOrderA] = useState({});
-	const [feedback, setFeedback] = useState("");
+	const [feedback, setFeedback] = useState(null);
+	const [stars, setStars] = useState(0);
 
 	//	Modal settings
 	const [orderListingModal, setOrderListingModal] = useState(false);
@@ -109,26 +110,35 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function handleFeedback(event) {
 		event.preventDefault();
+		
+		setStars(3);
 
-		await api.put("order/" + orderId, {
-			status: true,
-			feedback: feedback
-		}).then(() => {
-			setFeedbackModal(false);
-			setTitle("Avaliação enviada!");
-			setMessage("Obrigado pelo seu feedback!");
-			setModalAlert(true);
-		}).catch((error) => {
-			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
-				setMessage(error.response.data);
-			} else {
-				setMessage(error.message);
-			}
-			setFeedbackModal(false);
-		});
+		var data = {
+			orderId: orderId,
+			feedback: feedback,
+			stars: 2
+		};
+		console.log(stars);
+		console.log(data);
 
-		setFeedback("");
+		await api.post("assessments", data, {
+			headers: {
+				"x-access-token" : userId
+			}})
+			.then(() => {
+				setFeedbackModal(false);
+				setTitle("Avaliação enviada!");
+				setMessage("Obrigado pelo seu feedback!");
+				setModalAlert(true);
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response && typeof(error.response.data) !== "object") {
+					setMessage(error.response.data);
+				} else {
+					setMessage(error.message);
+				}
+				setFeedbackModal(false);
+			});
 	}
 
 	return (
@@ -237,7 +247,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														</Button>
 														:
 														<>
-															{!order.feedback ?
+															{!feedback ?
 																<>
 																	<Button
 																		variant="warning"
@@ -332,7 +342,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				</Modal.Body>
 			</Modal>
 
-			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
+			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</div>
 	);
 }

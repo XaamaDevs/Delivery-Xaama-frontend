@@ -40,12 +40,10 @@ export default function AllOrders({ userId, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderA, setOrderA] = useState({});
-	const [feedback, setFeedback]= useState("");
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 
 	//	Modal settings
 	const [modalOrderListing, setModalOrderListing] = useState(false);
-	const [modalFeedback, setModalFeedback] = useState(false);
 	const [modalDeleteOrder, setModalDeleteOrder] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
@@ -101,7 +99,10 @@ export default function AllOrders({ userId, companyInfo }) {
 
 		var orderOK = false;
 
-		await api.put("/order/" + order._id, { status:true })
+		await api.put("/order/" + order._id, { status:true }, {
+			headers : {
+				"x-access-token": userId,
+			}})
 			.then(() => {
 				orderOK = true;
 			})
@@ -156,13 +157,6 @@ export default function AllOrders({ userId, companyInfo }) {
 					setModalAlert(true);
 				});
 		}
-	}
-
-	async function handleFeedback(event, order) {
-		event.preventDefault();
-
-		setFeedback(order.feedback);
-		setModalFeedback(true);
 	}
 
 	async function deleteAllSockets() {
@@ -314,13 +308,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														Entregar pedido
 													</Button>
 													:
-													<Button
-														variant="outline-warning"
-														className="m-1"
-														onClick={e => handleFeedback(e, order)}
-													>
-														Avaliação
-													</Button>
+													null
 												}
 											</Row>
 										</Card.Body>
@@ -402,18 +390,6 @@ export default function AllOrders({ userId, companyInfo }) {
 						</Button>
 					</Form>
 				</Modal.Body>
-			</Modal>
-
-			<Modal show={modalFeedback} onHide={() => setModalFeedback(false)}>
-				<Modal.Header closeButton>
-					<Modal.Title>Avalição do pedido</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>{feedback ? feedback : "Ainda não avaliou"}</Modal.Body>
-				<Modal.Footer>
-					<Button variant="warning" onClick={() => setModalFeedback(false)}>
-						Fechar
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Alert.Close
