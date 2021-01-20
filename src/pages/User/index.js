@@ -1673,7 +1673,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									))}
 								</CardDeck>
 								:
-								couponsByType[(couponTypes[eventKey])] && couponsByType[(couponTypes[eventKey])].length ?
+								couponsByType && couponsByType.length && couponsByType[(couponTypes[eventKey])] && couponsByType[(couponTypes[eventKey])].length ?
 									<h4 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima!</h4>
 									:
 									<h4 className="display-5 text-center m-auto p-5">Você não possui cupom desse tipo!</h4>
