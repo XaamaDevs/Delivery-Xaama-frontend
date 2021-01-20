@@ -74,34 +74,16 @@ export default function Additions({ userId }) {
 		async function fetchData() {
 			await api.get("productTypes")
 				.then((response) => {
-					if(response.data) {
+					if(response.status === 200) {
 						setProductTypes(response.data);
-					} else {
-						setTitle("Erro!");
-						setMessage("Não há tipos de produtos cadastrados");
-						setToastShow(true);
 					}
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
 				});
 
 			await api.get("addition")
 				.then((response) => {
-					setAdditions(response.data);
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
+					if(response.status === 200) {
+						setAdditions(response.data);
 					}
-					setToastShow(true);
 				});
 
 			setIsLoading(false);
@@ -135,22 +117,23 @@ export default function Additions({ userId }) {
 		await api.post("addition", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setAdditionAddModal(false);
-				setTitle("Nova adição!");
-				setMessage("Adição criada com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setAdditionAddModal(false);
+			setTitle("Nova adição!");
+			setMessage("Adição criada com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleAdditionUpdate(event) {
@@ -185,10 +168,12 @@ export default function Additions({ userId }) {
 			setModalAlert(true);
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
-				setMessage(error.response.data);
-			} else {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
@@ -212,10 +197,12 @@ export default function Additions({ userId }) {
 			setModalAlert(true);
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
-				setMessage(error.response.data);
-			} else {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
@@ -227,22 +214,23 @@ export default function Additions({ userId }) {
 		await api.delete("addition/" + additionId, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setAdditionDeleteModal(false);
-				setTitle("Remoção de adição!");
-				setMessage("Adição removida com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setAdditionDeleteModal(false);
+			setTitle("Remoção de adição!");
+			setMessage("Adição removida com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	const header = (

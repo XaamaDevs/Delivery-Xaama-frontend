@@ -124,8 +124,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			await api.get("coupon", {
 				headers : {
 					"x-access-token": userId,
-				}})
-				.then((response) => {
+				}
+			}).then((response) => {
+				if(response.status === 200) {
 					var cpnsByType = {};
 
 					for(var type of couponTypes) {
@@ -141,16 +142,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					}
 
 					setCouponsByType(cpnsByType);
-				})
-				.catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
+				}
+			});
 
 			setIsLoading(false);
 		}
@@ -211,26 +204,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		await api.put("user", data , {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then((response) => {
-				setModal1Show(false);
-				setModal2Show(false);
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
-				setTitle("Alterações de usuário");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then((response) => {
+			setModal1Show(false);
+			setModal2Show(false);
+			sessionStorage.setItem("userId", response.data.token);
+			setUserId(response.data.token);
+			setUser(response.data.user);
+			setTitle("Alterações de usuário");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	//	Function to handle update user
@@ -253,26 +245,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		await api.put("userThumbnail", data , {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then((response) => {
-				setModal1Show(false);
-				setModal2Show(false);
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
-				setTitle("Alterações de usuário");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then((response) => {
+			setModal1Show(false);
+			setModal2Show(false);
+			sessionStorage.setItem("userId", response.data.token);
+			setUserId(response.data.token);
+			setUser(response.data.user);
+			setTitle("Alterações de usuário");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleUserDelete(event) {
@@ -282,26 +273,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			headers: {
 				"x-access-token": userId,
 				password: userPasswordOnDelete
-			}})
-			.then((response) => {
-				sessionStorage.removeItem("userId");
+			}
+		}).then((response) => {
+			sessionStorage.removeItem("userId");
 
-				setUserId(sessionStorage.getItem("userId"));
-				setUser({});
+			setUserId(sessionStorage.getItem("userId"));
+			setUser({});
 
-				setTitle("Alterações de usuário");
-				setMessage(response.data);
-				setToastShow(true);
-				history.push("/");
-			}).catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			setTitle("Alterações de usuário");
+			setMessage(response.data);
+			setToastShow(true);
+			history.push("/");
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 
 		setUserPasswordOnDelete("");
 	}
@@ -501,10 +492,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
+					if(error.response.status === 400 || error.response.status === 404) {
 						setMessage(error.message);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+					} else {
+						setMessage("Algo deu errado :(");
 					}
 					setToastShow(true);
 				});

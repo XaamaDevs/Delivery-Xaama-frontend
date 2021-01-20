@@ -94,71 +94,53 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		async function fetchData() {
 			await api.get("productTypes")
 				.then((response) => {
-					setProductTypes(response.data);
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
+					if(response.status === 200) {
+						setProductTypes(response.data);
 					}
-					setToastShow(true);
 				});
 
 			await api.get("product")
 				.then((response) => {
-					var prodsByType = {};
+					if(response.status === 200) {
+						var prodsByType = {};
 
-					for(var type of productTypes) {
-						var prods = [];
+						for(var type of productTypes) {
+							var prods = [];
 
-						for(var product of response.data) {
-							if(product.type === type) {
-								prods.push(product);
+							for(var product of response.data) {
+								if(product.type === type) {
+									prods.push(product);
+								}
 							}
+
+							prodsByType[type] = prods;
 						}
 
-						prodsByType[type] = prods;
+						setProductsByType(prodsByType);
 					}
-
-					setProductsByType(prodsByType);
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
 				});
 
 			await api.get("addition")
 				.then((response) => {
-					var AddsByType = {};
+					if(response.status === 200) {
+						var AddsByType = {};
 
-					for(var type of productTypes) {
-						var adds = [];
+						for(var type of productTypes) {
+							var adds = [];
 
-						for(var addition of response.data) {
-							if(addition.type.indexOf(type) >= 0) {
-								if(addition.available){
-									adds.push(addition);
+							for(var addition of response.data) {
+								if(addition.type.indexOf(type) >= 0) {
+									if(addition.available){
+										adds.push(addition);
+									}
 								}
 							}
+
+							AddsByType[type] = adds;
 						}
 
-						AddsByType[type] = adds;
+						setAdditionsByType(AddsByType);
 					}
-
-					setAdditionsByType(AddsByType);
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
 				});
 
 			setIsLoading(false);
@@ -182,22 +164,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		await api.post("product", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setProductAddModal(false);
-				setTitle("Alterações produto!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setProductAddModal(false);
+			setTitle("Alterações produto!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleProductUpdate(event) {
@@ -215,22 +196,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		await api.put("product/" + productId, data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setProductUpdateModal(false);
-				setTitle("Alterações produto!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setProductUpdateModal(false);
+			setTitle("Alterações produto!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleProductThumbnailUpdate(event) {
@@ -243,22 +223,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		await api.put("productThumbnail/" + productId, data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setProductUpdateModal(false);
-				setTitle("Alterações produto!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setProductUpdateModal(false);
+			setTitle("Alterações produto!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleProductDelete(event) {
@@ -267,22 +246,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		await api.delete("product/" + productId, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setProductDeleteModal(false);
-				setTitle("Alterações produto!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setProductDeleteModal(false);
+			setTitle("Alterações produto!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleProductOrder(event) {

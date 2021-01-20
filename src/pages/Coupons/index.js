@@ -84,8 +84,9 @@ export default function Coupons({ userId, companyInfo }) {
 			await api.get("couponAll", {
 				headers: {
 					"x-access-token": userId
-				}})
-				.then((response) => {
+				}
+			}).then((response) => {
+				if(response.status === 200) {
 					var cpnsByType = {};
 
 					for(var type of couponTypes) {
@@ -101,33 +102,18 @@ export default function Coupons({ userId, companyInfo }) {
 					}
 
 					setCouponsByType(cpnsByType);
-				})
-				.catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
+				}
+			});
 
 			await api.get("userAll", {
 				headers: {
 					"x-access-token": userId
-				}})
-				.then((response) => {
+				}
+			}).then((response) => {
+				if(response.status === 200) {
 					setUsers(response.data);
-				})
-				.catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
+				}
+			});
 
 			setIsLoading(false);
 		}
@@ -160,22 +146,23 @@ export default function Coupons({ userId, companyInfo }) {
 		await api.post("coupon", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setModalCouponAdd(false);
-				setTitle("Alterações de cupom");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setModalCouponAdd(false);
+			setTitle("Alterações de cupom");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	//	Function to update coupons
@@ -197,22 +184,23 @@ export default function Coupons({ userId, companyInfo }) {
 		await api.put("coupon/" + coupon._id, data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setModalCouponUpdate(false);
-				setTitle("Alterações de cupom");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setModalCouponUpdate(false);
+			setTitle("Alterações de cupom");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	//	Function to delete coupons
@@ -222,22 +210,23 @@ export default function Coupons({ userId, companyInfo }) {
 		await api.delete("coupon/" + couponId, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setModalCouponDelete(false);
-				setTitle("Alterações de cupom");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setModalCouponDelete(false);
+			setTitle("Alterações de cupom");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	const header = (

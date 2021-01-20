@@ -69,17 +69,12 @@ export default function AllOrders({ userId, companyInfo }) {
 					"x-access-token": userId
 				}
 			}).then((response) => {
-				setOrders(response.data);
-				setupWebSocket();
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
+				if(response.status === 200) {
+					setOrders(response.data);
+					setupWebSocket();
 				}
-				setToastShow(true);
 			});
+
 			setIsLoading(false);
 		}
 
@@ -102,19 +97,18 @@ export default function AllOrders({ userId, companyInfo }) {
 		await api.put("/order/" + order._id, { status:true }, {
 			headers : {
 				"x-access-token": userId,
-			}})
-			.then(() => {
-				orderOK = true;
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setModalAlert(true);
-			});
+			}
+		}).then(() => {
+			orderOK = true;
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setModalAlert(true);
+		});
 
 		if(orderOK) {
 			var data = [];
@@ -141,30 +135,11 @@ export default function AllOrders({ userId, companyInfo }) {
 				headers : {
 					"x-access-token": userId,
 					"order-user-id": order.user._id
-				}})
-				.then(() => {
-					setTitle("Pedido enviado!");
-					setMessage("Alterações feitas com sucesso!");
-					setModalAlert(true);
-				})
-				.catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setModalAlert(true);
-				});
-		}
-	}
-
-	async function deleteAllSockets() {
-		await api.delete("sockets", {
-			headers: { "x-access-token": userId }
-		})
-			.then(() => {
-				//
+				}
+			}).then(() => {
+				setTitle("Pedido enviado!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
 			}).catch((error) => {
 				setTitle("Erro!");
 				if(error.response && typeof(error.response.data) !== "object") {
@@ -174,6 +149,15 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 				setModalAlert(true);
 			});
+		}
+	}
+
+	async function deleteAllSockets() {
+		await api.delete("sockets", {
+			headers: {
+				"x-access-token": userId
+			}
+		});
 	}
 
 	async function handleDeleteOrders(event) {
@@ -184,22 +168,21 @@ export default function AllOrders({ userId, companyInfo }) {
 			headers : {
 				"x-access-token": userId,
 				password: userPasswordOnDelete
-			}})
-			.then(() => {
-				deleteAllSockets();
-				setTitle("Todos pedidos apagados!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setModalAlert(true);
-			});
+			}
+		}).then(() => {
+			deleteAllSockets();
+			setTitle("Todos pedidos apagados!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setModalAlert(true);
+		});
 	}
 
 	return (

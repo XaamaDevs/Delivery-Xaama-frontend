@@ -62,7 +62,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [isLoading, setIsLoading] = useState(true);
 
 	const [value, setValue] = useState(3);
-	
+
 	const customIcons = {
 		1: {
 			icon: <SentimentVeryDissatisfiedIcon />,
@@ -94,7 +94,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	IconContainer.propTypes = {
 		value: PropTypes.number.isRequired,
 	};
-	
+
 
 	function setupWebSocket() {
 		disconnect();
@@ -120,27 +120,22 @@ export default function AllOrders({ userId, companyInfo }) {
 	}, [orders, userId]);
 
 	useEffect(() => {
-		async function loadOrder() {
+		async function fetchData() {
 			await api.get("order", {
 				headers : {
 					"x-access-token": userId
-				}})
-				.then((response) => {
+				}
+			}).then((response) => {
+				if(response.status === 200) {
 					setOrders(response.data);
 					setupWebSocket();
-				}).catch((error) => {
-					setTitle("Alerta!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
-					setToastShow(true);
-				});
+				}
+			});
+
 			setIsLoading(false);
 		}
 
-		loadOrder();
+		fetchData();
 	}, [userId]);
 
 	async function handleSetOrder(event, order) {
@@ -152,7 +147,7 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	async function handleFeedback(event) {
 		event.preventDefault();
-	
+
 		var data = {
 			orderId: orderId,
 			feedback: feedback,
@@ -162,22 +157,22 @@ export default function AllOrders({ userId, companyInfo }) {
 		await api.post("assessments", data, {
 			headers: {
 				"x-access-token" : userId
-			}})
-			.then(() => {
-				setFeedbackModal(false);
-				setFeedback(null);
-				setTitle("Avaliação enviada!");
-				setMessage("Obrigado pelo seu feedback!");
-				setModalAlert(true);
-			}).catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setFeedbackModal(false);
+			setFeedback(null);
+			setTitle("Avaliação enviada!");
+			setMessage("Obrigado pelo seu feedback!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response && typeof(error.response.data) !== "object") {
+				setMessage(error.response.data);
+			} else {
+				setMessage(error.message);
+			}
+			setToastShow(true);
+		});
 	}
 
 	return (
@@ -327,7 +322,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			<Modal
 				show={orderListingModal}
 				onHide={() => setOrderListingModal(false) }
-				size="md"
+				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />

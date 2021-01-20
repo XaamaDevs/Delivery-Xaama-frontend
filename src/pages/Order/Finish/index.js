@@ -87,21 +87,12 @@ export default function FinishOrder({
 			await api.get("coupon", {
 				headers : {
 					"x-access-token": userId
-				}})
-				.then((response) => {
+				}
+			}).then((response) => {
+				if(response.status === 200) {
 					setUserCoupons(response.data);
-				}).catch((error) => {
-					setTitle("Alerta!");
-					if(error.response.status === 404) {
-						setUserCoupons([]);
-					} else if(error.response.status === 500) {
-						setMessage(error.message);
-						setToastShow(true);
-					} else {
-						setMessage(error.response.data);
-						setToastShow(true);
-					}
-				});
+				}
+			});
 		}
 
 		fetchData();
@@ -213,20 +204,22 @@ export default function FinishOrder({
 		await api.put("user", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then((response) => {
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then((response) => {
+			sessionStorage.setItem("userId", response.data.token);
+			setUserId(response.data.token);
+			setUser(response.data.user);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 
 		data = {
 			products: order.products,
@@ -242,20 +235,24 @@ export default function FinishOrder({
 		await api.post("order", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
+			}
+		}).then((response) => {
+			if(response.status === 200) {
 				setIsLoading(false);
 				setFinishOrderStep(finishOrderStep+1);
 				setOrder({ products: [] });
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	//	Function to get address info via cep api
@@ -270,26 +267,24 @@ export default function FinishOrder({
 			await api.put("couponUser/" + orderDeliverCoupon._id, null, {
 				headers : {
 					"x-access-token": userId
-				}})
-				.then((response) => {
-					if(response.status === 200) {
-						setTitle("Sucesso!");
-						setMessage("Cupom validado.");
-						setToastShow(true);
-					} else {
-						setTitle("Erro!");
-						setMessage("Não foi possível validar o cupom.");
-						setToastShow(true);
-					}
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
-						setMessage(error.message);
-					}
+				}
+			}).then((response) => {
+				if(response.status === 200) {
+					setTitle("Sucesso!");
+					setMessage("Cupom validado.");
 					setToastShow(true);
-				});
+				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400 || error.response.status === 404) {
+					setMessage(error.message);
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+				} else {
+					setMessage("Algo deu errado :(");
+				}
+				setToastShow(true);
+			});
 		}
 	}
 
@@ -322,10 +317,12 @@ export default function FinishOrder({
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response && typeof(error.response.data) !== "object") {
-						setMessage(error.response.data);
-					} else {
+					if(error.response.status === 400 || error.response.status === 404) {
 						setMessage(error.message);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+					} else {
+						setMessage("Algo deu errado :(");
 					}
 					setToastShow(true);
 				});
@@ -346,13 +343,13 @@ export default function FinishOrder({
 							<Form.Group controlId="userChange">
 								<Row>
 									<Col>
-										<Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
+										<Form.Label as={Col} className="mx-auto my-2" sm>Troco para R$: </Form.Label>
 									</Col>
 									<Col>
 										<Form.Control
 											value={orderDeliverChange}
 											onChange={e => setOrderDeliverChange(e.target.value)}
-											type="number"
+											type="tel"
 											min={orderDeliverChange}
 											required={!orderDeliverPaymentMethod}
 											autoFocus
@@ -476,7 +473,7 @@ export default function FinishOrder({
 															<Form.Control
 																value={orderDeliverAddressNumber}
 																onChange={e => setOrderDeliverAddressNumber(e.target.value)}
-																type="number"
+																type="tel"
 																min="0"
 																placeholder="Número"
 															/>
@@ -497,9 +494,7 @@ export default function FinishOrder({
 															<Form.Control
 																value={orderDeliverAddressCep}
 																onChange={e => setOrderDeliverAddressCep(e.target.value)}
-																type="number"
-																min="0"
-																max="99999999"
+																type="tel"
 																placeholder="CEP"
 															/>
 															<Button

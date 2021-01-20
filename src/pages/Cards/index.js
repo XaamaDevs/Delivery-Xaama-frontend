@@ -67,22 +67,23 @@ export default function Cards({ companyInfo, userId }) {
 		await api.put("companyUpdateCards", data, {
 			headers : {
 				"x-access-token": userId
-			}})
-			.then(() => {
-				setModalCards(false);
-				setTitle("Alterações cartão de fidelidade!");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
-			})
-			.catch((error) => {
-				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
-				}
-				setToastShow(true);
-			});
+			}
+		}).then(() => {
+			setModalCards(false);
+			setTitle("Alterações cartão de fidelidade!");
+			setMessage("Alterações feitas com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	return (

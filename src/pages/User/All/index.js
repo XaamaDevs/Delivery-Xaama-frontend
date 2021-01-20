@@ -50,27 +50,22 @@ export default function AllUsers({ userId }) {
 	}, [users]);
 
 	useEffect(() => {
-		async function loadUser() {
+		async function fetchData() {
 			await api.get("userAll", {
 				headers : {
 					"x-access-token": userId
 				}
 			}).then((response) => {
-				setUsers(response.data);
-				setupWebSocket();
-				setIsLoading(false);
-			}).catch((error) => {
-				setTitle("Alerta!");
-				if(error.response && typeof(error.response.data) !== "object") {
-					setMessage(error.response.data);
-				} else {
-					setMessage(error.message);
+				if(response.status === 200) {
+					setUsers(response.data);
+					setupWebSocket();
 				}
-				setToastShow(true);
 			});
+
+			setIsLoading(false);
 		}
 
-		loadUser();
+		fetchData();
 	}, [userId]);
 
 	async function handleTypeUser(event) {

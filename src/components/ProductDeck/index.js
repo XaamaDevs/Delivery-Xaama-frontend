@@ -13,9 +13,9 @@ export default function ProductDeck({ bg, text, products }) {
 		<Tabs fill defaultActiveKey={0} id="productDeck">
 			{products.map((product, index) => (
 				<Tab key={index} eventKey={index} title={product.product.name}>
-					<Card className="p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
+					<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
 						<Row>
-							<Col sm="5">
+							<Col sm="6">
 								<Image
 									src={product.product.thumbnail_url ? process.env.REACT_APP_API_URL + product.product.thumbnail_url : camera}
 									alt="thumbnail"

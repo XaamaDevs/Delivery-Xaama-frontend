@@ -68,13 +68,17 @@ export default function Routes() {
 						"x-access-token": userId
 					}
 				}).then((response) => {
-					setUser(response.data);
+					if(response.status === 200) {
+						setUser(response.data);
+					}
 				});
 			}
 
 			await api.get("company")
 				.then((response) => {
-					setCompanyInfo(response.data);
+					if(response.status === 200) {
+						setCompanyInfo(response.data);
+					}
 				});
 
 			setIsLoading(false);
