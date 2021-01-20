@@ -13,7 +13,7 @@ export default function ProductDeck({ bg, text, products }) {
 		<Tabs fill defaultActiveKey={0} id="productDeck">
 			{products.map((product, index) => (
 				<Tab key={index} eventKey={index} title={product.product.name}>
-					<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
+					<Card className="p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
 						<Row>
 							<Col sm="5">
 								<Image
