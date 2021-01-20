@@ -55,7 +55,7 @@ export default function Coupons({ userId, companyInfo }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [toastShow, setToastShow] = useState(false);
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	//	Update coupon state variables
 	useEffect(() => {
@@ -129,7 +129,7 @@ export default function Coupons({ userId, companyInfo }) {
 					setToastShow(true);
 				});
 
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		fetchData();

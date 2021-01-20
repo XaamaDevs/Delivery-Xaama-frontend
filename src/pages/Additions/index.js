@@ -51,7 +51,7 @@ export default function Additions({ userId }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	//	Update addition state variables
 	useEffect(() => {
@@ -104,7 +104,7 @@ export default function Additions({ userId }) {
 					setToastShow(true);
 				});
 
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		fetchData();

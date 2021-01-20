@@ -36,7 +36,7 @@ export default function AllUsers({ userId }) {
 	const [modal1Show, setModal1Show] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
 	const [toastShow, setToastShow] = useState(false);
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	async function setupWebSocket() {
 		disconnect();
@@ -58,7 +58,7 @@ export default function AllUsers({ userId }) {
 			}).then((response) => {
 				setUsers(response.data);
 				setupWebSocket();
-				setLoading(false);
+				setIsLoading(false);
 			}).catch((error) => {
 				setTitle("Alerta!");
 				if(error.response && typeof(error.response.data) !== "object") {

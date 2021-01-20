@@ -52,7 +52,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [modalAlert, setModalAlert] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	function setupWebSocket() {
 		disconnect();
@@ -95,7 +95,7 @@ export default function AllOrders({ userId, companyInfo }) {
 					}
 					setToastShow(true);
 				});
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		loadOrder();
@@ -228,7 +228,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														)
 													}
 												</Card.Text>
-												
+
 												<Row className="d-flex justify-content-between">
 													<Button
 														variant="light"

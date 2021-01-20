@@ -28,7 +28,13 @@ import Push from "../../../components/Push";
 import ProductDeck from "../../../components/ProductDeck";
 
 //	Importing React icons features
-import { RiShoppingBasketLine, RiMoneyDollarBoxLine, RiMotorbikeFill, RiPhoneLine } from "react-icons/ri";
+import {
+	RiShoppingBasketLine,
+	RiMoneyDollarBoxLine,
+	RiMotorbikeFill,
+	RiPhoneLine,
+	RiCheckLine
+} from "react-icons/ri";
 
 // Importing backend api and cep api
 import api from "../../../services/api";
@@ -40,8 +46,8 @@ export default function FinishOrder({
 	setUserId,
 	user,
 	setUser,
-	setData,
 	order,
+	setOrder,
 	companyInfo,
 	companySystemOpenByHour,
 	noCards
@@ -69,8 +75,7 @@ export default function FinishOrder({
 	// Aux variables
 	const [orderType, setOrderType] = useState(new Map);
 	const [couponDiscountText, setCouponDiscountText] = useState("");
-	const [finish, setFinish] = useState(false);
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
 
@@ -83,23 +88,24 @@ export default function FinishOrder({
 	//	Fetch user coupons data
 	useEffect(() => {
 		async function fetchData() {
-			if(userId) {
-				await api.get("coupon", {
-					headers : {
-						"x-access-token": userId
-					}})
-					.then((response) => {
-						setUserCoupons(response.data);
-					}).catch((error) => {
-						setTitle("Alerta!");
-						if(error.response && typeof(error.response.data) !== "object") {
-							setMessage(error.response.data);
-						} else {
-							setMessage(error.message);
-						}
+			await api.get("coupon", {
+				headers : {
+					"x-access-token": userId
+				}})
+				.then((response) => {
+					setUserCoupons(response.data);
+				}).catch((error) => {
+					setTitle("Alerta!");
+					if(error.response.status === 404) {
+						setUserCoupons([]);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
 						setToastShow(true);
-					});
-			}
+					} else {
+						setMessage(error.response.data);
+						setToastShow(true);
+					}
+				});
 		}
 
 		fetchData();
@@ -156,7 +162,7 @@ export default function FinishOrder({
 	}, [orderDeliverCoupon, orderDeliver]);
 
 	useEffect(() => {
-		async function Products() {
+		async function mapProductsByType() {
 			var myMapTypesProducts = new Map();
 
 			//	Calculate order total price
@@ -181,21 +187,19 @@ export default function FinishOrder({
 			setOrderType(myMapTypesProducts);
 		}
 
-		Products();
+		mapProductsByType();
 
 	}, []);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
 		event.preventDefault();
-		history.push("/menu");
 
-		setFinish(true);
-		setLoading(true);
+		setIsLoading(true);
 
 		var status = [];
 
-		user.cards.map((card,index) => (
+		user.cards.map((card, index) => (
 			card.completed && !card.status && orderType &&
 				orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 				status.push(true) : status.push(card.status)
@@ -227,8 +231,6 @@ export default function FinishOrder({
 				setToastShow(true);
 			});
 
-		setData(new Date());
-
 		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
 
 		data = {
@@ -247,10 +249,9 @@ export default function FinishOrder({
 				"x-access-token": userId
 			}})
 			.then(() => {
-				setTitle("Pedido enviado!");
-				setMessage("Obrigado pela preferência! Acompanhe seu pedido na seção Meus pedidos.");
-				history.push("orders");
-				setModalAlert(true);
+				setIsLoading(false);
+				setFinishOrderStep(finishOrderStep+1);
+				setOrder({ products: [] });
 			}).catch((error) => {
 				setTitle("Alerta!");
 				if(error.response && typeof(error.response.data) !== "object") {
@@ -260,8 +261,6 @@ export default function FinishOrder({
 				}
 				setToastShow(true);
 			});
-
-		setLoading(false);
 	}
 
 	//	Function to get address info via cep api
@@ -307,7 +306,7 @@ export default function FinishOrder({
 			setTitle("Erro!");
 			setMessage("Número da residência inválido!");
 			setToastShow(true);
-		} else if(orderDeliverAddressCep.length != 8) {
+		} else if(!orderDeliverAddressCep || orderDeliverAddressCep.length != 8) {
 			setTitle("Erro!");
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
@@ -387,295 +386,393 @@ export default function FinishOrder({
 
 	return (
 		<>
-			<Card bg="light" text="dark" className="my-auto p-0 h-75">
-				<Tab.Container defaultActiveKey={0} activeKey={finishOrderStep}>
-					<Row className="d-flex flex-row flex-wrap p-0 my-3 mx-0 h-100">
-						<Col className="h-100" sm="3">
-							<Nav variant="pills" className="flex-column h-100">
-								<Nav.Item>
-									<Nav.Link eventKey={0} disabled>
-										<RiShoppingBasketLine className="my-0 mx-2" size="25" />
+			<Card bg="light" text="dark" className="my-auto mx-5 p-0 h-75">
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Card.Body>
+					<Tab.Container defaultActiveKey={0} activeKey={finishOrderStep}>
+						<Row className="h-100">
+							<Col sm="3">
+								<Nav variant="pills" className="flex-column h-100">
+									<Nav.Item>
+										<Nav.Link eventKey={0} disabled>
+											<RiShoppingBasketLine className="my-0 mx-2" size="25" />
 										Confirme seu pedido
-									</Nav.Link>
-								</Nav.Item>
-								<Nav.Item>
-									<Nav.Link eventKey={1} disabled>
-										<RiPhoneLine className="my-0 mx-2" size="25" />
+										</Nav.Link>
+									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey={1} disabled>
+											<RiPhoneLine className="my-0 mx-2" size="25" />
 										Informações de contato
-									</Nav.Link>
-								</Nav.Item>
-								<Nav.Item>
-									<Nav.Link eventKey={2} disabled>
-										<RiMotorbikeFill className="my-0 mx-2" size="25" />
+										</Nav.Link>
+									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey={2} disabled>
+											<RiMotorbikeFill className="my-0 mx-2" size="25" />
 										Informações de entrega
-									</Nav.Link>
-								</Nav.Item>
-								<Nav.Item>
-									<Nav.Link eventKey={3} disabled>
-										<RiMoneyDollarBoxLine className="my-0 mx-2" size="25" />
+										</Nav.Link>
+									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey={3} disabled>
+											<RiMoneyDollarBoxLine className="my-0 mx-2" size="25" />
 										Finalizar pedido
-									</Nav.Link>
-								</Nav.Item>
-								<Button
-									className="mt-auto mx-auto w-100"
-									variant="warning"
-									onClick={() => setFinishOrderStep(finishOrderStep < 3 ? finishOrderStep+1 : finishOrderStep)}
-								>
-									Próximo
-								</Button>
-							</Nav>
-						</Col>
-						<Col sm="8">
-							<Tab.Content>
-								<Tab.Pane eventKey={0}>
-									<ProductDeck products={order.products} />
-								</Tab.Pane>
-								<Tab.Pane eventKey={1}>
-									<Form>
-										<Form.Group as={Col} controlId="orderPhone" setShoppingBasketModal sm>
-											<Form.Label>Telefone para contato: </Form.Label>
-											<Form.Control
-												value={orderDeliverPhone}
-												onChange={e => setOrderDeliverPhone(e.target.value)}
-												type="text"
-												pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
-												placeholder="(__) _ ____-____"
-												required
-												autoFocus
-											/>
-										</Form.Group>
-									</Form>
-								</Tab.Pane>
-								<Tab.Pane eventKey={2}>
-									<Form>
-										<Row>
-											<Form.Group as={Col} controlId="orderDeliverAddress" sm>
-												<Form.Label>Entregar pedido?</Form.Label>
-												<Form.Check
-													type="switch"
-													label={"+ R$" + companyInfo.freight + " de taxa de entrega"}
-													checked={orderDeliver}
-													onChange={e => setOrderDeliver(e.target.checked)}
-												/>
-											</Form.Group>
-										</Row>
-										{orderDeliver ?
-											<>
+										</Nav.Link>
+									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey={4} disabled>
+											<RiCheckLine className="my-0 mx-2" size="25" />
+										Sucesso
+										</Nav.Link>
+									</Nav.Item>
+								</Nav>
+							</Col>
+							<Col className="h-100" sm="9">
+								<Row className="h-100">
+									<Tab.Content as={Col}>
+										<Tab.Pane eventKey={0}>
+											<Row>
+												<Col>
+													<ProductDeck products={order.products} />
+												</Col>
+											</Row>
+											<Row className="text-right">
+												<Col>
+													<Button
+														className="m-2"
+														variant="warning"
+														onClick={() => setFinishOrderStep(finishOrderStep < 3 ? finishOrderStep+1 : finishOrderStep)}
+													>
+													Próximo
+													</Button>
+												</Col>
+											</Row>
+										</Tab.Pane>
+										<Tab.Pane eventKey={1}>
+											<Form
+												onSubmit={(e) => {
+													e.preventDefault();
+													setFinishOrderStep(finishOrderStep < 3 ? finishOrderStep+1 : finishOrderStep);
+												}}
+											>
 												<Row>
-													<Form.Group as={Col} controlId="orderDeliverAddressNumber" sm>
-														<Form.Label>Número da residência</Form.Label>
+													<Form.Group as={Col} controlId="orderPhone" sm="6">
+														<Form.Label>Telefone para contato: </Form.Label>
 														<Form.Control
-															value={orderDeliverAddressNumber}
-															onChange={e => setOrderDeliverAddressNumber(e.target.value)}
-															type="number"
-															min="0"
-															placeholder="Número"
-														/>
-													</Form.Group>
-													<Form.Group as={Col} controlId="orderDeliverAddressComplement" sm>
-														<Form.Label>Complemento</Form.Label>
-														<Form.Control
-															value={orderDeliverAddressComplement}
-															onChange={e => setOrderDeliverAddressComplement(e.target.value)}
+															value={orderDeliverPhone}
+															onChange={e => setOrderDeliverPhone(e.target.value)}
 															type="text"
-															placeholder="Complemento (opcional)"
+															pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+															placeholder="(__) _ ____-____"
+															required
+															autoFocus
 														/>
 													</Form.Group>
 												</Row>
+												<Row className="text-right">
+													<Col>
+														<Button
+															className="m-2"
+															variant="warning"
+															type="submit"
+														>
+														Próximo
+														</Button>
+													</Col>
+												</Row>
+											</Form>
+										</Tab.Pane>
+										<Tab.Pane eventKey={2}>
+											<Form
+												onSubmit={(e) => {
+													e.preventDefault();
+													setFinishOrderStep(finishOrderStep < 3 ? finishOrderStep+1 : finishOrderStep);
+												}}
+											>
 												<Row>
-													<Form.Group as={Col} controlId="orderDeliverAddressCep" sm>
-														<Form.Label>CEP</Form.Label>
-														<Form.Control
-															value={orderDeliverAddressCep}
-															onChange={e => setOrderDeliverAddressCep(e.target.value)}
-															type="number"
-															min="0"
-															max="99999999"
-															placeholder="CEP"
+													<Form.Group as={Col} controlId="orderDeliverAddress" sm>
+														<Form.Label>Entregar pedido?</Form.Label>
+														<Form.Check
+															type="switch"
+															label={"+ R$" + companyInfo.freight + " de taxa de entrega"}
+															checked={orderDeliver}
+															onChange={e => setOrderDeliver(e.target.checked)}
 														/>
+													</Form.Group>
+												</Row>
+												{orderDeliver ?
+													<>
+														<Row>
+															<Form.Group as={Col} controlId="orderDeliverAddressNumber" sm>
+																<Form.Label>Número da residência</Form.Label>
+																<Form.Control
+																	value={orderDeliverAddressNumber}
+																	onChange={e => setOrderDeliverAddressNumber(e.target.value)}
+																	type="number"
+																	min="0"
+																	placeholder="Número"
+																/>
+															</Form.Group>
+															<Form.Group as={Col} controlId="orderDeliverAddressComplement" sm>
+																<Form.Label>Complemento</Form.Label>
+																<Form.Control
+																	value={orderDeliverAddressComplement}
+																	onChange={e => setOrderDeliverAddressComplement(e.target.value)}
+																	type="text"
+																	placeholder="Complemento (opcional)"
+																/>
+															</Form.Group>
+														</Row>
+														<Row>
+															<Form.Group as={Col} controlId="orderDeliverAddressCep" sm>
+																<Form.Label>CEP</Form.Label>
+																<Form.Control
+																	value={orderDeliverAddressCep}
+																	onChange={e => setOrderDeliverAddressCep(e.target.value)}
+																	type="number"
+																	min="0"
+																	max="99999999"
+																	placeholder="CEP"
+																/>
+																<Button
+																	variant="light"
+																	id="btn-custom"
+																	size="sm"
+																	className="my-2"
+																	onClick={getAddressInfo}
+																>
+															Verificar CEP
+																</Button>
+															</Form.Group>
+															<Form.Group as={Col} controlId="orderDeliverAddress" sm>
+																<Form.Label>Endereço de entrega:</Form.Label>
+																<Form.Control
+																	value={orderDeliverAddress}
+																	onChange={e => setOrderDeliverAddress(e.target.value)}
+																	type="text"
+																	pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
+																	placeholder="Rua, Número, Bairro, Complemento (opcional)"
+																	disabled={!orderDeliver}
+																	required={orderDeliver}
+																/>
+																<Form.Text className="text-muted">
+																Separe rua, número, bairro e complemento por vírgula
+																</Form.Text>
+															</Form.Group>
+														</Row>
+													</>
+													:
+													null
+												}
+												<Row className="text-right">
+													<Col>
+														<Button
+															className="m-2"
+															variant="warning"
+															type="submit"
+														>
+														Próximo
+														</Button>
+													</Col>
+												</Row>
+											</Form>
+										</Tab.Pane>
+										<Tab.Pane eventKey={3}>
+											{isLoading ?
+												<FormGroup className="d-flex justify-content-center">
+													<Spinner
+														animation="border"
+														variant="warning"
+													/>
+												</FormGroup>
+												:
+												null
+											}
+											<Form onSubmit={handleFinishOrder}>
+												<Row>
+													{!noCards ?
+														user.cards && user.cards.length && orderType ?
+															<OverlayTrigger
+																placement="bottom"
+																overlay={
+																	<Tooltip>
+																	OBS: Se o pedido de um produto for mais barato
+																	que o desconto desse produto,
+																	o desconto será o valor do pedido desse produto.
+																	O valor do frete não está incluso!
+																	</Tooltip>
+																}
+															>
+																<FormGroup as={Col} controlId="deliverCard" sm>
+																	<Form.Label>Descontos por cartão fidelidade:</Form.Label>
+																	{user.cards.map((card,index) => (
+																		card.completed && !card.status &&
+																	orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+																			<Row className="m-auto" key={index}>
+																				{`Completou o cartão de ${card.cardFidelity}`}
+																				<FormLabel className="ml-1" style={{color: "#c83a34"}} >
+																					{"-R$ " +
+																					(companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ?
+																						companyInfo.cards[index].discount
+																						:
+																						orderType.get(card.cardFidelity)
+																					)
+																					}
+																				</FormLabel>
+																			</Row>
+																			:
+																			(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+																				<Row>
+																					<Form.Label as={Col}>
+																						{`Seu cartão de ${card.cardFidelity} não está completo`}
+																					</Form.Label>
+																				</Row>
+																				:
+																				(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+																					<Row>
+																						<Form.Label as={Col}>
+																			Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado
+																						</Form.Label>
+																					</Row>
+																					:
+																					null
+																				)
+																			)
+																	))}
+																</FormGroup>
+															</OverlayTrigger>
+															:
+															null
+														:
+														null
+													}
+													<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
+														<Form.Label>Cupons:</Form.Label>
+														<Form.Control
+															value={null}
+															onChange={e => {
+																const cpn = userCoupons.find(c => c.name === e.target.value);
+																setOrderDeliverCoupon(cpn ? cpn : null);
+																setCouponDiscountText(cpn && cpn.method === "dinheiro" ?
+																	"R$ " + cpn.discount
+																	:
+																	cpn && cpn.method === "porcentagem" ?
+																		cpn.discount + "%"
+																		:
+																		null
+																);
+																setOrderDeliver(cpn && cpn.type === "frete" ? true : orderDeliver);
+															}}
+															as="select"
+															placeholder="Cupons"
+															required
+														>
+															<option disabled>Selecione o cupom desejado</option>
+															<option>Sem cupom</option>
+															{userCoupons.map((coupon, index) => (
+																coupon.available && (
+																	(coupon.type === "frete" && orderDeliver) ||
+													(coupon.type === "valor" && order.total >= coupon.minValue) ||
+													(coupon.type === "quantidade")
+																) ?
+																	<option key={index}>{coupon.name}</option>
+																	:
+																	<option key={index} disabled>{coupon.name}</option>
+															))}
+														</Form.Control>
+														<Form.Text muted>
+															{orderDeliverCoupon ?
+																orderDeliverCoupon.type === "frete" ?
+																	"Cupom de frete - Seu pedido chegará em sua casa com frete grátis"
+																	:
+																	orderDeliverCoupon.type === "valor" ?
+																		`Cupom de valor - Como seu pedido atingiu o valor mínimo (R$ ${orderDeliverCoupon.minValue}), você tem ${couponDiscountText} de desconto`
+																		:
+																		orderDeliverCoupon.type === "quantidade" ?
+																			`Cupom de quantidade - Seu pedido tem ${couponDiscountText} de desconto`
+																			:
+																			null
+																:
+																"Nenhum cupom selecionado"
+															}
+														</Form.Text>
 														<Button
 															variant="light"
 															id="btn-custom"
 															size="sm"
 															className="my-2"
-															onClick={getAddressInfo}
+															onClick={validateCoupon}
 														>
-															Verificar CEP
+											Validar cupom
 														</Button>
 													</Form.Group>
-													<Form.Group as={Col} controlId="orderDeliverAddress" sm>
-														<Form.Label>Endereço de entrega:</Form.Label>
-														<Form.Control
-															value={orderDeliverAddress}
-															onChange={e => setOrderDeliverAddress(e.target.value)}
-															type="text"
-															pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-															placeholder="Rua, Número, Bairro, Complemento (opcional)"
-															disabled={!orderDeliver}
-															required={orderDeliver}
-														/>
-														<Form.Text className="text-muted">
-													Separe rua, número, bairro e complemento por vírgula
-														</Form.Text>
+												</Row>
+												<Row>
+													<Form.Group as={Col} controlId="deliverPayment">
+														<Form.Label>Forma de pagamento:</Form.Label>
+														<Payment />
 													</Form.Group>
 												</Row>
-											</>
-											:
-											null
-										}
-									</Form>
-								</Tab.Pane>
-								<Tab.Pane eventKey={3}>
-									{isLoading && finish ?
-										<FormGroup className="d-flex justify-content-center">
-											<Spinner
-												animation="border"
-												variant="warning"
-											/>
-										</FormGroup>
-										:
-										null
-									}
-									<Form onSubmit={handleFinishOrder} className="mx-auto my-2">
-										<Row>
-											{!noCards ?
-												user.cards && user.cards.length && orderType ?
-													<OverlayTrigger
-														placement="top"
-														overlay={
-															<Tooltip>
-													OBS: Se o pedido de um produto for mais barato que o desconto desse produto,
-													o desconto será o valor do pedido desse produto. O valor do frete não está incluso!
-															</Tooltip>
+												<Row className="text-right">
+													<Col>
+														<Button
+															className="mx-1"
+															variant="danger"
+															onClick={() => {
+																setOrder({});
+																history.push("/");
+															}}
+														>
+														Cancelar pedido
+														</Button>
+														{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+													(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+															<Button
+																className="mx-1"
+																variant="warning"
+																type="submit"
+															>
+																{"Finalizar pedido +R$" + orderDeliverTotal}
+															</Button>
+															:
+															<Button
+																className="mx-1"
+																variant="light"
+																id="btn-custom-outline"
+															>
+															Estamos fechados
+															</Button>
 														}
+													</Col>
+												</Row>
+											</Form>
+										</Tab.Pane>
+										<Tab.Pane eventKey={4}>
+											<Card className="text-center">
+												<Card.Body>
+													<Card.Title>
+													Pedido enviado
+													</Card.Title>
+													<Card.Text>
+													Obrigado pela preferência! Acompanhe seu pedido na seção Meus Pedidos.
+													</Card.Text>
+													<Button
+														variant="warning"
+														className="m-1"
+														onClick={() => { setOrder({}); history.push("/order"); }}
 													>
-														<FormGroup as={Col} controlId="deliverCard" sm>
-															<Form.Label>Descontos por cartão fidelidade:</Form.Label>
-															{user.cards.map((card,index) => (
-																card.completed && !card.status && orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-																	<Row className="m-auto" key={index}>
-															Completou o cartão {card.cardFidelity}
-																		<FormLabel style={{color: "#c83a34"}} >
-																			<span>&nbsp;</span>-R${companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ? companyInfo.cards[index].discount : orderType.get(card.cardFidelity)}
-																		</FormLabel>
-																	</Row>
-																	:
-																	(!card.completed && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-																		<Row>
-																			<Form.Label as={Col}>Seu cartão {card.cardFidelity} não está completo</Form.Label>
-																		</Row>
-																		:
-																		(card.status && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-																			<Row>
-																				<Form.Label as={Col}>
-																			Voce utilizou seu cartão {card.cardFidelity} no seu último pedido que ainda não foi enviado
-																				</Form.Label>
-																			</Row>
-																			:
-																			null
-																		)
-																	)
-															))}
-														</FormGroup>
-													</OverlayTrigger>
-													:
-													null
-												:
-												null
-											}
-											<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
-												<Form.Label>Cupons:</Form.Label>
-												<Form.Control
-													value={null}
-													onChange={e => {
-														const cpn = userCoupons.find(c => c.name === e.target.value);
-														setOrderDeliverCoupon(cpn ? cpn : null);
-														setCouponDiscountText(cpn && cpn.method === "dinheiro" ?
-															"R$ " + cpn.discount
-															:
-															cpn && cpn.method === "porcentagem" ?
-																cpn.discount + "%"
-																:
-																null
-														);
-														setOrderDeliver(cpn && cpn.type === "frete" ? true : orderDeliver);
-													}}
-													as="select"
-													placeholder="Cupons"
-													required
-												>
-													<option disabled>Selecione o cupom desejado</option>
-													<option>Sem cupom</option>
-													{userCoupons.map((coupon, index) => (
-														coupon.available && (
-															(coupon.type === "frete" && orderDeliver) ||
-													(coupon.type === "valor" && order.total >= coupon.minValue) ||
-													(coupon.type === "quantidade")
-														) ?
-															<option key={index}>{coupon.name}</option>
-															:
-															<option key={index} disabled>{coupon.name}</option>
-													))}
-												</Form.Control>
-												<Form.Text muted>
-													{orderDeliverCoupon ?
-														orderDeliverCoupon.type === "frete" ?
-															"Cupom de frete - Seu pedido chegará em sua casa com frete grátis"
-															:
-															orderDeliverCoupon.type === "valor" ?
-																`Cupom de valor - Como seu pedido atingiu o valor mínimo (R$ ${orderDeliverCoupon.minValue}), você tem ${couponDiscountText} de desconto`
-																:
-																orderDeliverCoupon.type === "quantidade" ?
-																	`Cupom de quantidade - Seu pedido tem ${couponDiscountText} de desconto`
-																	:
-																	null
-														:
-														"Nenhum cupom selecionado"
-													}
-												</Form.Text>
-												<Button
-													variant="light"
-													id="btn-custom"
-													size="sm"
-													className="my-2"
-													onClick={validateCoupon}
-												>
-											Validar cupom
-												</Button>
-											</Form.Group>
-										</Row>
-										<Form.Group controlId="deliverPayment">
-											<Form.Label>Forma de pagamento:</Form.Label>
-											<Payment />
-										</Form.Group>
-										<Button
-											variant="danger"
-											onClick={() => {
-												setToastShow(false);
-											}}
-										>
-										Fechar
-										</Button>
-										{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-										|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
-											<Button variant="warning" type="submit" onClick={handleFinishOrder}>
-												{"Finalizar pedido +R$" + orderDeliverTotal}
-											</Button>
-											:
-											<Button variant="danger">
-											Estamos fechados
-											</Button>
-										}
-									</Form>
-								</Tab.Pane>
-							</Tab.Content>
-						</Col>
-					</Row>
-				</Tab.Container>
+													Meus Pedidos
+													</Button>
+												</Card.Body>
+											</Card>
+										</Tab.Pane>
+									</Tab.Content>
+								</Row>
+							</Col>
+						</Row>
+					</Tab.Container>
+				</Card.Body>
 			</Card>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
-			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</>
 	);
 }
@@ -690,7 +787,6 @@ FinishOrder.propTypes = {
 	companyInfo : PropTypes.object.isRequired,
 	companySystemOpenByHour : PropTypes.bool,
 	setCompanySystemOpenByHour : PropTypes.func.isRequired,
-	setData : PropTypes.func.isRequired,
 	data : PropTypes.object.isRequired,
 	noCards : PropTypes.bool.isRequired
 };
