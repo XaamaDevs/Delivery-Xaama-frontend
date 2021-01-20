@@ -159,7 +159,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			stars: value
 		};
 
-		await api.post("assessments", data, {
+		await api.post("rating", data, {
 			headers: {
 				"x-access-token" : userId
 			}})
