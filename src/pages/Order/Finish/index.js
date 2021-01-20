@@ -237,7 +237,7 @@ export default function FinishOrder({
 				"x-access-token": userId
 			}
 		}).then((response) => {
-			if(response.status === 200) {
+			if(response.status === 201) {
 				setIsLoading(false);
 				setFinishOrderStep(finishOrderStep+1);
 				setOrder({ products: [] });

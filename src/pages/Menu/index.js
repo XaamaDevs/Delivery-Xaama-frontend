@@ -165,11 +165,13 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setProductAddModal(false);
-			setTitle("Alterações produto!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 201) {
+				setProductAddModal(false);
+				setTitle("Alterações produto!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {

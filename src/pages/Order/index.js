@@ -158,13 +158,15 @@ export default function AllOrders({ userId, companyInfo }) {
 			headers: {
 				"x-access-token" : userId
 			}
-		}).then(() => {
-			setFeedbackModal(false);
-			setFeedback(null);
-			setValue(3);
-			setTitle("Avaliação enviada!");
-			setMessage("Obrigado pelo seu feedback!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 201) {
+				setFeedbackModal(false);
+				setFeedback(null);
+				setValue(3);
+				setTitle("Avaliação enviada!");
+				setMessage("Obrigado pelo seu feedback!");
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response && typeof(error.response.data) !== "object") {

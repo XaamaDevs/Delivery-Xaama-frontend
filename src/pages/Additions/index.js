@@ -118,11 +118,13 @@ export default function Additions({ userId }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setAdditionAddModal(false);
-			setTitle("Nova adição!");
-			setMessage("Adição criada com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 201) {
+				setAdditionAddModal(false);
+				setTitle("Nova adição!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response.status === 400 || error.response.status === 404) {

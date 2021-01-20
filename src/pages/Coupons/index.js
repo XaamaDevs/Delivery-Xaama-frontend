@@ -147,11 +147,13 @@ export default function Coupons({ userId, companyInfo }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModalCouponAdd(false);
-			setTitle("Alterações de cupom");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 201) {
+				setModalCouponAdd(false);
+				setTitle("Alterações de cupom");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
 			if(error.response.status === 400 || error.response.status === 404) {
