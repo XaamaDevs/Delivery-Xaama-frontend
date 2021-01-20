@@ -127,6 +127,8 @@ export default function AllOrders({ userId, companyInfo }) {
 			}})
 			.then(() => {
 				setFeedbackModal(false);
+				setFeedback(null);
+				setStars(0);
 				setTitle("Avaliação enviada!");
 				setMessage("Obrigado pelo seu feedback!");
 				setModalAlert(true);
@@ -137,13 +139,12 @@ export default function AllOrders({ userId, companyInfo }) {
 				} else {
 					setMessage(error.message);
 				}
-				setFeedbackModal(false);
+				setToastShow(true);
 			});
 	}
 
 	return (
 		<div className="all-container p-0 w-100">
-			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
@@ -247,7 +248,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														</Button>
 														:
 														<>
-															{!feedback ?
+															{!order.feedback ?
 																<>
 																	<Button
 																		variant="warning"
@@ -289,9 +290,10 @@ export default function AllOrders({ userId, companyInfo }) {
 			<Modal
 				show={orderListingModal}
 				onHide={() => setOrderListingModal(false) }
-				size="lg"
+				size="md"
 				centered
 			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
 				</Modal.Header>
@@ -310,6 +312,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			</Modal>
 
 			<Modal show={feedbackModal} onHide={() => setFeedbackModal(false)} size="lg" centered>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Avaliar pedido</Modal.Title>
 				</Modal.Header>
