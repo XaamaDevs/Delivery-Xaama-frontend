@@ -63,8 +63,7 @@ export default function FinishOrder({
 	const [orderDeliverChange, setOrderDeliverChange] = useState(null);
 	const [orderDeliverCardsDiscount, setOrderDeliverCardsDiscount] = useState(null);
 	const [orderDeliverTotal, setOrderDeliverTotal] = useState(null);
-	const [deliverCash, setDeliverCash] = useState(false);
-	const [deliverCard, setDeliverCard] = useState(false);
+	const [orderDeliverPaymentMethod, setOrderDeliverPaymentMethod] = useState(null);
 
 	//	Message settings
 	const [toastShow, setToastShow] = useState(false);
@@ -78,9 +77,6 @@ export default function FinishOrder({
 	const [isLoading, setIsLoading] = useState(false);
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
-
-	// Tabs settings
-	const [eventKey, setEventKey] = useState("0");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -134,6 +130,7 @@ export default function FinishOrder({
 		setOrderDeliverCoupon(null);
 		setOrderDeliverChange(null);
 		setOrderDeliverCardsDiscount(cardsDiscount);
+		setOrderDeliverPaymentMethod(0);
 		setOrderDeliverTotal(order.total - cardsDiscount);
 		setOrderDeliverChange(order.total - cardsDiscount);
 		setCouponDiscountText("");
@@ -231,14 +228,12 @@ export default function FinishOrder({
 				setToastShow(true);
 			});
 
-		const type = (!deliverCard && !deliverCash) ? 0 : (deliverCash && !deliverCard) ? 0 : 1;
-
 		data = {
 			products: order.products,
 			deliver: orderDeliver,
 			address: orderDeliverAddress,
 			phone: orderDeliverPhone,
-			typePayment: type,
+			typePayment: orderDeliverPaymentMethod,
 			change: orderDeliverChange,
 			total: orderDeliverTotal,
 			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
@@ -342,41 +337,34 @@ export default function FinishOrder({
 			<Tabs
 				fill
 				defaultActiveKey="1"
-				id="uncontrolled-tabs"
-				activeKey={eventKey}
-				onSelect={(k) => setEventKey(k)} >
-
-				<Tab eventKey="1" title="Dinheiro">
-					{eventKey === "1" ? setDeliverCash(true) : null}
-					{eventKey === "1" ? setDeliverCard(false): null}
+				activeKey={!orderDeliverPaymentMethod ? "0" : "1"}
+				onSelect={(k) => setOrderDeliverPaymentMethod(k !== "0")}
+			>
+				<Tab eventKey="0" title="Dinheiro">
 					<Card>
 						<Card.Body>
-							<Form className="mx-auto my-2">
-								<Form.Group controlId="userChange">
-									<Row>
-										<Col>
-											<Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
-										</Col>
-										<Col>
-											<Form.Control
-												value={orderDeliverChange}
-												onChange={e => setOrderDeliverChange(e.target.value)}
-												type="number"
-												min={orderDeliverChange}
-												required={deliverCash}
-												autoFocus
-											/>
-										</Col>
-									</Row>
-								</Form.Group>
-							</Form>
+							<Form.Group controlId="userChange">
+								<Row>
+									<Col>
+										<Form.Label className="mx-auto my-2"> Troco para R$: </Form.Label>
+									</Col>
+									<Col>
+										<Form.Control
+											value={orderDeliverChange}
+											onChange={e => setOrderDeliverChange(e.target.value)}
+											type="number"
+											min={orderDeliverChange}
+											required={!orderDeliverPaymentMethod}
+											autoFocus
+										/>
+									</Col>
+								</Row>
+							</Form.Group>
 						</Card.Body>
 					</Card>
 				</Tab>
-				<Tab eventKey="0" title="Cartão" >
+				<Tab eventKey="1" title="Cartão">
 					<Card>
-						{eventKey === "0" ? setDeliverCash(false) : null}
-						{eventKey === "0" ? setDeliverCard(true): null}
 						<Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
 					</Card>
 				</Tab>
@@ -636,7 +624,7 @@ export default function FinishOrder({
 												<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
 													<Form.Label>Cupons:</Form.Label>
 													<Form.Control
-														value={null}
+														value={""}
 														onChange={e => {
 															const cpn = userCoupons.find(c => c.name === e.target.value);
 															setOrderDeliverCoupon(cpn ? cpn : null);
@@ -771,6 +759,5 @@ FinishOrder.propTypes = {
 	setOrder : PropTypes.func.isRequired,
 	companyInfo : PropTypes.object.isRequired,
 	companySystemOpenByHour : PropTypes.bool,
-	setCompanySystemOpenByHour : PropTypes.func.isRequired,
 	noCards : PropTypes.bool.isRequired
 };
