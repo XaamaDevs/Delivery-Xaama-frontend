@@ -87,7 +87,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -147,7 +147,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					setToastShow(true);
 				});
 
-			setLoading(false);
+			setIsLoading(false);
 		}
 		fetchData();
 	}, []);
@@ -1663,9 +1663,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										i%3 === 0 ?
 											<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
 												{Array(3).fill(null).map((value, j) => (
-													
+
 													i+j < coupons.length ? couponCard(coupons[i+j], j) : null
-												
+
 												))}
 											</Row>
 											:

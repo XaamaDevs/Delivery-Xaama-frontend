@@ -69,7 +69,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const [toastShow, setToastShow] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	//	Update product state variables
 	useEffect(() => {
@@ -161,7 +161,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					setToastShow(true);
 				});
 
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		fetchData();

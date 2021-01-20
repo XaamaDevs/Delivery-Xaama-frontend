@@ -15,7 +15,7 @@ export default function ProductDeck({ bg, text, products }) {
 				<Tab key={index} eventKey={index} title={product.product.name}>
 					<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
 						<Row>
-							<Col sm="6">
+							<Col sm="5">
 								<Image
 									src={product.product.thumbnail_url ? process.env.REACT_APP_API_URL + product.product.thumbnail_url : camera}
 									alt="thumbnail"

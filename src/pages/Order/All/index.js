@@ -51,7 +51,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [toastShow, setToastShow] = useState(false);
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	function setupWebSocket() {
 		disconnect();
@@ -82,7 +82,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 				setToastShow(true);
 			});
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		loadOrder();

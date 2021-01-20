@@ -45,7 +45,7 @@ export default function Routes() {
 	const [companySystemOpenByHour, setCompanySystemOpenByHour] = useState();
 
 	//	Loading state variable
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	//  Defining constant for manipulating the time
 	const [data, setData] = useState(new Date());
@@ -54,10 +54,10 @@ export default function Routes() {
 	const [noCards, setNoCards] = useState(true);
 
 	//  Update system time every 25 minutes
-	function hourCurrent() {
+	function currentTime() {
 		setData(new Date());
 	}
-	setTimeout(hourCurrent,1500000);
+	setTimeout(currentTime, 1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
@@ -77,7 +77,7 @@ export default function Routes() {
 					setCompanyInfo(response.data);
 				});
 
-			setLoading(false);
+			setIsLoading(false);
 		}
 
 		fetchData();
@@ -101,6 +101,10 @@ export default function Routes() {
 
 	function userAuth() {
 		return userId;
+	}
+
+	function orderAuth() {
+		return userId && order && order.products;
 	}
 
 	if(isLoading) {
@@ -154,19 +158,19 @@ export default function Routes() {
 				<Route
 					exact path="/finishOrder"
 					render={() => {
-						return userAuth() ?
+						return orderAuth() ?
 							<FinishOrder
 								userId={userId}
 								setUserId={setUserId}
 								user={user}
 								setUser={setUser}
-								setData={setData}
 								order={order}
+								setOrder={setOrder}
 								companyInfo={companyInfo}
 								companySystemOpenByHour={companySystemOpenByHour}
 								noCards={noCards}
 							/>
-							: <Auth />;
+							: <Autho />;
 					}}
 				/>
 				<Route
