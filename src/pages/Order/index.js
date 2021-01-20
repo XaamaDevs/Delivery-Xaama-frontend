@@ -154,13 +154,14 @@ export default function AllOrders({ userId, companyInfo }) {
 			stars: value
 		};
 
-		await api.post("assessments", data, {
+		await api.post("rating", data, {
 			headers: {
 				"x-access-token" : userId
 			}
 		}).then(() => {
 			setFeedbackModal(false);
 			setFeedback(null);
+			setValue(3);
 			setTitle("Avaliação enviada!");
 			setMessage("Obrigado pelo seu feedback!");
 			setModalAlert(true);
@@ -343,7 +344,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={feedbackModal} onHide={() => setFeedbackModal(false)} size="lg" centered>
+			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);setFeedback("");setValue(3);}} size="lg" centered>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Avaliar pedido</Modal.Title>
@@ -379,7 +380,9 @@ export default function AllOrders({ userId, companyInfo }) {
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => {setFeedbackModal(false);}}>
+							<Button
+								variant="danger"
+								onClick={() => {setFeedbackModal(false);setFeedback("");setValue(3);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">

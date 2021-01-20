@@ -160,6 +160,17 @@ export default function WebsiteNavbar({
 						<Nav.Item>
 							<NavLink
 								style={{color: "#ffbf00"}}
+								activeClassName="activeRoute"
+								activeStyle={{ color: "white" }}
+								className="nav-link mx-2"
+								to="/rating"
+							>
+								Avaliações
+							</NavLink>
+						</Nav.Item>
+						<Nav.Item>
+							<NavLink
+								style={{color: "#ffbf00"}}
 								className="nav-link mx-2"
 								to="#"
 								onClick={() => setModalTimetable(true)}
