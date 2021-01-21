@@ -16,7 +16,7 @@ import Additions from "./pages/Additions";
 import Order from "./pages/Order";
 import FinishOrder from "./pages/Order/Finish";
 import AllOrders from "./pages/Order/All";
-import Rating from "./pages/Order/Rating";
+import Ratings from "./pages/Order/Rating";
 import Menu from "./pages/Menu";
 import Cards from "./pages/Cards";
 import Coupons from "./pages/Coupons";
@@ -215,7 +215,7 @@ export default function Routes() {
 					exact path="/allusers"
 					render={() => userId ? (adminAuth() ? <AllUsers userId={userId} /> : <Autho />) : <Auth />}
 				/>
-				<Route exact path="/rating" render={() => <Rating userId={userId} />} />
+				<Route exact path="/rating" render={() => <Ratings userId={userId} user={user} />} />
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
 			<Footer />
