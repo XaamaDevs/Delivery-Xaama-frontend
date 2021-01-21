@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
+//	Importing React Router features
+import { useHistory } from "react-router-dom";
+
 //	Importing React features
 import { Button, Modal, Form, Row, Col, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
 
@@ -31,6 +34,9 @@ export default function AllUsers({ userId }) {
 	const [userPassword, setUserPassword] = useState("");
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
+
+	//	Defining history to jump through pages
+	const history = useHistory();
 
 	//	Modal settings
 	const [modal1Show, setModal1Show] = useState(false);
@@ -150,7 +156,7 @@ export default function AllUsers({ userId }) {
 												}
 											</p>
 											<div className="d-flex justify-content-between">
-												{((userId !== user._id) && (user.userType !== 2)) ?
+												{((user.userType !== 2)) ?
 													<Button
 														onClick={() => {
 															setUserUpdateId(user._id);
@@ -165,7 +171,7 @@ export default function AllUsers({ userId }) {
 													null
 												}
 
-												{((userId !== user._id) && (user.userType !== 1))?
+												{((user.userType !== 1) && (user.userType !== 2))?
 													<Button
 														onClick={() => {
 															setUserUpdateId(user._id);
@@ -175,6 +181,19 @@ export default function AllUsers({ userId }) {
 														variant="outline-warning"
 													>
 														Gerente
+													</Button>
+													:
+													null
+												}
+
+												{(user.userType === 2) ?
+													<Button
+														onClick={() => {
+															history.push("/user");
+														}}
+														variant="outline-warning"
+													>
+														Perfil
 													</Button>
 													:
 													null
