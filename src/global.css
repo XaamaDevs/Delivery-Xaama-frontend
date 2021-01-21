@@ -100,6 +100,9 @@ body {
 @media (min-width: 0) {
 	.display-1 {
 		font-size: 300%;
+  }
+  .display-4 {
+		font-size: 300%;
 	}
 }
 

@@ -22,6 +22,7 @@ import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfie
 //	Exporting resource to routes.js
 export default function Ratings({ userId, user }) {
 	const [ratings, setRatings] = useState([]);
+	const [ratingsEmpty, setRatingsEmpty] = useState(true);
 
 	//	Modal settings
 	const [isLoading, setIsLoading] = useState(true);
@@ -65,11 +66,24 @@ export default function Ratings({ userId, user }) {
 					setRatings(response.data);
 				}
 			});
+
 			setIsLoading(false);
 		}
 
 		fetchData();
+
 	}, []);
+
+	useEffect (() => {
+		console.log(ratings);
+		for(let rating of ratings) {
+			if(rating.approved) {
+				console.log("Entrei");
+				setRatingsEmpty(false);
+				break;
+			}
+		}
+	}, [ratings]);
 
 	return (
 		<>
@@ -86,69 +100,84 @@ export default function Ratings({ userId, user }) {
 				<CardDeck className="mx-3">
 					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >
 						{ratings.map(rating => (
-							<Col key={rating._id} className="my-2">
-								<Card text="white" bg="dark">
-									<Card.Header>
-										<Row>
-											<Col className="d-flex flex-wrap align-items-center" sm="3">
-												<Image
-													className="w-100"
-													style={{ borderRadius: "50%" }}
-													src={rating.thumbnail ? process.env.REACT_APP_API_URL + rating.thumbnail_url: camera }
-													alt="thumbnail"
-													fluid
-												/>
-												{console.log(rating.thumbnail_url)}
-											</Col>
-											<Col className="ml-3">
-												<Row>
-													<strong>{rating.name ? rating.name : ""}</strong>
-												</Row>
-												<Row className="my-1">
-													<Rating
-														name="customized-icons"
-														value={rating.stars ? rating.stars : 0}
-														getLabelText={(value) => customIcons[value].label}
-														IconContainerComponent={IconContainer}
+							(!userId && rating.approved) ||
+							(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
+							(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
+								<Col key={rating._id} className="my-2">
+									<Card text="white" bg="dark">
+										<Card.Header>
+											<Row>
+												<Col className="d-flex flex-wrap align-items-center" sm="3">
+													<Image
+														className="w-100"
+														style={{ borderRadius: "50%" }}
+														src={rating.thumbnail ? process.env.REACT_APP_API_URL + rating.thumbnail_url: camera }
+														alt="thumbnail"
+														fluid
 													/>
-												</Row>
-											</Col>
-										</Row>
-									</Card.Header>
-									<Card.Body>
-										<Card.Text>
-											{rating.feedback ? rating.feedback : ""}
-										</Card.Text>
-
-										{userId && userId.length && user && user.userType != 0 ?
-											<Row className="d-flex justify-content-around flex-wrap mx-auto">
-												<Button
-													className="my-1"
-													variant="warning"
-													size="sm"
-													//onClick ={() => {  }}
-												>
-													Aprovar
-												</Button>
-											
-												<Button
-													className="my-1"
-													variant="danger"
-													size="sm"
-													//onClick={() => {  }}
-												>
-													Deletar
-												</Button>
+													{console.log(rating.thumbnail_url)}
+												</Col>
+												<Col className="ml-3">
+													<Row>
+														<strong>{rating.name ? rating.name : ""}</strong>
+													</Row>
+													<Row className="my-1">
+														<Rating
+															name="customized-icons"
+															value={rating.stars ? rating.stars : 0}
+															getLabelText={(value) => customIcons[value].label}
+															IconContainerComponent={IconContainer}
+														/>
+													</Row>
+												</Col>
 											</Row>
-											:
-											null
-										}
-									</Card.Body>
-								</Card>
-							</Col>
+										</Card.Header>
+										<Card.Body>
+											<Card.Text>
+												{rating.feedback ? rating.feedback : ""}
+											</Card.Text>
+
+											{userId && userId.length && user && user.userType != 0 ?
+												<Row className="d-flex justify-content-around flex-wrap mx-auto">
+													{!rating.approved ? 
+														<Button
+															className="my-1"
+															variant="warning"
+															size="sm"
+															//onClick ={() => {  }}
+														>
+															Aprovar
+														</Button>
+														:
+														null
+													}
+												
+													<Button
+														className="my-1"
+														variant="danger"
+														size="sm"
+														//onClick={() => {  }}
+													>
+														Deletar
+													</Button>
+												</Row>
+												:
+												null
+											}
+										</Card.Body>
+									</Card>
+								</Col>
+								:
+								null
 						))}
 					</Row>
 				</CardDeck>
+			}
+			{
+				((ratings.length == 0) || (ratingsEmpty && (user.userType != 2)) || (user.userType === 2 && ratings.length == 0)) ? 
+					<h1 className="display-4 text-center text-white m-auto p-3 w-100">Nenhuma avaliação no momento!</h1>
+					: 
+					null
 			}
 		</>
 	);
