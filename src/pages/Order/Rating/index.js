@@ -2,6 +2,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+//	Importing website utils
+import Alert from "../../../components/Alert";
+import Push from "../../../components/Push";
+
 // Importing backend api
 import api from "../../../services/api";
 
@@ -9,7 +13,7 @@ import api from "../../../services/api";
 import camera from "../../../assets/camera.svg";
 
 //	Importing React features
-import { Button, Row, Col, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
+import { Button, Row, Col, Modal, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
 
 //	Importing Material-ui features
 import Rating from "@material-ui/lab/Rating";
@@ -21,11 +25,19 @@ import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfie
 
 //	Exporting resource to routes.js
 export default function Ratings({ userId, user }) {
+	// Ratings variables
 	const [ratings, setRatings] = useState([]);
 	const [ratingsEmpty, setRatingsEmpty] = useState(true);
+	const [ratingId, setRatingId] = useState("");
 
 	//	Modal settings
 	const [isLoading, setIsLoading] = useState(true);
+	const [toastShow, setToastShow] = useState(false);
+	const [title, setTitle] = useState("");
+	const [message, setMessage] = useState("");
+	const [modalApprovedRating, setModalApprovedRating] = useState(false);
+	const [modalDeleteRating, setModalDeleteRating] = useState(false);
+	const [modalAlert, setModalAlert] = useState(false);
 
 	const customIcons = {
 		1: {
@@ -75,15 +87,42 @@ export default function Ratings({ userId, user }) {
 	}, []);
 
 	useEffect (() => {
-		console.log(ratings);
 		for(let rating of ratings) {
 			if(rating.approved) {
-				console.log("Entrei");
 				setRatingsEmpty(false);
 				break;
 			}
 		}
 	}, [ratings]);
+
+	async function handleApprovedRating(event) {
+		event.preventDefault();
+	}
+
+	async function handleDeleteRating(event) {
+		event.preventDefault();
+
+		await api.delete("rating/" + ratingId, {
+			headers : {
+				"x-access-token": userId
+			}
+		}).then(() => {
+			setModalDeleteRating(false);
+			setTitle("Remoção de avaliação!");
+			setMessage("Avaliação removida com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
+	}
 
 	return (
 		<>
@@ -115,7 +154,6 @@ export default function Ratings({ userId, user }) {
 														alt="thumbnail"
 														fluid
 													/>
-													{console.log(rating.thumbnail_url)}
 												</Col>
 												<Col className="ml-3">
 													<Row>
@@ -144,7 +182,7 @@ export default function Ratings({ userId, user }) {
 															className="my-1"
 															variant="warning"
 															size="sm"
-															//onClick ={() => {  }}
+															onClick ={() => { setRatingId(rating._id); setModalApprovedRating(true); }}
 														>
 															Aprovar
 														</Button>
@@ -156,7 +194,7 @@ export default function Ratings({ userId, user }) {
 														className="my-1"
 														variant="danger"
 														size="sm"
-														//onClick={() => {  }}
+														onClick={() => { setRatingId(rating._id); setModalDeleteRating(true); }}
 													>
 														Deletar
 													</Button>
@@ -179,6 +217,74 @@ export default function Ratings({ userId, user }) {
 					: 
 					null
 			}
+
+			<Modal
+				show={modalApprovedRating}
+				onHide={() => {
+					setRatingId("");
+					setModalApprovedRating(false);
+					setToastShow(false);
+				}}
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Aprovar avaliação</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Você tem certeza que deseja aprovar esta avalição?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						className="my-1"
+						variant="light"
+						id="btn-custom"
+						onClick={() => {
+							setRatingId("");
+							setModalApprovedRating(false);
+							setToastShow(false);
+						}}
+					>
+						Voltar
+					</Button>
+					<Button variant="warning" onClick={handleApprovedRating}>
+						Aprovar
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal
+				show={modalDeleteRating}
+				onHide={() => {
+					setRatingId("");
+					setModalDeleteRating(false);
+					setToastShow(false);
+				}}
+			>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>Remover avaliação</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Você tem certeza que deseja remover esta avalição?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						variant="warning"
+						onClick={() => {
+							setRatingId("");
+							setModalDeleteRating(false);
+							setToastShow(false);
+						}}
+					>
+						Voltar
+					</Button>
+					<Button variant="danger" onClick={handleDeleteRating}>
+						Remover
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 		</>
 	);
 }
