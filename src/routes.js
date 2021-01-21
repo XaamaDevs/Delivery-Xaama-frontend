@@ -215,7 +215,7 @@ export default function Routes() {
 					exact path="/allusers"
 					render={() => userId ? (adminAuth() ? <AllUsers userId={userId} /> : <Autho />) : <Auth />}
 				/>
-				<Route exact path="/rating" render={() => <Rating />} />
+				<Route exact path="/rating" render={() => <Rating userId={userId} />} />
 				<Route path="*" component={NotFoundPage} />
 			</Switch>
 			<Footer />
