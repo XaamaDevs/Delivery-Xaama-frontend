@@ -72,6 +72,9 @@ export default function Routes() {
 					if(response.status === 200) {
 						setUser(response.data);
 					}
+				}).catch(() => {
+					setUser({});
+					setUserId("");
 				});
 			}
 
@@ -80,6 +83,8 @@ export default function Routes() {
 					if(response.status === 200) {
 						setCompanyInfo(response.data);
 					}
+				}).catch(() => {
+					setCompanyInfo({});
 				});
 
 			setIsLoading(false);
