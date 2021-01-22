@@ -183,32 +183,20 @@ export default function FinishOrder({
 	async function handleFinishOrder(event) {
 		event.preventDefault();
 
-		// TODO: chamar função get para ataualziar o token do usuário antes de fazer o pedido
-		// no get, atualizar o token
-
 		setIsLoading(true);
+		
+		var updateTokenUser = false;
 
-		var orderOk = false;
-
-		var data = {
-			products: order.products,
-			deliver: orderDeliver,
-			address: orderDeliverAddress,
-			phone: orderDeliverPhone,
-			typePayment: orderDeliverPaymentMethod,
-			change: orderDeliverChange,
-			total: orderDeliverTotal,
-			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
-		};
-
-		await api.post("order", data, {
+		await api.get("user", {
 			headers : {
 				"x-access-token": userId
 			}
 		}).then((response) => {
 			if(response.status === 201) {
-				setOrder({ products: [] });
-				orderOk = true;
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
+				updateTokenUser = true;
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
@@ -222,38 +210,32 @@ export default function FinishOrder({
 			setToastShow(true);
 		});
 
-		if(orderOk) {
-
-			var status = [];
-
-			user.cards.map((card, index) => (
-				card.completed && !card.status && orderType &&
-					orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-					status.push(true) : status.push(card.status)
-			));
-
-			data = {
-				name: user.name,
-				email: user.email,
-				phone: user.phone ? user.phone : orderDeliverPhone,
-				address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : ""),
-				status: status,
+		if(updateTokenUser) {
+			var orderOk = false;
+			
+			var data = {
+				products: order.products,
+				deliver: orderDeliver,
+				address: orderDeliverAddress,
+				phone: orderDeliverPhone,
+				typePayment: orderDeliverPaymentMethod,
+				change: orderDeliverChange,
+				total: orderDeliverTotal,
+				couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
 			};
 
-			await api.put("user", data, {
+			await api.post("order", data, {
 				headers : {
 					"x-access-token": userId
 				}
 			}).then((response) => {
-				setIsLoading(false);
-				setFinishOrderStep(finishOrderStep+1);
-				
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
+				if(response.status === 201) {
+					setOrder({ products: [] });
+					orderOk = true;
+				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400) {
+				if(error.response.status === 400 || error.response.status === 404) {
 					setMessage(error.response.data);
 				} else if(error.response.status === 500) {
 					setMessage(error.message);
@@ -262,8 +244,49 @@ export default function FinishOrder({
 				}
 				setToastShow(true);
 			});
+
+			if(orderOk) {
+
+				var status = [];
+
+				user.cards.map((card, index) => (
+					card.completed && !card.status && orderType &&
+						orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+						status.push(true) : status.push(card.status)
+				));
+
+				data = {
+					name: user.name,
+					email: user.email,
+					phone: user.phone ? user.phone : orderDeliverPhone,
+					address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : ""),
+					status: status,
+				};
+
+				await api.put("user", data, {
+					headers : {
+						"x-access-token": userId
+					}
+				}).then((response) => {
+					setIsLoading(false);
+					setFinishOrderStep(finishOrderStep+1);
+					
+					sessionStorage.setItem("userId", response.data.token);
+					setUserId(response.data.token);
+					setUser(response.data.user);
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+					} else {
+						setMessage("Algo deu errado :(");
+					}
+					setToastShow(true);
+				});
+			}
 		}
-		
 	}
 
 	//	Function to get address info via cep api
