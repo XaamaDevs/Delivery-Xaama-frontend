@@ -97,6 +97,27 @@ export default function Ratings({ userId, user }) {
 
 	async function handleApprovedRating(event) {
 		event.preventDefault();
+		
+		await api.put("rating/" + ratingId, {}, {
+			headers : {
+				"x-access-token": userId
+			}
+		}).then(() => {
+			setModalApprovedRating(false);
+			setTitle("Aprovação de avaliação!");
+			setMessage("Avaliação aprovada com sucesso!");
+			setModalAlert(true);
+		}).catch((error) => {
+			setTitle("Erro!");
+			if(error.response.status === 400 || error.response.status === 404) {
+				setMessage(error.message);
+			} else if(error.response.status === 500) {
+				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
+			}
+			setToastShow(true);
+		});
 	}
 
 	async function handleDeleteRating(event) {
@@ -196,7 +217,7 @@ export default function Ratings({ userId, user }) {
 														size="sm"
 														onClick={() => { setRatingId(rating._id); setModalDeleteRating(true); }}
 													>
-														Deletar
+														Apagar
 													</Button>
 												</Row>
 												:
