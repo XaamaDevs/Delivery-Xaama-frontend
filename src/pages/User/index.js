@@ -145,7 +145,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 404) {
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
 					setCoupons([]);
 					setCouponsByType();
 				} else if(error.response.status === 500) {
@@ -230,16 +233,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 	}
 
@@ -275,16 +276,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 	}
 
@@ -310,16 +309,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 
 		setUserPasswordOnDelete("");
@@ -356,20 +353,20 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				"x-access-token": userId
 			}
 		}).then((response) => {
-			setCompanyInfo(response.data.company);
-			upCompany = true;
+			if(response.status === 200 || response.status === 201) {
+				setCompanyInfo(response.data.company);
+				upCompany = true;
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 
 		if(upCard && upCompany) {
@@ -388,16 +385,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 404) {
+				if(error.response.status === 400 || error.response.status === 404) {
 					setMessage(error.response.data);
-					setModalAlert(true);
 				} else if(error.response.status === 500) {
 					setMessage(error.message);
-					setModalAlert(true);
 				} else {
 					setMessage("Algo deu errado :(");
-					setModalAlert(true);
 				}
+				setToastShow(true);
 			});
 		} else if(!upCard && upCompany) {
 			setModal4Show(false);
@@ -445,16 +440,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 	}
 
@@ -499,16 +492,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400 || error.response.status === 404) {
 				setMessage(error.response.data);
-				setModalAlert(true);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
-				setModalAlert(true);
 			} else {
 				setMessage("Algo deu errado :(");
-				setModalAlert(true);
 			}
+			setToastShow(true);
 		});
 	}
 
@@ -541,8 +532,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response.status === 400 || error.response.status === 404) {
-						setMessage(error.message);
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
 					} else if(error.response.status === 500) {
 						setMessage(error.message);
 					} else {

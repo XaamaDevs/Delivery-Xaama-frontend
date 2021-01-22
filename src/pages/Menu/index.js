@@ -97,6 +97,17 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					if(response.status === 200) {
 						setProductTypes(response.data);
 					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 404) {
+						setProductTypes([]);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+						setToastShow(true);
+					} else {
+						setMessage("Algo deu errado :(");
+						setToastShow(true);
+					}
 				});
 
 			await api.get("product")
@@ -117,6 +128,17 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						}
 
 						setProductsByType(prodsByType);
+					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 404) {
+						setProductsByType({});
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+						setToastShow(true);
+					} else {
+						setMessage("Algo deu errado :(");
+						setToastShow(true);
 					}
 				});
 
@@ -140,6 +162,17 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						}
 
 						setAdditionsByType(AddsByType);
+					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 404) {
+						setAdditionsByType({});
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+						setToastShow(true);
+					} else {
+						setMessage("Algo deu errado :(");
+						setToastShow(true);
 					}
 				});
 
@@ -174,10 +207,12 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
@@ -199,17 +234,21 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setProductUpdateModal(false);
-			setTitle("Alterações produto!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setProductUpdateModal(false);
+				setTitle("Alterações produto!");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
