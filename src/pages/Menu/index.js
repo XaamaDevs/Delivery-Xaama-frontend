@@ -254,7 +254,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			setTitle("Erro!");
 			if(error.response.status === 400) {
 				setMessage(error.response.data);
-				setToastShow(true);
 			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
@@ -288,7 +287,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			setTitle("Erro!");
 			if(error.response.status === 400) {
 				setMessage(error.response.data);
-				setToastShow(true);
 			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
@@ -318,7 +316,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			setTitle("Erro!");
 			if(error.response.status === 400) {
 				setMessage(error.response.data);
-				setToastShow(true);
 			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
