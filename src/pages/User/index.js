@@ -72,10 +72,10 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [timetableSaturdayI, setTimetableSaturdayI] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].beginHour ? companyInfo.timetable[6].beginHour : undefined);
 	const [timetableSaturdayF, setTimetableSaturdayF] = useState(companyInfo && companyInfo.timetable && companyInfo.timetable[6] && companyInfo.timetable[6].endHour ? companyInfo.timetable[6].endHour : undefined);
 
-	// Coupons for user
+	// User coupons
 	const couponTypes = ["quantidade", "valor", "frete"];
 	const [coupons, setCoupons] = useState([]);
-	const [couponsByType, setCouponsByType] = useState(null);
+	const [couponsByType, setCouponsByType] = useState({});
 
 	// Tabs settings
 	const [eventKey, setEventKey] = useState("0");
@@ -143,10 +143,23 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 					setCouponsByType(cpnsByType);
 				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 404) {
+					setCoupons([]);
+					setCouponsByType();
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
+				}
 			});
 
 			setIsLoading(false);
 		}
+
 		fetchData();
 	}, []);
 
@@ -206,22 +219,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				"x-access-token": userId
 			}
 		}).then((response) => {
-			setModal1Show(false);
-			setModal2Show(false);
-			sessionStorage.setItem("userId", response.data.token);
-			setUserId(response.data.token);
-			setUser(response.data.user);
-			setTitle("Alterações de usuário");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+			if(response.status === 200) {
+				setModal1Show(false);
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
+				setTitle("Alterações de usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 	}
 
@@ -247,22 +265,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				"x-access-token": userId
 			}
 		}).then((response) => {
-			setModal1Show(false);
-			setModal2Show(false);
-			sessionStorage.setItem("userId", response.data.token);
-			setUserId(response.data.token);
-			setUser(response.data.user);
-			setTitle("Alterações de usuário");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+			if(response.status === 200) {
+				sessionStorage.setItem("userId", response.data.token);
+				setUserId(response.data.token);
+				setUser(response.data.user);
+				setTitle("Alterações de usuário");
+				setMessage("Alterações feitas com sucesso!");
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 	}
 
@@ -275,23 +297,29 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				password: userPasswordOnDelete
 			}
 		}).then((response) => {
-			sessionStorage.removeItem("userId");
+			if(response.status === 200) {
+				sessionStorage.removeItem("userId");
 
-			setUserId(sessionStorage.getItem("userId"));
-			setUser({});
+				setUserId(sessionStorage.getItem("userId"));
+				setUser({});
 
-			setTitle("Alterações de usuário");
-			setMessage(response.data);
-			setToastShow(true);
-			history.push("/");
+				setTitle("Alterações de usuário");
+				setMessage(response.data);
+				setToastShow(true);
+				history.push("/");
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 
 		setUserPasswordOnDelete("");
@@ -332,12 +360,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			upCompany = true;
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 
 		if(upCard && upCompany) {
@@ -345,22 +377,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				headers : {
 					"x-access-token": userId
 				}
-			}).then(() => {
-				setModal4Show(false);
-				setModalImages(false);
-				upCard = false;
-				upCompany = false;
-				setTitle("Alterações da empresa");
-				setMessage("Alterações feitas com sucesso!");
-				setModalAlert(true);
+			}).then((response) => {
+				if(response.status === 200) {
+					setModal4Show(false);
+					upCard = false;
+					upCompany = false;
+					setTitle("Alterações da empresa");
+					setMessage(response.data);
+					setModalAlert(true);
+				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
+				if(error.response.status === 404) {
 					setMessage(error.response.data);
-				} else {
+					setModalAlert(true);
+				} else if(error.response.status === 500) {
 					setMessage(error.message);
+					setModalAlert(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setModalAlert(true);
 				}
-				setToastShow(true);
 			});
 		} else if(!upCard && upCompany) {
 			setModal4Show(false);
@@ -398,20 +435,26 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModal4Show(false);
-			setModalImages(false);
-			setTitle("Alterações da empresa");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setModal4Show(false);
+				setModalImages(false);
+				setTitle("Alterações da empresa");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 	}
 
@@ -447,19 +490,25 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			headers : {
 				"x-access-token": userId,
 			}
-		}).then(() => {
-			setModalTimetable(false);
-			setTitle("Alterações da empresa");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setModalTimetable(false);
+				setTitle("Alterações da empresa");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 404) {
 				setMessage(error.response.data);
-			} else {
+				setModalAlert(true);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+				setModalAlert(true);
+			} else {
+				setMessage("Algo deu errado :(");
+				setModalAlert(true);
 			}
-			setToastShow(true);
 		});
 	}
 
@@ -506,7 +555,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 	//	Return a list of coupons given type
 	async function handleCouponsList(type) {
-		setCoupons(couponsByType[type]);
+		setCoupons(couponsByType ? couponsByType[type] : []);
 	}
 
 	function AllCoupons() {
@@ -1688,7 +1737,6 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
 			<Alert.Close
 				modalAlert={modalAlert}
 				setModalAlert={setModalAlert}
