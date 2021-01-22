@@ -99,7 +99,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response.status === 404) {
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+						setToastShow(true);
+					} else if(error.response.status === 404) {
 						setProductTypes([]);
 					} else if(error.response.status === 500) {
 						setMessage(error.message);
@@ -131,7 +134,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response.status === 404) {
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+						setToastShow(true);
+					} else if(error.response.status === 404) {
 						setProductsByType({});
 					} else if(error.response.status === 500) {
 						setMessage(error.message);
@@ -165,7 +171,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
-					if(error.response.status === 404) {
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+						setToastShow(true);
+					} else if(error.response.status === 404) {
 						setAdditionsByType({});
 					} else if(error.response.status === 500) {
 						setMessage(error.message);
@@ -207,7 +216,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -238,12 +247,15 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			if(response.status === 200) {
 				setProductUpdateModal(false);
 				setTitle("Alterações produto!");
-				setMessage("Alterações feitas com sucesso!");
+				setMessage(response.data);
 				setModalAlert(true);
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+				setToastShow(true);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -265,17 +277,24 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setProductUpdateModal(false);
-			setTitle("Alterações produto!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setProductUpdateModal(false);
+				setTitle("Alterações produto!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 400) {
 				setMessage(error.response.data);
-			} else {
+				setToastShow(true);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
@@ -288,17 +307,24 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setProductDeleteModal(false);
-			setTitle("Alterações produto!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setProductDeleteModal(false);
+				setTitle("Alterações produto!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 400) {
 				setMessage(error.response.data);
-			} else {
+				setToastShow(true);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
