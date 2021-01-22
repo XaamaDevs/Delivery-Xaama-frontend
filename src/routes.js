@@ -63,8 +63,8 @@ export default function Routes() {
 	//	Fetching current user data
 	useEffect(() => {
 		async function fetchData() {
-			if(userId) {
-				await api.get("user", {
+			if(userId && userId.length) {
+				await api.get("session", {
 					headers : {
 						"x-access-token": userId
 					}
