@@ -19,7 +19,8 @@ export default function NotFound() {
 				<p className="lead">
 					<Link
 						to="/"
-						className="btn btn-outline-light btn-sm p-1">
+						className="btn btn-outline-light btn-sm p-1"
+					>
 						Voltar para o início
 					</Link>
 				</p>

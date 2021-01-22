@@ -105,12 +105,12 @@ export default function AllUsers({ userId }) {
 	}
 
 	return (
-		<div className="all-container w-100">
+		<div className="all-container w-100 h-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
-						className="my-5 mx-auto"
+						className="m-auto"
 						style={{width: "5rem", height: "5rem"}}
 						animation="grow"
 						variant="warning"

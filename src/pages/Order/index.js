@@ -49,7 +49,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
-	const [orderA, setOrderA] = useState({});
+	const [order, setOrder] = useState({});
 	const [feedback, setFeedback] = useState(null);
 
 	//	Modal settings
@@ -130,6 +130,20 @@ export default function AllOrders({ userId, companyInfo }) {
 					setOrders(response.data);
 					setupWebSocket();
 				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
+					setOrders([]);
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
+				}
 			});
 
 			setIsLoading(false);
@@ -137,13 +151,6 @@ export default function AllOrders({ userId, companyInfo }) {
 
 		fetchData();
 	}, [userId]);
-
-	async function handleSetOrder(event, order) {
-		event.preventDefault();
-
-		setOrderA(order);
-		setOrderListingModal(true);
-	}
 
 	async function handleFeedback(event) {
 		event.preventDefault();
@@ -169,21 +176,23 @@ export default function AllOrders({ userId, companyInfo }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 400) {
 				setMessage(error.response.data);
-			} else {
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setToastShow(true);
 		});
 	}
 
 	return (
-		<div className="all-container p-0 w-100">
+		<div className="all-container p-0 w-100 h-100">
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
-						className="my-5 mx-auto"
+						className="m-auto"
 						style={{width: "5rem", height: "5rem"}}
 						animation="grow"
 						variant="warning"
@@ -197,8 +206,8 @@ export default function AllOrders({ userId, companyInfo }) {
 					{orders && orders.length ?
 						<CardDeck className="mx-3">
 							<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-								{orders.map(order => (
-									<Col key={order._id} className="my-2">
+								{orders.map((orderI) => (
+									<Col key={orderI._id} className="my-2">
 										<Card text="white" bg="dark">
 											<Card.Header>
 												<Row>
@@ -206,59 +215,59 @@ export default function AllOrders({ userId, companyInfo }) {
 														<Image
 															className="w-100"
 															style={{ borderRadius: "50%" }}
-															src={order.user && order.user.thumbnail ? process.env.REACT_APP_API_URL + order.user.thumbnail_url: camera}
+															src={orderI.user && orderI.user.thumbnail ? process.env.REACT_APP_API_URL + orderI.user.thumbnail_url: camera}
 															alt="thumbnail"
 															fluid
 														/>
 													</Col>
 													<Col className="ml-3">
 														<Row>
-															<strong>{order.user.name ? order.user.name : null}</strong>
+															<strong>{orderI.user.name ? orderI.user.name : null}</strong>
 														</Row>
 														<Row>
-															<span>{order.user.email ? order.user.email : null}</span>
+															<span>{orderI.user.email ? orderI.user.email : null}</span>
 														</Row>
 														<Row>
-															<span>{order.creationDate ? order.creationDate : null}</span>
+															<span>{orderI.creationDate ? orderI.creationDate : null}</span>
 														</Row>
 													</Col>
 												</Row>
 											</Card.Header>
 											<Card.Body>
 												<Card.Text>
-													{order.phone ? "Telefone para contato: " + order.phone : "Telefone não informado"}
+													{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
 												</Card.Text>
 												<Card.Text>
-													{order.deliver ?
-														"Endereço de entrega: " + order.address.join(", ")
+													{orderI.deliver ?
+														"Endereço de entrega: " + orderI.address.join(", ")
 														:
 														"Irá retirar no balcão!"
 													}
 												</Card.Text>
 												<Card.Text>
-													{order.deliver ?
+													{orderI.deliver ?
 														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
 														:
 														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
 													}
 												</Card.Text>
 												<Card.Text>
-													Total a pagar R$ {order.total}
+													Total a pagar R$ {orderI.total}
 												</Card.Text>
 												<Card.Text>
 													Método de pagamento:
-													{order.typePayment === 1 ?
+													{orderI.typePayment === 1 ?
 														" Cartão"
 														:
 														" Dinheiro"
 													}
 												</Card.Text>
 												<Card.Text>
-													{(order.change === order.total) ?
+													{(orderI.change === orderI.total) ?
 														"Não precisa de troco"
 														:
-														((order.typePayment === 0) ?
-															"Pagará R$" + order.change + ", troco de R$" + (order.change - order.total)
+														((orderI.typePayment === 0) ?
+															"Pagará R$" + orderI.change + ", troco de R$" + (orderI.change - orderI.total)
 															:
 															"Pagará na maquininha"
 														)
@@ -270,11 +279,11 @@ export default function AllOrders({ userId, companyInfo }) {
 														variant="light"
 														id="btn-custom-outline"
 														className="m-1 mx-auto"
-														onClick={e => handleSetOrder(e, order)}
+														onClick={() => { setOrder(orderI); setOrderListingModal(true); }}
 													>
 														Ver pedido
 													</Button>
-													{!order.status ?
+													{!orderI.status ?
 														<Button
 															variant="danger"
 															className="m-1 mx-auto"
@@ -283,7 +292,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														</Button>
 														:
 														<>
-															{!order.feedback ?
+															{!orderI.feedback ?
 																<>
 																	<Button
 																		variant="warning"
@@ -294,7 +303,7 @@ export default function AllOrders({ userId, companyInfo }) {
 																	<Button
 																		variant="outline-warning"
 																		className="m-1 mx-auto"
-																		onClick={() => { setOrderId(order._id); setFeedbackModal(true); }}
+																		onClick={() => { setOrderId(orderI._id); setFeedbackModal(true); }}
 																	>
 																		Recebeu seu pedido? Avalie!
 																	</Button>
@@ -324,13 +333,13 @@ export default function AllOrders({ userId, companyInfo }) {
 
 			<Modal
 				show={orderListingModal}
-				onHide={() => setOrderListingModal(false) }
+				onHide={() => { setOrder({}); setOrderListingModal(false); }}
 				size="lg"
 				centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>Pedido de {orderA.user ? orderA.user.name : null }</Modal.Title>
+					<Modal.Title>Pedido de {order && order.user ? order.user.name : null }</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					{isLoading ?
@@ -341,7 +350,7 @@ export default function AllOrders({ userId, companyInfo }) {
 							variant="warning"
 						/>
 						:
-						<ProductDeck products={orderA.products} />
+						<ProductDeck products={order && order.products ? order.products : []} />
 					}
 				</Modal.Body>
 			</Modal>
@@ -384,7 +393,7 @@ export default function AllOrders({ userId, companyInfo }) {
 						<Modal.Footer>
 							<Button
 								variant="danger"
-								onClick={() => {setFeedbackModal(false);setFeedback("");setValue(3);}}>
+								onClick={() => {setFeedbackModal(false); setFeedback(""); setValue(3);}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
