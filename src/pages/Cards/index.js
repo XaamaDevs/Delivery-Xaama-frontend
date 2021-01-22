@@ -68,15 +68,19 @@ export default function Cards({ companyInfo, userId }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModalCards(false);
-			setTitle("Alterações cartão de fidelidade!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setModalCards(false);
+				setTitle("Alterações cartão de fidelidade!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
