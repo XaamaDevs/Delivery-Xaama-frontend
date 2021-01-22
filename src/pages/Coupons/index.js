@@ -103,6 +103,20 @@ export default function Coupons({ userId, companyInfo }) {
 
 					setCouponsByType(cpnsByType);
 				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
+					setCouponsByType({});
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
+				}
 			});
 
 			await api.get("userAll", {
@@ -112,6 +126,20 @@ export default function Coupons({ userId, companyInfo }) {
 			}).then((response) => {
 				if(response.status === 200) {
 					setUsers(response.data);
+				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
+					setUsers([]);
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
 				}
 			});
 
@@ -156,8 +184,8 @@ export default function Coupons({ userId, companyInfo }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
@@ -187,15 +215,19 @@ export default function Coupons({ userId, companyInfo }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModalCouponUpdate(false);
-			setTitle("Alterações de cupom");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status4 === 200) {
+				setModalCouponUpdate(false);
+				setTitle("Alterações de cupom");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
@@ -213,15 +245,19 @@ export default function Coupons({ userId, companyInfo }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModalCouponDelete(false);
-			setTitle("Alterações de cupom");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setModalCouponDelete(false);
+				setTitle("Alterações de cupom");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {

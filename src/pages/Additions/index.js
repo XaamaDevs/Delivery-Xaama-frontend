@@ -77,6 +77,20 @@ export default function Additions({ userId }) {
 					if(response.status === 200) {
 						setProductTypes(response.data);
 					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+						setToastShow(true);
+					} else if(error.response.status === 404) {
+						setProductTypes([]);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+						setToastShow(true);
+					} else {
+						setMessage("Algo deu errado :(");
+						setToastShow(true);
+					}
 				});
 
 			await api.get("addition")
@@ -84,13 +98,27 @@ export default function Additions({ userId }) {
 					if(response.status === 200) {
 						setAdditions(response.data);
 					}
+				}).catch((error) => {
+					setTitle("Erro!");
+					if(error.response.status === 400) {
+						setMessage(error.response.data);
+						setToastShow(true);
+					} else if(error.response.status === 404) {
+						setAdditions([]);
+					} else if(error.response.status === 500) {
+						setMessage(error.message);
+						setToastShow(true);
+					} else {
+						setMessage("Algo deu errado :(");
+						setToastShow(true);
+					}
 				});
 
 			setIsLoading(false);
 		}
 
 		fetchData();
-	}, [productTypes, modalAlert]);
+	}, [productTypes]);
 
 	async function handleAdditionAdd(event) {
 		event.preventDefault();
@@ -127,8 +155,8 @@ export default function Additions({ userId }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
@@ -163,15 +191,19 @@ export default function Additions({ userId }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setAdditionUpdateModal(false);
-			setTitle("Alterações de adição!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setAdditionUpdateModal(false);
+				setTitle("Alterações de adição!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
@@ -192,15 +224,19 @@ export default function Additions({ userId }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setAdditionUpdateModal(false);
-			setTitle("Alterações de adição!");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setAdditionUpdateModal(false);
+				setTitle("Alterações de adição!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
@@ -217,15 +253,19 @@ export default function Additions({ userId }) {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setAdditionDeleteModal(false);
-			setTitle("Remoção de adição!");
-			setMessage("Adição removida com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setAdditionDeleteModal(false);
+				setTitle("Remoção de adição!");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
-				setMessage(error.message);
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
 			} else {
