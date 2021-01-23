@@ -80,7 +80,7 @@ export default function WebsiteNavbar({
 		try {
 			sessionStorage.removeItem("userId");
 
-			setUserId(sessionStorage.getItem("userId"));
+			setUserId("");
 			setUser({});
 			setOrder({});
 

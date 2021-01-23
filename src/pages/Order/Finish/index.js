@@ -92,6 +92,20 @@ export default function FinishOrder({
 				if(response.status === 200) {
 					setUserCoupons(response.data);
 				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
+					setUserCoupons([]);
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
+				}
 			});
 		}
 
@@ -184,7 +198,7 @@ export default function FinishOrder({
 		event.preventDefault();
 
 		setIsLoading(true);
-		
+
 		var updateTokenUser = false;
 
 		await api.get("user", {
@@ -200,7 +214,9 @@ export default function FinishOrder({
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -212,7 +228,7 @@ export default function FinishOrder({
 
 		if(updateTokenUser) {
 			var orderOk = false;
-			
+
 			var data = {
 				products: order.products,
 				deliver: orderDeliver,
@@ -235,7 +251,9 @@ export default function FinishOrder({
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400 || error.response.status === 404) {
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+				} else if(error.response.status === 404) {
 					setMessage(error.response.data);
 				} else if(error.response.status === 500) {
 					setMessage(error.message);
@@ -268,15 +286,18 @@ export default function FinishOrder({
 						"x-access-token": userId
 					}
 				}).then((response) => {
-					setIsLoading(false);
-					setFinishOrderStep(finishOrderStep+1);
-					
-					sessionStorage.setItem("userId", response.data.token);
-					setUserId(response.data.token);
-					setUser(response.data.user);
+					if(response.status === 200) {
+						setIsLoading(false);
+						setFinishOrderStep(finishOrderStep+1);
+						sessionStorage.setItem("userId", response.data.token);
+						setUserId(response.data.token);
+						setUser(response.data.user);
+					}
 				}).catch((error) => {
 					setTitle("Erro!");
 					if(error.response.status === 400) {
+						setMessage(error.response.data);
+					} else if(error.response.status === 404) {
 						setMessage(error.response.data);
 					} else if(error.response.status === 500) {
 						setMessage(error.message);
@@ -310,8 +331,10 @@ export default function FinishOrder({
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400 || error.response.status === 404) {
-					setMessage(error.message);
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+				} else if(error.response.status === 404) {
+					setMessage(error.response.data);
 				} else if(error.response.status === 500) {
 					setMessage(error.message);
 				} else {

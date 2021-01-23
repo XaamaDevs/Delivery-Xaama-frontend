@@ -178,7 +178,7 @@ export default function Coupons({ userId, companyInfo }) {
 		}).then((response) => {
 			if(response.status === 201) {
 				setModalCouponAdd(false);
-				setTitle("Alterações de cupom");
+				setTitle("Novo cupom");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -216,7 +216,7 @@ export default function Coupons({ userId, companyInfo }) {
 				"x-access-token": userId
 			}
 		}).then((response) => {
-			if(response.status4 === 200) {
+			if(response.status === 200) {
 				setModalCouponUpdate(false);
 				setTitle("Alterações de cupom");
 				setMessage(response.data);
@@ -248,7 +248,7 @@ export default function Coupons({ userId, companyInfo }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setModalCouponDelete(false);
-				setTitle("Alterações de cupom");
+				setTitle("Remoção de cupom");
 				setMessage(response.data);
 				setModalAlert(true);
 			}

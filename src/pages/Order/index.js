@@ -188,7 +188,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	return (
-		<div className="all-container p-0 w-100 h-100">
+		<div className="all-container p-0 w-100">
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner

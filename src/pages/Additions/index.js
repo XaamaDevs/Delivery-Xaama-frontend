@@ -149,7 +149,7 @@ export default function Additions({ userId }) {
 		}).then((response) => {
 			if(response.status === 201) {
 				setAdditionAddModal(false);
-				setTitle("Nova adição!");
+				setTitle("Nova adição");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -194,7 +194,7 @@ export default function Additions({ userId }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setAdditionUpdateModal(false);
-				setTitle("Alterações de adição!");
+				setTitle("Alterações de adição");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -227,7 +227,7 @@ export default function Additions({ userId }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setAdditionUpdateModal(false);
-				setTitle("Alterações de adição!");
+				setTitle("Alterações de adição");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -256,7 +256,7 @@ export default function Additions({ userId }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setAdditionDeleteModal(false);
-				setTitle("Remoção de adição!");
+				setTitle("Remoção de adição");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -450,7 +450,7 @@ export default function Additions({ userId }) {
 				<Modal.Body>
 					<Form onSubmit={handleAdditionAdd}>
 						<Row>
-							<Col className="d-flex m-auto" sm="7">
+							<Col className="d-flex m-auto" sm="6">
 								<Form.Control
 									id="inputImage"
 									className="d-none"

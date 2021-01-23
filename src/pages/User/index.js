@@ -233,7 +233,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -276,7 +278,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -309,7 +313,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -359,7 +365,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -385,7 +393,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400 || error.response.status === 404) {
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+				} else if(error.response.status === 404) {
 					setMessage(error.response.data);
 				} else if(error.response.status === 500) {
 					setMessage(error.message);
@@ -440,7 +450,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);
@@ -492,7 +504,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400 || error.response.status === 404) {
+			if(error.response.status === 400) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 404) {
 				setMessage(error.response.data);
 			} else if(error.response.status === 500) {
 				setMessage(error.message);

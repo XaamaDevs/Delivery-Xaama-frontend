@@ -109,7 +109,7 @@ export default function Ratings({ userId, user }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setModalApprovedRating(false);
-				setTitle("Aprovação de avaliação!");
+				setTitle("Aprovação de avaliação");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -138,7 +138,7 @@ export default function Ratings({ userId, user }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setModalDeleteRating(false);
-				setTitle("Remoção de avaliação!");
+				setTitle("Remoção de avaliação");
 				setMessage(response.data);
 				setModalAlert(true);
 			}

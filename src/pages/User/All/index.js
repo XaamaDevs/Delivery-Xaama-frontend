@@ -66,6 +66,20 @@ export default function AllUsers({ userId }) {
 					setUsers(response.data);
 					setupWebSocket();
 				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response.status === 400) {
+					setMessage(error.response.data);
+					setToastShow(true);
+				} else if(error.response.status === 404) {
+					setUsers([]);
+				} else if(error.response.status === 500) {
+					setMessage(error.message);
+					setToastShow(true);
+				} else {
+					setMessage("Algo deu errado :(");
+					setToastShow(true);
+				}
 			});
 
 			setIsLoading(false);
@@ -77,35 +91,42 @@ export default function AllUsers({ userId }) {
 	async function handleTypeUser(event) {
 		event.preventDefault();
 
-		await api.put("/companyUpdateUser", {
+		const data = {
 			userUpdateId,
-			type: newType,
-			password: userPassword
-		}, {
+			type : newType,
+			password : userPassword
+		};
+
+		await api.put("/companyUpdateUser", data, {
 			headers : {
 				"x-access-token": userId
 			}
-		}).then(() => {
-			setModal1Show(false);
-			setTitle("Alterações usuário");
-			setMessage("Alterações feitas com sucesso!");
-			setModalAlert(true);
+		}).then((response) => {
+			if(response.status === 200) {
+				setModal1Show(false);
+				setTitle("Alterações de usuário");
+				setMessage(response.data);
+				setModalAlert(true);
+			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response && typeof(error.response.data) !== "object") {
+			if(error.response.status === 400) {
 				setMessage(error.response.data);
-			} else {
+			} else if(error.response.status === 404) {
+				setMessage(error.response.data);
+			} else if(error.response.status === 500) {
 				setMessage(error.message);
+			} else {
+				setMessage("Algo deu errado :(");
 			}
 			setModalAlert(true);
-			setModal1Show(false);
 		});
 
 		setUserPassword("");
 	}
 
 	return (
-		<div className="all-container w-100 h-100">
+		<div className="all-container w-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">

@@ -49,14 +49,14 @@ export default function Routes() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	//  Defining constant for manipulating the time
-	const [data, setData] = useState(new Date());
+	const [date, setDate] = useState(new Date());
 
 	// Aux Variables
 	const [noCards, setNoCards] = useState(true);
 
 	//  Update system time every 25 minutes
 	function currentTime() {
-		setData(new Date());
+		setDate(new Date());
 	}
 	setTimeout(currentTime, 1500000);
 
@@ -133,8 +133,8 @@ export default function Routes() {
 				companyInfo ={companyInfo}
 				companySystemOpenByHour={companySystemOpenByHour}
 				setCompanySystemOpenByHour={setCompanySystemOpenByHour}
-				data={data}
-				setData={setData}
+				data={date}
+				setData={setDate}
 				noCards={noCards}
 			/>
 			<Switch>

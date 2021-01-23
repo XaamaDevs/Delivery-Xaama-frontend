@@ -71,7 +71,7 @@ export default function Cards({ companyInfo, userId }) {
 		}).then((response) => {
 			if(response.status === 200) {
 				setModalCards(false);
-				setTitle("Alterações cartão de fidelidade!");
+				setTitle("Alterações de cartão de fidelidade");
 				setMessage(response.data);
 				setModalAlert(true);
 			}

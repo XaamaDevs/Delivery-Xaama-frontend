@@ -151,7 +151,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			}).then((response) => {
 				if(response.status === 200) {
 					setTitle("Pedido enviado!");
-					setMessage("Alterações feitas com sucesso!");
+					setMessage(response.data);
 					setModalAlert(true);
 				}
 			}).catch((error) => {
@@ -190,7 +190,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			if(response.status === 200) {
 				setModalDeleteOrder(false);
 				deleteAllSockets();
-				setTitle("Todos pedidos apagados!");
+				setTitle("Remoção de pedidos");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -210,7 +210,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	return (
-		<div className="all-container p-0 w-100 h-100">
+		<div className="all-container p-0 w-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
@@ -275,7 +275,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													}
 												</p>
 												<p>
-													{"Total a pagar R$" + orderI.total}
+													{"Total a pagar R$ " + orderI.total}
 												</p>
 												<p>
 														Método de pagamento:
@@ -290,7 +290,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														"Não precisa de troco"
 														:
 														((orderI.typePayment === 0) ?
-															"Pagará R$" + orderI.change + ", troco de R$" + (orderI.change - orderI.total)
+															"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
 															:
 															"Pagará na maquininha"
 														)

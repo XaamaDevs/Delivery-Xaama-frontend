@@ -210,7 +210,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}).then((response) => {
 			if(response.status === 201) {
 				setProductAddModal(false);
-				setTitle("Alterações produto!");
+				setTitle("Novo produto");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -246,7 +246,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}).then((response) => {
 			if(response.status === 200) {
 				setProductUpdateModal(false);
-				setTitle("Alterações produto!");
+				setTitle("Alterações de produto");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -279,7 +279,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}).then((response) => {
 			if(response.status === 200) {
 				setProductUpdateModal(false);
-				setTitle("Alterações produto!");
+				setTitle("Alterações de produto");
 				setMessage(response.data);
 				setModalAlert(true);
 			}
@@ -308,7 +308,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		}).then((response) => {
 			if(response.status === 200) {
 				setProductDeleteModal(false);
-				setTitle("Alterações produto!");
+				setTitle("Remoção de produto");
 				setMessage(response.data);
 				setModalAlert(true);
 			}

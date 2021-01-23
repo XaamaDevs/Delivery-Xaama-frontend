@@ -53,18 +53,22 @@ export default function Signup({ setUserId, setUser }) {
 
 		await api.post("user", data)
 			.then((response) => {
-				sessionStorage.setItem("userId", response.data.token);
+				if(response.status === 201) {
+					sessionStorage.setItem("userId", response.data.token);
 
-				setUserId(sessionStorage.getItem("userId"));
-				setUser(response.data.user);
+					setUserId(sessionStorage.getItem("userId"));
+					setUser(response.data.user);
 
-				history.push("/menu");
+					history.push("/menu");
+				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response && typeof(error.response.data) !== "object") {
+				if(error.response.status === 400) {
 					setMessage(error.response.data);
-				} else {
+				} else if(error.response.status === 500) {
 					setMessage(error.message);
+				} else {
+					setMessage("Algo deu errado :(");
 				}
 				setToastShow(true);
 			});
@@ -162,6 +166,5 @@ export default function Signup({ setUserId, setUser }) {
 
 Signup.propTypes = {
 	setUserId : PropTypes.func.isRequired,
-	setUser : PropTypes.func.isRequired,
-	companyInfo : PropTypes.object.isRequired,
+	setUser : PropTypes.func.isRequired
 };
