@@ -330,7 +330,7 @@ export default function AllOrders({ userId, companyInfo }) {
 							className="d-flex mx-auto my-4"
 							onClick={() => setModalDeleteOrder(true)}
 						>
-							Apagar todos pedidos
+							Apagar todos pedidos já entregues
 						</Button>
 						:
 						null
