@@ -616,7 +616,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					</OverlayTrigger>
 				</Form.Group>
 			</Row>
-			{product && product.ingredients && product.ingredients.length ?
+			{productAddModal || productUpdateModal && productIngredients.length ?
 				<Form.Group controlId="productIngredients">
 					<Form.Label>Ingredientes</Form.Label>
 					<OverlayTrigger
@@ -634,7 +634,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							rows="3"
 							style={{resize :"none"}}
 							placeholder="Ingredientes do produto"
-							required
+							required={productUpdateModal && productIngredients.length}
 						/>
 					</OverlayTrigger>
 				</Form.Group>
