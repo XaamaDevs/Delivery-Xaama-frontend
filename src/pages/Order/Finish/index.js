@@ -287,7 +287,6 @@ export default function FinishOrder({
 					}
 				}).then((response) => {
 					if(response.status === 200) {
-						setIsLoading(false);
 						setFinishOrderStep(finishOrderStep+1);
 						sessionStorage.setItem("userId", response.data.token);
 						setUserId(response.data.token);
@@ -308,6 +307,8 @@ export default function FinishOrder({
 				});
 			}
 		}
+
+		setIsLoading(false);
 	}
 
 	//	Function to get address info via cep api
