@@ -75,7 +75,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	useEffect(() => {
 		setProductId(product ? product._id : "");
 		setProductName(product ? product.name : "");
-		setProductIngredients(product ? product.ingredients.join(", ") : "");
+		setProductIngredients(product && product.ingredients ? product.ingredients.join(", ") : "");
 		setProductPrices(product ? product.prices.join(", ") : "");
 		setProductSizes(product ? product.sizes.join(", ") : "");
 		setProductType(product ? product.type : productTypes[0]);
@@ -428,14 +428,18 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				/>
 				<Card.Body key={productI._id} className="d-flex align-content-between flex-column">
 					<Card.Title>{productI.name}</Card.Title>
-					<Card.Text>
-						{productI.ingredients.map((ingredient, index) => (
-							index === productI.ingredients.length-1 ?
-								ingredient
-								:
-								ingredient + ", "
-						))}
-					</Card.Text>
+					{productI.ingredients && productI.ingredients.length ?
+						<Card.Text>
+							{productI.ingredients.map((ingredient, index) => (
+								index === productI.ingredients.length-1 ?
+									ingredient
+									:
+									ingredient + ", "
+							))}
+						</Card.Text>
+						:
+						null
+					}
 					{userId && user ?
 						user.userType === 1 || user.userType === 2 ?
 							<div className="d-flex justify-content-around flex-wrap my-auto">
@@ -612,27 +616,31 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					</OverlayTrigger>
 				</Form.Group>
 			</Row>
-			<Form.Group controlId="productIngredients">
-				<Form.Label>Ingredientes</Form.Label>
-				<OverlayTrigger
-					placement="top"
-					overlay={
-						<Tooltip>
-								Para múltiplos ingredientes, separe-os entre vírgulas.
-						</Tooltip>
-					}
-				>
-					<Form.Control
-						value={productIngredients}
-						onChange={(e) => setProductIngredients(e.target.value)}
-						as="textarea"
-						rows="3"
-						style={{resize :"none"}}
-						placeholder="Ingredientes do produto"
-						required
-					/>
-				</OverlayTrigger>
-			</Form.Group>
+			{product && product.ingredients && product.ingredients.length ?
+				<Form.Group controlId="productIngredients">
+					<Form.Label>Ingredientes</Form.Label>
+					<OverlayTrigger
+						placement="top"
+						overlay={
+							<Tooltip>
+									Para múltiplos ingredientes, separe-os entre vírgulas.
+							</Tooltip>
+						}
+					>
+						<Form.Control
+							value={productIngredients}
+							onChange={(e) => setProductIngredients(e.target.value)}
+							as="textarea"
+							rows="3"
+							style={{resize :"none"}}
+							placeholder="Ingredientes do produto"
+							required
+						/>
+					</OverlayTrigger>
+				</Form.Group>
+				:
+				null
+			}
 			<Form.Group className={productAddModal ? "d-none" : null}  controlId="productAvailable">
 				<Form.Check
 					type="switch"
@@ -886,17 +894,17 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									<Card.Text>
 										{productOrder.ingredients ? productOrder.ingredients.join(", ") : null}
 									</Card.Text>
-									<OverlayTrigger
-										placement="bottom"
-										overlay={
-											<Tooltip>
-												Você pode inserir no máximo 4 adições ao seu produto.
-											</Tooltip>
-										}
-									>
-										<Carousel interval={null} indicators={false}>
-											{additions && additions.length ?
-												additions.map((add, index) => (
+									{additions && additions.length ?
+										<OverlayTrigger
+											placement="bottom"
+											overlay={
+												<Tooltip>
+													Você pode inserir no máximo 4 adições ao seu produto.
+												</Tooltip>
+											}
+										>
+											<Carousel interval={null} indicators={false}>
+												{additions.map((add, index) => (
 													<Carousel.Item key={index} className="text-dark">
 														<Image
 															className="d-block m-auto"
@@ -906,7 +914,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
 															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-																|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+																	|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 																<Button
 																	variant="light"
 																	id="btn-custom"
@@ -921,32 +929,36 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 															}
 														</Carousel.Caption>
 													</Carousel.Item>
-												))
-												:
-												null
-											}
-										</Carousel>
-									</OverlayTrigger>
+												))}
+											</Carousel>
+										</OverlayTrigger>
+										:
+										null
+									}
 								</Card.Body>
 							</Card>
 						</Col>
 					</Row>
 					<Row>
-						<Col className="my-2" sm>
-							<Card bg="light" text="dark">
-								<Card.Header>Observações</Card.Header>
-								<Card.Body>
-									<Form.Control
-										value={productNote}
-										onChange={e => setProductNote(e.target.value)}
-										placeholder="Digite aqui se você deseja remover algum ingrediente do pedido (opcional)"
-										as="textarea"
-										rows="2"
-										style={{resize :"none"}}
-									/>
-								</Card.Body>
-							</Card>
-						</Col>
+						{productOrder.ingredients ?
+							<Col className="my-2" sm>
+								<Card bg="light" text="dark">
+									<Card.Header>Observações</Card.Header>
+									<Card.Body>
+										<Form.Control
+											value={productNote}
+											onChange={e => setProductNote(e.target.value)}
+											placeholder="Digite aqui se você deseja remover algum ingrediente do pedido (opcional)"
+											as="textarea"
+											rows="2"
+											style={{resize :"none"}}
+										/>
+									</Card.Body>
+								</Card>
+							</Col>
+							:
+							null
+						}
 						{additionsOrder &&  additionsOrder.length ?
 							<Col className="my-2" sm>
 								<Card bg="light" text="dark">
