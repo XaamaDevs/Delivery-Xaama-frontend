@@ -200,6 +200,7 @@ export default function FinishOrder({
 		setIsLoading(true);
 
 		var updateTokenUser = false;
+		var newToken = "";
 
 		await api.get("user", {
 			headers : {
@@ -210,6 +211,7 @@ export default function FinishOrder({
 				sessionStorage.setItem("userId", response.data.token);
 				setUserId(response.data.token);
 				setUser(response.data.user);
+				newToken = response.data.token;
 				updateTokenUser = true;
 			}
 		}).catch((error) => {
@@ -242,7 +244,7 @@ export default function FinishOrder({
 
 			await api.post("order", data, {
 				headers : {
-					"x-access-token": userId
+					"x-access-token": newToken
 				}
 			}).then((response) => {
 				if(response.status === 201) {
@@ -283,7 +285,7 @@ export default function FinishOrder({
 
 				await api.put("user", data, {
 					headers : {
-						"x-access-token": userId
+						"x-access-token": newToken
 					}
 				}).then((response) => {
 					if(response.status === 200) {
