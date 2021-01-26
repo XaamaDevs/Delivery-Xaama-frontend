@@ -39,7 +39,12 @@ export default function Routes() {
 	const [user, setUser] = useState({});
 
 	//	Order state variable
-	const [order, setOrder] = useState({});
+	const [order, setOrder] = useState(
+		sessionStorage.getItem("order") ?
+			JSON.parse(sessionStorage.getItem("order"))
+			:
+			{}
+	);
 
 	//	Company info state variable
 	const [companyInfo, setCompanyInfo] = useState({});
@@ -142,11 +147,29 @@ export default function Routes() {
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route
 					exact path="/login"
-					render={() => !userAuth() ? <Login setUserId={setUserId} setUser={setUser} /> : <Logged />}
+					render={() =>
+						!userAuth() ?
+							<Login
+								setUserId={setUserId}
+								setUser={setUser}
+								order={order}
+							/>
+							:
+							<Logged />
+					}
 				/>
 				<Route
 					exact path="/signup"
-					render={() => !userAuth() ? <Signup setUserId={setUserId} setUser={setUser} /> : <Logged />}
+					render={() =>
+						!userAuth() ?
+							<Signup
+								setUserId={setUserId}
+								setUser={setUser}
+								order={order}
+							/>
+							:
+							<Logged />
+					}
 				/>
 				<Route
 					exact path="/menu"
@@ -180,7 +203,7 @@ export default function Routes() {
 								companySystemOpenByHour={companySystemOpenByHour}
 								noCards={noCards}
 							/>
-							: <Autho />;
+							: <Auth />;
 					}}
 				/>
 				<Route

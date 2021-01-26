@@ -250,7 +250,6 @@ export default function FinishOrder({
 				}
 			}).then((response) => {
 				if(response.status === 201) {
-					setOrder({ products: [] });
 					orderOk = true;
 				}
 			}).catch((error) => {
@@ -268,7 +267,6 @@ export default function FinishOrder({
 			});
 
 			if(orderOk) {
-
 				var status = [];
 
 				user.cards.map((card, index) => (
@@ -291,6 +289,8 @@ export default function FinishOrder({
 					}
 				}).then((response) => {
 					if(response.status === 200) {
+						setOrder({ products: [] });
+						sessionStorage.removeItem("order");
 						setFinishOrderStep(finishOrderStep+1);
 						sessionStorage.setItem("userId", response.data.token);
 						setUserId(response.data.token);
@@ -470,6 +470,7 @@ export default function FinishOrder({
 									className={finishOrderStep === 3 ? "d-none" : "m-3 mt-auto"}
 									onClick={() => {
 										setOrder({});
+										sessionStorage.removeItem("order");
 										history.push("/");
 									}}
 								>
@@ -791,7 +792,7 @@ export default function FinishOrder({
 												<Button
 													variant="warning"
 													className="m-1"
-													onClick={() => { setOrder({}); history.push("/order"); }}
+													onClick={() => history.push("/order")}
 												>
 													Meus Pedidos
 												</Button>
