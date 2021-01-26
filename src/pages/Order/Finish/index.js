@@ -250,8 +250,6 @@ export default function FinishOrder({
 				}
 			}).then((response) => {
 				if(response.status === 201) {
-					setOrder({ products: [] });
-					sessionStorage.removeItem("order");
 					orderOk = true;
 				}
 			}).catch((error) => {
@@ -269,7 +267,6 @@ export default function FinishOrder({
 			});
 
 			if(orderOk) {
-
 				var status = [];
 
 				user.cards.map((card, index) => (
@@ -292,6 +289,8 @@ export default function FinishOrder({
 					}
 				}).then((response) => {
 					if(response.status === 200) {
+						setOrder({ products: [] });
+						sessionStorage.removeItem("order");
 						setFinishOrderStep(finishOrderStep+1);
 						sessionStorage.setItem("userId", response.data.token);
 						setUserId(response.data.token);

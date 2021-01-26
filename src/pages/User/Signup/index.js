@@ -18,7 +18,7 @@ import Push from "../../../components/Push";
 import camera from "../../../assets/camera.svg";
 
 //	Exporting resource to routes.js
-export default function Signup({ setUserId, setUser }) {
+export default function Signup({ setUserId, setUser, order }) {
 	//	User variables
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -59,7 +59,7 @@ export default function Signup({ setUserId, setUser }) {
 					setUserId(sessionStorage.getItem("userId"));
 					setUser(response.data.user);
 
-					history.push("/menu");
+					history.push(order && order.products && order.products.length ? "/finishOrder" : "/menu");
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
@@ -166,5 +166,6 @@ export default function Signup({ setUserId, setUser }) {
 
 Signup.propTypes = {
 	setUserId : PropTypes.func.isRequired,
-	setUser : PropTypes.func.isRequired
+	setUser : PropTypes.func.isRequired,
+	order : PropTypes.object
 };

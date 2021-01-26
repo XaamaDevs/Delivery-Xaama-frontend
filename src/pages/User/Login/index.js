@@ -15,7 +15,7 @@ import Push from "../../../components/Push";
 import api from "../../../services/api";
 
 //	Exporting resource to routes.js
-export default function Login({ setUserId, setUser }) {
+export default function Login({ setUserId, setUser, order }) {
 	//	Session variables
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -42,7 +42,7 @@ export default function Login({ setUserId, setUser }) {
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data.user);
 
-				history.push("/menu");
+				history.push(order && order.products && order.products.length ? "/finishOrder" : "/menu");
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
@@ -105,5 +105,6 @@ export default function Login({ setUserId, setUser }) {
 
 Login.propTypes = {
 	setUserId : PropTypes.func.isRequired,
-	setUser : PropTypes.func.isRequired
+	setUser : PropTypes.func.isRequired,
+	order : PropTypes.object
 };

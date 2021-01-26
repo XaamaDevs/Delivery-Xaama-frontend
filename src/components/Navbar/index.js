@@ -180,50 +180,50 @@ export default function WebsiteNavbar({
 							</NavLink>
 						</Nav.Item>
 					</Nav>
-					{!userId ?
-						<Nav className="ml-auto">
+					<Nav className="ml-auto">
+						{order.products && order.products.length ?
 							<Nav.Item>
 								<NavLink
 									style={{color: "#ffbf00"}}
 									activeClassName="activeRoute"
 									activeStyle={{ color: "white" }}
-									to="/login"
+									to="/finishOrder"
 									className="nav-link mx-2"
 								>
+									<RiShoppingBasketLine size="25" />
+								</NavLink>
+							</Nav.Item>
+							:
+							null
+						}
+						{!userId ?
+							<>
+								<Nav.Item>
+									<NavLink
+										style={{color: "#ffbf00"}}
+										activeClassName="activeRoute"
+										activeStyle={{ color: "white" }}
+										to="/login"
+										className="nav-link mx-2"
+									>
 									Entrar
-								</NavLink>
-							</Nav.Item>
-							<Nav.Item>
-								<NavLink
-									style={{color: "#ffbf00"}}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
-									to="/signup"
-									className="nav-link mx-2"
-								>
+									</NavLink>
+								</Nav.Item>
+								<Nav.Item>
+									<NavLink
+										style={{color: "#ffbf00"}}
+										activeClassName="activeRoute"
+										activeStyle={{ color: "white" }}
+										to="/signup"
+										className="nav-link mx-2"
+									>
 									Cadastrar
-								</NavLink>
-							</Nav.Item>
-						</Nav>
-						:
-						<Nav className="ml-auto">
-							{user.userType === 0 ?
-								<>
-									{order.products && order.products.length ?
-										<Nav.Item>
-											<NavLink
-												style={{color: "#ffbf00"}}
-												activeClassName="activeRoute"
-												activeStyle={{ color: "white" }}
-												to="/finishOrder"
-												className="nav-link mx-2"
-											>
-												<RiShoppingBasketLine size="25" />
-											</NavLink>
-										</Nav.Item>
-										:
-										null
-									}
+									</NavLink>
+								</Nav.Item>
+							</>
+							:
+							<>
+								{user.userType === 0 ?
 									<Nav.Item>
 										<NavLink
 											style={{color: "#ffbf00"}}
@@ -235,33 +235,33 @@ export default function WebsiteNavbar({
 											Meus Pedidos
 										</NavLink>
 									</Nav.Item>
-								</>
-								:
-								null
-							}
-							<Nav.Item>
-								<NavLink
-									style={{color: "#ffbf00"}}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
-									to="/user"
-									className="nav-link mx-2"
-								>
+									:
+									null
+								}
+								<Nav.Item>
+									<NavLink
+										style={{color: "#ffbf00"}}
+										activeClassName="activeRoute"
+										activeStyle={{ color: "white" }}
+										to="/user"
+										className="nav-link mx-2"
+									>
 									Perfil
-								</NavLink>
-							</Nav.Item>
-							<Nav.Item>
-								<NavLink
-									style={{color: "#ffbf00"}}
-									to="#"
-									onClick={handleLogout}
-									className="nav-link mx-2"
-								>
+									</NavLink>
+								</Nav.Item>
+								<Nav.Item>
+									<NavLink
+										style={{color: "#ffbf00"}}
+										to="#"
+										onClick={handleLogout}
+										className="nav-link mx-2"
+									>
 									Sair
-								</NavLink>
-							</Nav.Item>
-						</Nav>
-					}
+									</NavLink>
+								</Nav.Item>
+							</>
+						}
+					</Nav>
 				</Navbar.Collapse>
 			</Navbar>
 

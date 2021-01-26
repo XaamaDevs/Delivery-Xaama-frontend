@@ -346,8 +346,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				setOrder(newOrder);
 				sessionStorage.setItem("order", JSON.stringify(newOrder));
 			} else {
-				setOrder({ products: [product], total: productTotal });
-				sessionStorage.setItem("order", JSON.stringify({ products: [product], total: productTotal }));
+				const newOrder = { products: [product], total: productTotal };
+				setOrder(newOrder);
+				sessionStorage.setItem("order", JSON.stringify(newOrder));
 			}
 
 			setProductOrderModal(false);
@@ -442,87 +443,81 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						:
 						null
 					}
-					{userId && user ?
-						user.userType === 1 || user.userType === 2 ?
-							<div className="d-flex justify-content-around flex-wrap my-auto">
+					{userId && user && (user.userType === 1 || user.userType === 2) ?
+						<div className="d-flex justify-content-around flex-wrap my-auto">
+							<Button
+								className="my-1"
+								variant="warning"
+								size="sm"
+								onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
+							>
+								Modificar
+							</Button>
+							{productI.available ?
 								<Button
 									className="my-1"
-									variant="warning"
+									variant="light"
 									size="sm"
-									onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
+									id="btn-custom"
 								>
-									Modificar
+									Disponível
 								</Button>
-
-								{productI.available ?
-									<Button
-										className="my-1"
-										variant="light"
-										size="sm"
-										id="btn-custom"
-									>
-										Disponível
-									</Button>
-									:
-									<Button
-										className="my-1"
-										variant="light"
-										size="sm"
-										id="btn-custom-outline"
-									>
-										Indisponível
-									</Button>
-								}
-
+								:
 								<Button
 									className="my-1"
-									variant="danger"
+									variant="light"
 									size="sm"
-									onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+									id="btn-custom-outline"
 								>
-									Remover
+									Indisponível
 								</Button>
-							</div>
-							:
-							<>
-								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-									|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
-
-									productI.available ?
-										<Button
-											className="my-auto"
-											variant="warning"
-											size="sm"
-											onClick ={() => {
-												setProductNote("");
-												setAdditionsOrder([]);
-												setProductSize(0);
-												setProductTotal(0);
-												setProductOrder(productI);
-												setProductTotal(productI.prices[0]);
-												setProductOrderModal(true);
-											}}
-										>
-											Adicionar aos pedidos
-										</Button>
-										:
-										<Button
-											variant="danger"
-											size="sm"
-										>
-											Indisponível no momento
-										</Button>
+							}
+							<Button
+								className="my-1"
+								variant="danger"
+								size="sm"
+								onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+							>
+								Remover
+							</Button>
+						</div>
+						:
+						<>
+							{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+							(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+								productI.available ?
+									<Button
+										className="my-auto"
+										variant="warning"
+										size="sm"
+										onClick ={() => {
+											setProductNote("");
+											setAdditionsOrder([]);
+											setProductSize(0);
+											setProductTotal(0);
+											setProductOrder(productI);
+											setProductTotal(productI.prices[0]);
+											setProductOrderModal(true);
+										}}
+									>
+										Adicionar aos pedidos
+									</Button>
 									:
 									<Button
 										variant="danger"
 										size="sm"
 									>
-										Estamos fechados
+										Indisponível no momento
 									</Button>
-								}
-							</>
-						:
-						null
+								:
+								<Button
+									variant="danger"
+									size="sm"
+								>
+									Estamos fechados
+								</Button>
+							}
+						</>
 					}
 				</Card.Body>
 				<Card.Footer>

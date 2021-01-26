@@ -147,11 +147,29 @@ export default function Routes() {
 				<Route exact path="/about" render={() => <About companyInfo={companyInfo} />} />
 				<Route
 					exact path="/login"
-					render={() => !userAuth() ? <Login setUserId={setUserId} setUser={setUser} /> : <Logged />}
+					render={() =>
+						!userAuth() ?
+							<Login
+								setUserId={setUserId}
+								setUser={setUser}
+								order={order}
+							/>
+							:
+							<Logged />
+					}
 				/>
 				<Route
 					exact path="/signup"
-					render={() => !userAuth() ? <Signup setUserId={setUserId} setUser={setUser} /> : <Logged />}
+					render={() =>
+						!userAuth() ?
+							<Signup
+								setUserId={setUserId}
+								setUser={setUser}
+								order={order}
+							/>
+							:
+							<Logged />
+					}
 				/>
 				<Route
 					exact path="/menu"
@@ -185,7 +203,7 @@ export default function Routes() {
 								companySystemOpenByHour={companySystemOpenByHour}
 								noCards={noCards}
 							/>
-							: <Autho />;
+							: <Auth />;
 					}}
 				/>
 				<Route
