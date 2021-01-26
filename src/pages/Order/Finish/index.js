@@ -60,6 +60,7 @@ export default function FinishOrder({
 	const [orderDeliverAddressComplement, setOrderDeliverAddressComplement] = useState("");
 	const [orderDeliver, setOrderDeliver] = useState(false);
 	const [orderDeliverCoupon, setOrderDeliverCoupon] = useState(null);
+	const [orderCouponValidated, setOrderCouponValidated] = useState(false);
 	const [orderDeliverChange, setOrderDeliverChange] = useState(null);
 	const [orderDeliverCardsDiscount, setOrderDeliverCardsDiscount] = useState(null);
 	const [orderDeliverTotal, setOrderDeliverTotal] = useState(null);
@@ -139,6 +140,7 @@ export default function FinishOrder({
 		setOrderDeliverTotal(order.total - cardsDiscount);
 		setOrderDeliverChange(order.total - cardsDiscount);
 		setCouponDiscountText("");
+		setOrderCouponValidated(false);
 	}, [orderType]);
 
 	//	Update order total and change when coupon is added or updated
@@ -328,6 +330,7 @@ export default function FinishOrder({
 				}
 			}).then((response) => {
 				if(response.status === 200) {
+					setOrderCouponValidated(true);
 					setTitle("Sucesso!");
 					setMessage("Cupom validado.");
 					setToastShow(true);
@@ -679,7 +682,7 @@ export default function FinishOrder({
 												<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
 													<Form.Label>Cupons:</Form.Label>
 													<Form.Control
-														value={""}
+														value={null}
 														onChange={e => {
 															const cpn = userCoupons.find(c => c.name === e.target.value);
 															setOrderDeliverCoupon(cpn ? cpn : null);
@@ -695,7 +698,8 @@ export default function FinishOrder({
 														}}
 														as="select"
 														placeholder="Cupons"
-														required
+														required={!orderCouponValidated}
+														disabled={orderCouponValidated}
 													>
 														<option disabled>Selecione o cupom desejado</option>
 														<option>Sem cupom</option>
@@ -732,6 +736,7 @@ export default function FinishOrder({
 														size="sm"
 														className="my-2"
 														onClick={validateCoupon}
+														disabled={orderCouponValidated}
 													>
 											Validar cupom
 													</Button>
