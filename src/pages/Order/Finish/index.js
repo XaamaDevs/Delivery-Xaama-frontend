@@ -251,6 +251,7 @@ export default function FinishOrder({
 			}).then((response) => {
 				if(response.status === 201) {
 					setOrder({ products: [] });
+					sessionStorage.removeItem("order");
 					orderOk = true;
 				}
 			}).catch((error) => {
@@ -470,6 +471,7 @@ export default function FinishOrder({
 									className={finishOrderStep === 3 ? "d-none" : "m-3 mt-auto"}
 									onClick={() => {
 										setOrder({});
+										sessionStorage.removeItem("order");
 										history.push("/");
 									}}
 								>
@@ -791,7 +793,7 @@ export default function FinishOrder({
 												<Button
 													variant="warning"
 													className="m-1"
-													onClick={() => { setOrder({}); history.push("/order"); }}
+													onClick={() => history.push("/order")}
 												>
 													Meus Pedidos
 												</Button>

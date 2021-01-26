@@ -338,14 +338,16 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				note: productNote
 			};
 
-			if(order.products) {
+			if(order.products && order.products.length) {
 				var newOrder = order;
 				newOrder["products"].push(product);
 				newOrder["total"] += productTotal;
 
 				setOrder(newOrder);
+				sessionStorage.setItem("order", JSON.stringify(newOrder));
 			} else {
-				setOrder({ products: [product], deliver: false, total: productTotal, address: user.address });
+				setOrder({ products: [product], total: productTotal });
+				sessionStorage.setItem("order", JSON.stringify({ products: [product], total: productTotal }));
 			}
 
 			setProductOrderModal(false);

@@ -83,6 +83,7 @@ export default function WebsiteNavbar({
 			setUserId("");
 			setUser({});
 			setOrder({});
+			sessionStorage.removeItem("order");
 
 			history.push("/");
 		} catch (error) {

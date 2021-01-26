@@ -39,7 +39,12 @@ export default function Routes() {
 	const [user, setUser] = useState({});
 
 	//	Order state variable
-	const [order, setOrder] = useState({});
+	const [order, setOrder] = useState(
+		sessionStorage.getItem("order") ?
+			JSON.parse(sessionStorage.getItem("order"))
+			:
+			{}
+	);
 
 	//	Company info state variable
 	const [companyInfo, setCompanyInfo] = useState({});
