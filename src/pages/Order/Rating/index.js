@@ -70,34 +70,33 @@ export default function Ratings({ userId, user }) {
 		value: PropTypes.number.isRequired,
 	};
 
-	async function load(response) {
-		var data = [];
-	
-		for(var rating of response.data) {
-			await fetch(process.env.REACT_APP_API_URL + rating.thumbnail_url).then((response) => {
-				if(response && response.status && response.status === 200) {
-					data.push(rating);
-				} else if(response && response.status && response.status === 404) {
+	useEffect(() => {
+		async function verifyRatingThumbnail(response) {
+			var data = [];
+
+			for(var rating of response.data) {
+				await fetch(process.env.REACT_APP_API_URL + rating.thumbnail_url).then((response) => {
+					if(response && response.status && response.status === 200) {
+						data.push(rating);
+					} else if(response && response.status && response.status === 404) {
+						rating.thumbnail = "";
+						rating.thumbnail_url = "";
+						data.push(rating);
+					}
+				}).catch(() => {
 					rating.thumbnail = "";
 					rating.thumbnail_url = "";
 					data.push(rating);
-				} 
-			}).catch(() => {
-				rating.thumbnail = "";
-				rating.thumbnail_url = "";
-				data.push(rating);
-			});
+				});
+			}
+			setRatings(data);
 		}
-		setRatings(data);
-	}
 
-
-	useEffect(() => {
 		async function fetchData() {
 			await api.get("ratingAll")
 				.then((response) => {
 					if(response.status === 200) {
-						load(response);
+						verifyRatingThumbnail(response);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
