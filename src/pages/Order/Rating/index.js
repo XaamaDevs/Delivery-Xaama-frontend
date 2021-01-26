@@ -70,12 +70,34 @@ export default function Ratings({ userId, user }) {
 		value: PropTypes.number.isRequired,
 	};
 
+	async function load(response) {
+		var data = [];
+	
+		for(var rating of response.data) {
+			await fetch(process.env.REACT_APP_API_URL + rating.thumbnail_url).then((response) => {
+				if(response && response.status && response.status === 200) {
+					data.push(rating);
+				} else if(response && response.status && response.status === 404) {
+					rating.thumbnail = "";
+					rating.thumbnail_url = "";
+					data.push(rating);
+				} 
+			}).catch(() => {
+				rating.thumbnail = "";
+				rating.thumbnail_url = "";
+				data.push(rating);
+			});
+		}
+		setRatings(data);
+	}
+
+
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("ratingAll")
 				.then((response) => {
 					if(response.status === 200) {
-						setRatings(response.data);
+						load(response);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -176,7 +198,7 @@ export default function Ratings({ userId, user }) {
 								(!userId && rating.approved) ||
 								(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
 								(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
-									<Col key={rating._id} className="my-2">
+									<Col key={rating._id} className="my-2" >
 										<Card text="white" bg="dark">
 											<Card.Header>
 												<Row>
@@ -184,8 +206,8 @@ export default function Ratings({ userId, user }) {
 														<Image
 															className="w-100"
 															style={{ borderRadius: "50%" }}
-															src={rating.thumbnail ? process.env.REACT_APP_API_URL + rating.thumbnail_url: camera }
 															alt="thumbnail"
+															src={rating.thumbnail_url ? process.env.REACT_APP_API_URL + rating.thumbnail_url : camera}
 															fluid
 														/>
 													</Col>
