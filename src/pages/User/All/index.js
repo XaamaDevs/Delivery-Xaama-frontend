@@ -126,7 +126,7 @@ export default function AllUsers({ userId }) {
 	}
 
 	return (
-		<div className="all-container w-100">
+		<>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
@@ -259,7 +259,7 @@ export default function AllUsers({ userId }) {
 			</Modal>
 
 			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
-		</div>
+		</>
 	);
 }
 

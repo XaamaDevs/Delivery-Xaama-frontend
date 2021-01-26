@@ -210,7 +210,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	return (
-		<div className="all-container p-0 w-100">
+		<>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Container className="d-flex h-100">
@@ -405,7 +405,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				title={title}
 				message={message}
 			/>
-		</div>
+		</>
 	);
 }
 

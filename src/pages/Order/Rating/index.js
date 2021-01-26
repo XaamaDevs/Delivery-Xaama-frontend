@@ -90,6 +90,7 @@ export default function Ratings({ userId, user }) {
 				});
 			}
 			setRatings(data);
+			setIsLoading(false);
 		}
 
 		async function fetchData() {
@@ -113,8 +114,6 @@ export default function Ratings({ userId, user }) {
 						setToastShow(true);
 					}
 				});
-
-			setIsLoading(false);
 		}
 
 		fetchData();

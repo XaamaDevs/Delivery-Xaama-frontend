@@ -188,7 +188,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	return (
-		<div className="all-container p-0 w-100">
+		<>
 			{isLoading ?
 				<Container className="d-flex h-100">
 					<Spinner
@@ -405,7 +405,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
-		</div>
+		</>
 	);
 }
 
