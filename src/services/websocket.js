@@ -1,20 +1,9 @@
 import socketio from "socket.io-client";
 
-const socket = socketio("http://localhost:4000", {
+const socket = socketio(process.env.REACT_APP_API_URL, {
 	autoConnect: false,
 });
 
-function subscribeToNewUsers(subcribeFunction) {
-	socket.on("new-user", subcribeFunction);
-}
-
-function subscribeToUpdateUsers(subcribeFunction) {
-	socket.on("update-user", subcribeFunction);
-}
-
-function subscribeToDeleteUsers(subcribeFunction) {
-	socket.on("delete-user", subcribeFunction);
-}
 
 function subscribeToNewOrders(subcribeFunction) {
 	socket.on("new-order", subcribeFunction);
@@ -41,10 +30,7 @@ async function disconnect() {
 export {
 	connect,
 	disconnect,
-	subscribeToNewUsers,
 	subscribeToNewOrders,
-	subscribeToDeleteUsers,
 	subscribeToDeleteOrders,
-	subscribeToUpdateUsers,
 	subscribeToUpdateOrders,
 };

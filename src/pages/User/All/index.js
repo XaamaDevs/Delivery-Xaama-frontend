@@ -18,14 +18,6 @@ import camera from "../../../assets/camera.svg";
 // Importing backend api
 import api from "../../../services/api";
 
-import {
-	connect,
-	disconnect,
-	subscribeToNewUsers,
-	subscribeToDeleteUsers,
-	subscribeToUpdateUsers
-} from "../../../services/websocket";
-
 //	Exporting resource to routes.js
 export default function AllUsers({ userId }) {
 	const [users, setUsers] = useState([]);
@@ -44,16 +36,6 @@ export default function AllUsers({ userId }) {
 	const [toastShow, setToastShow] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
-	async function setupWebSocket() {
-		disconnect();
-		connect();
-	}
-
-	useEffect(() => {
-		subscribeToNewUsers(u => setUsers([...users, u]));
-		subscribeToUpdateUsers(u => setUsers(u));
-		subscribeToDeleteUsers(u => setUsers(u));
-	}, [users]);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -64,7 +46,6 @@ export default function AllUsers({ userId }) {
 			}).then((response) => {
 				if(response.status === 200) {
 					setUsers(response.data);
-					setupWebSocket();
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
@@ -166,16 +147,16 @@ export default function AllUsers({ userId }) {
 									</Card.Header>
 									<Card.Body>
 										<Card.Text>
-											<p>
+											<Card.Text>
 												{user.phone ? "Telefone: " + user.phone : "Telefone não informado"}
-											</p>
-											<p>
+											</Card.Text>
+											<Card.Text>
 												{user.address && user.address.length ?
 													"Endereço: " + user.address.join(", ")
 													:
 													"Endereço não informado"
 												}
-											</p>
+											</Card.Text>
 											<div className="d-flex justify-content-between">
 												{((user.userType !== 2)) ?
 													<Button
