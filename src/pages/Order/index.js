@@ -39,13 +39,12 @@ import api from "../../services/api";
 import {
 	connect,
 	disconnect,
-	subscribeToNewOrders,
 	subscribeToUpdateOrders,
 	subscribeToDeleteOrders
 } from "../../services/websocket";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, companyInfo }) {
+export default function AllOrders({ userId, user, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
@@ -103,18 +102,12 @@ export default function AllOrders({ userId, companyInfo }) {
 
 	useEffect(() => {
 		function filterOrders(o) {
-			let resp = o.filter(f => ( f.user._id === userId ));
+			console.log(o);
+			let resp = o.filter(f => ( f.user._id === user._id ));
+			console.log(resp);
 			return resp && resp.length ? resp : null;
 		}
 
-		async function newOrders(o) {
-			const resp = await filterOrders(o);
-			if(resp && resp.length) {
-				setOrders([...orders, resp]);
-			}
-		}
-
-		subscribeToNewOrders(o => newOrders(o));
 		subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
 		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders, userId]);
@@ -411,5 +404,6 @@ export default function AllOrders({ userId, companyInfo }) {
 
 AllOrders.propTypes = {
 	userId : PropTypes.string.isRequired,
+	user : PropTypes.string.isRequired,
 	companyInfo : PropTypes.object.isRequired,
 };

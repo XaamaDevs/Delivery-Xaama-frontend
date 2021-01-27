@@ -186,7 +186,14 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/order"
-					render={() => { return userAuth() ? <Order userId={userId} companyInfo={companyInfo} /> : <Auth />; }}
+					render={() => { 
+						return userAuth() ? 
+							<Order 
+								userId={userId}
+								user={user}
+								companyInfo={companyInfo} 
+							/> 
+							: <Auth />; }}
 				/>
 				<Route
 					exact path="/finishOrder"
