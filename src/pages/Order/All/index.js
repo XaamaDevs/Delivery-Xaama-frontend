@@ -195,6 +195,8 @@ export default function AllOrders({ userId, companyInfo }) {
 				setModalAlert(true);
 			}
 		}).catch((error) => {
+			setUserPasswordOnDelete("");
+			setModalDeleteOrder(false);
 			setTitle("Erro!");
 			if(error.response && error.response.status === 400) {
 				setMessage(error.response.data);
