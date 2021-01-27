@@ -75,12 +75,12 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400) {
+				if(error.response && error.response.status === 400) {
 					setMessage(error.response.data);
 					setToastShow(true);
-				} else if(error.response.status === 404) {
+				} else if(error.response && error.response.status === 404) {
 					setOrders([]);
-				} else if(error.response.status === 500) {
+				} else if(error.response && error.response.status === 500) {
 					setMessage(error.message);
 					setToastShow(true);
 				} else {
@@ -110,11 +110,11 @@ export default function AllOrders({ userId, companyInfo }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400) {
+			if(error.response && error.response.status === 400) {
 				setMessage(error.response.data);
-			} else if(error.response.status === 404) {
+			} else if(error.response && error.response.status === 404) {
 				setMessage(error.response.data);
-			} else if(error.response.status === 500) {
+			} else if(error.response && error.response.status === 500) {
 				setMessage(error.message);
 			} else {
 				setMessage("Algo deu errado :(");
@@ -156,11 +156,11 @@ export default function AllOrders({ userId, companyInfo }) {
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
-				if(error.response.status === 400) {
+				if(error.response && error.response.status === 400) {
 					setMessage(error.response.data);
-				} else if(error.response.status === 404) {
+				} else if(error.response && error.response.status === 404) {
 					setMessage(error.response.data);
-				} else if(error.response.status === 500) {
+				} else if(error.response && error.response.status === 500) {
 					setMessage(error.message);
 				} else {
 					setMessage("Algo deu errado :(");
@@ -196,11 +196,11 @@ export default function AllOrders({ userId, companyInfo }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400) {
+			if(error.response && error.response.status === 400) {
 				setMessage(error.response.data);
-			} else if(error.response.status === 404) {
+			} else if(error.response && error.response.status === 404) {
 				setMessage(error.response.data);
-			} else if(error.response.status === 500) {
+			} else if(error.response && error.response.status === 500) {
 				setMessage(error.message);
 			} else {
 				setMessage("Algo deu errado :(");

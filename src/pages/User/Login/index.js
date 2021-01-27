@@ -46,9 +46,9 @@ export default function Login({ setUserId, setUser, order }) {
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
-			if(error.response.status === 400) {
+			if(error.response && error.response.status === 400) {
 				setMessage(error.response.data);
-			} else if(error.response.status === 500) {
+			} else if(error.response && error.response.status === 500) {
 				setMessage(error.message);
 			} else {
 				setMessage("Algo deu errado :(");
