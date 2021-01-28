@@ -11,7 +11,7 @@ import { Jumbotron, Carousel, Image } from "react-bootstrap";
 //	Exporting resource to routes.js
 export default function Home({ companyInfo }) {
 	return (
-		<div className="website-container d-flex flex-row flex-wrap align-items-center m-0 p-0 h-100">
+		<div className="d-flex flex-row flex-wrap align-items-center my-auto">
 			<Jumbotron className="col-sm mr-4 p-0 pl-5 bg-transparent">
 				<h1 className="display-5 font-italic text-white">Está com fome?</h1>
 				<h1 className="display-1 text-white">Não espere!</h1>
@@ -44,6 +44,7 @@ export default function Home({ companyInfo }) {
 		</div>
 	);
 }
+
 Home.propTypes = {
 	companyInfo : PropTypes.object.isRequired
 };
