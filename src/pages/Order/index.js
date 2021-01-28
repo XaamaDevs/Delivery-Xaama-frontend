@@ -102,14 +102,12 @@ export default function AllOrders({ userId, user, companyInfo }) {
 
 	useEffect(() => {
 		function filterOrders(o) {
-			console.log(o);
 			let resp = o.filter(f => ( f.user._id === user._id ));
-			console.log(resp);
 			return resp && resp.length ? resp : null;
 		}
 
 		subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
-		subscribeToDeleteOrders(o => setOrders(o));
+		subscribeToDeleteOrders(o => setOrders(filterOrders(o)));
 	}, [orders, userId]);
 
 	useEffect(() => {
