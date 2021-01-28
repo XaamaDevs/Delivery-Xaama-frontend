@@ -504,7 +504,7 @@ export default function Additions({ userId }) {
 				</Modal.Header>
 				<Modal.Body>
 					<Row>
-						<Col className="d-flex justify-content-center m-auto" sm="6">
+						<Col className="d-flex text-center flex-column m-auto" sm="6">
 							<Form onSubmit={handleAdditionThumbnailUpdate}>
 								<Form.Control
 									id="inputImage"

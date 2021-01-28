@@ -749,7 +749,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Header>
 				<Modal.Body>
 					<Row>
-						<Col className="d-flex justify-content-center m-auto" sm="6">
+						<Col className="d-flex text-center flex-column m-auto" sm="6">
 							<Form onSubmit={handleProductThumbnailUpdate}>
 								<Form.Control
 									id="inputImage"
@@ -760,7 +760,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								/>
 								<Image
 									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
-									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+									className={preview || productThumbnail_url ? "btn border-0 m-auto" : "btn w-75 m-auto"}
 									src={preview ? preview : (productThumbnail_url ? process.env.REACT_APP_API_URL + productThumbnail_url : camera)}
 									alt="Selecione sua imagem"
 									onClick={() => document.getElementById("inputImage").click()}
