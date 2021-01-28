@@ -205,7 +205,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/user"
-					render={() => {
+					render={() =>
 						userAuth() ?
 							<User
 								userId={userId}
@@ -215,8 +215,10 @@ export default function Routes() {
 								companyInfo={companyInfo}
 								setCompanyInfo={setCompanyInfo}
 								noCards={noCards}
-							/> : <Auth />;
-					}}
+							/>
+							:
+							<Auth />
+					}
 				/>
 				<Route
 					exact path="/cards"
