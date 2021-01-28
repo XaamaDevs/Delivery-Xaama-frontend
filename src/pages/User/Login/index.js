@@ -48,6 +48,8 @@ export default function Login({ setUserId, setUser, order }) {
 			setTitle("Erro!");
 			if(error.response && error.response.status === 400) {
 				setMessage(error.response.data);
+			} else if(error.response && error.response.status === 404) {
+				setMessage(error.response.data);
 			} else if(error.response && error.response.status === 500) {
 				setMessage(error.message);
 			} else {
