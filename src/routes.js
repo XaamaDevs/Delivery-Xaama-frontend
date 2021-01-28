@@ -203,7 +203,7 @@ export default function Routes() {
 								:
 								<Redirect to="/menu" />
 							:
-							<Login />
+							<Redirect to="/login" />
 					}
 				/>
 				<Route
