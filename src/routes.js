@@ -225,11 +225,30 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/cards"
-					render={() => userId ? (adminAuth() ? <Cards companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
+					render={() =>
+						userId ?
+							(adminAuth() ?
+								<Cards companyInfo={companyInfo} userId={userId} />
+								:
+								<Autho />
+							)
+							:
+							<Auth />
+					}
 				/>
 				<Route
 					exact path="/coupons"
-					render={() => userId ? (adminAuth() ? <Coupons companyInfo={companyInfo} userId={userId} /> : <Autho />) : <Auth />}
+					render={() =>
+						userId ?
+							(adminAuth() ?
+								<Coupons companyInfo={companyInfo} userId={userId} />
+								:
+								<Autho />
+							)
+							:
+							<Auth />
+					}
+
 				/>
 				<Route
 					exact path="/additions"
@@ -237,7 +256,16 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/allorders"
-					render={() => userId ? (managerAuth() ? <AllOrders userId={userId} companyInfo={companyInfo} /> : <Autho />) : <Auth />}
+					render={() =>
+						userId ?
+							(managerAuth() ?
+								<AllOrders userId={userId} companyInfo={companyInfo} />
+								:
+								<Autho />
+							)
+							:
+							<Auth />
+					}
 				/>
 				<Route
 					exact path="/allusers"
