@@ -36,7 +36,10 @@ export default function WebsiteNavbar({
 	const [modalTimetable, setModalTimetable] = useState(false);
 
 	//  Current day of the week and time
-	const [systemTime, setSystemTime] = useState(data && data.getHours() && data.getMinutes() ? data.getHours() + ":" + data.getMinutes() : "");
+	const [systemTime, setSystemTime] = useState(
+		data && data.getHours() && data.getMinutes() ?
+			data.getHours() + ":" + data.getMinutes() : ""
+	);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -44,13 +47,13 @@ export default function WebsiteNavbar({
 	//  Updating system time
 	useEffect(() => {
 		function systemOpen() {
-			const openHour = data && companyInfo && companyInfo.timetable &&
-											companyInfo.timetable[data.getDay()].beginHour ?
-				companyInfo.timetable[data.getDay()].beginHour : "";
+			const openHour =
+				data && companyInfo && companyInfo.timetable && companyInfo.timetable[data.getDay()].beginHour ?
+					companyInfo.timetable[data.getDay()].beginHour : "";
 
-			const endHour = data && companyInfo && companyInfo.timetable &&
-											companyInfo.timetable[data.getDay()].endHour ?
-				companyInfo.timetable[data.getDay()].endHour : "";
+			const endHour =
+				data && companyInfo && companyInfo.timetable && companyInfo.timetable[data.getDay()].endHour ?
+					companyInfo.timetable[data.getDay()].endHour : "";
 
 			const current = new Date("2020-07-28 " + systemTime);
 			const open = new Date("2020-07-28 " + openHour);
@@ -97,7 +100,7 @@ export default function WebsiteNavbar({
 				<NavLink to="/" className="navbar-brand text-warning mx-5 p-0">
 					{companyInfo.logo ?
 						<Image
-							className={"border-0 m-auto"}
+							className="border-0 m-auto"
 							width="100px"
 							src={process.env.REACT_APP_API_URL + companyInfo.logo_url}
 							alt="Logo"
@@ -112,7 +115,7 @@ export default function WebsiteNavbar({
 					<Nav className="mr-auto">
 						<Nav.Item>
 							<NavLink
-								style={{color: "#ffbf00"}}
+								style={{ color: "#ffbf00" }}
 								exact activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
 								to="/"
@@ -123,7 +126,7 @@ export default function WebsiteNavbar({
 						</Nav.Item>
 						<Nav.Item>
 							<NavLink
-								style={{color: "#ffbf00"}}
+								style={{ color: "#ffbf00" }}
 								activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
 								to="/menu"
@@ -135,7 +138,7 @@ export default function WebsiteNavbar({
 						{user && (user.userType === 1 || user.userType === 2) ?
 							<Nav.Item>
 								<NavLink
-									style={{color: "#ffbf00"}}
+									style={{ color: "#ffbf00" }}
 									activeClassName="activeRoute"
 									activeStyle={{ color: "white" }}
 									to="/additions"
@@ -149,7 +152,7 @@ export default function WebsiteNavbar({
 						}
 						<Nav.Item>
 							<NavLink
-								style={{color: "#ffbf00"}}
+								style={{ color: "#ffbf00" }}
 								activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
 								to="/about"
@@ -160,7 +163,7 @@ export default function WebsiteNavbar({
 						</Nav.Item>
 						<Nav.Item>
 							<NavLink
-								style={{color: "#ffbf00"}}
+								style={{ color: "#ffbf00" }}
 								activeClassName="activeRoute"
 								activeStyle={{ color: "white" }}
 								className="nav-link mx-2"
@@ -171,7 +174,7 @@ export default function WebsiteNavbar({
 						</Nav.Item>
 						<Nav.Item>
 							<NavLink
-								style={{color: "#ffbf00"}}
+								style={{ color: "#ffbf00" }}
 								className="nav-link mx-2"
 								to="#"
 								onClick={() => setModalTimetable(true)}
@@ -184,7 +187,7 @@ export default function WebsiteNavbar({
 						{order.products && order.products.length ?
 							<Nav.Item>
 								<NavLink
-									style={{color: "#ffbf00"}}
+									style={{ color: "#ffbf00" }}
 									activeClassName="activeRoute"
 									activeStyle={{ color: "white" }}
 									to="/finishOrder"
@@ -200,7 +203,7 @@ export default function WebsiteNavbar({
 							<>
 								<Nav.Item>
 									<NavLink
-										style={{color: "#ffbf00"}}
+										style={{ color: "#ffbf00" }}
 										activeClassName="activeRoute"
 										activeStyle={{ color: "white" }}
 										to="/login"
@@ -211,7 +214,7 @@ export default function WebsiteNavbar({
 								</Nav.Item>
 								<Nav.Item>
 									<NavLink
-										style={{color: "#ffbf00"}}
+										style={{ color: "#ffbf00" }}
 										activeClassName="activeRoute"
 										activeStyle={{ color: "white" }}
 										to="/signup"
@@ -226,7 +229,7 @@ export default function WebsiteNavbar({
 								{user.userType === 0 ?
 									<Nav.Item>
 										<NavLink
-											style={{color: "#ffbf00"}}
+											style={{ color: "#ffbf00" }}
 											activeClassName="activeRoute"
 											activeStyle={{ color: "white" }}
 											to="/order"
@@ -240,7 +243,7 @@ export default function WebsiteNavbar({
 								}
 								<Nav.Item>
 									<NavLink
-										style={{color: "#ffbf00"}}
+										style={{ color: "#ffbf00" }}
 										activeClassName="activeRoute"
 										activeStyle={{ color: "white" }}
 										to="/user"
@@ -251,7 +254,7 @@ export default function WebsiteNavbar({
 								</Nav.Item>
 								<Nav.Item>
 									<NavLink
-										style={{color: "#ffbf00"}}
+										style={{ color: "#ffbf00" }}
 										to="#"
 										onClick={handleLogout}
 										className="nav-link mx-2"
@@ -275,8 +278,8 @@ export default function WebsiteNavbar({
 					<Modal.Title>Horário de Funcionamento</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					{
-						(companyInfo && companyInfo.timetable && companyInfo.timetable.length ? companyInfo.timetable.map((t, index) => (
+					{(companyInfo && companyInfo.timetable && companyInfo.timetable.length ?
+						companyInfo.timetable.map((t, index) => (
 							<Row key={index} className="mt-2">
 								<Col className="text-center my-2 ml-auto p-0 pl-2">
 									{t.dayWeek}:
@@ -303,17 +306,17 @@ export default function WebsiteNavbar({
 								)}
 							</Row>
 						))
-							:
-							<Row>
-								<Col className="my-2" md="auto">
+						:
+						<Row>
+							<Col className="my-2" md="auto">
 								Horário indisponível
-								</Col>
-							</Row>
-						)}
+							</Col>
+						</Row>
+					)}
 				</Modal.Body>
 				<Modal.Footer>
-					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+					(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button
 							variant="light"
 							size="md"
