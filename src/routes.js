@@ -66,7 +66,7 @@ export default function Routes() {
 	const orderAuth = () => userId && order && order.products;
 
 	//  Update system time every 25 minutes
-	setTimeout(setDate(new Date()), 1500000);
+	setTimeout(() => setDate(new Date()), 1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
