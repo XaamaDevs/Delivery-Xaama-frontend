@@ -59,11 +59,14 @@ export default function Routes() {
 	// Aux Variables
 	const [noCards, setNoCards] = useState(true);
 
+	//	Authetication function
+	const adminAuth = () => user && (user.userType === 2);
+	const managerAuth = () => user && (user.userType === 1 || user.userType === 2);
+	const userAuth = () => userId;
+	const orderAuth = () => userId && order && order.products;
+
 	//  Update system time every 25 minutes
-	function currentTime() {
-		setDate(new Date());
-	}
-	setTimeout(currentTime, 1500000);
+	setTimeout(setDate(new Date()), 1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
@@ -105,22 +108,6 @@ export default function Routes() {
 			));
 		}
 	}, [companyInfo]);
-
-	function adminAuth() {
-		return (user && (user.userType === 2));
-	}
-
-	function managerAuth() {
-		return (user && (user.userType === 1 || user.userType === 2));
-	}
-
-	function userAuth() {
-		return userId;
-	}
-
-	function orderAuth() {
-		return userId && order && order.products;
-	}
 
 	if(isLoading) {
 		return (<Loading />);
@@ -186,19 +173,21 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/order"
-					render={() => { 
-						return userAuth() ? 
-							<Order 
+					render={() =>
+						userAuth() ?
+							<Order
 								userId={userId}
 								user={user}
-								companyInfo={companyInfo} 
-							/> 
-							: <Auth />; }}
+								companyInfo={companyInfo}
+							/>
+							:
+							<Auth />
+					}
 				/>
 				<Route
 					exact path="/finishOrder"
-					render={() => {
-						return orderAuth() ?
+					render={() =>
+						orderAuth() ?
 							<FinishOrder
 								userId={userId}
 								setUserId={setUserId}
@@ -210,13 +199,14 @@ export default function Routes() {
 								companySystemOpenByHour={companySystemOpenByHour}
 								noCards={noCards}
 							/>
-							: <Auth />;
-					}}
+							:
+							<Auth />
+					}
 				/>
 				<Route
 					exact path="/user"
 					render={() => {
-						return userAuth() ?
+						userAuth() ?
 							<User
 								userId={userId}
 								setUserId={setUserId}
@@ -238,9 +228,7 @@ export default function Routes() {
 				/>
 				<Route
 					exact path="/additions"
-					render={() => {
-						return userId ? (managerAuth() ? <Additions userId={userId} /> : <Autho />) : <Auth />;
-					}}
+					render={() => userId ? (managerAuth() ? <Additions userId={userId} /> : <Autho />) : <Auth />}
 				/>
 				<Route
 					exact path="/allorders"
