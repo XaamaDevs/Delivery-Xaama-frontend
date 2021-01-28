@@ -2,7 +2,7 @@
 import React, {useState, useEffect} from "react";
 
 //	Importing Route features to manage app routes
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 //	Importing all app pages
 import HomePage from "./pages/Website/Home";
@@ -63,7 +63,7 @@ export default function Routes() {
 	const adminAuth = () => user && (user.userType === 2);
 	const managerAuth = () => user && (user.userType === 1 || user.userType === 2);
 	const userAuth = () => userId;
-	const orderAuth = () => userId && order && order.products;
+	const orderAuth = () => order && order.products;
 
 	//  Update system time every 25 minutes
 	setTimeout(() => setDate(new Date()), 1500000);
@@ -187,20 +187,23 @@ export default function Routes() {
 				<Route
 					exact path="/finishOrder"
 					render={() =>
-						orderAuth() ?
-							<FinishOrder
-								userId={userId}
-								setUserId={setUserId}
-								user={user}
-								setUser={setUser}
-								order={order}
-								setOrder={setOrder}
-								companyInfo={companyInfo}
-								companySystemOpenByHour={companySystemOpenByHour}
-								noCards={noCards}
-							/>
+						userAuth() ?
+							orderAuth() ?
+								<FinishOrder
+									userId={userId}
+									setUserId={setUserId}
+									user={user}
+									setUser={setUser}
+									order={order}
+									setOrder={setOrder}
+									companyInfo={companyInfo}
+									companySystemOpenByHour={companySystemOpenByHour}
+									noCards={noCards}
+								/>
+								:
+								<Redirect to="/menu" />
 							:
-							<Auth />
+							<Login />
 					}
 				/>
 				<Route
