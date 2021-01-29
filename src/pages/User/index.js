@@ -640,6 +640,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											id="inputImage"
 											className="d-none"
 											type="file"
+											accept="image/*"
 											onChange={event => setThumbnail(event.target.files[0])}
 											required
 										/>
