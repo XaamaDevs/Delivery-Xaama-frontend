@@ -1743,9 +1743,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Modal.Footer>
 			</Modal>
 
-			<Alert.Close
+			<Alert.Refresh
 				modalAlert={modalAlert}
-				setModalAlert={setModalAlert}
 				title={title}
 				message={message}
 			/>
