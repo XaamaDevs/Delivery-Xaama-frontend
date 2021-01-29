@@ -278,6 +278,7 @@ export default function Orders({ userId, user, companyInfo }) {
 														<Button
 															variant="danger"
 															className="m-1 mx-auto"
+															disabled
 														>
 															Pedido sendo preparado
 														</Button>
@@ -288,6 +289,7 @@ export default function Orders({ userId, user, companyInfo }) {
 																	<Button
 																		variant="warning"
 																		className="m-1 mx-auto"
+																		disabled
 																	>
 																		Pedido a caminho
 																	</Button>
@@ -303,6 +305,7 @@ export default function Orders({ userId, user, companyInfo }) {
 																<Button
 																	variant="warning"
 																	className="m-1 mx-auto"
+																	disabled
 																>
 																	Pedido entregue
 																</Button>

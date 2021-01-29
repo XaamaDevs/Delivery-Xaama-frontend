@@ -321,12 +321,14 @@ export default function WebsiteNavbar({
 							variant="light"
 							size="md"
 							id="btn-custom"
+							disabled
 						>
 							Aberto agora
 						</Button>
 						:
 						<Button
 							variant="danger"
+							disabled
 						>
 							Fechado
 						</Button>

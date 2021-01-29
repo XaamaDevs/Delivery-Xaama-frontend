@@ -91,12 +91,11 @@ export default function Routes() {
 				.then((response) => {
 					if(response.status === 200) {
 						setCompanyInfo(response.data);
+						setIsLoading(false);
 					}
 				}).catch(() => {
 					setCompanyInfo({});
 				});
-
-			setIsLoading(false);
 		}
 
 		fetchData();
