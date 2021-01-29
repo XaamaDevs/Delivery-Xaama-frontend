@@ -6,11 +6,12 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Card, CardDeck, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs, Tab, Spinner } from "react-bootstrap";
+import { Card, CardDeck, Image, Button, Form, Col, Row, Modal, ProgressBar, Tabs, Tab } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
+import Loading from "../../components/Loading";
 
 //	Importing React icons features
 import {
@@ -1527,6 +1528,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Control
 										className="d-none"
 										type="file"
+										accept="image/*"
 										onChange={event => setLogo(event.target.files[0])}
 										required
 									/>
@@ -1574,6 +1576,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									id="inputCarouselC1"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => {setC1(event.target.files[0]);}}
 									required
 								/>
@@ -1614,6 +1617,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									id="inputCarouselC2"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => {setC2(event.target.files[0]);}}
 									required
 								/>
@@ -1654,6 +1658,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									id="inputCarouselC3"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => {setC3(event.target.files[0]);}}
 									required
 								/>
@@ -1706,12 +1711,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					<AllCoupons />
 					<Card className="px-3" text="dark" bg="ligth">
 						{isLoading ?
-							<Spinner
-								className="my-5 mx-auto"
-								style={{width: "5rem", height: "5rem"}}
-								animation="grow"
-								variant="warning"
-							/>
+							<Loading animation="grow" />
 							:
 							coupons && coupons.length ?
 								<CardDeck className="p-2">

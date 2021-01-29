@@ -6,11 +6,12 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Image, Card, CardDeck } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../../components/Alert";
 import Push from "../../../components/Push";
+import Loading from "../../../components/Loading";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
@@ -110,14 +111,7 @@ export default function AllUsers({ userId }) {
 		<>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
-				<Container className="d-flex h-100">
-					<Spinner
-						className="m-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
-				</Container>
+				<Loading animation="grow" />
 				:
 				<CardDeck className="mx-3">
 					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >

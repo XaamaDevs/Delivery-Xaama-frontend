@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 //	Importing React Bootstrap features
 import {
 	Container,
-	Spinner,
 	Nav,
 	Card,
 	Button,
@@ -20,6 +19,7 @@ import {
 //	Importing website utils
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
+import Loading from "../../components/Loading";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -412,12 +412,7 @@ export default function Additions({ userId }) {
 			<Card className="px-3" text="light" bg="dark">
 				{header}
 				{isLoading ?
-					<Spinner
-						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
+					<Loading animation="grow" />
 					:
 					additions.length ?
 						<CardDeck className="p-2">
@@ -455,6 +450,7 @@ export default function Additions({ userId }) {
 									id="inputImage"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 								/>
 								<Image
@@ -510,6 +506,7 @@ export default function Additions({ userId }) {
 									id="inputImage"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => setAdditionThumbnail(event.target.files[0])}
 									required
 								/>

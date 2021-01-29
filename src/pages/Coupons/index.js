@@ -12,13 +12,13 @@ import {
 	Col,
 	Row,
 	Nav,
-	Container,
-	Spinner
+	Container
 } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
+import Loading from "../../components/Loading";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -512,12 +512,7 @@ export default function Coupons({ userId, companyInfo }) {
 			<Card className="px-3" text="light" bg="dark">
 				{header}
 				{isLoading ?
-					<Spinner
-						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
+					<Loading animation="grow" />
 					:
 					coupons && coupons.length ?
 						<CardDeck className="p-2">

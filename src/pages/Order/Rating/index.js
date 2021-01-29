@@ -2,18 +2,19 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+//	Importing React features
+import { Button, Row, Col, Modal, Image, Card, CardDeck } from "react-bootstrap";
+
 //	Importing website utils
 import Alert from "../../../components/Alert";
 import Push from "../../../components/Push";
+import Loading from "../../../components/Loading";
 
 // Importing backend api
 import api from "../../../services/api";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
-
-//	Importing React features
-import { Button, Row, Col, Modal, Spinner, Container, Image, Card, CardDeck } from "react-bootstrap";
 
 //	Importing Material-ui features
 import Rating from "@material-ui/lab/Rating";
@@ -180,14 +181,7 @@ export default function Ratings({ userId, user }) {
 	return (
 		<>
 			{isLoading ?
-				<Container className="d-flex h-100">
-					<Spinner
-						className="m-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
-				</Container>
+				<Loading animation="grow" />
 				:
 				<CardDeck className="mx-3">
 					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >

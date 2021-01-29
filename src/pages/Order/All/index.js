@@ -10,8 +10,6 @@ import {
 	Modal,
 	Row,
 	Col,
-	Spinner,
-	Container,
 	Image,
 	Form
 } from "react-bootstrap";
@@ -20,6 +18,7 @@ import {
 import Alert from "../../../components/Alert";
 import Push from "../../../components/Push";
 import ProductDeck from "../../../components/ProductDeck";
+import Loading from "../../../components/Loading";
 
 // Importing image from camera
 import camera from "../../../assets/camera.svg";
@@ -215,14 +214,7 @@ export default function AllOrders({ userId, companyInfo }) {
 		<>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
-				<Container className="d-flex h-100">
-					<Spinner
-						className="m-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
-				</Container>
+				<Loading animation="grow" />
 				:
 				<div className="p-0 w-100">
 					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
@@ -352,12 +344,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				</Modal.Header>
 				<Modal.Body>
 					{isLoading ?
-						<Spinner
-							className="my-5 mx-auto"
-							style={{width: "5rem", height: "5rem"}}
-							animation="grow"
-							variant="warning"
-						/>
+						<Loading animation="grow" />
 						:
 						<ProductDeck products={order && order.products ? order.products : []} />
 					}

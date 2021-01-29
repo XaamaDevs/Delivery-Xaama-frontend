@@ -7,7 +7,6 @@ import {
 	Container,
 	Carousel,
 	Modal,
-	Spinner,
 	OverlayTrigger,
 	Tooltip,
 	Nav,
@@ -23,6 +22,7 @@ import {
 //	Importing website utils
 import Alert from "../../components/Alert";
 import Push from "../../components/Push";
+import Loading from "../../components/Loading";
 
 //	Importing api to communicate to backend
 import api from "../../services/api";
@@ -168,6 +168,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									setToastShow(true);
 								}
 							});
+
+						setIsLoading(false);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -184,8 +186,6 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						setToastShow(true);
 					}
 				});
-
-			setIsLoading(false);
 		}
 
 		fetchData();
@@ -653,30 +653,28 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	return (
 		<Container className="product-container w-100">
 			<Card className="px-3" text="light" bg="dark">
-				{header}
 				{isLoading ?
-					<Spinner
-						className="my-5 mx-auto"
-						style={{width: "5rem", height: "5rem"}}
-						animation="grow"
-						variant="warning"
-					/>
+					<Loading animation="grow" />
 					:
-					products && products.length ?
-						<CardDeck className="p-2">
-							{Array(products.length).fill(null).map((value, i) => (
-								i%3 === 0 ?
-									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-										{Array(3).fill(null).map((value, j) => (
-											i+j < products.length ? productCard(products[i+j]) : null
-										))}
-									</Row>
-									:
-									null
-							))}
-						</CardDeck>
-						:
-						<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de produto desejado acima</h1>
+					<>
+						{header}
+						{products && products.length ?
+							<CardDeck className="p-2">
+								{Array(products.length).fill(null).map((value, i) => (
+									i%3 === 0 ?
+										<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
+											{Array(3).fill(null).map((value, j) => (
+												i+j < products.length ? productCard(products[i+j]) : null
+											))}
+										</Row>
+										:
+										null
+								))}
+							</CardDeck>
+							:
+							<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de produto desejado acima</h1>
+						}
+					</>
 				}
 			</Card>
 
@@ -698,6 +696,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									id="inputImage"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => setProductThumbnail(event.target.files[0])}
 								/>
 								<Image
@@ -755,6 +754,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									id="inputImage"
 									className="d-none"
 									type="file"
+									accept="image/*"
 									onChange={event => setProductThumbnail(event.target.files[0])}
 									required
 								/>

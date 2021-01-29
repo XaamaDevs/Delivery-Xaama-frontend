@@ -84,6 +84,7 @@ export default function Signup({ setUserId, setUser, order }) {
 						<Form.Control
 							className="d-none"
 							type="file"
+							accept="image/*"
 							onChange={e => setThumbnail(e.target.files[0])}
 						/>
 						<Image
