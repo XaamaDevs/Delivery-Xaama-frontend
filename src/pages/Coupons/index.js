@@ -60,9 +60,9 @@ export default function Coupons({ userId, companyInfo }) {
 	//	Update coupon state variables
 	useEffect(() => {
 		setCouponUserId(coupon && coupon.private && coupon.userId && users ?
-			users.find(u => u._id === coupon.userId).email
+			users.find(u => u._id === coupon.userId) ? users.find(u => u._id === coupon.userId).email : ""
 			:
-			users && users[0] ?
+			users && users[0] && users[0].email ?
 				users[0].email
 				:
 				""
