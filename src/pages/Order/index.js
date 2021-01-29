@@ -44,7 +44,7 @@ import {
 } from "../../services/websocket";
 
 //	Exporting resource to routes.js
-export default function AllOrders({ userId, user, companyInfo }) {
+export default function Orders({ userId, user, companyInfo }) {
 	//	Order state variables
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState("");
@@ -400,8 +400,8 @@ export default function AllOrders({ userId, user, companyInfo }) {
 	);
 }
 
-AllOrders.propTypes = {
+Orders.propTypes = {
 	userId : PropTypes.string.isRequired,
-	user : PropTypes.string.isRequired,
-	companyInfo : PropTypes.object.isRequired,
+	user : PropTypes.object.isRequired,
+	companyInfo : PropTypes.object.isRequired
 };

@@ -54,7 +54,8 @@ export default function Routes() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	//  Defining constant for manipulating the time
-	const [date, setDate] = useState(new Date());
+
+	const [date, setDate] = useState(new Date(new Date().toLocaleString("en-US", { timeZone : "America/Sao_Paulo" })));
 
 	// Aux Variables
 	const [noCards, setNoCards] = useState(true);
@@ -66,7 +67,7 @@ export default function Routes() {
 	const orderAuth = () => order && order.products;
 
 	//  Update system time every 25 minutes
-	setTimeout(() => setDate(new Date()), 1500000);
+	setTimeout(() => setDate(new Date(new Date().toLocaleString("en-US", { timeZone : "America/Sao_Paulo" }))), 1500000);
 
 	//	Fetching current user data
 	useEffect(() => {
