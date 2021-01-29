@@ -118,7 +118,7 @@ export default function Additions({ userId }) {
 		}
 
 		fetchData();
-	}, [productTypes]);
+	}, []);
 
 	async function handleAdditionAdd(event) {
 		event.preventDefault();

@@ -93,9 +93,81 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("productTypes")
-				.then((response) => {
-					if(response.status === 200) {
-						setProductTypes(response.data);
+				.then((resProdTypes) => {
+					if(resProdTypes.status === 200) {
+						setProductTypes(resProdTypes.data);
+
+						api.get("product")
+							.then((response) => {
+								if(response.status === 200) {
+									var prodsByType = {};
+
+									for(var type of resProdTypes.data) {
+										var prods = [];
+
+										for(var product of response.data) {
+											if(product.type === type) {
+												prods.push(product);
+											}
+										}
+
+										prodsByType[type] = prods;
+									}
+
+									setProductsByType(prodsByType);
+								}
+							}).catch((error) => {
+								setTitle("Erro!");
+								if(error.response && error.response.status === 400) {
+									setMessage(error.response.data);
+									setToastShow(true);
+								} else if(error.response && error.response.status === 404) {
+									setProductsByType({});
+								} else if(error.response && error.response.status === 500) {
+									setMessage(error.message);
+									setToastShow(true);
+								} else {
+									setMessage("Algo deu errado :(");
+									setToastShow(true);
+								}
+							});
+
+						api.get("addition")
+							.then((response) => {
+								if(response.status === 200) {
+									var AddsByType = {};
+
+									for(var type of resProdTypes.data) {
+										var adds = [];
+
+										for(var addition of response.data) {
+											if(addition.type.indexOf(type) >= 0) {
+												if(addition.available){
+													adds.push(addition);
+												}
+											}
+										}
+
+										AddsByType[type] = adds;
+									}
+
+									setAdditionsByType(AddsByType);
+								}
+							}).catch((error) => {
+								setTitle("Erro!");
+								if(error.response && error.response.status === 400) {
+									setMessage(error.response.data);
+									setToastShow(true);
+								} else if(error.response && error.response.status === 404) {
+									setAdditionsByType({});
+								} else if(error.response && error.response.status === 500) {
+									setMessage(error.message);
+									setToastShow(true);
+								} else {
+									setMessage("Algo deu errado :(");
+									setToastShow(true);
+								}
+							});
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -113,83 +185,11 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					}
 				});
 
-			await api.get("product")
-				.then((response) => {
-					if(response.status === 200) {
-						var prodsByType = {};
-
-						for(var type of productTypes) {
-							var prods = [];
-
-							for(var product of response.data) {
-								if(product.type === type) {
-									prods.push(product);
-								}
-							}
-
-							prodsByType[type] = prods;
-						}
-
-						setProductsByType(prodsByType);
-					}
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && error.response.status === 400) {
-						setMessage(error.response.data);
-						setToastShow(true);
-					} else if(error.response && error.response.status === 404) {
-						setProductsByType({});
-					} else if(error.response && error.response.status === 500) {
-						setMessage(error.message);
-						setToastShow(true);
-					} else {
-						setMessage("Algo deu errado :(");
-						setToastShow(true);
-					}
-				});
-
-			await api.get("addition")
-				.then((response) => {
-					if(response.status === 200) {
-						var AddsByType = {};
-
-						for(var type of productTypes) {
-							var adds = [];
-
-							for(var addition of response.data) {
-								if(addition.type.indexOf(type) >= 0) {
-									if(addition.available){
-										adds.push(addition);
-									}
-								}
-							}
-
-							AddsByType[type] = adds;
-						}
-
-						setAdditionsByType(AddsByType);
-					}
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && error.response.status === 400) {
-						setMessage(error.response.data);
-						setToastShow(true);
-					} else if(error.response && error.response.status === 404) {
-						setAdditionsByType({});
-					} else if(error.response && error.response.status === 500) {
-						setMessage(error.message);
-						setToastShow(true);
-					} else {
-						setMessage("Algo deu errado :(");
-						setToastShow(true);
-					}
-				});
-
 			setIsLoading(false);
 		}
 
 		fetchData();
-	}, [productTypes]);
+	}, []);
 
 	async function handleProductAdd(event) {
 		event.preventDefault();
