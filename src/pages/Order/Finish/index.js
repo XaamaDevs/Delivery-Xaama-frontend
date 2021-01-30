@@ -367,11 +367,7 @@ export default function FinishOrder({
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(!orderDeliverAddressNumber || !orderDeliverAddressNumber.length) {
-			setTitle("Erro!");
-			setMessage("Número da residência inválido!");
-			setToastShow(true);
-		} else if(!orderDeliverAddressCep || orderDeliverAddressCep.length != 8) {
+		if(!orderDeliverAddressCep || orderDeliverAddressCep.length != 8) {
 			setTitle("Erro!");
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);

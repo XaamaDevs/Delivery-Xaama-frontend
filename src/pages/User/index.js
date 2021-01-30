@@ -204,16 +204,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			s.push(c.status);
 		}
 
-		const address = userComplement && userComplement.length ?
-			[userAddress, userNumber, userNeighborhood, userComplement]
-			:
-			[userAddress, userNumber, userNeighborhood];
+		const address = [];
+		if(userAddress && userAddress.length) {
+			address.push(userAddress);
+			address.push(userNumber);
+			address.push(userNeighborhood);
+			if(userComplement && userComplement.length) {
+				address.push(userComplement);
+			}
+		}
 
 		var data = {
 			name: userName,
 			email: userEmail.toLowerCase(),
 			phone: userPhone && userPhone.length ? userPhone : "",
-			address: address.join(", "),
+			address: address.length ? address.join(", ") : null,
 			status: s,
 		};
 
@@ -529,11 +534,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(!userNumber.length) {
-			setTitle("Erro!");
-			setMessage("Número da residência inválido!");
-			setToastShow(true);
-		} else if(userCep.length != 8) {
+		if(!userCep || userCep.length != 8) {
 			setTitle("Erro!");
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
@@ -972,6 +973,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									type="tel"
 									min="0"
 									placeholder="Ex. 45"
+									required={userAddress.length}
 								/>
 							</Form.Group>
 						</Row>
@@ -983,6 +985,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									onChange={e => setUserNeighborhood(e.target.value)}
 									type="text"
 									placeholder="Ex. Belvedere"
+									required={userAddress.length}
 								/>
 							</Form.Group>
 							<Form.Group as={Col} controlId="userComplement" sm>
