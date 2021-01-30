@@ -28,14 +28,13 @@ export default function Login({ setUserId, setUser, order }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
-
 	// Configuring recaptcha
 	const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
 
 	useEffect(() => {
 		const loadScriptByURL = (id, url, callback) => {
 			const isScriptExist = document.getElementById(id);
-	
+
 			if (!isScriptExist) {
 				var script = document.createElement("script");
 				script.type = "text/javascript";
@@ -51,7 +50,7 @@ export default function Login({ setUserId, setUser, order }) {
 				callback();
 			}
 		};
-		
+
 		// load the script by passing the URL
 		loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`);
 	}, []);
@@ -80,6 +79,7 @@ export default function Login({ setUserId, setUser, order }) {
 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data.user);
+				//document.getElementsByClassName("grecaptcha-badge")[0].style = "visibility: hidden";
 
 				history.push(order && order.products && order.products.length ? "/finishOrder" : "/menu");
 			}
@@ -101,7 +101,7 @@ export default function Login({ setUserId, setUser, order }) {
 	return (
 		<div className="user-container d-flex h-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
-			<Form className="col-sm-3 py-3 m-auto text-white">
+			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleOnClick}>
 				<Form.Group controlId="email">
 					<Form.Label>Email</Form.Label>
 					<Form.Control
@@ -134,7 +134,7 @@ export default function Login({ setUserId, setUser, order }) {
 				</Row>
 				<Row className="my-3">
 					<Col className="text-center">
-						<Button variant="warning" onClick={handleOnClick}>
+						<Button variant="warning" type="submit">
 							Acessar
 						</Button>
 					</Col>
