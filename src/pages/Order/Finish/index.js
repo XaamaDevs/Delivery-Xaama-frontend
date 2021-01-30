@@ -53,9 +53,10 @@ export default function FinishOrder({
 	noCards
 }) {
 	//	Order state variables
-	const [orderDeliverAddress, setOrderDeliverAddress] = useState("");
 	const [orderDeliverPhone, setOrderDeliverPhone] = useState("");
+	const [orderDeliverAddress, setOrderDeliverAddress] = useState("");
 	const [orderDeliverAddressNumber, setOrderDeliverAddressNumber] = useState("");
+	const [orderDeliverAddressNeighborhood, setOrderDeliverAddressNeighborhood] = useState("");
 	const [orderDeliverAddressCep, setOrderDeliverAddressCep] = useState("");
 	const [orderDeliverAddressComplement, setOrderDeliverAddressComplement] = useState("");
 	const [orderDeliver, setOrderDeliver] = useState(false);
@@ -127,8 +128,9 @@ export default function FinishOrder({
 			});
 		}
 
-		setOrderDeliverAddress(user.address && user.address.length ? user.address.join(", ") : "");
-		setOrderDeliverAddressNumber(user.address && user.address.length ? user.address[1] : null);
+		setOrderDeliverAddress(user.address && user.address[0] ? user.address[0] : "");
+		setOrderDeliverAddressNumber(user.address && user.address[1] ? user.address[1] : null);
+		setOrderDeliverAddressNeighborhood(user.address && user.address[2] ? user.address[2] : "");
 		setOrderDeliverAddressComplement(user.address && user.address[3] ? user.address[3] : "");
 		setOrderDeliverAddressCep(null);
 		setOrderDeliverPhone(user.phone && user.phone.length ? user.phone : "");
@@ -233,10 +235,20 @@ export default function FinishOrder({
 		if(updateTokenUser) {
 			var orderOk = false;
 
+			const address = orderDeliverAddressComplement && orderDeliverAddressComplement.length ?
+				[
+					orderDeliverAddress,
+					orderDeliverAddressNumber,
+					orderDeliverAddressNeighborhood,
+					orderDeliverAddressComplement
+				]
+				:
+				[orderDeliverAddress, orderDeliverAddressNumber, orderDeliverAddressNeighborhood];
+
 			var data = {
 				products: order.products,
 				deliver: orderDeliver,
-				address: orderDeliverAddress,
+				address: address.join(", "),
 				phone: orderDeliverPhone,
 				typePayment: orderDeliverPaymentMethod,
 				change: orderDeliverChange,
@@ -375,8 +387,9 @@ export default function FinishOrder({
 						setMessage("O CEP não contém todas as informações! Digite o endereço manualmente.");
 						setToastShow(true);
 					}	else {
-						const complement = orderDeliverAddressComplement.length ? ", " + orderDeliverAddressComplement : "";
-						setOrderDeliverAddress(`${response.data.logradouro}, ${orderDeliverAddressNumber}, ${response.data.bairro}${complement}`);
+						setOrderDeliverAddress(response.data.logradouro);
+						setOrderDeliverAddressNeighborhood(response.data.bairro);
+						setOrderDeliverAddressComplement(response.data.complemento);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -532,6 +545,45 @@ export default function FinishOrder({
 											{orderDeliver ?
 												<>
 													<Row>
+														<Form.Group as={Col} controlId="userCep" sm>
+															<Form.Label>CEP</Form.Label>
+															<Form.Control
+																value={orderDeliverAddressCep}
+																onChange={e => setOrderDeliverAddressCep(e.target.value)}
+																type="tel"
+																min="0"
+																max="99999999"
+																placeholder="CEP"
+															/>
+															<Button
+																variant="light"
+																id="btn-custom"
+																size="sm"
+																className="my-2"
+																onClick={getAddressInfo}
+															>
+																Verificar CEP
+															</Button>
+															<Button
+																variant="warning"
+																size="sm"
+																className="mx-2 my-2"
+																onClick={() => window.open("https://buscacepinter.correios.com.br/app/endereco/index.php")}
+															>
+																Não sei meu CEP
+															</Button>
+														</Form.Group>
+														<Form.Group as={Col} controlId="orderDeliverAddress" sm>
+															<Form.Label>Endereço</Form.Label>
+															<Form.Control
+																value={orderDeliverAddress}
+																onChange={e => setOrderDeliverAddress(e.target.value)}
+																type="text"
+																placeholder="Ex. Avenida Prudente de Moraes"
+																disabled={!orderDeliver}
+																required={orderDeliver}
+															/>
+														</Form.Group>
 														<Form.Group as={Col} controlId="orderDeliverAddressNumber" sm>
 															<Form.Label>Número da residência</Form.Label>
 															<Form.Control
@@ -539,7 +591,22 @@ export default function FinishOrder({
 																onChange={e => setOrderDeliverAddressNumber(e.target.value)}
 																type="tel"
 																min="0"
-																placeholder="Número"
+																placeholder="Ex. 45"
+																disabled={!orderDeliver}
+																required={orderDeliver}
+															/>
+														</Form.Group>
+													</Row>
+													<Row>
+														<Form.Group as={Col} controlId="orderDeliverAddressNeighborhood" sm>
+															<Form.Label>Bairro</Form.Label>
+															<Form.Control
+																value={orderDeliverAddressNeighborhood}
+																onChange={e => setOrderDeliverAddressNeighborhood(e.target.value)}
+																type="text"
+																placeholder="Ex. Belvedere"
+																disabled={!orderDeliver}
+																required={orderDeliver}
 															/>
 														</Form.Group>
 														<Form.Group as={Col} controlId="orderDeliverAddressComplement" sm>
@@ -550,41 +617,6 @@ export default function FinishOrder({
 																type="text"
 																placeholder="Complemento (opcional)"
 															/>
-														</Form.Group>
-													</Row>
-													<Row>
-														<Form.Group as={Col} controlId="orderDeliverAddressCep" sm>
-															<Form.Label>CEP</Form.Label>
-															<Form.Control
-																value={orderDeliverAddressCep}
-																onChange={e => setOrderDeliverAddressCep(e.target.value)}
-																type="tel"
-																placeholder="CEP"
-															/>
-															<Button
-																variant="light"
-																id="btn-custom"
-																size="sm"
-																className="my-2"
-																onClick={getAddressInfo}
-															>
-															Verificar CEP
-															</Button>
-														</Form.Group>
-														<Form.Group as={Col} controlId="orderDeliverAddress" sm>
-															<Form.Label>Endereço de entrega:</Form.Label>
-															<Form.Control
-																value={orderDeliverAddress}
-																onChange={e => setOrderDeliverAddress(e.target.value)}
-																type="text"
-																pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-																placeholder="Rua, Número, Bairro, Complemento (opcional)"
-																disabled={!orderDeliver}
-																required={orderDeliver}
-															/>
-															<Form.Text className="text-muted">
-																Separe rua, número, bairro e complemento por vírgula
-															</Form.Text>
 														</Form.Group>
 													</Row>
 												</>
