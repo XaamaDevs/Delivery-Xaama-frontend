@@ -17,8 +17,13 @@ export default function ProductDeck({ bg, text, products }) {
 						<Row>
 							<Col className="d-flex text-center" sm="6">
 								<Image
-									className={product.product.thumbnail_url ? "w-100 m-auto" : "w-75 m-auto"}
-									src={product.product.thumbnail_url ? process.env.REACT_APP_API_URL + product.product.thumbnail_url : camera}
+									className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
+									src={
+										product.product.thumbnail ?
+											process.env.REACT_APP_API_URL + "files/" + product.product.thumbnail
+											:
+											camera
+									}
 									alt="thumbnail"
 									fluid
 									rounded
