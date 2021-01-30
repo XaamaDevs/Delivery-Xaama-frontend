@@ -27,6 +27,7 @@ import {
 import Alert from "../../../components/Alert";
 import Push from "../../../components/Push";
 import ProductDeck from "../../../components/ProductDeck";
+import Loading from "../../../components/Loading";
 
 //	Importing React icons features
 import {
@@ -53,6 +54,7 @@ export default function FinishOrder({
 	noCards
 }) {
 	//	Order state variables
+	const [orderDeliverProducts, setOrderDeliverProducts] = useState([]);
 	const [orderDeliverPhone, setOrderDeliverPhone] = useState("");
 	const [orderDeliverAddress, setOrderDeliverAddress] = useState("");
 	const [orderDeliverAddressNumber, setOrderDeliverAddressNumber] = useState("");
@@ -76,7 +78,7 @@ export default function FinishOrder({
 	// Aux variables
 	const [orderType, setOrderType] = useState(new Map);
 	const [couponDiscountText, setCouponDiscountText] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
 
@@ -109,6 +111,62 @@ export default function FinishOrder({
 					setToastShow(true);
 				}
 			});
+
+			const prods = [];
+			for(const prod of order.products) {
+				const p = { size : prod.size, note : prod.note };
+
+				await api.get("product/" + prod.product)
+					.then((resProd) => {
+						if(resProd.status === 200) {
+							p["product"] = resProd.data;
+						}
+					}).catch((error) => {
+						setTitle("Erro!");
+						if(error.response && error.response.status === 400) {
+							setMessage(error.response.data);
+							setToastShow(true);
+						} else if(error.response && error.response.status === 404) {
+							setUserCoupons([]);
+						} else if(error.response && error.response.status === 500) {
+							setMessage(error.message);
+							setToastShow(true);
+						} else {
+							setMessage("Algo deu errado :(");
+							setToastShow(true);
+						}
+					});
+
+				const adds = [];
+				for(const add of prod.additions) {
+					await api.get("addition/" + add)
+						.then((response) => {
+							if(response.status === 200) {
+								adds.push(response.data);
+							}
+						}).catch((error) => {
+							setTitle("Erro!");
+							if(error.response && error.response.status === 400) {
+								setMessage(error.response.data);
+								setToastShow(true);
+							} else if(error.response && error.response.status === 404) {
+								setUserCoupons([]);
+							} else if(error.response && error.response.status === 500) {
+								setMessage(error.message);
+								setToastShow(true);
+							} else {
+								setMessage("Algo deu errado :(");
+								setToastShow(true);
+							}
+						});
+				}
+
+				p["additions"] = adds;
+				prods.push(p);
+			}
+
+			setOrderDeliverProducts(prods);
+			setIsLoading(false);
 		}
 
 		fetchData();
@@ -172,8 +230,8 @@ export default function FinishOrder({
 			var myMapTypesProducts = new Map();
 
 			//	Calculate order total price
-			if(order && order.products){
-				for(var x of order.products) {
+			if(orderDeliverProducts){
+				for(var x of orderDeliverProducts) {
 					if(x.size >= 0 && x.size < x.product.prices.length) {
 						myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
 							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) :
@@ -493,7 +551,11 @@ export default function FinishOrder({
 									<Tab.Pane eventKey={0}>
 										<Row>
 											<Col>
-												<ProductDeck products={order.products} />
+												{isLoading ?
+													<Loading animation="grow" />
+													:
+													<ProductDeck products={orderDeliverProducts} />
+												}
 											</Col>
 										</Row>
 										<Row className="text-right">
