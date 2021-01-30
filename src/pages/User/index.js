@@ -31,13 +31,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	const [userName, setUserName] = useState("");
 	const [userEmail, setUserEmail] = useState("");
 	const [userPhone, setUserPhone] = useState("");
-	const [userAddress, setUserAddress] = useState("");
 	const [userPasswordO, setUserPasswordO] = useState("");
 	const [userPasswordN, setUserPasswordN] = useState("");
 	const [userPasswordOnDelete, setUserPasswordOnDelete] = useState("");
 	const [thumbnail, setThumbnail] = useState(null);
-	const [userCep, setUserCep] = useState("");
-	const [userNumber, setUserNumber] = useState("");
+	const [userCep, setUserCep] = useState(null);
+	const [userAddress, setUserAddress] = useState("");
+	const [userNumber, setUserNumber] = useState(null);
+	const [userNeighborhood, setUserNeighborhood] = useState("");
 	const [userComplement, setUserComplement] = useState("");
 
 	//	Company variable
@@ -103,10 +104,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		setUserName(user.name);
 		setUserEmail(user.email);
 		setUserPhone(user.phone ? user.phone : "");
-		setUserAddress(user.address ? user.address.join(", ") : "");
-		setUserNumber("");
-		setUserCep("");
-		setUserComplement("");
+		setUserAddress(user.address && user.address[0] ? user.address[0] : "");
+		setUserNumber(user.address && user.address[1] ? user.address[1] : null);
+		setUserNeighborhood(user.address && user.address[2] ? user.address[2] : "");
+		setUserComplement(user.address && user.address[3] ? user.address[3] : "");
+		setUserCep(null);
 	}, [modal1Show, modal2Show]);
 
 	//	Update company state variables
@@ -202,11 +204,21 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			s.push(c.status);
 		}
 
+		const address = [];
+		if(userAddress && userAddress.length) {
+			address.push(userAddress);
+			address.push(userNumber);
+			address.push(userNeighborhood);
+			if(userComplement && userComplement.length) {
+				address.push(userComplement);
+			}
+		}
+
 		var data = {
 			name: userName,
 			email: userEmail.toLowerCase(),
 			phone: userPhone && userPhone.length ? userPhone : "",
-			address: userAddress && userAddress.length ? userAddress : "",
+			address: address.length ? address.join(", ") : null,
 			status: s,
 		};
 
@@ -309,7 +321,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 				setTitle("Alterações de usuário");
 				setMessage(response.data);
-				setToastShow(true);
+				setModalAlert(true);
 				history.push("/");
 			}
 		}).catch((error) => {
@@ -522,11 +534,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	async function getAddressInfo(event) {
 		event.preventDefault();
 
-		if(!userNumber.length) {
-			setTitle("Erro!");
-			setMessage("Número da residência inválido!");
-			setToastShow(true);
-		} else if(userCep.length != 8) {
+		if(!userCep || userCep.length != 8) {
 			setTitle("Erro!");
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
@@ -542,8 +550,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 						setMessage("O CEP não contém todas as informações! Digite o endereço manualmente.");
 						setToastShow(true);
 					}	else {
-						const complement = userComplement.length ? ", " + userComplement : "";
-						setUserAddress(`${response.data.logradouro}, ${userNumber}, ${response.data.bairro}${complement}`);
+						setUserAddress(response.data.logradouro);
+						setUserNeighborhood(response.data.bairro);
+						setUserComplement(response.data.complemento);
 					}
 				}).catch((error) => {
 					setTitle("Erro!");
@@ -885,108 +894,109 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				<Modal.Body>
 					<Form onSubmit={(e) => handleUserUpdate(e)}>
 						<Row>
-							<Col sm>
-								<Form.Group controlId="userName">
-									<Form.Label>Nome</Form.Label>
-									<Form.Control
-										value={userName}
-										onChange={e => setUserName(e.target.value)}
-										type="text"
-										placeholder="Nome de usuário"
-										required
-									/>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="userEmail">
-									<Form.Label>Email</Form.Label>
-									<Form.Control
-										value={userEmail}
-										onChange={e => setUserEmail(e.target.value)}
-										type="email"
-										placeholder="Seu email"
-										required
-									/>
-								</Form.Group>
-							</Col>
+							<Form.Group as={Col} controlId="userName" sm>
+								<Form.Label>Nome</Form.Label>
+								<Form.Control
+									value={userName}
+									onChange={e => setUserName(e.target.value)}
+									type="text"
+									placeholder="Nome de usuário"
+									required
+								/>
+							</Form.Group>
+							<Form.Group as={Col} controlId="userEmail" sm>
+								<Form.Label>Email</Form.Label>
+								<Form.Control
+									value={userEmail}
+									onChange={e => setUserEmail(e.target.value)}
+									type="email"
+									placeholder="Seu email"
+									required
+								/>
+							</Form.Group>
 						</Row>
 						<Row>
-							<Col sm>
-								<Form.Group controlId="userNumber">
-									<Form.Label>Número da residência</Form.Label>
-									<Form.Control
-										value={userNumber}
-										onChange={e => setUserNumber(e.target.value)}
-										type="number"
-										min="0"
-										placeholder="Número"
-									/>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="userComplement">
-									<Form.Label>Complemento</Form.Label>
-									<Form.Control
-										value={userComplement}
-										onChange={e => setUserComplement(e.target.value)}
-										type="text"
-										placeholder="Complemento (opcional)"
-									/>
-								</Form.Group>
-							</Col>
+							<Form.Group as={Col} controlId="userPhone" sm>
+								<Form.Label>Telefone</Form.Label>
+								<Form.Control
+									value={userPhone}
+									onChange={e => setUserPhone(e.target.value)}
+									type="tel"
+									pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
+									placeholder="(__) _ ____-____"
+								/>
+							</Form.Group>
+							<Form.Group as={Col} controlId="userCep" sm>
+								<Form.Label>CEP</Form.Label>
+								<Form.Control
+									value={userCep}
+									onChange={e => setUserCep(e.target.value)}
+									type="tel"
+									min="0"
+									max="99999999"
+									placeholder="CEP"
+								/>
+								<Button
+									variant="light"
+									id="btn-custom"
+									size="sm"
+									className="my-2"
+									onClick={getAddressInfo}
+								>
+									Verificar CEP
+								</Button>
+								<Button
+									variant="warning"
+									size="sm"
+									className="mx-2 my-2"
+									onClick={() => window.open("https://buscacepinter.correios.com.br/app/endereco/index.php")}
+								>
+									Não sei meu CEP
+								</Button>
+							</Form.Group>
 						</Row>
 						<Row>
-							<Col sm>
-								<Form.Group controlId="userCep">
-									<Form.Label>CEP</Form.Label>
-									<Form.Control
-										value={userCep}
-										onChange={e => setUserCep(e.target.value)}
-										type="number"
-										min="0"
-										max="99999999"
-										placeholder="CEP"
-									/>
-									<Button
-										variant="light"
-										id="btn-custom"
-										size="sm"
-										className="my-2"
-										onClick={getAddressInfo}
-									>
-										Verificar CEP
-									</Button>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="userPhone">
-									<Form.Label>Telefone</Form.Label>
-									<Form.Control
-										value={userPhone}
-										onChange={e => setUserPhone(e.target.value)}
-										type="tel"
-										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
-										placeholder="(__) _ ____-____"
-									/>
-								</Form.Group>
-							</Col>
+							<Form.Group as={Col} controlId="userAddress" sm>
+								<Form.Label>Endereço</Form.Label>
+								<Form.Control
+									value={userAddress}
+									onChange={e => setUserAddress(e.target.value)}
+									type="text"
+									placeholder="Ex. Avenida Prudente de Moraes"
+								/>
+							</Form.Group>
+							<Form.Group as={Col} controlId="userNumber" sm>
+								<Form.Label>Número da residência</Form.Label>
+								<Form.Control
+									value={userNumber}
+									onChange={e => setUserNumber(e.target.value)}
+									type="tel"
+									min="0"
+									placeholder="Ex. 45"
+									required={userAddress.length}
+								/>
+							</Form.Group>
 						</Row>
 						<Row>
-							<Col sm>
-								<Form.Group controlId="userAddress">
-									<Form.Label>Endereço</Form.Label>
-									<Form.Control
-										value={userAddress}
-										onChange={e => setUserAddress(e.target.value)}
-										type="text"
-										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
-										placeholder="Rua, Número, Bairro, Complemento (opcional)"
-									/>
-									<Form.Text className="text-muted">
-										Separe rua, número, bairro e complemento por vírgula
-									</Form.Text>
-								</Form.Group>
-							</Col>
+							<Form.Group as={Col} controlId="userNeighborhood" sm>
+								<Form.Label>Bairro</Form.Label>
+								<Form.Control
+									value={userNeighborhood}
+									onChange={e => setUserNeighborhood(e.target.value)}
+									type="text"
+									placeholder="Ex. Belvedere"
+									required={userAddress.length}
+								/>
+							</Form.Group>
+							<Form.Group as={Col} controlId="userComplement" sm>
+								<Form.Label>Complemento</Form.Label>
+								<Form.Control
+									value={userComplement}
+									onChange={e => setUserComplement(e.target.value)}
+									type="text"
+									placeholder="Complemento (opcional)"
+								/>
+							</Form.Group>
 						</Row>
 						<Modal.Footer>
 							<Button variant="danger" onClick={() => { setModal1Show(false); setToastShow(false); }}>

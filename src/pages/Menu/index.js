@@ -332,8 +332,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		if(productOrder.available) {
 			const product = {
-				product: productOrder,
-				additions: additionsOrder,
+				product: productOrder.id,
+				additions: additionsOrder.map(a => a.id),
 				size: productSize,
 				note: productNote
 			};
