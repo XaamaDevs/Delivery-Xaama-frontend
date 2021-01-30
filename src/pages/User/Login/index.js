@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -28,14 +28,53 @@ export default function Login({ setUserId, setUser, order }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
-	//	Function to handle user login
-	async function handleUserLogin(event) {
-		event.preventDefault();
 
-		await api.post("session", {
+	// Configuring recaptcha
+	const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+
+	useEffect(() => {
+		const loadScriptByURL = (id, url, callback) => {
+			const isScriptExist = document.getElementById(id);
+	
+			if (!isScriptExist) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = url;
+				script.id = id;
+				script.onload = function () {
+					if (callback) callback();
+				};
+				document.body.appendChild(script);
+			}
+
+			if (isScriptExist && callback) {
+				callback();
+			}
+		};
+		
+		// load the script by passing the URL
+		loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`);
+	}, []);
+
+	const handleOnClick = e => {
+		e.preventDefault();
+		window.grecaptcha.ready(() => {
+			window.grecaptcha.execute(SITE_KEY, { action: "submit" }).then(token => {
+				submitData(token);
+			});
+		});
+	};
+
+	const submitData = token => {
+		// call a backend API to verify reCAPTCHA response
+
+		var data = {
 			email: email.toLowerCase(),
-			password
-		}).then((response) => {
+			password,
+			recaptchaToken: token
+		};
+
+		api.post("session", data).then((response) => {
 			if(response.status === 201) {
 				sessionStorage.setItem("userId", response.data.token);
 
@@ -57,12 +96,12 @@ export default function Login({ setUserId, setUser, order }) {
 			}
 			setToastShow(true);
 		});
-	}
+	};
 
 	return (
 		<div className="user-container d-flex h-100">
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
-			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleUserLogin}>
+			<Form className="col-sm-3 py-3 m-auto text-white">
 				<Form.Group controlId="email">
 					<Form.Label>Email</Form.Label>
 					<Form.Control
@@ -95,7 +134,7 @@ export default function Login({ setUserId, setUser, order }) {
 				</Row>
 				<Row className="my-3">
 					<Col className="text-center">
-						<Button variant="warning" type="submit">
+						<Button variant="warning" onClick={handleOnClick}>
 							Acessar
 						</Button>
 					</Col>
