@@ -70,7 +70,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
-	
+
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
 	var element = document.getElementsByClassName("grecaptcha-badge")[0];
@@ -427,125 +427,123 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		</Card.Header>
 	);
 
-	const productCard = (productI, index) => {
-		return (
-			<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
-				<Card className="m-0 h-100" bg="secondary">
-					<Card.Img
-						variant="top"
-						src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera}
-						fluid="true"
-					/>
-					<Card.Body className="d-flex align-content-between flex-column">
-						<Card.Title>{productI.name}</Card.Title>
-						{productI.ingredients && productI.ingredients.length ?
-							<Card.Text>
-								{productI.ingredients.map((ingredient, index) => (
-									index === productI.ingredients.length-1 ?
-										ingredient
-										:
-										ingredient + ", "
-								))}
-							</Card.Text>
-							:
-							null
-						}
-						{userId && user && (user.userType === 1 || user.userType === 2) ?
-							<div className="d-flex justify-content-around flex-wrap my-auto">
-								<Button
-									className="my-1"
-									variant="warning"
-									size="sm"
-									onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
-								>
-								Modificar
-								</Button>
-								{productI.available ?
-									<Button
-										className="my-1"
-										variant="light"
-										size="sm"
-										id="btn-custom"
-									>
-									Disponível
-									</Button>
+	const productCard = (productI, index) => (
+		<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
+			<Card className="m-0 h-100" bg="secondary">
+				<Card.Img
+					variant="top"
+					src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera}
+					fluid="true"
+				/>
+				<Card.Body className="d-flex align-content-between flex-column">
+					<Card.Title>{productI.name}</Card.Title>
+					{productI.ingredients && productI.ingredients.length ?
+						<Card.Text>
+							{productI.ingredients.map((ingredient, index) => (
+								index === productI.ingredients.length-1 ?
+									ingredient
 									:
-									<Button
-										className="my-1"
-										variant="light"
-										size="sm"
-										id="btn-custom-outline"
-									>
-									Indisponível
-									</Button>
-								}
+									ingredient + ", "
+							))}
+						</Card.Text>
+						:
+						null
+					}
+					{userId && user && (user.userType === 1 || user.userType === 2) ?
+						<div className="d-flex justify-content-around flex-wrap my-auto">
+							<Button
+								className="my-1"
+								variant="warning"
+								size="sm"
+								onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
+							>
+								Modificar
+							</Button>
+							{productI.available ?
 								<Button
 									className="my-1"
-									variant="danger"
+									variant="light"
 									size="sm"
-									onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+									id="btn-custom"
 								>
-								Remover
+									Disponível
 								</Button>
-							</div>
-							:
-							<>
-								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+								:
+								<Button
+									className="my-1"
+									variant="light"
+									size="sm"
+									id="btn-custom-outline"
+								>
+									Indisponível
+								</Button>
+							}
+							<Button
+								className="my-1"
+								variant="danger"
+								size="sm"
+								onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+							>
+								Remover
+							</Button>
+						</div>
+						:
+						<>
+							{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
 							(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
-									productI.available ?
-										<Button
-											className="my-auto"
-											variant="warning"
-											size="sm"
-											onClick ={() => {
-												setProductNote("");
-												setAdditionsOrder([]);
-												setProductSize(0);
-												setProductTotal(0);
-												setProductOrder(productI);
-												setProductTotal(productI.prices[0]);
-												setProductOrderModal(true);
-											}}
-										>
+								productI.available ?
+									<Button
+										className="my-auto"
+										variant="warning"
+										size="sm"
+										onClick ={() => {
+											setProductNote("");
+											setAdditionsOrder([]);
+											setProductSize(0);
+											setProductTotal(0);
+											setProductOrder(productI);
+											setProductTotal(productI.prices[0]);
+											setProductOrderModal(true);
+										}}
+									>
 										Adicionar aos pedidos
-										</Button>
-										:
-										<Button
-											variant="danger"
-											size="sm"
-										>
-										Indisponível no momento
-										</Button>
+									</Button>
 									:
 									<Button
 										variant="danger"
 										size="sm"
 									>
-									Estamos fechados
+										Indisponível no momento
 									</Button>
-								}
-							</>
-						}
-					</Card.Body>
-					<Card.Footer>
-						<small>
-							{productI.prices.length === 1 ?
-								"Preço: "
 								:
-								"Preços por tamanho: "
+								<Button
+									variant="danger"
+									size="sm"
+								>
+									Estamos fechados
+								</Button>
 							}
-							{productI.prices.map((price, index) => (
-								index === productI.prices.length-1 ?
-									"R$" + price
-									:
-									"R$" + price + ", "
-							))}
-						</small>
-					</Card.Footer>
-				</Card>
-			</Col>
-		);
-	};
+						</>
+					}
+				</Card.Body>
+				<Card.Footer>
+					<small>
+						{productI.prices.length === 1 ?
+							"Preço: "
+							:
+							"Preços por tamanho: "
+						}
+						{productI.prices.map((price, index) => (
+							index === productI.prices.length-1 ?
+								"R$" + price
+								:
+								"R$" + price + ", "
+						))}
+					</small>
+				</Card.Footer>
+			</Card>
+		</Col>
+	);
 
 	const productFormBody = (
 		<>
@@ -668,7 +666,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						{header}
 						<CardDeck>
 							{products && products.length ?
-								<Row className="m-auto">
+								<Row className="m-auto w-100">
 									{products.map((productI, index) => (
 										productCard(productI, index)
 									))}

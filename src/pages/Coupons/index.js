@@ -295,9 +295,9 @@ export default function Coupons({ userId, companyInfo }) {
 		</Card.Header>
 	);
 
-	const couponCard = (couponI) => (
-		couponI ?
-			<Card key={couponI._id}  as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
+	const couponCard = (couponI, index) => (
+		<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
+			<Card className="m-0 h-100" bg="secondary">
 				<Card.Header>
 					{couponI.name ? couponI.name : null}
 				</Card.Header>
@@ -370,8 +370,7 @@ export default function Coupons({ userId, companyInfo }) {
 					</div>
 				</Card.Body>
 			</Card>
-			:
-			null
+		</Col>
 	);
 
 	const couponFormBody = (
@@ -508,29 +507,27 @@ export default function Coupons({ userId, companyInfo }) {
 	);
 
 	return (
-		<Container className="w-100">
+		<Container>
 			<Card className="px-3" text="light" bg="dark">
-				{header}
 				{isLoading ?
 					<Loading animation="grow" />
 					:
-					coupons && coupons.length ?
-						<CardDeck className="p-2">
-							{Array(coupons.length).fill(null).map((value, i) => (
-								i%3 === 0 ?
-									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-										{Array(3).fill(null).map((value, j) => (
-											i+j < coupons.length ? couponCard(coupons[i+j]) : null
-										))}
-									</Row>
-									:
-									null
-							))}
+					<>
+						{header}
+						<CardDeck>
+							{coupons && coupons.length ?
+								<Row className="m-auto w-100">
+									{coupons.map((couponI, index) => (
+										couponCard(couponI, index)
+									))}
+								</Row>
+								:
+								<h1 className="display-5 text-center m-auto py-5">
+									Selecione o tipo de cupom acima
+								</h1>
+							}
 						</CardDeck>
-						:
-						<h1 className="display-5 text-center m-auto py-5">
-							Selecione o tipo de cupom acima
-						</h1>
+					</>
 				}
 			</Card>
 

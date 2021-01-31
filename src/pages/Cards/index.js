@@ -10,7 +10,8 @@ import {
 	CardDeck,
 	Form,
 	Col,
-	Row
+	Row,
+	Container
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -91,43 +92,55 @@ export default function Cards({ companyInfo, userId }) {
 	}
 
 	return (
-		<>
-			<CardDeck className="mx-3">
-				<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-					{companyCards.map((cardI, index) => (
-						<Col key={index} className="my-2">
-							<Card text="white" bg="dark">
-								<Card.Header>
-									{cardI.type[0].toUpperCase() + cardI.type.slice(1)}
-								</Card.Header>
-								<Card.Body>
-									{cardI && cardI.available ?
-										<>
+		<Container fluid>
+			<CardDeck>
+				{companyCards && companyCards.length ?
+					<Row className="m-auto w-100">
+						{companyCards.map((cardI, index) => (
+							<Col key={index} className="px-0 my-2 mx-auto" xl="3" lg="4" md="6" sm="12">
+								<Card className="mx-2 h-100" text="white" bg="dark">
+									<Card.Header>
+										{cardI.type[0].toUpperCase() + cardI.type.slice(1)}
+									</Card.Header>
+									<Card.Body>
+										{cardI && cardI.available ?
+											<>
+												<Card.Text>
+													{cardI && cardI.qtdMax ?
+														"Quantidade de pedidos para completar o cartão: " + cardI.qtdMax
+														:
+														"Quantidade de pedidos desse produto para completar o cartão: Não atribuído"
+													}
+												</Card.Text>
+												<Card.Text>
+													{cardI && cardI.discount ?
+														"Desconto aṕos completar o cartão: R$ " + cardI.discount
+														:
+														"Desconto aṕos completar o cartão: Não atribuído"
+													}
+												</Card.Text>
+											</>
+											:
 											<Card.Text>
-												{cardI && cardI.qtdMax ? "Quantidade de pedidos para completar o cartão: " + cardI.qtdMax : "Quantidade de pedidos desse produto para completar o cartão: Não atribuído"}
+												Não existe cartão fidelidade para este produto
 											</Card.Text>
-											<Card.Text>
-												{cardI && cardI.discount ? "Desconto aṕos completar o cartão: R$" + cardI.discount : "Desconto aṕos completar o cartão: Não atribuído" }
-											</Card.Text>
-										</>
-										:
-										<Card.Text>
-											Não existe cartão fidelidade para este produto
-										</Card.Text>
-									}
-									<Button
-										variant="light"
-										size="sm"
-										id="btn-custom"
-										onClick ={() => { setCard(cardI); setModalCards(true); } }
-									>
+										}
+										<Button
+											variant="light"
+											size="sm"
+											id="btn-custom"
+											onClick ={() => { setCard(cardI); setModalCards(true); } }
+										>
 										Modificar
-									</Button>
-								</Card.Body>
-							</Card>
-						</Col>
-					))}
-				</Row>
+										</Button>
+									</Card.Body>
+								</Card>
+							</Col>
+						))}
+					</Row>
+					:
+					null
+				}
 			</CardDeck>
 
 			<Modal
@@ -199,7 +212,7 @@ export default function Cards({ companyInfo, userId }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message}/>
-		</>
+		</Container>
 	);
 }
 

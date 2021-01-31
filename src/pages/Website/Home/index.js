@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Jumbotron, Carousel, Image } from "react-bootstrap";
+import { Jumbotron, Carousel, Image, Col } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function Home({ companyInfo }) {
@@ -18,7 +18,7 @@ export default function Home({ companyInfo }) {
 
 	return (
 		<div className="d-flex flex-row flex-wrap align-items-center my-auto">
-			<Jumbotron className="col-sm mr-4 p-0 pl-5 bg-transparent">
+			<Jumbotron as={Col} className="mr-4 p-0 pl-5 bg-transparent" sm>
 				<h1 className="display-5 font-italic text-white">Está com fome?</h1>
 				<h1 className="display-1 text-white">Não espere!</h1>
 				<p className="font-italic text-warning">Faça seu pedido agora</p>
@@ -32,7 +32,7 @@ export default function Home({ companyInfo }) {
 				</p>
 			</Jumbotron>
 			{companyInfo.carousel_urls ?
-				<Carousel className="col-sm-5 m-auto px-5">
+				<Carousel as={Col} className="m-auto px-5" sm="5">
 					{companyInfo.carousel_urls.map((url, index) => (
 						<Carousel.Item key={index}>
 							<Image

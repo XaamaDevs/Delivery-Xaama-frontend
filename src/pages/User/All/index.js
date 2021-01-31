@@ -6,7 +6,8 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Image, Card, CardDeck } from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Image, Card, CardDeck, Container
+} from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../../components/Alert";
@@ -108,99 +109,107 @@ export default function AllUsers({ userId }) {
 	}
 
 	return (
-		<>
+		<Container fluid>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<CardDeck className="mx-3">
-					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >
-						{users.map(user => (
-							<Col key={user._id} className="my-2">
-								<Card text="white" bg="dark">
-									<Card.Header>
-										<Row>
-											<Col className="d-flex flex-wrap align-items-center" sm="3">
-												<Image
-													className="w-100"
-													style={{ borderRadius: "50%" }}
-													src={user.thumbnail ? process.env.REACT_APP_API_URL + user.thumbnail_url: camera }
-													alt="thumbnail"
-													fluid
-												/>
-											</Col>
-											<Col className="ml-3">
-												<Row>
-													<strong>{user.name}</strong>
-												</Row>
-												<Row>
-													<span>{user.email}</span>
-												</Row>
-											</Col>
-										</Row>
-									</Card.Header>
-									<Card.Body>
-										<Card.Text>
+				<CardDeck>
+					{users && users.length ?
+						<Row className="m-auto w-100">
+							{users.map(user => (
+								<Col key={user._id} className="px-0 my-2 mx-auto" lg="4" md="6" sm="12">
+									<Card className="mx-1 h-100" text="white" bg="dark">
+										<Card.Header>
+											<Row>
+												<Col className="d-flex flex-wrap align-items-center" sm="3">
+													<Image
+														className="w-100"
+														style={{ borderRadius: "50%" }}
+														src={user.thumbnail ?
+															process.env.REACT_APP_API_URL + user.thumbnail_url
+															:
+															camera
+														}
+														alt="thumbnail"
+														fluid
+													/>
+												</Col>
+												<Col className="ml-3" sm>
+													<Row>
+														<strong>{user.name}</strong>
+													</Row>
+													<Row>
+														<span>{user.email}</span>
+													</Row>
+												</Col>
+											</Row>
+										</Card.Header>
+										<Card.Body>
 											<Card.Text>
-												{user.phone ? "Telefone: " + user.phone : "Telefone não informado"}
-											</Card.Text>
-											<Card.Text>
-												{user.address && user.address.length ?
-													"Endereço: " + user.address.join(", ")
-													:
-													"Endereço não informado"
-												}
-											</Card.Text>
-											<div className="d-flex justify-content-between">
-												{((user.userType !== 2)) ?
-													<Button
-														onClick={() => {
-															setUserUpdateId(user._id);
-															setNewType(2);
-															setModal1Show(true);
-														}}
-														variant="outline-danger"
-													>
+												<Card.Text>
+													{user.phone ? "Telefone: " + user.phone : "Telefone não informado"}
+												</Card.Text>
+												<Card.Text>
+													{user.address && user.address.length ?
+														"Endereço: " + user.address.join(", ")
+														:
+														"Endereço não informado"
+													}
+												</Card.Text>
+												<div className="d-flex justify-content-between">
+													{((user.userType !== 2)) ?
+														<Button
+															onClick={() => {
+																setUserUpdateId(user._id);
+																setNewType(2);
+																setModal1Show(true);
+															}}
+															variant="outline-danger"
+														>
 														ADM
-													</Button>
-													:
-													null
-												}
+														</Button>
+														:
+														null
+													}
 
-												{((user.userType !== 1) && (user.userType !== 2))?
-													<Button
-														onClick={() => {
-															setUserUpdateId(user._id);
-															setNewType(1);
-															setModal1Show(true);
-														}}
-														variant="outline-warning"
-													>
+													{((user.userType !== 1) && (user.userType !== 2))?
+														<Button
+															onClick={() => {
+																setUserUpdateId(user._id);
+																setNewType(1);
+																setModal1Show(true);
+															}}
+															variant="outline-warning"
+														>
 														Gerente
-													</Button>
-													:
-													null
-												}
+														</Button>
+														:
+														null
+													}
 
-												{(user.userType === 2) ?
-													<Button
-														onClick={() => {
-															history.push("/user");
-														}}
-														variant="outline-warning"
-													>
+													{(user.userType === 2) ?
+														<Button
+															onClick={() => {
+																history.push("/user");
+															}}
+															variant="outline-warning"
+														>
 														Perfil
-													</Button>
-													:
-													null
-												}
-											</div>
-										</Card.Text>
-									</Card.Body>
-								</Card>
-							</Col>
-						))}
-					</Row>
+														</Button>
+														:
+														null
+													}
+												</div>
+											</Card.Text>
+										</Card.Body>
+									</Card>
+								</Col>
+							))}
+						</Row>
+						:
+						null
+					}
 				</CardDeck>
 			}
 
@@ -234,7 +243,7 @@ export default function AllUsers({ userId }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
-		</>
+		</Container>
 	);
 }
 

@@ -636,7 +636,12 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	return (
 		<>
 			<div className="d-flex flex-row flex-wrap my-auto">
-				<Col className="m-auto" sm="7">
+				<Col
+					className="m-auto"
+					lg={user.userType === 2 ? "9" : null}
+					md={user.userType === 2 ? "12" : null}
+					sm="12"
+				>
 					<Card text="light" bg="dark">
 						<Card.Header>
 							<ImFire className="my-0 mx-2 text-warning" size="20" />
@@ -926,7 +931,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									placeholder="(__) _ ____-____"
 								/>
 							</Form.Group>
-							<Form.Group as={Col} controlId="userCep" sm>
+							<Form.Group as={Col} controlId="userCep" md="12" sm>
 								<Form.Label>CEP</Form.Label>
 								<Form.Control
 									value={userCep}
