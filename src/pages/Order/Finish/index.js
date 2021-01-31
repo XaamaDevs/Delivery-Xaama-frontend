@@ -253,7 +253,7 @@ export default function FinishOrder({
 
 		mapProductsByType();
 
-	}, []);
+	}, [orderDeliverProducts]);
 
 	//	Function to handle finish order
 	async function handleFinishOrder(event) {
