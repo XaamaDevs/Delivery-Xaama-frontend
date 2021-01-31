@@ -56,7 +56,7 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	useEffect(() => {
-		subscribeToNewOrders(o => setOrders([...orders, o[0]]));
+		subscribeToNewOrders(o => setOrders([o[0], ...orders]));
 		subscribeToUpdateOrders(o => setOrders(o));
 		subscribeToDeleteOrders(o => setOrders(o));
 	}, [orders]);
