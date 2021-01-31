@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Form, Button, Col, Row } from "react-bootstrap";
+import { Form, Button, Col, Row, Container } from "react-bootstrap";
 
 //	Importing website utils
 import Push from "../../../components/Push";
@@ -50,10 +50,10 @@ export default function Login({ setUserId, setUser, order }) {
 				callback();
 			}
 		};
-		
+
 		// load the script by passing the URL
 		loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`);
-		
+
 	}, []);
 
 	const handleOnClick = e => {
@@ -80,7 +80,7 @@ export default function Login({ setUserId, setUser, order }) {
 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data.user);
-			
+
 				//  Deleting recaptcha
 				document.getElementById("recaptcha-key").remove();
 				var element = document.getElementsByClassName("grecaptcha-badge")[0];
@@ -104,48 +104,50 @@ export default function Login({ setUserId, setUser, order }) {
 	};
 
 	return (
-		<div className="user-container d-flex h-100">
+		<Container className="m-auto" fluid>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
-			<Form className="col-sm-3 py-3 m-auto text-white" onSubmit={handleOnClick}>
-				<Form.Group controlId="email">
-					<Form.Label>Email</Form.Label>
-					<Form.Control
-						value={email}
-						onChange={e => setEmail(e.target.value)}
-						type="email"
-						placeholder="email@provedor.com"
-						autoFocus
-						required
-					/>
-				</Form.Group>
-				<Form.Group controlId="password">
-					<Form.Label>Senha</Form.Label>
-					<Form.Control
-						value={password}
-						onChange={e => setPassword(e.target.value)}
-						type="password"
-						placeholder="Senha"
-						required
-					/>
-				</Form.Group>
-				<Row className="my-1">
-					<Col className="text-center">
-						<small>Não tem conta? </small>
-						<Link className="text-light" to="/signup">
-							<small>Clique aqui</small>
-						</Link>
-						<small> para se cadastrar</small>
-					</Col>
-				</Row>
-				<Row className="my-3">
-					<Col className="text-center">
-						<Button variant="warning" type="submit">
+			<Col className="text-light mx-auto" xl="3" lg="5" md="5">
+				<Form onSubmit={handleOnClick}>
+					<Form.Group controlId="email">
+						<Form.Label>Email</Form.Label>
+						<Form.Control
+							value={email}
+							onChange={e => setEmail(e.target.value)}
+							type="email"
+							placeholder="email@provedor.com"
+							autoFocus
+							required
+						/>
+					</Form.Group>
+					<Form.Group controlId="password">
+						<Form.Label>Senha</Form.Label>
+						<Form.Control
+							value={password}
+							onChange={e => setPassword(e.target.value)}
+							type="password"
+							placeholder="Senha"
+							required
+						/>
+					</Form.Group>
+					<Row className="my-1">
+						<Col className="text-center">
+							<small>Não tem conta? </small>
+							<Link className="text-light" to="/signup">
+								<small>Clique aqui</small>
+							</Link>
+							<small> para se cadastrar</small>
+						</Col>
+					</Row>
+					<Row className="my-3">
+						<Col className="text-center">
+							<Button variant="warning" type="submit">
 							Acessar
-						</Button>
-					</Col>
-				</Row>
-			</Form>
-		</div>
+							</Button>
+						</Col>
+					</Row>
+				</Form>
+			</Col>
+		</Container>
 	);
 }
 

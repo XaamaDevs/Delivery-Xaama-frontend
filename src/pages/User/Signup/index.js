@@ -9,7 +9,7 @@ import api from "../../../services/api";
 import { Link, useHistory } from "react-router-dom";
 
 //	Importing React Bootstrap features
-import { Image, Form, Button, Col, Row } from "react-bootstrap";
+import { Image, Form, Button, Col, Row, Container } from "react-bootstrap";
 
 //	Importing website utils
 import Push from "../../../components/Push";
@@ -80,10 +80,10 @@ export default function Signup({ setUserId, setUser, order }) {
 	}
 
 	return (
-		<>
+		<Container className="m-auto" fluid>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			<Form className="d-flex flex-row flex-wrap" onSubmit={handleUserSignup}>
-				<Col sm="4" className="text-white d-flex flex-column m-auto p-3">
+				<Col className="text-white d-flex flex-column m-auto p-3" lg="4" md="7" sm="12">
 					<Form.Group controlId="inputImage">
 						<Form.Label>Foto de perfil</Form.Label>
 						<Form.Control
@@ -103,7 +103,7 @@ export default function Signup({ setUserId, setUser, order }) {
 						/>
 					</Form.Group>
 				</Col>
-				<Col sm="4" className="text-white m-auto p-3">
+				<Col className="text-white m-auto p-3" lg="4" md="5" sm="12">
 					<Form.Group controlId="name">
 						<Form.Label>Nome</Form.Label>
 						<Form.Control
@@ -166,7 +166,7 @@ export default function Signup({ setUserId, setUser, order }) {
 					</Row>
 				</Col>
 			</Form>
-		</>
+		</Container>
 	);
 }
 

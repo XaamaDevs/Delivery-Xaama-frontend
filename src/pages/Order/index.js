@@ -12,6 +12,7 @@ import {
 	Row,
 	Col,
 	Image,
+	Container
 } from "react-bootstrap";
 
 //	Importing Material-ui features
@@ -178,20 +179,20 @@ export default function Orders({ userId, user, companyInfo }) {
 	}
 
 	return (
-		<>
+		<Container fluid>
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<div className="p-0 w-100">
+				<>
 					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
 						{orders && orders.length ? "Seus últimos pedidos!" : "Não há pedidos!"}
 					</h1>
-					{orders && orders.length ?
-						<CardDeck className="mx-3">
-							<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
+					<CardDeck>
+						{orders && orders.length ?
+							<Row className="m-auto w-100">
 								{orders.map((orderI) => (
-									<Col key={orderI._id} className="my-2">
-										<Card text="white" bg="dark">
+									<Col key={orderI._id} className="px-0 my-2 mx-auto" xl="3" lg="4" md="6" sm="12">
+										<Card className="mx-2 h-100" text="white" bg="dark">
 											<Card.Header>
 												<Row>
 													<Col className="d-flex flex-wrap align-items-center" sm="3">
@@ -315,11 +316,11 @@ export default function Orders({ userId, user, companyInfo }) {
 									</Col>
 								))}
 							</Row>
-						</CardDeck>
-						:
-						null
-					}
-				</div>
+							:
+							null
+						}
+					</CardDeck>
+				</>
 			}
 
 			<Modal
@@ -391,7 +392,7 @@ export default function Orders({ userId, user, companyInfo }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
-		</>
+		</Container>
 	);
 }
 

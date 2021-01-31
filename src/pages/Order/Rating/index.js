@@ -38,7 +38,7 @@ export default function Ratings({ userId, user }) {
 	const [modalApprovedRating, setModalApprovedRating] = useState(false);
 	const [modalDeleteRating, setModalDeleteRating] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
-	
+
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
 	var element = document.getElementsByClassName("grecaptcha-badge")[0];
@@ -184,45 +184,43 @@ export default function Ratings({ userId, user }) {
 	}
 
 	return (
-		<Container fluid>
+		<Container>
 			{isLoading ?
 				<Loading animation="grow" />
 				:
 				<CardDeck>
 					{ratings && ratings.length ?
-						<Row className="m-auto">
+						<Row className="m-auto w-100">
 							{ratings.map(rating => (
 								(!userId && rating.approved) ||
 									(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
 									(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
-									<Col key={rating._id} className="px-1 my-2 mx-auto" lg="6" md="6" sm="12">
-										<Card text="white" bg="dark">
-											<Row className="m-auto">
-												<Col sm>
-													<Image
-														className="w-100"
-														style={{ borderRadius: "50%" }}
-														alt="thumbnail"
-														src={rating.thumbnail_url ? process.env.REACT_APP_API_URL + rating.thumbnail_url : camera}
-														fluid
-													/>
-												</Col>
-												<Col className="ml-3" sm>
-													{rating.name ? rating.name : ""}
-													<Row className="m-auto">
-														<Rating
-															name="customized-icons"
-															value={rating.stars ? rating.stars : 0}
-															getLabelText={(value) => customIcons[value].label}
-															IconContainerComponent={IconContainer}
-														/>
-													</Row>
-												</Col>
-											</Row>
+									<Col key={rating._id} className="px-1 my-2 mx-auto" lg="3" md="6" sm="12">
+										<Card className="text-center h-100" text="white" bg="dark">
+											<Card.Header>
+												<Image
+													className="w-50"
+													style={{ borderRadius: "50%" }}
+													alt="thumbnail"
+													src={rating.thumbnail_url ? process.env.REACT_APP_API_URL + rating.thumbnail_url : camera}
+													fluid
+												/>
+											</Card.Header>
 											<Card.Body>
+												<Card.Text>
+													<Rating
+														name="customized-icons"
+														value={rating.stars ? rating.stars : 0}
+														getLabelText={(value) => customIcons[value].label}
+														IconContainerComponent={IconContainer}
+													/>
+												</Card.Text>
 												<Card.Title>
-													{rating.feedback ? rating.feedback : ""}
+													{rating.name ? rating.name : ""}
 												</Card.Title>
+												<Card.Text>
+													{rating.feedback ? rating.feedback : ""}
+												</Card.Text>
 
 												{userId && userId.length && user && user.userType != 0 ?
 													<Row className="d-flex justify-content-around flex-wrap mx-auto">

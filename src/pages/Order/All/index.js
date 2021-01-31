@@ -11,7 +11,8 @@ import {
 	Row,
 	Col,
 	Image,
-	Form
+	Form,
+	Container
 } from "react-bootstrap";
 
 //	Importing website utils
@@ -211,108 +212,118 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	return (
-		<>
+		<Container fluid>
 			<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<div className="p-0 w-100">
-					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
+				<>
+					<h1 className="display-4 text-center text-white m-auto py-3 w-100">
 						{orders && orders.length ? "Pedidos das últimas 24 horas" : "Não há pedidos das últimas 24 horas!"}
 					</h1>
-					<CardDeck className="mx-3">
-						<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100">
-							{orders.map((orderI) => (
-								<Col key={orderI._id} className="my-2">
-									<Card text="white" bg="dark">
-										<Card.Header>
-											<Row>
-												<Col className="d-flex flex-wrap align-items-center" sm="3">
-													<Image
-														className="w-100"
-														style={{ borderRadius: "50%" }}
-														src={orderI.user.thumbnail ? process.env.REACT_APP_API_URL + orderI.user.thumbnail_url: camera}
-														alt="thumbnail"
-														fluid
-													/>
-												</Col>
-												<Col className="d-flex flex-wrap align-items-center" sm="3">
-													<Card.Text>
-														<strong>{orderI.user.name ? orderI.user.name : null}</strong>
-														<br></br>
-														<span>{orderI.user.email ? orderI.user.email : null}</span>
-														<br></br>
-														<span>{orderI.creationDate ? orderI.creationDate : null}</span>
-													</Card.Text>
-												</Col>
-											</Row>
-										</Card.Header>
-										<Card.Body>
-											<Card.Text>
-												{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
-											</Card.Text>
-											<Card.Text>
-												{orderI.deliver ?
-													"Endereço de entrega: " + orderI.address.join(", ")
-													:
-													"Irá retirar no balcão!"
-												}
-											</Card.Text>
-											<Card.Text>
-												{orderI.deliver ?
-													"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
-													:
-													"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
-												}
-											</Card.Text>
-											<Card.Text>
-												{"Total a pagar R$ " + orderI.total}
-											</Card.Text>
-											<Card.Text>
-													Método de pagamento:
-												{orderI.typePayment === 1 ?
-													" Cartão"
-													:
-													" Dinheiro"
-												}
-											</Card.Text>
-											<Card.Text>
-												{(orderI.change === orderI.total) ?
-													"Não precisa de troco"
-													:
-													((orderI.typePayment === 0) ?
-														"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
+					<CardDeck>
+						{orders && orders.length ?
+							<Row className="m-auto w-100">
+								{orders.map((orderI) => (
+									<Col key={orderI._id} className="px-0 my-2 mx-auto" xl="3" lg="4" md="6" sm="12">
+										<Card className="mx-2 h-100" text="white" bg="dark">
+											<Card.Header>
+												<Row>
+													<Col className="d-flex flex-wrap align-items-center" sm="3">
+														<Image
+															className="w-100"
+															style={{ borderRadius: "50%" }}
+															src={orderI.user.thumbnail ?
+																process.env.REACT_APP_API_URL + orderI.user.thumbnail_url
+																:
+																camera
+															}
+															alt="thumbnail"
+															fluid
+														/>
+													</Col>
+													<Col className="ml-3">
+														<Row>
+															<strong>{orderI.user.name ? orderI.user.name : null}</strong>
+														</Row>
+														<Row>
+															<span>{orderI.user.email ? orderI.user.email : null}</span>
+														</Row>
+														<Row>
+															<span>{orderI.creationDate ? orderI.creationDate : null}</span>
+														</Row>
+													</Col>
+												</Row>
+											</Card.Header>
+											<Card.Body>
+												<Card.Text>
+													{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
+												</Card.Text>
+												<Card.Text>
+													{orderI.deliver ?
+														"Endereço de entrega: " + orderI.address.join(", ")
 														:
-														"Pagará na maquininha"
-													)
-												}
-											</Card.Text>
-											<Row className="d-flex justify-content-between">
-												<Button
-													variant="light"
-													id="btn-custom-outline"
-													className="m-1"
-													onClick={() => { setOrder(orderI); setModalOrderListing(true); }}
-												>
-													Ver pedido
-												</Button>
-												{!orderI.status ?
+														"Irá retirar no balcão!"
+													}
+												</Card.Text>
+												<Card.Text>
+													{orderI.deliver ?
+														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+														:
+														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+													}
+												</Card.Text>
+												<Card.Text>
+													{"Total a pagar R$ " + orderI.total}
+												</Card.Text>
+												<Card.Text>
+													Método de pagamento:
+													{orderI.typePayment === 1 ?
+														" Cartão"
+														:
+														" Dinheiro"
+													}
+												</Card.Text>
+												<Card.Text>
+													{(orderI.change === orderI.total) ?
+														"Não precisa de troco"
+														:
+														((orderI.typePayment === 0) ?
+															"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
+															:
+															"Pagará na maquininha"
+														)
+													}
+												</Card.Text>
+												<Row className="d-flex justify-content-between">
 													<Button
-														variant="outline-warning"
+														variant="light"
+														id="btn-custom-outline"
 														className="m-1"
-														onClick={e => handleDeliver(e, orderI)}
+														onClick={() => { setOrder(orderI); setModalOrderListing(true); }}
 													>
-														Entregar pedido
+													Ver pedido
 													</Button>
-													:
-													null
-												}
-											</Row>
-										</Card.Body>
-									</Card>
-								</Col>
-							))}
-						</Row>
+													{!orderI.status ?
+														<Button
+															variant="outline-warning"
+															className="m-1"
+															onClick={e => handleDeliver(e, orderI)}
+														>
+														Entregar pedido
+														</Button>
+														:
+														null
+													}
+												</Row>
+											</Card.Body>
+										</Card>
+									</Col>
+								))}
+							</Row>
+							:
+							null
+						}
 					</CardDeck>
 					{orders && orders.length ?
 						<Button
@@ -325,7 +336,7 @@ export default function AllOrders({ userId, companyInfo }) {
 						:
 						null
 					}
-				</div>
+				</>
 			}
 
 			<Modal
@@ -390,7 +401,7 @@ export default function AllOrders({ userId, companyInfo }) {
 				title={title}
 				message={message}
 			/>
-		</>
+		</Container>
 	);
 }
 
