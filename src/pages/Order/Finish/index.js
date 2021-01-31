@@ -21,6 +21,7 @@ import {
 	OverlayTrigger,
 	Tooltip,
 	Spinner,
+	Modal,
 	Nav
 } from "react-bootstrap";
 
@@ -79,6 +80,7 @@ export default function FinishOrder({
 	//	Message settings
 	const [toastShow, setToastShow] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	const [modalDeleteProduct, setModalDeleteProduct] = useState(false);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 
@@ -89,6 +91,8 @@ export default function FinishOrder({
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
 	const [newToken, setNewToken] = useState("");
+	const [productType, setProductType] = useState("");
+	const [productName, setProductName] = useState("");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -461,6 +465,11 @@ export default function FinishOrder({
 		}
 	}
 
+	// Delete an product of order
+	async function handleProductDelete() {
+
+	}
+
 	function Payment() {
 		return (
 			<Tabs
@@ -533,7 +542,7 @@ export default function FinishOrder({
 													<BsFillTrashFill 
 														className="my-0 mx-2 text-danger" size="20"
 														style={{cursor: "pointer"}}
-														onClick={null} />
+														onClick={() => {setProductType(product.product.type);setProductName(product.product.name); setModalDeleteProduct(true);}} />
 												</Col>
 											</Row>
 											
@@ -1002,6 +1011,30 @@ export default function FinishOrder({
 					</Row>
 				</Tab.Container>
 			</Container>
+
+			<Modal show={modalDeleteProduct} onHide={() => {setModalDeleteProduct(false); setToastShow(false);}}>
+				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
+				<Modal.Header closeButton>
+					<Modal.Title>
+						Remover { productName && productType ?
+							productType[0].toUpperCase() + productType.slice(1) + " " + productName
+							: 
+							null
+						}
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Você tem certeza que deseja remover este produto?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="warning" onClick={() => {setModalDeleteProduct(false); setToastShow(false);}}>
+						Voltar
+					</Button>
+					<Button variant="danger" onClick={handleProductDelete}>
+						Remover
+					</Button>
+				</Modal.Footer>
+			</Modal>
 
 			<Alert.Close modalAlert={modalAlert} setModalAlert={setModalAlert} title={title} message={message} />
 		</>
