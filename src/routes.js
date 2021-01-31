@@ -64,7 +64,7 @@ export default function Routes() {
 	const adminAuth = () => user && (user.userType === 2);
 	const managerAuth = () => user && (user.userType === 1 || user.userType === 2);
 	const userAuth = () => userId;
-	const orderAuth = () => order && order.products;
+	const orderAuth = () => order && order.products && order.products.length;
 
 	//  Update system time every 25 minutes
 	setTimeout(() => setDate(new Date(new Date().toLocaleString("en-US", { timeZone : "America/Sao_Paulo" }))), 1500000);

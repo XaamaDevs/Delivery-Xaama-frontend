@@ -93,6 +93,7 @@ export default function FinishOrder({
 	const [newToken, setNewToken] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productName, setProductName] = useState("");
+	const [productIndex, setProductIndex] = useState(-1);
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -467,7 +468,38 @@ export default function FinishOrder({
 
 	// Delete an product of order
 	async function handleProductDelete() {
+		var newOrder = order;
+		var price = 0.0;
 
+		if (productIndex > -1) {
+			newOrder["products"].splice(productIndex, 1);
+
+			//	Calculate product total price
+			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].size >= 0 && 
+				orderDeliverProducts[productIndex].size < orderDeliverProducts[productIndex].product.prices.length ) {
+				price += orderDeliverProducts[productIndex].product.prices[orderDeliverProducts[productIndex].size];
+			}
+
+			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].additions && orderDeliverProducts[productIndex].additions.length) {
+				for(var y of orderDeliverProducts[productIndex].additions) {
+					price += y.price;
+				}
+			}
+		
+			newOrder["total"] -= price;
+		}
+
+		setOrder(newOrder);
+
+		if(newOrder && newOrder.products && newOrder.products.length == 0) {
+			setOrder({});
+			sessionStorage.removeItem("order");
+		} else {	
+			sessionStorage.setItem("order", JSON.stringify(newOrder));
+		}
+
+		setModalDeleteProduct(false);
+		history.go();
 	}
 
 	function Payment() {
@@ -542,7 +574,11 @@ export default function FinishOrder({
 													<BsFillTrashFill 
 														className="my-0 mx-2 text-danger" size="20"
 														style={{cursor: "pointer"}}
-														onClick={() => {setProductType(product.product.type);setProductName(product.product.name); setModalDeleteProduct(true);}} />
+														onClick={() => {
+															setProductType(product.product.type);
+															setProductName(product.product.name);
+															setProductIndex(index);
+															setModalDeleteProduct(true);}} />
 												</Col>
 											</Row>
 											
