@@ -53,6 +53,7 @@ export default function Login({ setUserId, setUser, order }) {
 		
 		// load the script by passing the URL
 		loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`);
+		
 	}, []);
 
 	const handleOnClick = e => {
@@ -79,7 +80,11 @@ export default function Login({ setUserId, setUser, order }) {
 
 				setUserId(sessionStorage.getItem("userId"));
 				setUser(response.data.user);
-				//document.getElementsByClassName("grecaptcha-badge")[0].style = "visibility: hidden";
+			
+				//  Deleting recaptcha
+				document.getElementById("recaptcha-key").remove();
+				var element = document.getElementsByClassName("grecaptcha-badge")[0];
+				element.parentNode.removeChild(element);
 
 				history.push(order && order.products && order.products.length ? "/finishOrder" : "/menu");
 			}

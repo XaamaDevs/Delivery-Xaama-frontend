@@ -10,6 +10,12 @@ import { RiWhatsappLine, RiPhoneLine, RiMailLine } from "react-icons/ri";
 
 //	Exporting resource to routes.js
 export default function About({ companyInfo }) {
+	//  Deleting recaptcha
+	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
+	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	element && element.parentNode ? element.parentNode.removeChild(element) : null;
+
+
 	return (
 		<Container fluid>
 			<Card text="light" bg="transparent">

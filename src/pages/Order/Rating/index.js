@@ -38,6 +38,11 @@ export default function Ratings({ userId, user }) {
 	const [modalApprovedRating, setModalApprovedRating] = useState(false);
 	const [modalDeleteRating, setModalDeleteRating] = useState(false);
 	const [modalAlert, setModalAlert] = useState(false);
+	
+	//  Deleting recaptcha
+	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
+	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	element && element.parentNode ? element.parentNode.removeChild(element) : null;
 
 	const customIcons = {
 		1: {
