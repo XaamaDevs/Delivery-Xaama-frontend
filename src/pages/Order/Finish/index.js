@@ -293,20 +293,20 @@ export default function FinishOrder({
 		if(updateTokenUser) {
 			var orderOk = false;
 
-			const address = orderDeliverAddressComplement && orderDeliverAddressComplement.length ?
-				[
-					orderDeliverAddress,
-					orderDeliverAddressNumber,
-					orderDeliverAddressNeighborhood,
-					orderDeliverAddressComplement
-				]
-				:
-				[orderDeliverAddress, orderDeliverAddressNumber, orderDeliverAddressNeighborhood];
+			const address = [];
+			if(orderDeliver && orderDeliverAddress && orderDeliverAddress.length) {
+				address.push(orderDeliverAddress);
+				address.push(orderDeliverAddressNumber);
+				address.push(orderDeliverAddressNeighborhood);
+				if(orderDeliverAddressComplement && orderDeliverAddressComplement.length) {
+					address.push(orderDeliverAddressComplement);
+				}
+			}
 
 			var data = {
 				products: order.products,
 				deliver: orderDeliver,
-				address: address.join(", "),
+				address: orderDeliver && address.length ? address.join(", ") : "",
 				phone: orderDeliverPhone,
 				typePayment: orderDeliverPaymentMethod,
 				change: orderDeliverChange,
@@ -349,7 +349,7 @@ export default function FinishOrder({
 					name: user.name,
 					email: user.email,
 					phone: user.phone ? user.phone : orderDeliverPhone,
-					address: user.address ? user.address.join(", ") : (orderDeliverAddress ? orderDeliverAddress : ""),
+					address: user.address ? user.address.join(", ") : (address.length ? address.join(", ") : ""),
 					status: status,
 				};
 
