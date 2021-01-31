@@ -622,8 +622,8 @@ export default function FinishOrder({
 										{product.additions.length ?
 											<Card.Text>
 												<Row>
-													{(product.additions).map(addition => (
-														<Col key={(addition) ? addition._id : null } sm>
+													{(product.additions).map((addition, index) => (
+														<Col key={index} sm>
 															{addition.name + "\nPreço: R$" + addition.price}
 														</Col>
 													))}
