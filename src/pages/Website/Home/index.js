@@ -10,6 +10,12 @@ import { Jumbotron, Carousel, Image } from "react-bootstrap";
 
 //	Exporting resource to routes.js
 export default function Home({ companyInfo }) {
+	//  Deleting recaptcha
+	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
+	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	element && element.parentNode ? element.parentNode.removeChild(element) : null;
+
+
 	return (
 		<div className="d-flex flex-row flex-wrap align-items-center my-auto">
 			<Jumbotron className="col-sm mr-4 p-0 pl-5 bg-transparent">

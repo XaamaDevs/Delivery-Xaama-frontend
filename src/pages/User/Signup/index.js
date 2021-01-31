@@ -39,6 +39,11 @@ export default function Signup({ setUserId, setUser, order }) {
 	//	Defining history to jump through pages
 	const history = useHistory();
 
+	//  Deleting recaptcha
+	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
+	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	element && element.parentNode ? element.parentNode.removeChild(element) : null;
+
 	//	Function to handle user signup
 	async function handleUserSignup(event) {
 		event.preventDefault();

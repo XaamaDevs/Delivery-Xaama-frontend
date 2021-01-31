@@ -70,6 +70,12 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	
+	//  Deleting recaptcha
+	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
+	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	element && element.parentNode ? element.parentNode.removeChild(element) : null;
+
 
 	//	Update product state variables
 	useEffect(() => {
