@@ -81,6 +81,7 @@ export default function FinishOrder({
 	const [isLoading, setIsLoading] = useState(true);
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
+	const [newToken, setNewToken] = useState("");
 
 	//	Defining history to jump through pages
 	const history = useHistory();
@@ -88,6 +89,31 @@ export default function FinishOrder({
 	//	Fetch user coupons data
 	useEffect(() => {
 		async function fetchData() {
+			await api.get("user", {
+				headers : {
+					"x-access-token": userId
+				}
+			}).then((response) => {
+				if(response.status === 201) {
+					sessionStorage.setItem("userId", response.data.token);
+					setUserId(response.data.token);
+					setUser(response.data.user);
+					setNewToken(response.data.token);
+				}
+			}).catch((error) => {
+				setTitle("Erro!");
+				if(error.response && error.response.status === 400) {
+					setMessage(error.response.data);
+				} else if(error.response && error.response.status === 404) {
+					setMessage(error.response.data);
+				} else if(error.response && error.response.status === 500) {
+					setMessage(error.message);
+				} else {
+					setMessage("Algo deu errado :(");
+				}
+				setToastShow(true);
+			});
+
 			await api.get("coupon", {
 				headers : {
 					"x-access-token": userId
@@ -260,21 +286,37 @@ export default function FinishOrder({
 		event.preventDefault();
 
 		setIsLoading(true);
+		
+		var orderOk = false;
 
-		var updateTokenUser = false;
-		var newToken = "";
+		const address = [];
+		if(orderDeliver && orderDeliverAddress && orderDeliverAddress.length) {
+			address.push(orderDeliverAddress);
+			address.push(orderDeliverAddressNumber);
+			address.push(orderDeliverAddressNeighborhood);
+			if(orderDeliverAddressComplement && orderDeliverAddressComplement.length) {
+				address.push(orderDeliverAddressComplement);
+			}
+		}
 
-		await api.get("user", {
+		var data = {
+			products: order.products,
+			deliver: orderDeliver,
+			address: orderDeliver && address.length ? address.join(", ") : "",
+			phone: orderDeliverPhone,
+			typePayment: orderDeliverPaymentMethod,
+			change: orderDeliverChange,
+			total: orderDeliverTotal,
+			couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
+		};
+
+		await api.post("order", data, {
 			headers : {
-				"x-access-token": userId
+				"x-access-token": newToken
 			}
 		}).then((response) => {
 			if(response.status === 201) {
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
-				newToken = response.data.token;
-				updateTokenUser = true;
+				orderOk = true;
 			}
 		}).catch((error) => {
 			setTitle("Erro!");
@@ -290,37 +332,35 @@ export default function FinishOrder({
 			setToastShow(true);
 		});
 
-		if(updateTokenUser) {
-			var orderOk = false;
+		if(orderOk) {
+			var status = [];
 
-			const address = [];
-			if(orderDeliver && orderDeliverAddress && orderDeliverAddress.length) {
-				address.push(orderDeliverAddress);
-				address.push(orderDeliverAddressNumber);
-				address.push(orderDeliverAddressNeighborhood);
-				if(orderDeliverAddressComplement && orderDeliverAddressComplement.length) {
-					address.push(orderDeliverAddressComplement);
-				}
-			}
+			user.cards.map((card, index) => (
+				card.completed && !card.status && orderType &&
+					orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
+					status.push(true) : status.push(card.status)
+			));
 
-			var data = {
-				products: order.products,
-				deliver: orderDeliver,
-				address: orderDeliver && address.length ? address.join(", ") : "",
-				phone: orderDeliverPhone,
-				typePayment: orderDeliverPaymentMethod,
-				change: orderDeliverChange,
-				total: orderDeliverTotal,
-				couponId: orderDeliverCoupon ? orderDeliverCoupon._id : null
+			data = {
+				name: user.name,
+				email: user.email,
+				phone: user.phone ? user.phone : orderDeliverPhone,
+				address: user.address ? user.address.join(", ") : (address.length ? address.join(", ") : ""),
+				status: status,
 			};
 
-			await api.post("order", data, {
+			await api.put("user", data, {
 				headers : {
 					"x-access-token": newToken
 				}
 			}).then((response) => {
-				if(response.status === 201) {
-					orderOk = true;
+				if(response.status === 200) {
+					setOrder({ products: [] });
+					sessionStorage.removeItem("order");
+					setFinishOrderStep(finishOrderStep+1);
+					sessionStorage.setItem("userId", response.data.token);
+					setUserId(response.data.token);
+					setUser(response.data.user);
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
@@ -335,51 +375,6 @@ export default function FinishOrder({
 				}
 				setToastShow(true);
 			});
-
-			if(orderOk) {
-				var status = [];
-
-				user.cards.map((card, index) => (
-					card.completed && !card.status && orderType &&
-						orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
-						status.push(true) : status.push(card.status)
-				));
-
-				data = {
-					name: user.name,
-					email: user.email,
-					phone: user.phone ? user.phone : orderDeliverPhone,
-					address: user.address ? user.address.join(", ") : (address.length ? address.join(", ") : ""),
-					status: status,
-				};
-
-				await api.put("user", data, {
-					headers : {
-						"x-access-token": newToken
-					}
-				}).then((response) => {
-					if(response.status === 200) {
-						setOrder({ products: [] });
-						sessionStorage.removeItem("order");
-						setFinishOrderStep(finishOrderStep+1);
-						sessionStorage.setItem("userId", response.data.token);
-						setUserId(response.data.token);
-						setUser(response.data.user);
-					}
-				}).catch((error) => {
-					setTitle("Erro!");
-					if(error.response && error.response.status === 400) {
-						setMessage(error.response.data);
-					} else if(error.response && error.response.status === 404) {
-						setMessage(error.response.data);
-					} else if(error.response && error.response.status === 500) {
-						setMessage(error.message);
-					} else {
-						setMessage("Algo deu errado :(");
-					}
-					setToastShow(true);
-				});
-			}
 		}
 
 		setIsLoading(false);
