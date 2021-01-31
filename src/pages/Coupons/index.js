@@ -297,7 +297,7 @@ export default function Coupons({ userId, companyInfo }) {
 
 	const couponCard = (couponI) => (
 		couponI ?
-			<Card as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
+			<Card key={couponI._id}  as={Col} className="p-0 m-2" text="white" bg="secondary" sm="4">
 				<Card.Header>
 					{couponI.name ? couponI.name : null}
 				</Card.Header>
@@ -528,7 +528,9 @@ export default function Coupons({ userId, companyInfo }) {
 							))}
 						</CardDeck>
 						:
-						<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de cupom acima</h1>
+						<h1 className="display-5 text-center m-auto py-5">
+							Selecione o tipo de cupom acima
+						</h1>
 				}
 			</Card>
 

@@ -429,7 +429,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera}
 					fluid="true"
 				/>
-				<Card.Body key={productI._id} className="d-flex align-content-between flex-column">
+				<Card.Body className="d-flex align-content-between flex-column">
 					<Card.Title>{productI.name}</Card.Title>
 					{productI.ingredients && productI.ingredients.length ?
 						<Card.Text>
@@ -672,7 +672,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								))}
 							</CardDeck>
 							:
-							<h1 className="display-5 text-center m-auto p-5">Selecione o tipo de produto desejado acima</h1>
+							<h1 className="display-5 text-center m-auto py-5">
+								Selecione o tipo de produto desejado acima
+							</h1>
 						}
 					</>
 				}
@@ -851,7 +853,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							<Card className="h-100" text="light" bg="dark">
 								<Card.Header>
 									<Row className="d-flex align-items-center">
-										<Col>
+										<Col className="my-1" sm>
 											{productOrder.type ?
 												productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
 												:
@@ -859,7 +861,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 											}
 										</Col>
 										{productOrder.prices && productOrder.prices.length !== 1 ?
-											<Col>
+											<Col className="my-1" sm>
 												<Form.Group className="m-auto" controlId="productType">
 													<Form.Control
 														value={productOrder.sizes[productSize]}
