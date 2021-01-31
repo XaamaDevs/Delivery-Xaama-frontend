@@ -421,121 +421,123 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		</Card.Header>
 	);
 
-	const productCard = (productI) => {
+	const productCard = (productI, index) => {
 		return (
-			<Card key={productI._id} as={Col} className="my-1 p-0" bg="secondary" sm="4">
-				<Card.Img
-					variant="top"
-					src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera}
-					fluid="true"
-				/>
-				<Card.Body className="d-flex align-content-between flex-column">
-					<Card.Title>{productI.name}</Card.Title>
-					{productI.ingredients && productI.ingredients.length ?
-						<Card.Text>
-							{productI.ingredients.map((ingredient, index) => (
-								index === productI.ingredients.length-1 ?
-									ingredient
-									:
-									ingredient + ", "
-							))}
-						</Card.Text>
-						:
-						null
-					}
-					{userId && user && (user.userType === 1 || user.userType === 2) ?
-						<div className="d-flex justify-content-around flex-wrap my-auto">
-							<Button
-								className="my-1"
-								variant="warning"
-								size="sm"
-								onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
-							>
+			<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
+				<Card className="m-0 h-100" bg="secondary">
+					<Card.Img
+						variant="top"
+						src={productI.thumbnail ? process.env.REACT_APP_API_URL + productI.thumbnail_url : camera}
+						fluid="true"
+					/>
+					<Card.Body className="d-flex align-content-between flex-column">
+						<Card.Title>{productI.name}</Card.Title>
+						{productI.ingredients && productI.ingredients.length ?
+							<Card.Text>
+								{productI.ingredients.map((ingredient, index) => (
+									index === productI.ingredients.length-1 ?
+										ingredient
+										:
+										ingredient + ", "
+								))}
+							</Card.Text>
+							:
+							null
+						}
+						{userId && user && (user.userType === 1 || user.userType === 2) ?
+							<div className="d-flex justify-content-around flex-wrap my-auto">
+								<Button
+									className="my-1"
+									variant="warning"
+									size="sm"
+									onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
+								>
 								Modificar
-							</Button>
-							{productI.available ?
-								<Button
-									className="my-1"
-									variant="light"
-									size="sm"
-									id="btn-custom"
-								>
-									Disponível
 								</Button>
-								:
-								<Button
-									className="my-1"
-									variant="light"
-									size="sm"
-									id="btn-custom-outline"
-								>
-									Indisponível
-								</Button>
-							}
-							<Button
-								className="my-1"
-								variant="danger"
-								size="sm"
-								onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
-							>
-								Remover
-							</Button>
-						</div>
-						:
-						<>
-							{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
-							(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
-								productI.available ?
+								{productI.available ?
 									<Button
-										className="my-auto"
-										variant="warning"
+										className="my-1"
+										variant="light"
 										size="sm"
-										onClick ={() => {
-											setProductNote("");
-											setAdditionsOrder([]);
-											setProductSize(0);
-											setProductTotal(0);
-											setProductOrder(productI);
-											setProductTotal(productI.prices[0]);
-											setProductOrderModal(true);
-										}}
+										id="btn-custom"
 									>
-										Adicionar aos pedidos
+									Disponível
 									</Button>
+									:
+									<Button
+										className="my-1"
+										variant="light"
+										size="sm"
+										id="btn-custom-outline"
+									>
+									Indisponível
+									</Button>
+								}
+								<Button
+									className="my-1"
+									variant="danger"
+									size="sm"
+									onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+								>
+								Remover
+								</Button>
+							</div>
+							:
+							<>
+								{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+							(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+									productI.available ?
+										<Button
+											className="my-auto"
+											variant="warning"
+											size="sm"
+											onClick ={() => {
+												setProductNote("");
+												setAdditionsOrder([]);
+												setProductSize(0);
+												setProductTotal(0);
+												setProductOrder(productI);
+												setProductTotal(productI.prices[0]);
+												setProductOrderModal(true);
+											}}
+										>
+										Adicionar aos pedidos
+										</Button>
+										:
+										<Button
+											variant="danger"
+											size="sm"
+										>
+										Indisponível no momento
+										</Button>
 									:
 									<Button
 										variant="danger"
 										size="sm"
 									>
-										Indisponível no momento
-									</Button>
-								:
-								<Button
-									variant="danger"
-									size="sm"
-								>
 									Estamos fechados
-								</Button>
-							}
-						</>
-					}
-				</Card.Body>
-				<Card.Footer>
-					<small>
-						{productI.prices.length === 1 ?
-							"Preço: "
-							:
-							"Preços por tamanho: "
+									</Button>
+								}
+							</>
 						}
-						{productI.prices.map((price, index) => (
-							index === productI.prices.length-1 ?
-								"R$" + price
+					</Card.Body>
+					<Card.Footer>
+						<small>
+							{productI.prices.length === 1 ?
+								"Preço: "
 								:
-								"R$" + price + ", "
-						))}
-					</small>
-				</Card.Footer>
-			</Card>
+								"Preços por tamanho: "
+							}
+							{productI.prices.map((price, index) => (
+								index === productI.prices.length-1 ?
+									"R$" + price
+									:
+									"R$" + price + ", "
+							))}
+						</small>
+					</Card.Footer>
+				</Card>
+			</Col>
 		);
 	};
 
@@ -651,31 +653,26 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	);
 
 	return (
-		<Container className="product-container w-100">
+		<Container>
 			<Card className="px-3" text="light" bg="dark">
 				{isLoading ?
 					<Loading animation="grow" />
 					:
 					<>
 						{header}
-						{products && products.length ?
-							<CardDeck className="p-2">
-								{Array(products.length).fill(null).map((value, i) => (
-									i%3 === 0 ?
-										<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-											{Array(3).fill(null).map((value, j) => (
-												i+j < products.length ? productCard(products[i+j]) : null
-											))}
-										</Row>
-										:
-										null
-								))}
-							</CardDeck>
-							:
-							<h1 className="display-5 text-center m-auto py-5">
-								Selecione o tipo de produto desejado acima
-							</h1>
-						}
+						<CardDeck>
+							{products && products.length ?
+								<Row className="m-auto">
+									{products.map((productI, index) => (
+										productCard(productI, index)
+									))}
+								</Row>
+								:
+								<h1 className="display-5 text-center m-auto py-5">
+									Selecione o tipo de produto desejado acima
+								</h1>
+							}
+						</CardDeck>
 					</>
 				}
 			</Card>

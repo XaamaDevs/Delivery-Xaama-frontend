@@ -291,62 +291,64 @@ export default function Additions({ userId }) {
 		</Card.Header>
 	);
 
-	const additionCard = (additionI) => {
+	const additionCard = (additionI, index) => {
 		return (
-			<Card className="col-sm-4 my-1 p-0" bg="secondary" key={additionI._id}>
-				<Card.Img
-					variant="top"
-					src={additionI.thumbnail ? process.env.REACT_APP_API_URL + additionI.thumbnail_url : camera}
-					fluid="true"
-				/>
-				<Card.Body key={additionI._id}>
-					<Card.Title>{additionI.name}</Card.Title>
-					<div className="d-flex justify-content-around flex-wrap my-auto">
-						<Button
-							className="my-1"
-							variant="warning"
-							size="sm"
-							onClick ={() => { setAddition(additionI); setAdditionUpdateModal(true); }}
-						>
+			<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
+				<Card className="m-0 h-100" bg="secondary">
+					<Card.Img
+						variant="top"
+						src={additionI.thumbnail ? process.env.REACT_APP_API_URL + additionI.thumbnail_url : camera}
+						fluid="true"
+					/>
+					<Card.Body key={additionI._id}>
+						<Card.Title>{additionI.name}</Card.Title>
+						<div className="d-flex justify-content-around flex-wrap my-auto">
+							<Button
+								className="my-1"
+								variant="warning"
+								size="sm"
+								onClick ={() => { setAddition(additionI); setAdditionUpdateModal(true); }}
+							>
 							Modificar
-						</Button>
+							</Button>
 
-						{additionI.available ?
-							<Button
-								className="my-1"
-								variant="light"
-								size="sm"
-								id="btn-custom"
-							>
+							{additionI.available ?
+								<Button
+									className="my-1"
+									variant="light"
+									size="sm"
+									id="btn-custom"
+								>
 								Disponível
-							</Button>
-							:
+								</Button>
+								:
+								<Button
+									className="my-1"
+									variant="light"
+									size="sm"
+									id="btn-custom-outline"
+								>
+								Indisponível
+								</Button>
+							}
+
 							<Button
 								className="my-1"
-								variant="light"
+								variant="danger"
 								size="sm"
-								id="btn-custom-outline"
+								onClick={() => { setAddition(additionI); setAdditionDeleteModal(true); }}
 							>
-								Indisponível
-							</Button>
-						}
-
-						<Button
-							className="my-1"
-							variant="danger"
-							size="sm"
-							onClick={() => { setAddition(additionI); setAdditionDeleteModal(true); }}
-						>
 							Remover
-						</Button>
-					</div>
-				</Card.Body>
-				<Card.Footer>
-					<small>
-						{"Preço: R$" + additionI.price}
-					</small>
-				</Card.Footer>
-			</Card>
+							</Button>
+						</div>
+					</Card.Body>
+					<Card.Footer>
+						<small>
+							{"Preço: R$" + additionI.price}
+						</small>
+					</Card.Footer>
+				</Card>
+			</Col>
 		);
 	};
 
@@ -414,21 +416,17 @@ export default function Additions({ userId }) {
 				{isLoading ?
 					<Loading animation="grow" />
 					:
-					additions.length ?
-						<CardDeck className="p-2">
-							{Array(additions.length).fill(null).map((value, i) => (
-								i%3 === 0 ?
-									<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>
-										{Array(3).fill(null).map((value, j) => (
-											i+j < additions.length ? additionCard(additions[i+j]) : null
-										))}
-									</Row>
-									:
-									null
-							))}
-						</CardDeck>
-						:
-						null
+					<CardDeck className="p-2">
+						{additions && additions.length ?
+							<Row className="m-auto">
+								{additions.map((additionI, index) => (
+									additionCard(additionI, index)
+								))}
+							</Row>
+							:
+							null
+						}
+					</CardDeck>
 				}
 			</Card>
 

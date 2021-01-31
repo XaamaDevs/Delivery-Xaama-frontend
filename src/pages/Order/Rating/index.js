@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React features
-import { Button, Row, Col, Modal, Image, Card, CardDeck } from "react-bootstrap";
+import { Button, Row, Col, Modal, Image, Card, CardDeck, Container } from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../../components/Alert";
@@ -179,49 +179,45 @@ export default function Ratings({ userId, user }) {
 	}
 
 	return (
-		<>
+		<Container fluid>
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<CardDeck className="mx-3">
-					<Row xs={1} sm={2} md={3} className="d-flex justify-content-around m-auto w-100" >
-						{ratings && ratings.length ?
-							ratings.map(rating => (
+				<CardDeck>
+					{ratings && ratings.length ?
+						<Row className="m-auto">
+							{ratings.map(rating => (
 								(!userId && rating.approved) ||
-								(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
-								(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
-									<Col key={rating._id} className="my-2" >
+									(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
+									(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
+									<Col key={rating._id} className="px-1 my-2 mx-auto" lg="6" md="6" sm="12">
 										<Card text="white" bg="dark">
-											<Card.Header>
-												<Row>
-													<Col className="d-flex flex-wrap align-items-center" sm="3">
-														<Image
-															className="w-100"
-															style={{ borderRadius: "50%" }}
-															alt="thumbnail"
-															src={rating.thumbnail_url ? process.env.REACT_APP_API_URL + rating.thumbnail_url : camera}
-															fluid
+											<Row className="m-auto">
+												<Col sm>
+													<Image
+														className="w-100"
+														style={{ borderRadius: "50%" }}
+														alt="thumbnail"
+														src={rating.thumbnail_url ? process.env.REACT_APP_API_URL + rating.thumbnail_url : camera}
+														fluid
+													/>
+												</Col>
+												<Col className="ml-3" sm>
+													{rating.name ? rating.name : ""}
+													<Row className="m-auto">
+														<Rating
+															name="customized-icons"
+															value={rating.stars ? rating.stars : 0}
+															getLabelText={(value) => customIcons[value].label}
+															IconContainerComponent={IconContainer}
 														/>
-													</Col>
-													<Col className="ml-3">
-														<Row>
-															<strong>{rating.name ? rating.name : ""}</strong>
-														</Row>
-														<Row className="my-1">
-															<Rating
-																name="customized-icons"
-																value={rating.stars ? rating.stars : 0}
-																getLabelText={(value) => customIcons[value].label}
-																IconContainerComponent={IconContainer}
-															/>
-														</Row>
-													</Col>
-												</Row>
-											</Card.Header>
+													</Row>
+												</Col>
+											</Row>
 											<Card.Body>
-												<Card.Text>
+												<Card.Title>
 													{rating.feedback ? rating.feedback : ""}
-												</Card.Text>
+												</Card.Title>
 
 												{userId && userId.length && user && user.userType != 0 ?
 													<Row className="d-flex justify-content-around flex-wrap mx-auto">
@@ -232,7 +228,7 @@ export default function Ratings({ userId, user }) {
 																size="sm"
 																onClick ={() => { setRatingId(rating._id); setModalApprovedRating(true); }}
 															>
-																Aprovar
+																	Aprovar
 															</Button>
 															:
 															null
@@ -244,7 +240,7 @@ export default function Ratings({ userId, user }) {
 															size="sm"
 															onClick={() => { setRatingId(rating._id); setModalDeleteRating(true); }}
 														>
-															Apagar
+																Apagar
 														</Button>
 													</Row>
 													:
@@ -255,13 +251,13 @@ export default function Ratings({ userId, user }) {
 									</Col>
 									:
 									null
-							))
-							:
-							<h1 className="display-4 text-center text-white m-auto p-3 w-100">
-								Nenhuma avaliação no momento!
-							</h1>
-						}
-					</Row>
+							))}
+						</Row>
+						:
+						<h1 className="display-4 text-center text-white m-auto p-3 w-100">
+							Nenhuma avaliação no momento!
+						</h1>
+					}
 				</CardDeck>
 			}
 
@@ -332,7 +328,7 @@ export default function Ratings({ userId, user }) {
 			</Modal>
 
 			<Alert.Refresh modalAlert={modalAlert} title={title} message={message} />
-		</>
+		</Container>
 	);
 }
 
