@@ -236,60 +236,56 @@ export default function AllOrders({ userId, companyInfo }) {
 														fluid
 													/>
 												</Col>
-												<Col className="ml-3">
-													<Row>
+												<Col className="d-flex flex-wrap align-items-center" sm="3">
+													<Card.Text>
 														<strong>{orderI.user.name ? orderI.user.name : null}</strong>
-													</Row>
-													<Row>
+														<br></br>
 														<span>{orderI.user.email ? orderI.user.email : null}</span>
-													</Row>
-													<Row>
+														<br></br>
 														<span>{orderI.creationDate ? orderI.creationDate : null}</span>
-													</Row>
+													</Card.Text>
 												</Col>
 											</Row>
 										</Card.Header>
 										<Card.Body>
 											<Card.Text>
-												<p>
-													{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
-												</p>
-												<p>
-													{orderI.deliver ?
-														"Endereço de entrega: " + orderI.address.join(", ")
+												{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
+											</Card.Text>
+											<Card.Text>
+												{orderI.deliver ?
+													"Endereço de entrega: " + orderI.address.join(", ")
+													:
+													"Irá retirar no balcão!"
+												}
+											</Card.Text>
+											<Card.Text>
+												{orderI.deliver ?
+													"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+													:
+													"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+												}
+											</Card.Text>
+											<Card.Text>
+												{"Total a pagar R$ " + orderI.total}
+											</Card.Text>
+											<Card.Text>
+													Método de pagamento:
+												{orderI.typePayment === 1 ?
+													" Cartão"
+													:
+													" Dinheiro"
+												}
+											</Card.Text>
+											<Card.Text>
+												{(orderI.change === orderI.total) ?
+													"Não precisa de troco"
+													:
+													((orderI.typePayment === 0) ?
+														"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
 														:
-														"Irá retirar no balcão!"
-													}
-												</p>
-												<p>
-													{orderI.deliver ?
-														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
-														:
-														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
-													}
-												</p>
-												<p>
-													{"Total a pagar R$ " + orderI.total}
-												</p>
-												<p>
-														Método de pagamento:
-													{orderI.typePayment === 1 ?
-														" Cartão"
-														:
-														" Dinheiro"
-													}
-												</p>
-												<p>
-													{(orderI.change === orderI.total) ?
-														"Não precisa de troco"
-														:
-														((orderI.typePayment === 0) ?
-															"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
-															:
-															"Pagará na maquininha"
-														)
-													}
-												</p>
+														"Pagará na maquininha"
+													)
+												}
 											</Card.Text>
 											<Row className="d-flex justify-content-between">
 												<Button
