@@ -51,7 +51,6 @@ export default function Login({ setUserId, setUser, order }) {
 				callback();
 			}
 		};
-		
 		// load the script by passing the URL
 		loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`);
 	}, []);
