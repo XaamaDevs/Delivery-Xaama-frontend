@@ -840,7 +840,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Header>
 				<Modal.Body>
 					<Row>
-						<Col className="d-flex my-2" sm>
+						<Col className="d-flex my-2" lg="6" md="12">
 							<Image
 								id="thumbnail"
 								className={preview || productOrder.thumbnail_url ? "border-0 m-auto" : "w-75 m-auto"}
@@ -850,7 +850,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								fluid
 							/>
 						</Col>
-						<Col className="my-2" sm>
+						<Col className="my-2" lg="6" md="12">
 							<Card className="h-100" text="light" bg="dark">
 								<Card.Header>
 									<Row className="d-flex align-items-center">

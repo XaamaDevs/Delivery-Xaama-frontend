@@ -15,7 +15,7 @@ export default function ProductDeck({ bg, text, products }) {
 				<Tab key={index} eventKey={index} title={product.product.name}>
 					<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
 						<Row>
-							<Col className="d-flex text-center" sm="6">
+							<Col className="d-flex text-center" lg="6" md="auto" sm="6">
 								<Image
 									className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
 									src={

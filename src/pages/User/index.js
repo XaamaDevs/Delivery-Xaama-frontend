@@ -902,7 +902,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				<Modal.Body>
 					<Form onSubmit={(e) => handleUserUpdate(e)}>
 						<Row>
-							<Form.Group as={Col} controlId="userName" sm>
+							<Form.Group as={Col} controlId="userName" md="4">
 								<Form.Label>Nome</Form.Label>
 								<Form.Control
 									value={userName}
@@ -912,7 +912,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									required
 								/>
 							</Form.Group>
-							<Form.Group as={Col} controlId="userEmail" sm>
+							<Form.Group as={Col} controlId="userEmail" md="4">
 								<Form.Label>Email</Form.Label>
 								<Form.Control
 									value={userEmail}
@@ -922,9 +922,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									required
 								/>
 							</Form.Group>
-						</Row>
-						<Row>
-							<Form.Group as={Col} controlId="userPhone" sm>
+							<Form.Group as={Col} controlId="userPhone" md="4">
 								<Form.Label>Telefone</Form.Label>
 								<Form.Control
 									value={userPhone}
@@ -934,7 +932,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									placeholder="(__) _ ____-____"
 								/>
 							</Form.Group>
-							<Form.Group as={Col} controlId="userCep" md="12" sm>
+							<Form.Group as={Col} controlId="userCep" md="6">
 								<Form.Label>CEP</Form.Label>
 								<Form.Control
 									value={userCep}
@@ -944,27 +942,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									max="99999999"
 									placeholder="CEP"
 								/>
-								<Button
-									variant="light"
-									id="btn-custom"
-									size="sm"
-									className="my-2"
-									onClick={getAddressInfo}
-								>
-									Verificar CEP
-								</Button>
-								<Button
-									variant="warning"
-									size="sm"
-									className="mx-2 my-2"
-									onClick={() => window.open("https://buscacepinter.correios.com.br/app/endereco/index.php")}
-								>
-									Não sei meu CEP
-								</Button>
+								<Row className="m-auto">
+									<Button
+										variant="light"
+										id="btn-custom"
+										size="sm"
+										className="mr-2 my-2"
+										onClick={getAddressInfo}
+									>
+										Verificar
+									</Button>
+									<Button
+										variant="warning"
+										size="sm"
+										className="my-2"
+										onClick={() => window.open("https://buscacepinter.correios.com.br/app/endereco/index.php")}
+									>
+										Não sei meu CEP
+									</Button>
+								</Row>
 							</Form.Group>
-						</Row>
-						<Row>
-							<Form.Group as={Col} controlId="userAddress" sm>
+							<Form.Group as={Col} controlId="userAddress" md="6">
 								<Form.Label>Endereço</Form.Label>
 								<Form.Control
 									value={userAddress}
@@ -973,7 +971,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									placeholder="Ex. Avenida Prudente de Moraes"
 								/>
 							</Form.Group>
-							<Form.Group as={Col} controlId="userNumber" sm>
+							<Form.Group as={Col} controlId="userNumber" md="6">
 								<Form.Label>Número da residência</Form.Label>
 								<Form.Control
 									value={userNumber}
@@ -984,9 +982,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									required={userAddress.length}
 								/>
 							</Form.Group>
-						</Row>
-						<Row>
-							<Form.Group as={Col} controlId="userNeighborhood" sm>
+							<Form.Group as={Col} controlId="userNeighborhood" md="6">
 								<Form.Label>Bairro</Form.Label>
 								<Form.Control
 									value={userNeighborhood}
@@ -996,7 +992,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									required={userAddress.length}
 								/>
 							</Form.Group>
-							<Form.Group as={Col} controlId="userComplement" sm>
+							<Form.Group as={Col} controlId="userComplement" md="12">
 								<Form.Label>Complemento</Form.Label>
 								<Form.Control
 									value={userComplement}
@@ -1312,9 +1308,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					<Modal.Title>Apagar perfil</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					Tem certeza que deseja excluir seu perfil? :/
-					<Form className="my-3" onSubmit={handleUserDelete}>
+					<Form onSubmit={handleUserDelete}>
 						<Form.Group controlId="passwordOnDelete">
+							<Form.Label>Tem certeza que deseja excluir seu perfil? :/</Form.Label>
 							<Form.Label>Confirme sua senha para prosseguir</Form.Label>
 							<Form.Control
 								placeholder="Senha"
@@ -1324,16 +1320,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								required
 							/>
 						</Form.Group>
+						<Modal.Footer>
+							<Button variant="warning" onClick={() => { setModal3Show(false); setToastShow(false); }}>
+								Cancelar
+							</Button>
+							<Button variant="danger" type="submit">
+								Apagar Perfil
+							</Button>
+						</Modal.Footer>
 					</Form>
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setModal3Show(false); setToastShow(false); }}>
-						Cancelar
-					</Button>
-					<Button variant="danger" type="submit" onClick={handleUserDelete}>
-						Apagar Perfil
-					</Button>
-				</Modal.Footer>
 			</Modal>
 
 			<Modal

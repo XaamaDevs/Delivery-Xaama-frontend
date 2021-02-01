@@ -513,143 +513,146 @@ export default function FinishOrder({
 				<Tab eventKey="0" title="Dinheiro">
 					<Card>
 						<Card.Body>
-							<Form.Group controlId="userChange">
-								<Row>
-									<Col>
-										<Form.Label as={Col} className="mx-auto my-2" sm>Troco para R$: </Form.Label>
-									</Col>
-									<Col>
-										<Form.Control
-											value={orderDeliverChange}
-											onChange={e => setOrderDeliverChange(e.target.value)}
-											type="tel"
-											min={orderDeliverChange}
-											required={!orderDeliverPaymentMethod}
-											autoFocus
-										/>
-									</Col>
-								</Row>
+							<Form.Group as={Row} controlId="userChange">
+								<Form.Label
+									as={Col}
+									className="text-center align-self-center p-0"
+									md="6"
+								>
+									Troco para R$:
+								</Form.Label>
+								<Col md="6">
+									<Form.Control
+										value={orderDeliverChange}
+										className="text-center"
+										onChange={e => setOrderDeliverChange(e.target.value)}
+										type="tel"
+										min={orderDeliverChange}
+										required={!orderDeliverPaymentMethod}
+										autoFocus
+									/>
+								</Col>
 							</Form.Group>
 						</Card.Body>
 					</Card>
 				</Tab>
 				<Tab eventKey="1" title="Cartão">
 					<Card>
-						<Card.Body>Pagamento pela maquininha. Aceitamos cartão de débito e crédito!</Card.Body>
+						<Card.Body className="text-center">
+							Pagamento pela maquininha. Aceitamos cartão de débito e crédito!
+						</Card.Body>
 					</Card>
 				</Tab>
 			</Tabs>
 		);
 	}
 
-	const productDeck = (products, text, bg) => {
-		return (
-			<Tabs fill defaultActiveKey={0} id="productDeck">
-				{products.map((product, index) => (
-					<Tab key={index} eventKey={index} title={product.product.name}>
-						<Card className="h-100 p-1" text={text ? text : "dark"} bg={bg ? bg : "light"} key={product._id}>
-							<Row>
-								<Col className="d-flex text-center" sm="6">
-									<Image
-										className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
-										src={
-											product.product.thumbnail ?
-												process.env.REACT_APP_API_URL + "files/" + product.product.thumbnail
-												:
-												camera
-										}
-										alt="thumbnail"
-										fluid
-										rounded
-									/>
-								</Col>
-								<Col sm>
-									<Row>
-										<Card.Body>
-											<Row>
-												<Col>
-													<Card.Title>{product.product ? product.product.name : null }</Card.Title>
-												</Col>
-												<Col align="right">
-													<BsFillTrashFill
-														className="my-0 mx-2 text-danger" size="20"
-														style={{cursor: "pointer"}}
-														onClick={() => {
-															setProductType(product.product.type);
-															setProductName(product.product.name);
-															setProductIndex(index);
-															setModalDeleteProduct(true);}} />
-												</Col>
-											</Row>
-
-											<Card.Text>
-												{product.product && product.product.ingredients ?
-													((product.product.ingredients.length === 1) ?
-														"Ingrediente: "
-														:
-														"Ingredientes: "
-													)
-													:
-													null
-												}
-												{product.product && product.product.ingredients ?
-													product.product.ingredients.map((ingredient, index) => (
-														index === product.product.ingredients.length-1 ?
-															ingredient
-															:
-															ingredient + ", "
-													))
-													:
-													null
-												}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-									<Row>
-										<Card.Body>
-											<Card.Title>Observações:</Card.Title>
-											<Card.Text>
-												{product.note ? product.note : "Sem Observações"}
-											</Card.Text>
-										</Card.Body>
-									</Row>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<Card.Body>
-										<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
-										{product.additions.length ?
-											<Card.Text>
-												<Row>
-													{(product.additions).map((addition, index) => (
-														<Col key={index} sm>
-															{addition.name + "\nPreço: R$" + addition.price}
-														</Col>
-													))}
-												</Row>
-											</Card.Text>
+	const productDeck = (
+		<Tabs fill defaultActiveKey={0}>
+			{orderDeliverProducts.map((product, index) => (
+				<Tab key={index} eventKey={index} title={product.product.name}>
+					<Card className="h-100 p-1" text="dark" bg="light" key={product._id}>
+						<Row>
+							<Col className="d-flex text-center" lg="6" md="auto" sm="6">
+								<Image
+									className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
+									src={
+										product.product.thumbnail ?
+											process.env.REACT_APP_API_URL + "files/" + product.product.thumbnail
 											:
-											null
-										}
+											camera
+									}
+									alt="thumbnail"
+									fluid
+									rounded
+								/>
+							</Col>
+							<Col sm>
+								<Row>
+									<Card.Body>
+										<Row>
+											<Col>
+												<Card.Title>{product.product ? product.product.name : null }</Card.Title>
+											</Col>
+											<Col align="right">
+												<BsFillTrashFill
+													className="my-0 mx-2 text-danger" size="20"
+													style={{cursor: "pointer"}}
+													onClick={() => {
+														setProductType(product.product.type);
+														setProductName(product.product.name);
+														setProductIndex(index);
+														setModalDeleteProduct(true);}} />
+											</Col>
+										</Row>
+
+										<Card.Text>
+											{product.product && product.product.ingredients ?
+												((product.product.ingredients.length === 1) ?
+													"Ingrediente: "
+													:
+													"Ingredientes: "
+												)
+												:
+												null
+											}
+											{product.product && product.product.ingredients ?
+												product.product.ingredients.map((ingredient, index) => (
+													index === product.product.ingredients.length-1 ?
+														ingredient
+														:
+														ingredient + ", "
+												))
+												:
+												null
+											}
+										</Card.Text>
 									</Card.Body>
-								</Col>
-							</Row>
-							<Card.Footer>
-								<small>
-									{product.product ?
-										"Preço: R$" + product.product.prices[product.size]
+								</Row>
+								<Row>
+									<Card.Body>
+										<Card.Title>Observações:</Card.Title>
+										<Card.Text>
+											{product.note ? product.note : "Sem Observações"}
+										</Card.Text>
+									</Card.Body>
+								</Row>
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<Card.Body>
+									<Card.Title>{product.additions.length ? "Adições:" : "Sem Adições"}</Card.Title>
+									{product.additions.length ?
+										<Card.Text>
+											<Row>
+												{(product.additions).map((addition, index) => (
+													<Col key={index} sm>
+														{addition.name + "\nPreço: R$" + addition.price}
+													</Col>
+												))}
+											</Row>
+										</Card.Text>
 										:
 										null
 									}
-								</small>
-							</Card.Footer>
-						</Card>
-					</Tab>
-				))}
-			</Tabs>
-		);
-	};
+								</Card.Body>
+							</Col>
+						</Row>
+						<Card.Footer>
+							<small>
+								{product.product ?
+									"Preço: R$" + product.product.prices[product.size]
+									:
+									null
+								}
+							</small>
+						</Card.Footer>
+					</Card>
+				</Tab>
+			))}
+		</Tabs>
+	);
 
 	return (
 		<>
@@ -657,7 +660,7 @@ export default function FinishOrder({
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Tab.Container defaultActiveKey={0} activeKey={finishOrderStep}>
 					<Row className="h-100">
-						<Col sm>
+						<Col lg="3" md="5" sm>
 							<Nav variant="pills" className="flex-column h-100">
 								<Nav.Item>
 									<Nav.Link eventKey={0} disabled>
@@ -697,7 +700,7 @@ export default function FinishOrder({
 								</Button>
 							</Nav>
 						</Col>
-						<Col className="p-0" sm="9">
+						<Col className="p-0" lg="9" md="7" sm="9">
 							<Container className="px-0 py-2 h-100">
 								<Tab.Content as={Col}>
 									<Tab.Pane eventKey={0}>
@@ -706,7 +709,7 @@ export default function FinishOrder({
 												{isLoading ?
 													<Loading animation="grow" />
 													:
-													productDeck(orderDeliverProducts)
+													productDeck
 												}
 											</Col>
 										</Row>
@@ -755,7 +758,7 @@ export default function FinishOrder({
 											{orderDeliver ?
 												<>
 													<Row>
-														<Form.Group as={Col} controlId="userCep" sm>
+														<Form.Group as={Col} controlId="userCep" lg="6" md="12">
 															<Form.Label>CEP</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressCep}
@@ -783,7 +786,7 @@ export default function FinishOrder({
 																Não sei meu CEP
 															</Button>
 														</Form.Group>
-														<Form.Group as={Col} controlId="orderDeliverAddress" sm>
+														<Form.Group as={Col} controlId="orderDeliverAddress" lg="6" md="12">
 															<Form.Label>Endereço</Form.Label>
 															<Form.Control
 																value={orderDeliverAddress}
@@ -794,7 +797,7 @@ export default function FinishOrder({
 																required={orderDeliver}
 															/>
 														</Form.Group>
-														<Form.Group as={Col} controlId="orderDeliverAddressNumber" sm>
+														<Form.Group as={Col} controlId="orderDeliverAddressNumber" lg="6" md="6">
 															<Form.Label>Número da residência</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressNumber}
@@ -806,9 +809,7 @@ export default function FinishOrder({
 																required={orderDeliver}
 															/>
 														</Form.Group>
-													</Row>
-													<Row>
-														<Form.Group as={Col} controlId="orderDeliverAddressNeighborhood" sm>
+														<Form.Group as={Col} controlId="orderDeliverAddressNeighborhood" lg="6" md="6">
 															<Form.Label>Bairro</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressNeighborhood}
@@ -819,7 +820,7 @@ export default function FinishOrder({
 																required={orderDeliver}
 															/>
 														</Form.Group>
-														<Form.Group as={Col} controlId="orderDeliverAddressComplement" sm>
+														<Form.Group as={Col} controlId="orderDeliverAddressComplement" lg="12" md="12">
 															<Form.Label>Complemento</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressComplement}
@@ -879,7 +880,7 @@ export default function FinishOrder({
 																</Tooltip>
 															}
 														>
-															<FormGroup as={Col} controlId="deliverCard" sm>
+															<FormGroup as={Col} controlId="deliverCard" lg="6" md="12">
 																<Form.Label>Descontos por cartão fidelidade:</Form.Label>
 																{user.cards.map((card,index) => (
 																	card.completed && !card.status &&
@@ -922,7 +923,7 @@ export default function FinishOrder({
 													:
 													null
 												}
-												<Form.Group as={Col} controlId="orderDeliverCoupon" sm>
+												<Form.Group as={Col} controlId="orderDeliverCoupon" lg="6" md="12">
 													<Form.Label>Cupons:</Form.Label>
 													<Form.Control
 														value={null}
@@ -981,12 +982,10 @@ export default function FinishOrder({
 														onClick={validateCoupon}
 														disabled={orderCouponValidated}
 													>
-											Validar cupom
+														Validar cupom
 													</Button>
 												</Form.Group>
-											</Row>
-											<Row>
-												<Form.Group as={Col} controlId="deliverPayment">
+												<Form.Group as={Col} controlId="deliverPayment" lg="12">
 													<Form.Label>Forma de pagamento:</Form.Label>
 													<Payment />
 												</Form.Group>
