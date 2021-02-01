@@ -638,9 +638,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			<div className="d-flex flex-row flex-wrap my-auto">
 				<Col
 					className="m-auto"
-					lg={user.userType === 2 ? "9" : null}
-					md={user.userType === 2 ? "12" : null}
-					sm="12"
+					lg="8"
+					md="12"
 				>
 					<Card text="light" bg="dark">
 						<Card.Header>
@@ -852,7 +851,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					</Card>
 				</Col>
 				{user.userType === 0 && user.cards && user.cards.length && !noCards ?
-					<Col className="m-auto p-2" sm="4">
+					<Col
+						className="m-auto"
+						lg="4"
+						md="12"
+					>
 						<h3 className="display-5 text-center text-light m-auto p-3">Cartões Fidelidade:</h3>
 						{user.cards.map((card, index) => (
 							companyInfo.cards[index].available ?
