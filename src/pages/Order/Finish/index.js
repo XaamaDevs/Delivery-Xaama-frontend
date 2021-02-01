@@ -265,11 +265,11 @@ export default function FinishOrder({
 
 	useEffect(() => {
 		async function mapProductsByType() {
-			var myMapTypesProducts = new Map();
+			const myMapTypesProducts = new Map();
 
 			//	Calculate order total price
 			if(orderDeliverProducts){
-				for(var x of orderDeliverProducts) {
+				for(const x of orderDeliverProducts) {
 					if(x.size >= 0 && x.size < x.product.prices.length) {
 						myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
 							myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + x.product.prices[x.size]) :
@@ -277,7 +277,7 @@ export default function FinishOrder({
 					}
 
 					if(x.additions && x.additions.length) {
-						for(var y of x.additions) {
+						for(const y of x.additions) {
 							myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
 								myMapTypesProducts.get(x.product.type) ? (myMapTypesProducts.get(x.product.type) + y.price) :
 									y.price);
@@ -298,7 +298,7 @@ export default function FinishOrder({
 		event.preventDefault();
 
 		setIsLoading(true);
-		
+
 		var orderOk = false;
 
 		const address = [];
@@ -475,17 +475,17 @@ export default function FinishOrder({
 			newOrder["products"].splice(productIndex, 1);
 
 			//	Calculate product total price
-			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].size >= 0 && 
+			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].size >= 0 &&
 				orderDeliverProducts[productIndex].size < orderDeliverProducts[productIndex].product.prices.length ) {
 				price += orderDeliverProducts[productIndex].product.prices[orderDeliverProducts[productIndex].size];
 			}
 
 			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].additions && orderDeliverProducts[productIndex].additions.length) {
-				for(var y of orderDeliverProducts[productIndex].additions) {
+				for(const y of orderDeliverProducts[productIndex].additions) {
 					price += y.price;
 				}
 			}
-		
+
 			newOrder["total"] -= price;
 		}
 
@@ -494,7 +494,7 @@ export default function FinishOrder({
 		if(newOrder && newOrder.products && newOrder.products.length == 0) {
 			setOrder({});
 			sessionStorage.removeItem("order");
-		} else {	
+		} else {
 			sessionStorage.setItem("order", JSON.stringify(newOrder));
 		}
 
@@ -571,7 +571,7 @@ export default function FinishOrder({
 													<Card.Title>{product.product ? product.product.name : null }</Card.Title>
 												</Col>
 												<Col align="right">
-													<BsFillTrashFill 
+													<BsFillTrashFill
 														className="my-0 mx-2 text-danger" size="20"
 														style={{cursor: "pointer"}}
 														onClick={() => {
@@ -581,7 +581,7 @@ export default function FinishOrder({
 															setModalDeleteProduct(true);}} />
 												</Col>
 											</Row>
-											
+
 											<Card.Text>
 												{product.product && product.product.ingredients ?
 													((product.product.ingredients.length === 1) ?
@@ -1054,7 +1054,7 @@ export default function FinishOrder({
 					<Modal.Title>
 						Remover { productName && productType ?
 							productType[0].toUpperCase() + productType.slice(1) + " " + productName
-							: 
+							:
 							null
 						}
 					</Modal.Title>

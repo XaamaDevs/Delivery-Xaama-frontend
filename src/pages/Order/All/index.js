@@ -128,13 +128,13 @@ export default function AllOrders({ userId, companyInfo }) {
 			var myMapTypesProducts = new Map();
 
 			if(order && order.products) {
-				for(var p of order.products) {
+				for(const p of order.products) {
 					myMapTypesProducts.set(p.product && p.product.type ? p.product.type : "",
 						myMapTypesProducts.get(p.product.type) ? myMapTypesProducts.get(p.product.type) + 1 : 1);
 				}
 			}
 
-			for(var cards of companyInfo.cards) {
+			for(const cards of companyInfo.cards) {
 				var cardsNewQtd = {
 					cardFidelity: cards.type,
 					qtdCurrent: myMapTypesProducts.get(cards.type) ? myMapTypesProducts.get(cards.type) : 0

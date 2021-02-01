@@ -52,7 +52,7 @@ export default function Cards({ companyInfo, userId }) {
 	async function handleCards(event) {
 		event.preventDefault();
 
-		for(var c of companyCards) {
+		for(const c of companyCards) {
 			if(c.type == cardType) {
 				c.available = cardAvailable ? cardAvailable : false;
 				c.qtdMax = cardQtdMax ? cardQtdMax : 0;

@@ -108,10 +108,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								if(response.status === 200) {
 									var prodsByType = {};
 
-									for(var type of resProdTypes.data) {
+									for(const type of resProdTypes.data) {
 										var prods = [];
 
-										for(var product of response.data) {
+										for(const product of response.data) {
 											if(product.type === type) {
 												prods.push(product);
 											}
@@ -143,10 +143,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								if(response.status === 200) {
 									var AddsByType = {};
 
-									for(var type of resProdTypes.data) {
+									for(const type of resProdTypes.data) {
 										var adds = [];
 
-										for(var addition of response.data) {
+										for(const addition of response.data) {
 											if(addition.type.indexOf(type) >= 0) {
 												if(addition.available){
 													adds.push(addition);
@@ -384,7 +384,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		if(productOrder.prices) {
 			var total = productOrder.prices[productSize];
 
-			for(var add of additionsOrder) {
+			for(const add of additionsOrder) {
 				total += add.price;
 			}
 
@@ -870,7 +870,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 															const size = productOrder.sizes.indexOf(e.target.value);
 															setProductSize(size);
 															var total = productOrder.prices[size];
-															for(var add of additionsOrder) {
+															for(const add of additionsOrder) {
 																total += add.price;
 															}
 															setProductTotal(total);

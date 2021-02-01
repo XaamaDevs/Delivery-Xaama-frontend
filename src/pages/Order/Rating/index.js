@@ -80,7 +80,7 @@ export default function Ratings({ userId, user }) {
 		async function verifyRatingThumbnail(response) {
 			var data = [];
 
-			for(var rating of response.data) {
+			for(const rating of response.data) {
 				await fetch(process.env.REACT_APP_API_URL + rating.thumbnail_url).then((response) => {
 					if(response && response.status && response.status === 200) {
 						data.push(rating);

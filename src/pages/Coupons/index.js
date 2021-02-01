@@ -89,10 +89,10 @@ export default function Coupons({ userId, companyInfo }) {
 				if(response.status === 200) {
 					var cpnsByType = {};
 
-					for(var type of couponTypes) {
+					for(const type of couponTypes) {
 						var cpns = [];
 
-						for(var cpn of response.data) {
+						for(const cpn of response.data) {
 							if(cpn.type === type) {
 								cpns.push(cpn);
 							}
