@@ -12,8 +12,8 @@ export default function Push({ toastShow, setToastShow, title, message }) {
 			aria-atomic="true"
 			style={{
 				position: "fixed",
-				top: "inherit",
-				right: "2%",
+				bottom: "1%",
+				right: "1%",
 				zIndex: "5"
 			}}
 		>

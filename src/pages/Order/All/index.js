@@ -299,7 +299,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													<Button
 														variant="light"
 														id="btn-custom-outline"
-														className="m-1"
+														className="m-1 mx-auto"
 														onClick={() => { setOrder(orderI); setModalOrderListing(true); }}
 													>
 													Ver pedido
@@ -307,7 +307,7 @@ export default function AllOrders({ userId, companyInfo }) {
 													{!orderI.status ?
 														<Button
 															variant="outline-warning"
-															className="m-1"
+															className="m-1 mx-auto"
 															onClick={e => handleDeliver(e, orderI)}
 														>
 														Entregar pedido
