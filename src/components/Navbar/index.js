@@ -3,7 +3,7 @@ import React, { useState, useEffect  } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
 //	Importing React Bootstrap features
 import {
@@ -96,8 +96,8 @@ export default function WebsiteNavbar({
 
 	return (
 		<>
-			<Navbar className="py-4 px-3" bg="transparent" expand="lg">
-				<NavLink to="/" className="navbar-brand text-warning mx-5 p-0">
+			<Navbar collapseOnSelect className="py-4 px-3" bg="transparent" expand="lg">
+				<Nav.Link as={Link} to="/" href="/" className="navbar-brand text-warning mx-5 p-0">
 					{companyInfo.logo ?
 						<Image
 							className="border-0 m-auto"
@@ -109,92 +109,93 @@ export default function WebsiteNavbar({
 						:
 						companyInfo.name
 					}
-				</NavLink>
+				</Nav.Link>
 				<Navbar.Toggle className="bg-warning" aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="mr-auto">
 						<Nav.Item>
-							<NavLink
-								style={{ color: "#ffbf00" }}
-								exact activeClassName="activeRoute"
-								activeStyle={{ color: "white" }}
+							<Nav.Link
+								as={Link}
 								to="/"
-								className="nav-link mx-2"
+								href="/"
+								className="text-warning mx-2"
 							>
 								Início
-							</NavLink>
+							</Nav.Link>
 						</Nav.Item>
 						<Nav.Item>
-							<NavLink
-								style={{ color: "#ffbf00" }}
-								activeClassName="activeRoute"
-								activeStyle={{ color: "white" }}
+							<Nav.Link
+								as={Link}
 								to="/menu"
-								className="nav-link mx-2"
+								href="/menu"
+								className="text-warning mx-2"
 							>
 								Cardápio
-							</NavLink>
+							</Nav.Link>
 						</Nav.Item>
 						{user && (user.userType === 1 || user.userType === 2) ?
 							<Nav.Item>
-								<NavLink
+								<Nav.Link
+									as={Link}
 									style={{ color: "#ffbf00" }}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
+									activeclassname="activeRoute"
+									activestyle={{ color: "white" }}
 									to="/additions"
-									className="nav-link mx-2"
+									href="/additions"
+									className="text-warning mx-2"
 								>
 									Adições
-								</NavLink>
+								</Nav.Link>
 							</Nav.Item>
 							:
 							null
 						}
 						<Nav.Item>
-							<NavLink
-								style={{ color: "#ffbf00" }}
-								activeClassName="activeRoute"
-								activeStyle={{ color: "white" }}
+							<Nav.Link
+								as={Link}
 								to="/about"
-								className="nav-link mx-2"
+								href="/about"
+								className="text-warning mx-2"
 							>
 								Sobre
-							</NavLink>
+							</Nav.Link>
 						</Nav.Item>
 						<Nav.Item>
-							<NavLink
-								style={{ color: "#ffbf00" }}
-								activeClassName="activeRoute"
-								activeStyle={{ color: "white" }}
-								className="nav-link mx-2"
+							<Nav.Link
+								as={Link}
+								className="text-warning mx-2"
 								to="/rating"
+								href="/rating"
 							>
 								Avaliações
-							</NavLink>
+							</Nav.Link>
 						</Nav.Item>
 						<Nav.Item>
-							<NavLink
-								style={{ color: "#ffbf00" }}
-								className="nav-link mx-2"
+							<Nav.Link
+								as={Link}
+								className="text-warning mx-2"
 								to="#"
+								href="#"
 								onClick={() => setModalTimetable(true)}
 							>
 								Horário de Funcionamento
-							</NavLink>
+							</Nav.Link>
 						</Nav.Item>
 					</Nav>
 					<Nav className="ml-auto">
 						{order.products && order.products.length ?
 							<Nav.Item>
-								<NavLink
+								<Nav.Link
+									as={Link}
 									style={{ color: "#ffbf00" }}
-									activeClassName="activeRoute"
-									activeStyle={{ color: "white" }}
+									activeclassname="activeRoute"
+									activestyle={{ color: "white" }}
 									to="/finishOrder"
-									className="nav-link mx-2"
+									href="/finishOrder"
+									className="text-warning mx-2"
 								>
 									<RiShoppingBasketLine size="25" />
-								</NavLink>
+								</Nav.Link>
 							</Nav.Item>
 							:
 							null
@@ -202,65 +203,75 @@ export default function WebsiteNavbar({
 						{!userId ?
 							<>
 								<Nav.Item>
-									<NavLink
+									<Nav.Link
+										as={Link}
 										style={{ color: "#ffbf00" }}
-										activeClassName="activeRoute"
-										activeStyle={{ color: "white" }}
+										activeclassname="activeRoute"
+										activestyle={{ color: "white" }}
 										to="/login"
-										className="nav-link mx-2"
+										href="/login"
+										className="text-warning mx-2"
 									>
 									Entrar
-									</NavLink>
+									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<NavLink
+									<Nav.Link
+										as={Link}
 										style={{ color: "#ffbf00" }}
-										activeClassName="activeRoute"
-										activeStyle={{ color: "white" }}
+										activeclassname="activeRoute"
+										activestyle={{ color: "white" }}
 										to="/signup"
-										className="nav-link mx-2"
+										href="/signup"
+										className="text-warning mx-2"
 									>
 									Cadastrar
-									</NavLink>
+									</Nav.Link>
 								</Nav.Item>
 							</>
 							:
 							<>
 								{user.userType === 0 ?
 									<Nav.Item>
-										<NavLink
+										<Nav.Link
+											as={Link}
 											style={{ color: "#ffbf00" }}
-											activeClassName="activeRoute"
-											activeStyle={{ color: "white" }}
+											activeclassname="activeRoute"
+											activestyle={{ color: "white" }}
 											to="/order"
-											className="nav-link mx-2"
+											href="/order"
+											className="text-warning mx-2"
 										>
 											Meus Pedidos
-										</NavLink>
+										</Nav.Link>
 									</Nav.Item>
 									:
 									null
 								}
 								<Nav.Item>
-									<NavLink
+									<Nav.Link
+										as={Link}
 										style={{ color: "#ffbf00" }}
-										activeClassName="activeRoute"
-										activeStyle={{ color: "white" }}
+										activeclassname="activeRoute"
+										activestyle={{ color: "white" }}
 										to="/user"
-										className="nav-link mx-2"
+										href="/user"
+										className="text-warning mx-2"
 									>
 									Perfil
-									</NavLink>
+									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<NavLink
+									<Nav.Link
+										as={Link}
 										style={{ color: "#ffbf00" }}
 										to="#"
+										href="#"
 										onClick={handleLogout}
-										className="nav-link mx-2"
+										className="text-warning mx-2"
 									>
 									Sair
-									</NavLink>
+									</Nav.Link>
 								</Nav.Item>
 							</>
 						}
