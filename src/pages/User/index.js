@@ -1081,208 +1081,222 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				</Modal.Header>
 				<Modal.Body>
 					<Form.Label>Deixe o horário com (--:--) para os dias que estiver fechado!</Form.Label>
-					<Form onSubmit={(e) => handleTimetable(e)}>
-						<Row className="mt-2">
-							<Col className="my-2" sm={2}>
-							Domingo:
+					<Form className="text-center" onSubmit={(e) => handleTimetable(e)}>
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Domingo:
 							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableSundayI">
-									<Form.Control
-										value={timetableSundayI}
-										onChange={e => setTimetableSundayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableSundayF">
-									<Form.Control
-										value={timetableSundayF}
-										onChange={e => setTimetableSundayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Segunda:
-							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableMondayI">
-									<Form.Control
-										value={timetableMondayI}
-										onChange={e => setTimetableMondayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableMondayF">
-									<Form.Control
-										value={timetableMondayF}
-										onChange={e => setTimetableMondayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableSundayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableSundayI}
+												onChange={e => setTimetableSundayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableSundayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableSundayF}
+												onChange={e => setTimetableSundayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
 							</Col>
 						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Terça:
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Segunda:
 							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableTuesdayI">
-									<Form.Control
-										value={timetableTuesdayI}
-										onChange={e => setTimetableTuesdayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableTuesdayF">
-									<Form.Control
-										value={timetableTuesdayF}
-										onChange={e => setTimetableTuesdayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Quarta:
-							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableWednesdayI">
-									<Form.Control
-										value={timetableWednesdayI}
-										onChange={e => setTimetableWednesdayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableWednesdayF">
-									<Form.Control
-										value={timetableWednesdayF}
-										onChange={e => setTimetableWednesdayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableMondayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableMondayI}
+												onChange={e => setTimetableMondayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableMondayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableMondayF}
+												onChange={e => setTimetableMondayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
 							</Col>
 						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Quinta:
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Terça:
 							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableThursdayI">
-									<Form.Control
-										value={timetableThursdayI}
-										onChange={e => setTimetableThursdayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableThursdayF">
-									<Form.Control
-										value={timetableThursdayF}
-										onChange={e => setTimetableThursdayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col>
-						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Sexta:
-							</Col>
-							<Col className="my-2" md="auto">
-								De
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableFridayI">
-									<Form.Control
-										value={timetableFridayI}
-										onChange={e => setTimetableFridayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
-							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableFridayF">
-									<Form.Control
-										value={timetableFridayF}
-										onChange={e => setTimetableFridayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableTuesdayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableTuesdayI}
+												onChange={e => setTimetableTuesdayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableTuesdayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableTuesdayF}
+												onChange={e => setTimetableTuesdayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
 							</Col>
 						</Row>
-						<Row>
-							<Col className="my-2" sm={2}>
-							Sábado:
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Quarta:
 							</Col>
-							<Col className="my-2" md="auto">
-								De
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableWednesdayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableWednesdayI}
+												onChange={e => setTimetableWednesdayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableWednesdayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableWednesdayF}
+												onChange={e => setTimetableWednesdayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
 							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableSaturdayI">
-									<Form.Control
-										value={timetableSaturdayI}
-										onChange={e => setTimetableSaturdayI(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
-							</Col >
-							<Col className="my-2" md="auto">
-								às
+						</Row>
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Quinta:
 							</Col>
-							<Col md="auto">
-								<Form.Group controlId="timetableSaturdayF">
-									<Form.Control
-										value={timetableSaturdayF}
-										onChange={e => setTimetableSaturdayF(e.target.value)}
-										type="time"
-									/>
-								</Form.Group>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableThursdayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableThursdayI}
+												onChange={e => setTimetableThursdayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableThursdayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableThursdayF}
+												onChange={e => setTimetableThursdayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
+							</Col>
+						</Row>
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Sexta:
+							</Col>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableFridayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableFridayI}
+												onChange={e => setTimetableFridayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableFridayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableFridayF}
+												onChange={e => setTimetableFridayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
+							</Col>
+						</Row>
+						<Row className="m-auto">
+							<Col className="align-self-center my-2 px-1" md="2" sm="12">
+								Sábado:
+							</Col>
+							<Col md="10" sm="6">
+								<Row>
+									<Form.Group as={Col} className="p-0" controlId="timetableSaturdayI" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>De</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableSaturdayI}
+												onChange={e => setTimetableSaturdayI(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Col} className="p-0" controlId="timetableSaturdayF" sm>
+										<Form.Label className="align-self-center p-0" as={Col}>Às</Form.Label>
+										<Col>
+											<Form.Control
+												className="text-center"
+												value={timetableSaturdayF}
+												onChange={e => setTimetableSaturdayF(e.target.value)}
+												type="time"
+											/>
+										</Col>
+									</Form.Group>
+								</Row>
 							</Col>
 						</Row>
 						<Modal.Footer>
@@ -1491,7 +1505,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								}
 							</Col>
 							<Col sm>
-								<Form.Group controlId="companyTimeDeliveryF">
+								<Form.Group controlId="companyTimeDeliveryF" sm>
 									<Form.Label>Tempo máximo para entrega de um pedido</Form.Label>
 									<Form.Control
 										value={companyTimeDeliveryF}
@@ -1585,7 +1599,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					</Row>
 					<Row>
 						<Col className="text-center mx-auto" sm="4">
-							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c1")}>
+							<Form className="d-flex flex-column h-100" onSubmit={(e) => handleCompanyImageUpdate(e, "c1")}>
 								<Form.Control
 									id="inputCarouselC1"
 									className="d-none"
@@ -1626,7 +1640,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							</Form>
 						</Col>
 						<Col className="text-center mx-auto" sm="4">
-							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c2")}>
+							<Form className="d-flex flex-column h-100" onSubmit={(e) => handleCompanyImageUpdate(e, "c2")}>
 								<Form.Control
 									id="inputCarouselC2"
 									className="d-none"
@@ -1667,7 +1681,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							</Form>
 						</Col>
 						<Col className="text-center mx-auto" sm="4">
-							<Form className="d-flex flex-column" onSubmit={(e) => handleCompanyImageUpdate(e, "c3")}>
+							<Form className="d-flex flex-column h-100" onSubmit={(e) => handleCompanyImageUpdate(e, "c3")}>
 								<Form.Control
 									id="inputCarouselC3"
 									className="d-none"

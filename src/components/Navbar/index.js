@@ -137,9 +137,6 @@ export default function WebsiteNavbar({
 							<Nav.Item>
 								<Nav.Link
 									as={Link}
-									style={{ color: "#ffbf00" }}
-									activeclassname="activeRoute"
-									activestyle={{ color: "white" }}
 									to="/additions"
 									href="/additions"
 									className="text-warning mx-2"
@@ -187,9 +184,6 @@ export default function WebsiteNavbar({
 							<Nav.Item>
 								<Nav.Link
 									as={Link}
-									style={{ color: "#ffbf00" }}
-									activeclassname="activeRoute"
-									activestyle={{ color: "white" }}
 									to="/finishOrder"
 									href="/finishOrder"
 									className="text-warning mx-2"
@@ -205,27 +199,21 @@ export default function WebsiteNavbar({
 								<Nav.Item>
 									<Nav.Link
 										as={Link}
-										style={{ color: "#ffbf00" }}
-										activeclassname="activeRoute"
-										activestyle={{ color: "white" }}
 										to="/login"
 										href="/login"
 										className="text-warning mx-2"
 									>
-									Entrar
+										Entrar
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
 									<Nav.Link
 										as={Link}
-										style={{ color: "#ffbf00" }}
-										activeclassname="activeRoute"
-										activestyle={{ color: "white" }}
 										to="/signup"
 										href="/signup"
 										className="text-warning mx-2"
 									>
-									Cadastrar
+										Cadastrar
 									</Nav.Link>
 								</Nav.Item>
 							</>
@@ -235,9 +223,6 @@ export default function WebsiteNavbar({
 									<Nav.Item>
 										<Nav.Link
 											as={Link}
-											style={{ color: "#ffbf00" }}
-											activeclassname="activeRoute"
-											activestyle={{ color: "white" }}
 											to="/order"
 											href="/order"
 											className="text-warning mx-2"
@@ -251,26 +236,22 @@ export default function WebsiteNavbar({
 								<Nav.Item>
 									<Nav.Link
 										as={Link}
-										style={{ color: "#ffbf00" }}
-										activeclassname="activeRoute"
-										activestyle={{ color: "white" }}
 										to="/user"
 										href="/user"
 										className="text-warning mx-2"
 									>
-									Perfil
+										Perfil
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
 									<Nav.Link
 										as={Link}
-										style={{ color: "#ffbf00" }}
 										to="#"
 										href="#"
 										onClick={handleLogout}
 										className="text-warning mx-2"
 									>
-									Sair
+										Sair
 									</Nav.Link>
 								</Nav.Item>
 							</>
