@@ -82,6 +82,7 @@ export default function Routes() {
 						setUser(response.data);
 					}
 				}).catch(() => {
+					sessionStorage.removeItem("userId");
 					setUser({});
 					setUserId("");
 				});
@@ -191,7 +192,6 @@ export default function Routes() {
 							orderAuth() ?
 								<FinishOrder
 									userId={userId}
-									setUserId={setUserId}
 									user={user}
 									setUser={setUser}
 									order={order}

@@ -52,7 +52,6 @@ import apicep from "../../../services/apicep";
 //	Exporting resource to routes.js
 export default function FinishOrder({
 	userId,
-	setUserId,
 	user,
 	setUser,
 	order,
@@ -90,7 +89,6 @@ export default function FinishOrder({
 	const [isLoading, setIsLoading] = useState(true);
 	const [userCoupons, setUserCoupons] = useState([]);
 	const [finishOrderStep, setFinishOrderStep] = useState(0);
-	const [newToken, setNewToken] = useState("");
 	const [productType, setProductType] = useState("");
 	const [productName, setProductName] = useState("");
 	const [productIndex, setProductIndex] = useState(-1);
@@ -106,11 +104,8 @@ export default function FinishOrder({
 					"x-access-token": userId
 				}
 			}).then((response) => {
-				if(response.status === 201) {
-					sessionStorage.setItem("userId", response.data.token);
-					setUserId(response.data.token);
-					setUser(response.data.user);
-					setNewToken(response.data.token);
+				if(response.status === 200) {
+					setUser(response.data);
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
@@ -324,7 +319,7 @@ export default function FinishOrder({
 
 		await api.post("order", data, {
 			headers : {
-				"x-access-token": newToken
+				"x-access-token": userId
 			}
 		}).then((response) => {
 			if(response.status === 201) {
@@ -363,16 +358,14 @@ export default function FinishOrder({
 
 			await api.put("user", data, {
 				headers : {
-					"x-access-token": newToken
+					"x-access-token": userId
 				}
 			}).then((response) => {
 				if(response.status === 200) {
 					setOrder({ products: [] });
 					sessionStorage.removeItem("order");
 					setFinishOrderStep(finishOrderStep+1);
-					sessionStorage.setItem("userId", response.data.token);
-					setUserId(response.data.token);
-					setUser(response.data.user);
+					setUser(response.data);
 				}
 			}).catch((error) => {
 				setTitle("Erro!");
@@ -1078,7 +1071,6 @@ export default function FinishOrder({
 
 FinishOrder.propTypes = {
 	userId : PropTypes.string,
-	setUserId : PropTypes.func.isRequired,
 	user : PropTypes.object.isRequired,
 	setUser : PropTypes.func.isRequired,
 	order : PropTypes.object.isRequired,

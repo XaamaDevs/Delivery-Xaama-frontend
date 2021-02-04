@@ -82,11 +82,11 @@ export default function WebsiteNavbar({
 
 		try {
 			sessionStorage.removeItem("userId");
+			sessionStorage.removeItem("order");
 
 			setUserId("");
 			setUser({});
 			setOrder({});
-			sessionStorage.removeItem("order");
 
 			history.push("/");
 		} catch (error) {

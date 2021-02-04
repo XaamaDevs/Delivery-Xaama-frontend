@@ -237,9 +237,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		}).then((response) => {
 			if(response.status === 200) {
 				setModal1Show(false);
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
+				setUser(response.data);
 				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
@@ -282,9 +280,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}).then((response) => {
 			if(response.status === 200) {
-				sessionStorage.setItem("userId", response.data.token);
-				setUserId(response.data.token);
-				setUser(response.data.user);
+				setUser(response.data);
 				setTitle("Alterações de usuário");
 				setMessage("Alterações feitas com sucesso!");
 				setModalAlert(true);
