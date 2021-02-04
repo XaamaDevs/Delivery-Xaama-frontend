@@ -188,7 +188,7 @@ export default function Ratings({ userId, user }) {
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<CardDeck>
+				<CardDeck className="mx-0">
 					{ratings && ratings.length ?
 						<Row className="m-auto w-100">
 							{ratings.map(rating => (

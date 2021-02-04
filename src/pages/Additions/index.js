@@ -276,7 +276,7 @@ export default function Additions({ userId }) {
 	}
 
 	const header = (
-		<Card.Header className="pb-3">
+		<Card.Header>
 			<Nav variant="tabs" defaultActiveKey="#">
 				<Nav.Item>
 					<Nav.Link
@@ -293,7 +293,7 @@ export default function Additions({ userId }) {
 
 	const additionCard = (additionI, index) => {
 		return (
-			<Col key={index} className="px-1 my-2 mx-auto" lg="4" md="6" sm="12">
+			<Col key={index} className="px-1 my-2 mx-auto" lg="3" md="4" sm="12">
 				<Card className="m-0 h-100" bg="secondary">
 					<Card.Img
 						variant="top"
@@ -411,12 +411,12 @@ export default function Additions({ userId }) {
 
 	return (
 		<Container className="addition-container w-100">
-			<Card className="px-3" text="light" bg="dark">
+			<Card text="light" bg="dark">
 				{header}
 				{isLoading ?
 					<Loading animation="grow" />
 					:
-					<CardDeck className="p-2">
+					<CardDeck className="mx-0">
 						{additions && additions.length ?
 							<Row className="m-auto">
 								{additions.map((additionI, index) => (

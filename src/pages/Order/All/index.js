@@ -221,7 +221,7 @@ export default function AllOrders({ userId, companyInfo }) {
 					<h1 className="display-4 text-center text-white m-auto py-3 w-100">
 						{orders && orders.length ? "Pedidos das últimas 24 horas" : "Não há pedidos das últimas 24 horas!"}
 					</h1>
-					<CardDeck>
+					<CardDeck className="mx-0">
 						{orders && orders.length ?
 							<Row className="m-auto w-100">
 								{orders.map((orderI) => (

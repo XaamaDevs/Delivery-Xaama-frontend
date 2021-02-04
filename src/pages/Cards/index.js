@@ -93,7 +93,7 @@ export default function Cards({ companyInfo, userId }) {
 
 	return (
 		<Container fluid>
-			<CardDeck>
+			<CardDeck className="mx-0">
 				{companyCards && companyCards.length ?
 					<Row className="m-auto w-100">
 						{companyCards.map((cardI, index) => (

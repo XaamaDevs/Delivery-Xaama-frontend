@@ -114,7 +114,7 @@ export default function AllUsers({ userId }) {
 			{isLoading ?
 				<Loading animation="grow" />
 				:
-				<CardDeck>
+				<CardDeck className="mx-0">
 					{users && users.length ?
 						<Row className="m-auto w-100">
 							{users.map(user => (

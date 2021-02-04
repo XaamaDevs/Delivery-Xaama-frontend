@@ -268,7 +268,7 @@ export default function Coupons({ userId, companyInfo }) {
 	}
 
 	const header = (
-		<Card.Header className="pb-3">
+		<Card.Header>
 			<Nav fill variant="tabs">
 				{couponTypes.map((type, index) => (
 					type && type.length ?
@@ -508,13 +508,13 @@ export default function Coupons({ userId, companyInfo }) {
 
 	return (
 		<Container>
-			<Card className="px-3" text="light" bg="dark">
+			<Card text="light" bg="dark">
 				{isLoading ?
 					<Loading animation="grow" />
 					:
 					<>
 						{header}
-						<CardDeck>
+						<CardDeck className="mx-0">
 							{coupons && coupons.length ?
 								<Row className="m-auto w-100">
 									{coupons.map((couponI, index) => (

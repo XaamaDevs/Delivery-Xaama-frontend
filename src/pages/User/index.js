@@ -576,8 +576,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				id="uncontrolled-tabs"
 				activeKey={eventKey}
 				defaultActiveKey="0"
-				onSelect={(k) => {setEventKey(k); handleCouponsList(couponTypes[k]);} } >
-
+				onSelect={(k) => { setEventKey(k); handleCouponsList(couponTypes[k]); }}
+			>
 				{couponTypes.map((type, index) => (
 					type && type.length ?
 						<Tab
@@ -1738,7 +1738,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							<Loading animation="grow" />
 							:
 							coupons && coupons.length ?
-								<CardDeck className="p-2">
+								<CardDeck className="mx-0">
 									{Array(coupons.length).fill(null).map((value, i) => (
 										i%3 === 0 ?
 											<Row className="d-flex justify-content-around m-auto w-100" key={i/3}>

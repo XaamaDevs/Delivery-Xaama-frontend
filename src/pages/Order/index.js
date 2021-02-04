@@ -187,7 +187,7 @@ export default function Orders({ userId, user, companyInfo }) {
 					<h1 className="display-4 text-center text-white m-auto p-3 w-100">
 						{orders && orders.length ? "Seus últimos pedidos!" : "Não há pedidos!"}
 					</h1>
-					<CardDeck>
+					<CardDeck className="mx-0">
 						{orders && orders.length ?
 							<Row className="m-auto w-100">
 								{orders.map((orderI) => (

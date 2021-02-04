@@ -393,7 +393,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	}
 
 	const header = (
-		<Card.Header className="pb-3">
+		<Card.Header>
 			<Nav fill variant="tabs">
 				{Object.keys(productsByType).map((type, index) => (
 					productsByType[type].length ?
@@ -658,13 +658,13 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 	return (
 		<Container>
-			<Card className="px-3" text="light" bg="dark">
+			<Card text="light" bg="dark">
 				{isLoading ?
 					<Loading animation="grow" />
 					:
 					<>
 						{header}
-						<CardDeck>
+						<CardDeck className="mx-0">
 							{products && products.length ?
 								<Row className="m-auto w-100">
 									{products.map((productI, index) => (
