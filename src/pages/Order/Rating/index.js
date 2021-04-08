@@ -41,44 +41,45 @@ export default function Ratings({ userId, user }) {
 
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
-	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	const element = document.getElementsByClassName("grecaptcha-badge")[0];
 	element && element.parentNode ? element.parentNode.removeChild(element) : null;
 
 	const customIcons = {
 		1: {
 			icon: <SentimentVeryDissatisfiedIcon />,
-			label: "Very Dissatisfied",
+			label: "Very Dissatisfied"
 		},
 		2: {
 			icon: <SentimentDissatisfiedIcon />,
-			label: "Dissatisfied",
+			label: "Dissatisfied"
 		},
 		3: {
 			icon: <SentimentSatisfiedIcon />,
-			label: "Neutral",
+			label: "Neutral"
 		},
 		4: {
 			icon: <SentimentSatisfiedAltIcon />,
-			label: "Satisfied",
+			label: "Satisfied"
 		},
 		5: {
 			icon: <SentimentVerySatisfiedIcon />,
-			label: "Very Satisfied",
-		},
+			label: "Very Satisfied"
+		}
 	};
 
 	function IconContainer(props) {
 		const { value, ...other } = props;
+
 		return <span {...other}>{customIcons[value].icon}</span>;
 	}
 
 	IconContainer.propTypes = {
-		value: PropTypes.number.isRequired,
+		value: PropTypes.number.isRequired
 	};
 
 	useEffect(() => {
 		async function verifyRatingThumbnail(response) {
-			var data = [];
+			const data = [];
 
 			for(const rating of response.data) {
 				await fetch(process.env.REACT_APP_API_URL + rating.thumbnail_url).then((response) => {
@@ -128,8 +129,8 @@ export default function Ratings({ userId, user }) {
 	async function handleApprovedRating(event) {
 		event.preventDefault();
 
-		await api.put("rating/" + ratingId, {}, {
-			headers : {
+		await api.put(`rating/${ratingId}`, {}, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -157,8 +158,8 @@ export default function Ratings({ userId, user }) {
 	async function handleDeleteRating(event) {
 		event.preventDefault();
 
-		await api.delete("rating/" + ratingId, {
-			headers : {
+		await api.delete(`rating/${ratingId}`, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -191,7 +192,7 @@ export default function Ratings({ userId, user }) {
 				<CardDeck className="mx-0">
 					{ratings && ratings.length ?
 						<Row className="m-auto w-100">
-							{ratings.map(rating => (
+							{ratings.map((rating) => (
 								(!userId && rating.approved) ||
 									(userId && userId.length && user && (user.userType === 0) && rating.approved) ||
 									(userId && userId.length && user && ((user.userType === 1) || user.userType === 2)) ?
@@ -229,7 +230,9 @@ export default function Ratings({ userId, user }) {
 																className="my-1"
 																variant="warning"
 																size="sm"
-																onClick ={() => { setRatingId(rating._id); setModalApprovedRating(true); }}
+																onClick ={() => {
+																	setRatingId(rating._id); setModalApprovedRating(true);
+																}}
 															>
 																	Aprovar
 															</Button>
@@ -241,7 +244,9 @@ export default function Ratings({ userId, user }) {
 															className="my-1"
 															variant="danger"
 															size="sm"
-															onClick={() => { setRatingId(rating._id); setModalDeleteRating(true); }}
+															onClick={() => {
+																setRatingId(rating._id); setModalDeleteRating(true);
+															}}
 														>
 																Apagar
 														</Button>
@@ -336,6 +341,6 @@ export default function Ratings({ userId, user }) {
 }
 
 Ratings.propTypes = {
-	userId : PropTypes.string,
-	user : PropTypes.object
+	userId: PropTypes.string,
+	user: PropTypes.object
 };

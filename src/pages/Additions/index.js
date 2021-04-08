@@ -129,11 +129,11 @@ export default function Additions({ userId }) {
 		data.append("price", additionPrice);
 
 		const addTypesElem = document.getElementById("additionType").children;
-		var addTypes = "";
+		let addTypes = "";
 
 		for(const type of addTypesElem) {
 			if(type.selected === true) {
-				addTypes += type.value + ", ";
+				addTypes += `${type.value}, `;
 			}
 		}
 
@@ -143,7 +143,7 @@ export default function Additions({ userId }) {
 		data.append("thumbnail", additionThumbnail);
 
 		await api.post("addition", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -170,11 +170,11 @@ export default function Additions({ userId }) {
 		event.preventDefault();
 
 		const addTypesElem = document.getElementById("additionType").children;
-		var addTypes = "";
+		let addTypes = "";
 
 		for(const type of addTypesElem) {
 			if(type.selected === true) {
-				addTypes += type.value + ", ";
+				addTypes += `${type.value}, `;
 			}
 		}
 
@@ -187,8 +187,8 @@ export default function Additions({ userId }) {
 			type: addTypes
 		};
 
-		await api.put("addition/" + additionId, data, {
-			headers : {
+		await api.put(`addition/${additionId}`, data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -220,8 +220,8 @@ export default function Additions({ userId }) {
 
 		data.append("thumbnail", additionThumbnail);
 
-		await api.put("additionThumbnail/" + additionId, data, {
-			headers : {
+		await api.put(`additionThumbnail/${additionId}`, data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -249,8 +249,8 @@ export default function Additions({ userId }) {
 	async function handleAdditionDelete(event) {
 		event.preventDefault();
 
-		await api.delete("addition/" + additionId, {
-			headers : {
+		await api.delete(`addition/${additionId}`, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -282,7 +282,9 @@ export default function Additions({ userId }) {
 					<Nav.Link
 						href="#"
 						className="btn-outline-warning rounded"
-						onClick={() => { setAddition(null); setAdditionAddModal(true); }}
+						onClick={() => {
+							setAddition(null); setAdditionAddModal(true);
+						}}
 					>
 						Nova adição
 					</Nav.Link>
@@ -307,7 +309,9 @@ export default function Additions({ userId }) {
 								className="my-1"
 								variant="warning"
 								size="sm"
-								onClick ={() => { setAddition(additionI); setAdditionUpdateModal(true); }}
+								onClick ={() => {
+									setAddition(additionI); setAdditionUpdateModal(true);
+								}}
 							>
 							Modificar
 							</Button>
@@ -336,7 +340,9 @@ export default function Additions({ userId }) {
 								className="my-1"
 								variant="danger"
 								size="sm"
-								onClick={() => { setAddition(additionI); setAdditionDeleteModal(true); }}
+								onClick={() => {
+									setAddition(additionI); setAdditionDeleteModal(true);
+								}}
 							>
 							Remover
 							</Button>
@@ -344,7 +350,7 @@ export default function Additions({ userId }) {
 					</Card.Body>
 					<Card.Footer>
 						<small>
-							{"Preço: R$" + additionI.price}
+							{`Preço: R$${additionI.price}`}
 						</small>
 					</Card.Footer>
 				</Card>
@@ -359,7 +365,7 @@ export default function Additions({ userId }) {
 					<Form.Label>Nome</Form.Label>
 					<Form.Control
 						value={additionName}
-						onChange={e => setAdditionName(e.target.value)}
+						onChange={(e) => setAdditionName(e.target.value)}
 						type="text"
 						placeholder="Nome da adição"
 						required
@@ -371,7 +377,7 @@ export default function Additions({ userId }) {
 					</Form.Label>
 					<Form.Control
 						value={additionPrice}
-						onChange={e => {
+						onChange={(e) => {
 							e.target.value = isNaN(e.target.value) ? additionPrice : e.target.value;
 							setAdditionPrice(e.target.value);
 						}}
@@ -388,7 +394,7 @@ export default function Additions({ userId }) {
 					{productTypes.map((type, index) => (
 						<option
 							key={index}
-							selected={additionType && additionType.indexOf(type) >= 0 ? true : false}>
+							selected={Boolean(additionType && additionType.indexOf(type) >= 0)}>
 							{type}
 						</option>
 					))}
@@ -403,7 +409,7 @@ export default function Additions({ userId }) {
 					id="custom-switch2"
 					label={additionAvailable ? "Disponível" : "Indisponível"}
 					checked={additionAvailable}
-					onChange={e => setAdditionAvailable(e.target.checked)}
+					onChange={(e) => setAdditionAvailable(e.target.checked)}
 				/>
 			</Form.Group>
 		</>
@@ -432,7 +438,9 @@ export default function Additions({ userId }) {
 
 			<Modal
 				show={additionAddModal}
-				onHide={() =>  { setAddition(null); setAdditionAddModal(false); setToastShow(false); }}
+				onHide={() => {
+					setAddition(null); setAdditionAddModal(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -449,7 +457,7 @@ export default function Additions({ userId }) {
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => setAdditionThumbnail(event.target.files[0])}
+									onChange={(event) => setAdditionThumbnail(event.target.files[0])}
 								/>
 								<Image
 									id={preview || additionThumbnail_url ? "thumbnail" : "camera"}
@@ -489,7 +497,9 @@ export default function Additions({ userId }) {
 
 			<Modal
 				show={additionUpdateModal}
-				onHide={() => { setAddition(null); setAdditionUpdateModal(false); setToastShow(false); }}
+				onHide={() => {
+					setAddition(null); setAdditionUpdateModal(false); setToastShow(false);
+				}}
 				size="lg" centered
 			>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
@@ -505,7 +515,7 @@ export default function Additions({ userId }) {
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => setAdditionThumbnail(event.target.files[0])}
+									onChange={(event) => setAdditionThumbnail(event.target.files[0])}
 									required
 								/>
 								<Image
@@ -589,5 +599,5 @@ export default function Additions({ userId }) {
 }
 
 Additions.propTypes = {
-	userId : PropTypes.string.isRequired
+	userId: PropTypes.string.isRequired
 };

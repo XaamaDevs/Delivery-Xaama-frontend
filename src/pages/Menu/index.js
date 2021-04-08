@@ -73,9 +73,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
-	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	const element = document.getElementsByClassName("grecaptcha-badge")[0];
 	element && element.parentNode ? element.parentNode.removeChild(element) : null;
-
 
 	//	Update product state variables
 	useEffect(() => {
@@ -106,10 +105,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						api.get("product")
 							.then((response) => {
 								if(response.status === 200) {
-									var prodsByType = {};
+									const prodsByType = {};
 
 									for(const type of resProdTypes.data) {
-										var prods = [];
+										const prods = [];
 
 										for(const product of response.data) {
 											if(product.type === type) {
@@ -141,14 +140,14 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						api.get("addition")
 							.then((response) => {
 								if(response.status === 200) {
-									var AddsByType = {};
+									const AddsByType = {};
 
 									for(const type of resProdTypes.data) {
-										var adds = [];
+										const adds = [];
 
 										for(const addition of response.data) {
 											if(addition.type.indexOf(type) >= 0) {
-												if(addition.available){
+												if(addition.available) {
 													adds.push(addition);
 												}
 											}
@@ -210,7 +209,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		data.append("thumbnail", productThumbnail);
 
 		await api.post("product", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -245,8 +244,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 			available: productAvailable
 		};
 
-		await api.put("product/" + productId, data, {
-			headers : {
+		await api.put(`product/${productId}`, data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -278,8 +277,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 		data.append("thumbnail", productThumbnail);
 
-		await api.put("productThumbnail/" + productId, data, {
-			headers : {
+		await api.put(`productThumbnail/${productId}`, data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -307,8 +306,8 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 	async function handleProductDelete(event) {
 		event.preventDefault();
 
-		await api.delete("product/" + productId, {
-			headers : {
+		await api.delete(`product/${productId}`, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -339,15 +338,15 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		if(productOrder.available) {
 			const product = {
 				product: productOrder.id,
-				additions: additionsOrder.map(a => a.id),
+				additions: additionsOrder.map((a) => a.id),
 				size: productSize,
 				note: productNote
 			};
 
 			if(order.products && order.products.length) {
-				var newOrder = order;
-				newOrder["products"].push(product);
-				newOrder["total"] += productTotal;
+				const newOrder = order;
+				newOrder.products.push(product);
+				newOrder.total += productTotal;
 
 				setOrder(newOrder);
 				sessionStorage.setItem("order", JSON.stringify(newOrder));
@@ -370,7 +369,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		event.preventDefault();
 
 		if(additionsOrder.length < 4) {
-			var newAdditionsOrder = additionsOrder;
+			const newAdditionsOrder = additionsOrder;
 
 			newAdditionsOrder.push(add);
 
@@ -382,7 +381,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 		event.preventDefault();
 
 		if(productOrder.prices) {
-			var total = productOrder.prices[productSize];
+			let total = productOrder.prices[productSize];
 
 			for(const add of additionsOrder) {
 				total += add.price;
@@ -400,7 +399,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						<Nav.Item key={index}>
 							<Nav.Link
 								className="btn-outline-warning rounded"
-								href={"#" + index}
+								href={`#${index}`}
 								onClick={() => {
 									setProducts(productsByType[type]);
 									setAdditions(additionsByType[type]);
@@ -443,7 +442,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								index === productI.ingredients.length-1 ?
 									ingredient
 									:
-									ingredient + ", "
+									`${ingredient}, `
 							))}
 						</Card.Text>
 						:
@@ -455,7 +454,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								className="my-1"
 								variant="warning"
 								size="sm"
-								onClick ={() => { setProduct(productI); setProductUpdateModal(true); }}
+								onClick ={() => {
+									setProduct(productI); setProductUpdateModal(true);
+								}}
 							>
 								Modificar
 							</Button>
@@ -482,7 +483,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 								className="my-1"
 								variant="danger"
 								size="sm"
-								onClick={() => { setProduct(productI); setProductDeleteModal(true); }}
+								onClick={() => {
+									setProduct(productI); setProductDeleteModal(true);
+								}}
 							>
 								Remover
 							</Button>
@@ -535,9 +538,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 						}
 						{productI.prices.map((price, index) => (
 							index === productI.prices.length-1 ?
-								"R$" + price
+								`R$${price}`
 								:
-								"R$" + price + ", "
+								`R$${price}, `
 						))}
 					</small>
 				</Card.Footer>
@@ -552,7 +555,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					<Form.Label>Nome</Form.Label>
 					<Form.Control
 						value={productName}
-						onChange={e => setProductName(e.target.value)}
+						onChange={(e) => setProductName(e.target.value)}
 						type="text"
 						placeholder="Nome do produto"
 						required
@@ -562,7 +565,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					<Form.Label>Tipo</Form.Label>
 					<Form.Control
 						value={productType}
-						onChange={e => setProductType(e.target.value)}
+						onChange={(e) => setProductType(e.target.value)}
 						as="select"
 						placeholder="Tipo do produto"
 						required
@@ -635,7 +638,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							onChange={(e) => setProductIngredients(e.target.value)}
 							as="textarea"
 							rows="3"
-							style={{resize :"none"}}
+							style={{resize: "none"}}
 							placeholder="Ingredientes do produto"
 							required={productUpdateModal && productIngredients.length}
 						/>
@@ -644,13 +647,13 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				:
 				null
 			}
-			<Form.Group className={productAddModal ? "d-none" : null}  controlId="productAvailable">
+			<Form.Group className={productAddModal ? "d-none" : null} controlId="productAvailable">
 				<Form.Check
 					type="switch"
 					id="custom-switch"
 					label={productAvailable ? "Disponível" : "Indisponível"}
 					checked={productAvailable}
-					onChange={e => setProductAvailable(e.target.checked)}
+					onChange={(e) => setProductAvailable(e.target.checked)}
 				/>
 			</Form.Group>
 		</>
@@ -683,7 +686,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 			<Modal
 				show={productAddModal}
-				onHide={() => { setProduct(null); setProductAddModal(false); setToastShow(false); }}
+				onHide={() => {
+					setProduct(null); setProductAddModal(false); setToastShow(false);
+				}}
 				dialogClassName="modal-custom"
 				centered
 			>
@@ -700,7 +705,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => setProductThumbnail(event.target.files[0])}
+									onChange={(event) => setProductThumbnail(event.target.files[0])}
 								/>
 								<Image
 									id={preview || productThumbnail_url ? "thumbnail" : "camera"}
@@ -741,7 +746,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 			<Modal
 				show={productUpdateModal}
-				onHide={() => { setProduct(null); setProductUpdateModal(false); setToastShow(false); }}
+				onHide={() => {
+					setProduct(null); setProductUpdateModal(false); setToastShow(false);
+				}}
 				dialogClassName="modal-custom"
 				centered
 			>
@@ -758,7 +765,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => setProductThumbnail(event.target.files[0])}
+									onChange={(event) => setProductThumbnail(event.target.files[0])}
 									required
 								/>
 								<Image
@@ -805,11 +812,13 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={productDeleteModal} onHide={() => {setProductDeleteModal(false); setToastShow(false);}}>
+			<Modal show={productDeleteModal} onHide={() => {
+				setProductDeleteModal(false); setToastShow(false);
+			}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Remover {productName && productType ?
-						productType[0].toUpperCase() + productType.slice(1) + " " + productName
+						`${productType[0].toUpperCase() + productType.slice(1)} ${productName}`
 						:
 						null
 					}
@@ -819,7 +828,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => {setProductDeleteModal(false); setToastShow(false);}}>
+					<Button variant="warning" onClick={() => {
+						setProductDeleteModal(false); setToastShow(false);
+					}}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleProductDelete}>
@@ -830,7 +841,9 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 
 			<Modal
 				show={productOrderModal}
-				onHide={() => {setProductOrderModal(false); setToastShow(false);}}
+				onHide={() => {
+					setProductOrderModal(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -856,7 +869,7 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									<Row className="d-flex align-items-center">
 										<Col className="my-1" sm>
 											{productOrder.type ?
-												productOrder.type[0].toUpperCase() + productOrder.type.slice(1) + " " + productOrder.name
+												`${productOrder.type[0].toUpperCase() + productOrder.type.slice(1)} ${productOrder.name}`
 												:
 												null
 											}
@@ -866,10 +879,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 												<Form.Group className="m-auto" controlId="productType">
 													<Form.Control
 														value={productOrder.sizes[productSize]}
-														onChange={e => {
+														onChange={(e) => {
 															const size = productOrder.sizes.indexOf(e.target.value);
 															setProductSize(size);
-															var total = productOrder.prices[size];
+															let total = productOrder.prices[size];
 															for(const add of additionsOrder) {
 																total += add.price;
 															}
@@ -913,16 +926,18 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 															alt="Adição"
 														/>
 														<Carousel.Caption className="d-flex flex-row align-items-end p-0 h-100">
-															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-																	|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+															{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+																	(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 																<Button
 																	variant="light"
 																	id="btn-custom"
 																	className="mx-auto"
 																	size="sm"
-																	onClick={e => {handleAdditionOrder(e, add); handleProductTotal(e);}}
+																	onClick={(e) => {
+																		handleAdditionOrder(e, add); handleProductTotal(e);
+																	}}
 																>
-																	{add.name + " +R$" + add.price}
+																	{`${add.name} +R$${add.price}`}
 																</Button>
 																:
 																null
@@ -947,11 +962,11 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 									<Card.Body>
 										<Form.Control
 											value={productNote}
-											onChange={e => setProductNote(e.target.value)}
+											onChange={(e) => setProductNote(e.target.value)}
 											placeholder="Digite aqui se você deseja remover algum ingrediente do pedido (opcional)"
 											as="textarea"
 											rows="2"
-											style={{resize :"none"}}
+											style={{resize: "none"}}
 										/>
 									</Card.Body>
 								</Card>
@@ -959,27 +974,27 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 							:
 							null
 						}
-						{additionsOrder &&  additionsOrder.length ?
+						{additionsOrder && additionsOrder.length ?
 							<Col className="my-2" sm>
 								<Card bg="light" text="dark">
 									<Card.Header>Adições</Card.Header>
 									<Card.Body>
 										<Row className="d-flex flex-row flex-wrap justify-content-start">
-											{additionsOrder.map((add, index) =>(
+											{additionsOrder.map((add, index) => (
 												<Button
 													variant="light"
 													id="btn-custom"
 													size="sm"
 													key={index}
 													className="m-1"
-													onClick={e => {
-														var newAdditionsOrder = additionsOrder;
+													onClick={(e) => {
+														const newAdditionsOrder = additionsOrder;
 														newAdditionsOrder.splice(index, 1);
 														setAdditionsOrder(newAdditionsOrder);
 														handleProductTotal(e);
 													}}
 												>
-													{add.name + " X"}
+													{`${add.name} X`}
 												</Button>
 											))}
 										</Row>
@@ -992,13 +1007,15 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 					</Row>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="danger" onClick={() => {setProductOrderModal(false); setToastShow(false);}}>
+					<Button variant="danger" onClick={() => {
+						setProductOrderModal(false); setToastShow(false);
+					}}>
 						Fechar
 					</Button>
-					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm)
-						|| (companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
+					{(companyInfo && companyInfo.manual && companyInfo.systemOpenByAdm) ||
+						(companyInfo && !companyInfo.manual && companySystemOpenByHour) ?
 						<Button variant="warning" onClick={handleProductOrder}>
-							{"Adicionar ao carrinho +R$" + productTotal}
+							{`Adicionar ao carrinho +R$${productTotal}`}
 						</Button>
 						:
 						<Button
@@ -1016,10 +1033,10 @@ export default function Menu({ userId, user, order, setOrder, companyInfo, compa
 }
 
 Menu.propTypes = {
-	userId : PropTypes.string,
-	user : PropTypes.object.isRequired,
-	companyInfo : PropTypes.object.isRequired,
-	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.func.isRequired,
-	companySystemOpenByHour : PropTypes.bool
+	userId: PropTypes.string,
+	user: PropTypes.object.isRequired,
+	companyInfo: PropTypes.object.isRequired,
+	order: PropTypes.object.isRequired,
+	setOrder: PropTypes.func.isRequired,
+	companySystemOpenByHour: PropTypes.bool
 };

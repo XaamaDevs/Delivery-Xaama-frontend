@@ -41,7 +41,7 @@ export default function Signup({ setUserId, setUser, order }) {
 
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
-	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	const element = document.getElementsByClassName("grecaptcha-badge")[0];
 	element && element.parentNode ? element.parentNode.removeChild(element) : null;
 
 	//	Function to handle user signup
@@ -90,12 +90,12 @@ export default function Signup({ setUserId, setUser, order }) {
 							className="d-none"
 							type="file"
 							accept="image/*"
-							onChange={e => setThumbnail(e.target.files[0])}
+							onChange={(e) => setThumbnail(e.target.files[0])}
 						/>
 						<Image
 							id={preview ? "thumbnail" : "camera"}
-							className={preview  ? "btn border-0 m-auto" : "btn w-100 m-auto"}
-							src={preview ? preview :  camera}
+							className={preview ? "btn border-0 m-auto" : "btn w-100 m-auto"}
+							src={preview ? preview : camera}
 							alt="Selecione sua imagem"
 							onClick={() => document.getElementById("inputImage").click()}
 							rounded
@@ -110,7 +110,7 @@ export default function Signup({ setUserId, setUser, order }) {
 							placeholder="Seu nome"
 							type="text"
 							value={name}
-							onChange={e => setName(e.target.value)}
+							onChange={(e) => setName(e.target.value)}
 							autoFocus
 							required
 						/>
@@ -121,7 +121,7 @@ export default function Signup({ setUserId, setUser, order }) {
 							placeholder="Seu email"
 							type="email"
 							value={email}
-							onChange={e => setEmail(e.target.value)}
+							onChange={(e) => setEmail(e.target.value)}
 							required
 						/>
 					</Form.Group>
@@ -131,7 +131,7 @@ export default function Signup({ setUserId, setUser, order }) {
 							placeholder="Senha"
 							type="password"
 							value={password}
-							onChange={e => setPassword(e.target.value)}
+							onChange={(e) => setPassword(e.target.value)}
 							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
@@ -143,7 +143,7 @@ export default function Signup({ setUserId, setUser, order }) {
 							placeholder="Confirme sua senha"
 							type="password"
 							value={passwordC}
-							onChange={e => setPasswordC(e.target.value)}
+							onChange={(e) => setPasswordC(e.target.value)}
 							pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 							required
 						/>
@@ -171,7 +171,7 @@ export default function Signup({ setUserId, setUser, order }) {
 }
 
 Signup.propTypes = {
-	setUserId : PropTypes.func.isRequired,
-	setUser : PropTypes.func.isRequired,
-	order : PropTypes.object
+	setUserId: PropTypes.func.isRequired,
+	setUser: PropTypes.func.isRequired,
+	order: PropTypes.object
 };

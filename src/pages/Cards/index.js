@@ -66,7 +66,7 @@ export default function Cards({ companyInfo, userId }) {
 		};
 
 		await api.put("companyUpdateCards", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -107,14 +107,14 @@ export default function Cards({ companyInfo, userId }) {
 											<>
 												<Card.Text>
 													{cardI && cardI.qtdMax ?
-														"Quantidade de pedidos para completar o cartão: " + cardI.qtdMax
+														`Quantidade de pedidos para completar o cartão: ${cardI.qtdMax}`
 														:
 														"Quantidade de pedidos desse produto para completar o cartão: Não atribuído"
 													}
 												</Card.Text>
 												<Card.Text>
 													{cardI && cardI.discount ?
-														"Desconto aṕos completar o cartão: R$ " + cardI.discount
+														`Desconto aṕos completar o cartão: R$ ${cardI.discount}`
 														:
 														"Desconto aṕos completar o cartão: Não atribuído"
 													}
@@ -129,7 +129,9 @@ export default function Cards({ companyInfo, userId }) {
 											variant="light"
 											size="sm"
 											id="btn-custom"
-											onClick ={() => { setCard(cardI); setModalCards(true); } }
+											onClick ={() => {
+												setCard(cardI); setModalCards(true);
+											} }
 										>
 										Modificar
 										</Button>
@@ -145,7 +147,9 @@ export default function Cards({ companyInfo, userId }) {
 
 			<Modal
 				show={modalCards}
-				onHide={() => { setCard(null); setModalCards(false); setToastShow(false);} }
+				onHide={() => {
+					setCard(null); setModalCards(false); setToastShow(false);
+				} }
 				size="lg"
 				centered
 			>
@@ -163,7 +167,7 @@ export default function Cards({ companyInfo, userId }) {
 									<Form.Check
 										type={"checkbox"}
 										checked={cardAvailable ? cardAvailable : false}
-										onChange={e => setCardAvailable(e.target.checked)}
+										onChange={(e) => setCardAvailable(e.target.checked)}
 										label={"Disponibilizar cartão fidelidade para esse produto?"}
 									/>
 								</Form.Group>
@@ -175,7 +179,7 @@ export default function Cards({ companyInfo, userId }) {
 									<Form.Label>Quantidade</Form.Label>
 									<Form.Control
 										value={cardQtdMax}
-										onChange={e => setCardQtdMax(e.target.value)}
+										onChange={(e) => setCardQtdMax(e.target.value)}
 										type="number"
 										min="10"
 										max="20"
@@ -189,7 +193,7 @@ export default function Cards({ companyInfo, userId }) {
 									<Form.Label>Desconto</Form.Label>
 									<Form.Control
 										value={cardDiscount}
-										onChange={e => setCardDiscount(e.target.value)}
+										onChange={(e) => setCardDiscount(e.target.value)}
 										type="number"
 										min="5"
 										max="20"
@@ -200,7 +204,9 @@ export default function Cards({ companyInfo, userId }) {
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setCard(null); setModalCards(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => {
+								setCard(null); setModalCards(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -217,6 +223,6 @@ export default function Cards({ companyInfo, userId }) {
 }
 
 Cards.propTypes = {
-	userId : PropTypes.string,
-	companyInfo : PropTypes.object,
+	userId: PropTypes.string,
+	companyInfo: PropTypes.object
 };

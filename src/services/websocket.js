@@ -1,7 +1,7 @@
 import socketio from "socket.io-client";
 
 const socket = socketio(process.env.REACT_APP_API_URL, {
-	autoConnect: false,
+	"autoConnect": false
 });
 
 
@@ -22,7 +22,7 @@ function connect() {
 }
 
 async function disconnect() {
-	if (socket.connected) {
+	if(socket.connected) {
 		socket.disconnect();
 	}
 }
@@ -32,5 +32,5 @@ export {
 	disconnect,
 	subscribeToNewOrders,
 	subscribeToDeleteOrders,
-	subscribeToUpdateOrders,
+	subscribeToUpdateOrders
 };

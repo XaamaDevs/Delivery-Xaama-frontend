@@ -20,5 +20,5 @@ export default function Loading({ animation }) {
 }
 
 Loading.propTypes = {
-	animation : PropTypes.string
+	animation: PropTypes.string
 };

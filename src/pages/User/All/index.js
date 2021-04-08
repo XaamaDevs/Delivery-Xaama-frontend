@@ -6,8 +6,7 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 
 //	Importing React features
-import { Button, Modal, Form, Row, Col, Image, Card, CardDeck, Container
-} from "react-bootstrap";
+import { Button, Modal, Form, Row, Col, Image, Card, CardDeck, Container} from "react-bootstrap";
 
 //	Importing website utils
 import Alert from "../../../components/Alert";
@@ -42,7 +41,7 @@ export default function AllUsers({ userId }) {
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("userAll", {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -76,12 +75,12 @@ export default function AllUsers({ userId }) {
 
 		const data = {
 			userUpdateId,
-			type : newType,
-			password : userPassword
+			type: newType,
+			password: userPassword
 		};
 
 		await api.put("/companyUpdateUser", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -117,7 +116,7 @@ export default function AllUsers({ userId }) {
 				<CardDeck className="mx-0">
 					{users && users.length ?
 						<Row className="m-auto w-100">
-							{users.map(user => (
+							{users.map((user) => (
 								<Col key={user._id} className="px-0 my-2 mx-auto" lg="4" md="6" sm="12">
 									<Card className="mx-1 h-100" text="white" bg="dark">
 										<Card.Header>
@@ -148,11 +147,11 @@ export default function AllUsers({ userId }) {
 										<Card.Body>
 											<Card.Text>
 												<Card.Text>
-													{user.phone ? "Telefone: " + user.phone : "Telefone não informado"}
+													{user.phone ? `Telefone: ${user.phone}` : "Telefone não informado"}
 												</Card.Text>
 												<Card.Text>
 													{user.address && user.address.length ?
-														"Endereço: " + user.address.join(", ")
+														`Endereço: ${user.address.join(", ")}`
 														:
 														"Endereço não informado"
 													}
@@ -224,7 +223,7 @@ export default function AllUsers({ userId }) {
 							<Form.Label>Senha</Form.Label>
 							<Form.Control
 								value={userPassword}
-								onChange={e => setUserPassword(e.target.value)}
+								onChange={(e) => setUserPassword(e.target.value)}
 								type="password"
 								placeholder="Sua senha"
 								required
@@ -248,5 +247,5 @@ export default function AllUsers({ userId }) {
 }
 
 AllUsers.propTypes = {
-	userId : PropTypes.string.isRequired
+	userId: PropTypes.string.isRequired
 };

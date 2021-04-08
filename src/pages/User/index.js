@@ -125,15 +125,15 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("coupon", {
-				headers : {
-					"x-access-token": userId,
+				headers: {
+					"x-access-token": userId
 				}
 			}).then((response) => {
 				if(response.status === 200) {
-					var cpnsByType = {};
+					const cpnsByType = {};
 
 					for(const type of couponTypes) {
-						var cpns = [];
+						const cpns = [];
 
 						for(const cpn of response.data) {
 							if(cpn.type === type) {
@@ -198,9 +198,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 	async function handleUserUpdate(event, action = null) {
 		event.preventDefault();
 
-		var s = [];
+		const s = [];
 
-		for (var c of user.cards) {
+		for(const c of user.cards) {
 			s.push(c.status);
 		}
 
@@ -214,24 +214,24 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			}
 		}
 
-		var data = {
+		const data = {
 			name: userName,
 			email: userEmail.toLowerCase(),
 			phone: userPhone && userPhone.length ? userPhone : "",
 			address: address.length ? address.join(", ") : null,
-			status: s,
+			status: s
 		};
 
 		if(action === 1) {
-			data["passwordN"] = userPasswordN;
-			data["passwordO"] = userPasswordO;
+			data.passwordN = userPasswordN;
+			data.passwordO = userPasswordO;
 
 			setUserPasswordO("");
 			setUserPasswordN("");
 		}
 
-		await api.put("user", data , {
-			headers : {
+		await api.put("user", data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -266,7 +266,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 		if(action === 0) {
 			data.append("thumbnail", thumbnail);
 		}
-		var delImg = false;
+		let delImg = false;
 
 		if(action === null) {
 			delImg = true;
@@ -274,8 +274,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 		data.append("delImg", delImg);
 
-		await api.put("userThumbnail", data , {
-			headers : {
+		await api.put("userThumbnail", data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -355,16 +355,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			timeWithdrawal: companyTimeWithdrawal
 		};
 
-		var upCard = false;
-		var upCompany = false;
-		var t = companyInfo.productTypes.join(", ");
+		let upCard = false;
+		let upCompany = false;
+		const t = companyInfo.productTypes.join(", ");
 
 		if(companyProductTypes != t) {
 			upCard = true;
 		}
 
-		await api.put("company", data , {
-			headers : {
+		await api.put("company", data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -388,7 +388,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 		if(upCard && upCompany) {
 			await api.put("userCard", {}, {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -445,8 +445,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			data.append("image", c3);
 		}
 
-		await api.put("companyImages", data , {
-			headers : {
+		await api.put("companyImages", data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -478,31 +478,24 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 		const timetable = [
 			{dayWeek: "Domingo", beginHour: timetableSundayI ? timetableSundayI : null,
-				endHour: timetableSundayF ? timetableSundayF : null
-			},
+				endHour: timetableSundayF ? timetableSundayF : null},
 			{dayWeek: "Segunda", beginHour: timetableMondayI ? timetableMondayI : null,
-				endHour: timetableMondayF ? timetableMondayF : null
-			},
+				endHour: timetableMondayF ? timetableMondayF : null},
 			{dayWeek: "Terça", beginHour: timetableTuesdayI ? timetableTuesdayI : null,
-				endHour: timetableTuesdayF ? timetableTuesdayF : null
-			},
+				endHour: timetableTuesdayF ? timetableTuesdayF : null},
 			{dayWeek: "Quarta", beginHour: timetableWednesdayI ? timetableWednesdayI : null,
-				endHour: timetableWednesdayF ? timetableWednesdayF : null
-			},
+				endHour: timetableWednesdayF ? timetableWednesdayF : null},
 			{dayWeek: "Quinta", beginHour: timetableThursdayI ? timetableThursdayI : null,
-				endHour: timetableThursdayF ? timetableThursdayF : null
-			},
+				endHour: timetableThursdayF ? timetableThursdayF : null},
 			{dayWeek: "Sexta", beginHour: timetableFridayI ? timetableFridayI : null,
-				endHour: timetableFridayF ? timetableFridayF : null
-			},
+				endHour: timetableFridayF ? timetableFridayF : null},
 			{dayWeek: "Sábado", beginHour: timetableSaturdayI ? timetableSaturdayI : null,
-				endHour: timetableSaturdayF ? timetableSaturdayF : null
-			}
+				endHour: timetableSaturdayF ? timetableSaturdayF : null}
 		];
 
 		await api.put("companyUpdateTimetable", {timetable}, {
-			headers : {
-				"x-access-token": userId,
+			headers: {
+				"x-access-token": userId
 			}
 		}).then((response) => {
 			if(response.status === 200) {
@@ -535,7 +528,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
 		} else {
-			apicep.get(userCep + "/json")
+			apicep.get(`${userCep}/json`)
 				.then((response) => {
 					if(response.data.erro) {
 						setTitle("Erro!");
@@ -576,7 +569,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				id="uncontrolled-tabs"
 				activeKey={eventKey}
 				defaultActiveKey="0"
-				onSelect={(k) => { setEventKey(k); handleCouponsList(couponTypes[k]); }}
+				onSelect={(k) => {
+					setEventKey(k); handleCouponsList(couponTypes[k]);
+				}}
 			>
 				{couponTypes.map((type, index) => (
 					type && type.length ?
@@ -601,27 +596,27 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 				<Card.Body>
 					{couponI.discount ?
 						<Card.Text>
-							{"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")}
+							{`Desconto: ${couponI.method === "dinheiro" ? `R$ ${couponI.discount}` : `${couponI.discount}%`}`}
 						</Card.Text>
 						:
 						null
 					}
 					{couponI.minValue ?
 						<Card.Text>
-							{"Valor mínimo para o desconto: R$ " + couponI.minValue}
+							{`Valor mínimo para o desconto: R$ ${couponI.minValue}`}
 						</Card.Text>
 						:
 						null
 					}
 					{!couponI.private ?
 						<Card.Text>
-							{"Quantidade: " + (couponI.qty ?  couponI.qty : "Não atribuído")}
+							{`Quantidade: ${couponI.qty ? couponI.qty : "Não atribuído"}`}
 						</Card.Text>
 						:
 						null
 					}
 					<Card.Text>
-						{"Cupom: " + (couponI.private ? "privado" : "público")}
+						{`Cupom: ${couponI.private ? "privado" : "público"}`}
 					</Card.Text>
 				</Card.Body>
 			</Card>
@@ -651,7 +646,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											className="d-none"
 											type="file"
 											accept="image/*"
-											onChange={event => setThumbnail(event.target.files[0])}
+											onChange={(event) => setThumbnail(event.target.files[0])}
 											required
 										/>
 										<Image
@@ -695,19 +690,18 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								</Col>
 								<Col sm>
 									<Card.Body>
-										<Card.Text>{"Email: " + user.email}</Card.Text>
+										<Card.Text>{`Email: ${user.email}`}</Card.Text>
 									</Card.Body>
 									<Card.Body>
-										<Card.Text>{"Telefone: " + (user.phone ? user.phone: "Não informado")}</Card.Text>
+										<Card.Text>{`Telefone: ${user.phone ? user.phone: "Não informado"}`}</Card.Text>
 									</Card.Body>
 									<Card.Body>
 										<Card.Text>
-											{"Endereço: " + (
+											{`Endereço: ${
 												(user.address && user.address.length) ?
 													user.address.join(", ")
 													:
-													"Não informado"
-											)}
+													"Não informado"}`}
 										</Card.Text>
 									</Card.Body>
 									{user.userType === 0 ?
@@ -887,7 +881,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modal1Show}
-				onHide={() => { setModal1Show(false); setToastShow(false); }}
+				onHide={() => {
+					setModal1Show(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -902,7 +898,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Nome</Form.Label>
 								<Form.Control
 									value={userName}
-									onChange={e => setUserName(e.target.value)}
+									onChange={(e) => setUserName(e.target.value)}
 									type="text"
 									placeholder="Nome de usuário"
 									required
@@ -912,7 +908,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Email</Form.Label>
 								<Form.Control
 									value={userEmail}
-									onChange={e => setUserEmail(e.target.value)}
+									onChange={(e) => setUserEmail(e.target.value)}
 									type="email"
 									placeholder="Seu email"
 									required
@@ -922,7 +918,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Telefone</Form.Label>
 								<Form.Control
 									value={userPhone}
-									onChange={e => setUserPhone(e.target.value)}
+									onChange={(e) => setUserPhone(e.target.value)}
 									type="tel"
 									pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 									placeholder="(__) _ ____-____"
@@ -932,7 +928,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>CEP</Form.Label>
 								<Form.Control
 									value={userCep}
-									onChange={e => setUserCep(e.target.value)}
+									onChange={(e) => setUserCep(e.target.value)}
 									type="tel"
 									min="0"
 									max="99999999"
@@ -962,7 +958,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Endereço</Form.Label>
 								<Form.Control
 									value={userAddress}
-									onChange={e => setUserAddress(e.target.value)}
+									onChange={(e) => setUserAddress(e.target.value)}
 									type="text"
 									placeholder="Ex. Avenida Prudente de Moraes"
 								/>
@@ -971,7 +967,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Número da residência</Form.Label>
 								<Form.Control
 									value={userNumber}
-									onChange={e => setUserNumber(e.target.value)}
+									onChange={(e) => setUserNumber(e.target.value)}
 									type="tel"
 									min="0"
 									placeholder="Ex. 45"
@@ -982,7 +978,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Bairro</Form.Label>
 								<Form.Control
 									value={userNeighborhood}
-									onChange={e => setUserNeighborhood(e.target.value)}
+									onChange={(e) => setUserNeighborhood(e.target.value)}
 									type="text"
 									placeholder="Ex. Belvedere"
 									required={userAddress.length}
@@ -992,14 +988,16 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								<Form.Label>Complemento</Form.Label>
 								<Form.Control
 									value={userComplement}
-									onChange={e => setUserComplement(e.target.value)}
+									onChange={(e) => setUserComplement(e.target.value)}
 									type="text"
 									placeholder="Complemento (opcional)"
 								/>
 							</Form.Group>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setModal1Show(false); setToastShow(false); }}>
+							<Button variant="danger" onClick={() => {
+								setModal1Show(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -1012,7 +1010,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modal2Show}
-				onHide={() => {setModal2Show(false); setToastShow(false);}}
+				onHide={() => {
+					setModal2Show(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -1028,7 +1028,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Senha atual</Form.Label>
 									<Form.Control
 										value={userPasswordO}
-										onChange={e => setUserPasswordO(e.target.value)}
+										onChange={(e) => setUserPasswordO(e.target.value)}
 										type="password"
 										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha atual"
@@ -1044,7 +1044,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Senha nova</Form.Label>
 									<Form.Control
 										value={userPasswordN}
-										onChange={e => setUserPasswordN(e.target.value)}
+										onChange={(e) => setUserPasswordN(e.target.value)}
 										type="password"
 										pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
 										placeholder="Senha nova"
@@ -1054,7 +1054,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setModal2Show(false); setToastShow(false); }}>
+							<Button variant="danger" onClick={() => {
+								setModal2Show(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -1067,7 +1069,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modalTimetable}
-				onHide={() => {setModalTimetable(false); setToastShow(false);}}
+				onHide={() => {
+					setModalTimetable(false); setToastShow(false);
+				}}
 				size="md"
 				centered
 			>
@@ -1090,7 +1094,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableSundayI}
-												onChange={e => setTimetableSundayI(e.target.value)}
+												onChange={(e) => setTimetableSundayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1101,7 +1105,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableSundayF}
-												onChange={e => setTimetableSundayF(e.target.value)}
+												onChange={(e) => setTimetableSundayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1121,7 +1125,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableMondayI}
-												onChange={e => setTimetableMondayI(e.target.value)}
+												onChange={(e) => setTimetableMondayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1132,7 +1136,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableMondayF}
-												onChange={e => setTimetableMondayF(e.target.value)}
+												onChange={(e) => setTimetableMondayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1152,7 +1156,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableTuesdayI}
-												onChange={e => setTimetableTuesdayI(e.target.value)}
+												onChange={(e) => setTimetableTuesdayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1163,7 +1167,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableTuesdayF}
-												onChange={e => setTimetableTuesdayF(e.target.value)}
+												onChange={(e) => setTimetableTuesdayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1183,7 +1187,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableWednesdayI}
-												onChange={e => setTimetableWednesdayI(e.target.value)}
+												onChange={(e) => setTimetableWednesdayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1194,7 +1198,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableWednesdayF}
-												onChange={e => setTimetableWednesdayF(e.target.value)}
+												onChange={(e) => setTimetableWednesdayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1214,7 +1218,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableThursdayI}
-												onChange={e => setTimetableThursdayI(e.target.value)}
+												onChange={(e) => setTimetableThursdayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1225,7 +1229,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableThursdayF}
-												onChange={e => setTimetableThursdayF(e.target.value)}
+												onChange={(e) => setTimetableThursdayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1245,7 +1249,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableFridayI}
-												onChange={e => setTimetableFridayI(e.target.value)}
+												onChange={(e) => setTimetableFridayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1256,7 +1260,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableFridayF}
-												onChange={e => setTimetableFridayF(e.target.value)}
+												onChange={(e) => setTimetableFridayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1276,7 +1280,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableSaturdayI}
-												onChange={e => setTimetableSaturdayI(e.target.value)}
+												onChange={(e) => setTimetableSaturdayI(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1287,7 +1291,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											<Form.Control
 												className="text-center"
 												value={timetableSaturdayF}
-												onChange={e => setTimetableSaturdayF(e.target.value)}
+												onChange={(e) => setTimetableSaturdayF(e.target.value)}
 												type="time"
 											/>
 										</Col>
@@ -1296,7 +1300,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setModalTimetable(false); setToastShow(false); }}>
+							<Button variant="danger" onClick={() => {
+								setModalTimetable(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -1309,7 +1315,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modal3Show}
-				onHide={() => { setModal3Show(false); setToastShow(false); }}
+				onHide={() => {
+					setModal3Show(false); setToastShow(false);
+				}}
 				size="md"
 				centered
 			>
@@ -1326,12 +1334,14 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 								placeholder="Senha"
 								type="password"
 								value={userPasswordOnDelete}
-								onChange={event => setUserPasswordOnDelete(event.target.value)}
+								onChange={(event) => setUserPasswordOnDelete(event.target.value)}
 								required
 							/>
 						</Form.Group>
 						<Modal.Footer>
-							<Button variant="warning" onClick={() => { setModal3Show(false); setToastShow(false); }}>
+							<Button variant="warning" onClick={() => {
+								setModal3Show(false); setToastShow(false);
+							}}>
 								Cancelar
 							</Button>
 							<Button variant="danger" type="submit">
@@ -1344,7 +1354,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modal4Show}
-				onHide={() => { setModal4Show(false); setToastShow(false); }}
+				onHide={() => {
+					setModal4Show(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -1360,7 +1372,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Nome</Form.Label>
 									<Form.Control
 										value={companyName}
-										onChange={e => setCompanyName(e.target.value)}
+										onChange={(e) => setCompanyName(e.target.value)}
 										type="text"
 										placeholder="Nome da empresa"
 										required
@@ -1372,7 +1384,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Email</Form.Label>
 									<Form.Control
 										value={companyEmail}
-										onChange={e => setCompanyEmail(e.target.value)}
+										onChange={(e) => setCompanyEmail(e.target.value)}
 										type="email"
 										placeholder="Email da empresa"
 										required
@@ -1386,7 +1398,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Telefone</Form.Label>
 									<Form.Control
 										value={companyPhone}
-										onChange={e => setCompanyPhone(e.target.value)}
+										onChange={(e) => setCompanyPhone(e.target.value)}
 										type="text"
 										pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 										placeholder="(__) _ ____-____"
@@ -1399,7 +1411,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Endereço</Form.Label>
 									<Form.Control
 										value={companyAddress}
-										onChange={e => setCompanyAddress(e.target.value)}
+										onChange={(e) => setCompanyAddress(e.target.value)}
 										type="text"
 										pattern="^([^\s,]+(\s[^\s,]+)*),\s?([0-9]+),\s?([^\s,]+(\s[^\s,]+)*)(,\s?[^\s,]+(\s[^\s,]+)*)?$"
 										placeholder="Rua, Número, Bairro, Cidade"
@@ -1416,7 +1428,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Valor do frete</Form.Label>
 									<Form.Control
 										value={companyFreight}
-										onChange={e => setCompanyFreight(e.target.value)}
+										onChange={(e) => setCompanyFreight(e.target.value)}
 										type="number"
 										placeholder="Valor do frete"
 										min="1"
@@ -1430,7 +1442,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Tipos de produtos</Form.Label>
 									<Form.Control
 										value={companyProductTypes}
-										onChange={e => setCompanyProductTypes(e.target.value)}
+										onChange={(e) => setCompanyProductTypes(e.target.value)}
 										type="text"
 										placeholder="Tipos de produtos"
 										required
@@ -1447,7 +1459,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Tempo para retirada de um pedido</Form.Label>
 									<Form.Control
 										value={companyTimeWithdrawal}
-										onChange={e => setCompanyTimeWithdrawal(e.target.value)}
+										onChange={(e) => setCompanyTimeWithdrawal(e.target.value)}
 										type="number"
 										min="10"
 										max="120"
@@ -1461,7 +1473,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Tempo mínimo para entrega de um pedido</Form.Label>
 									<Form.Control
 										value={companyTimeDeliveryI}
-										onChange={e => setCompanyTimeDeliveryI(e.target.value)}
+										onChange={(e) => setCompanyTimeDeliveryI(e.target.value)}
 										type="number"
 										min="10"
 										max="120"
@@ -1482,7 +1494,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										id="custom-switch4"
 										label={companyManual ? "Manual" : "Automático"}
 										checked={companyManual}
-										onChange={e => setCompanyManual(e.target.checked)}
+										onChange={(e) => setCompanyManual(e.target.checked)}
 									/>
 								</Form.Group>
 								{companyManual ?
@@ -1493,7 +1505,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 											id="custom-switch3"
 											label={companySystemOpenByAdm ? "Aberto" : "Fechado"}
 											checked={companySystemOpenByAdm}
-											onChange={e => setCompanySystemOpenByAdm(e.target.checked)}
+											onChange={(e) => setCompanySystemOpenByAdm(e.target.checked)}
 										/>
 									</Form.Group>
 									:
@@ -1505,7 +1517,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									<Form.Label>Tempo máximo para entrega de um pedido</Form.Label>
 									<Form.Control
 										value={companyTimeDeliveryF}
-										onChange={e => setCompanyTimeDeliveryF(e.target.value)}
+										onChange={(e) => setCompanyTimeDeliveryF(e.target.value)}
 										type="number"
 										min="10"
 										max="120"
@@ -1516,7 +1528,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 							</Col>
 						</Row>
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setModal4Show(false); setToastShow(false); }}>
+							<Button variant="danger" onClick={() => {
+								setModal4Show(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -1535,7 +1549,8 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					setC3(null);
 					setLogo(null);
 					setModalImages(false);
-					setToastShow(false); }}
+					setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -1553,7 +1568,7 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 										className="d-none"
 										type="file"
 										accept="image/*"
-										onChange={event => setLogo(event.target.files[0])}
+										onChange={(event) => setLogo(event.target.files[0])}
 										required
 									/>
 								</Form.Group>
@@ -1601,7 +1616,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => {setC1(event.target.files[0]);}}
+									onChange={(event) => {
+										setC1(event.target.files[0]);
+									}}
 									required
 								/>
 								<Image
@@ -1642,7 +1659,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => {setC2(event.target.files[0]);}}
+									onChange={(event) => {
+										setC2(event.target.files[0]);
+									}}
 									required
 								/>
 								<Image
@@ -1683,7 +1702,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 									className="d-none"
 									type="file"
 									accept="image/*"
-									onChange={event => {setC3(event.target.files[0]);}}
+									onChange={(event) => {
+										setC3(event.target.files[0]);
+									}}
 									required
 								/>
 								<Image
@@ -1723,7 +1744,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 
 			<Modal
 				show={modalMyCoupons}
-				onHide={() => { setModalMyCoupons(false); setToastShow(false); }}
+				onHide={() => {
+					setModalMyCoupons(false); setToastShow(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -1761,7 +1784,9 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 					</Card>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setModalMyCoupons(false); setToastShow(false); history.push("/menu");}}>
+					<Button variant="warning" onClick={() => {
+						setModalMyCoupons(false); setToastShow(false); history.push("/menu");
+					}}>
 						Cardápio
 					</Button>
 				</Modal.Footer>
@@ -1777,11 +1802,11 @@ export default function User({ userId, setUserId, user, setUser, companyInfo, se
 }
 
 User.propTypes = {
-	userId : PropTypes.string.isRequired,
-	setUserId : PropTypes.func.isRequired,
-	user : PropTypes.object.isRequired,
-	setUser : PropTypes.func.isRequired,
-	companyInfo : PropTypes.object.isRequired,
-	setCompanyInfo : PropTypes.func.isRequired,
-	noCards : PropTypes.bool.isRequired
+	userId: PropTypes.string.isRequired,
+	setUserId: PropTypes.func.isRequired,
+	user: PropTypes.object.isRequired,
+	setUser: PropTypes.func.isRequired,
+	companyInfo: PropTypes.object.isRequired,
+	setCompanyInfo: PropTypes.func.isRequired,
+	noCards: PropTypes.bool.isRequired
 };

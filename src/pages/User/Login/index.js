@@ -35,18 +35,18 @@ export default function Login({ setUserId, setUser, order }) {
 		const loadScriptByURL = (id, url, callback) => {
 			const isScriptExist = document.getElementById(id);
 
-			if (!isScriptExist) {
-				var script = document.createElement("script");
+			if(!isScriptExist) {
+				const script = document.createElement("script");
 				script.type = "text/javascript";
 				script.src = url;
 				script.id = id;
 				script.onload = function () {
-					if (callback) callback();
+					if(callback) callback();
 				};
 				document.body.appendChild(script);
 			}
 
-			if (isScriptExist && callback) {
+			if(isScriptExist && callback) {
 				callback();
 			}
 		};
@@ -56,19 +56,19 @@ export default function Login({ setUserId, setUser, order }) {
 
 	}, []);
 
-	const handleOnClick = e => {
+	const handleOnClick = (e) => {
 		e.preventDefault();
 		window.grecaptcha.ready(() => {
-			window.grecaptcha.execute(SITE_KEY, { action: "submit" }).then(token => {
+			window.grecaptcha.execute(SITE_KEY, { action: "submit" }).then((token) => {
 				submitData(token);
 			});
 		});
 	};
 
-	const submitData = token => {
+	const submitData = (token) => {
 		// call a backend API to verify reCAPTCHA response
 
-		var data = {
+		const data = {
 			email: email.toLowerCase(),
 			password,
 			recaptchaToken: token
@@ -83,7 +83,7 @@ export default function Login({ setUserId, setUser, order }) {
 
 				//  Deleting recaptcha
 				document.getElementById("recaptcha-key").remove();
-				var element = document.getElementsByClassName("grecaptcha-badge")[0];
+				const element = document.getElementsByClassName("grecaptcha-badge")[0];
 				element.parentNode.removeChild(element);
 
 				history.push(order && order.products && order.products.length ? "/finishOrder" : "/menu");
@@ -112,7 +112,7 @@ export default function Login({ setUserId, setUser, order }) {
 						<Form.Label>Email</Form.Label>
 						<Form.Control
 							value={email}
-							onChange={e => setEmail(e.target.value)}
+							onChange={(e) => setEmail(e.target.value)}
 							type="email"
 							placeholder="email@provedor.com"
 							autoFocus
@@ -123,7 +123,7 @@ export default function Login({ setUserId, setUser, order }) {
 						<Form.Label>Senha</Form.Label>
 						<Form.Control
 							value={password}
-							onChange={e => setPassword(e.target.value)}
+							onChange={(e) => setPassword(e.target.value)}
 							type="password"
 							placeholder="Senha"
 							required
@@ -152,7 +152,7 @@ export default function Login({ setUserId, setUser, order }) {
 }
 
 Login.propTypes = {
-	setUserId : PropTypes.func.isRequired,
-	setUser : PropTypes.func.isRequired,
-	order : PropTypes.object
+	setUserId: PropTypes.func.isRequired,
+	setUser: PropTypes.func.isRequired,
+	order: PropTypes.object
 };

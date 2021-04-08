@@ -60,7 +60,7 @@ export default function Coupons({ userId, companyInfo }) {
 	//	Update coupon state variables
 	useEffect(() => {
 		setCouponUserId(coupon && coupon.private && coupon.userId && users ?
-			users.find(u => u._id === coupon.userId) ? users.find(u => u._id === coupon.userId).email : ""
+			users.find((u) => u._id === coupon.userId) ? users.find((u) => u._id === coupon.userId).email : ""
 			:
 			users && users[0] && users[0].email ?
 				users[0].email
@@ -87,10 +87,10 @@ export default function Coupons({ userId, companyInfo }) {
 				}
 			}).then((response) => {
 				if(response.status === 200) {
-					var cpnsByType = {};
+					const cpnsByType = {};
 
 					for(const type of couponTypes) {
-						var cpns = [];
+						const cpns = [];
 
 						for(const cpn of response.data) {
 							if(cpn.type === type) {
@@ -168,11 +168,11 @@ export default function Coupons({ userId, companyInfo }) {
 			discount: couponDiscount,
 			minValue: couponMinValue,
 			private: couponPrivate,
-			userId: couponPrivate ? users.find(u => u.email === couponUserId)._id : null
+			userId: couponPrivate ? users.find((u) => u.email === couponUserId)._id : null
 		};
 
 		await api.post("coupon", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -208,11 +208,11 @@ export default function Coupons({ userId, companyInfo }) {
 			minValue: couponMinValue,
 			available: couponAvailable,
 			private: couponPrivate,
-			userId: couponPrivate ? users.find(u => u.email === couponUserId)._id : null
+			userId: couponPrivate ? users.find((u) => u.email === couponUserId)._id : null
 		};
 
-		await api.put("coupon/" + coupon._id, data, {
-			headers : {
+		await api.put(`coupon/${coupon._id}`, data, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -241,8 +241,8 @@ export default function Coupons({ userId, companyInfo }) {
 	async function handleCouponDelete(event) {
 		event.preventDefault();
 
-		await api.delete("coupon/" + couponId, {
-			headers : {
+		await api.delete(`coupon/${couponId}`, {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -275,8 +275,8 @@ export default function Coupons({ userId, companyInfo }) {
 						<Nav.Item key={index}>
 							<Nav.Link
 								className="btn-outline-warning rounded"
-								href={"#" + index}
-								onClick={e => handleCouponsList(e, couponTypes[index])}>
+								href={`#${index}`}
+								onClick={(e) => handleCouponsList(e, couponTypes[index])}>
 								{type[0].toUpperCase() + type.slice(1)}
 							</Nav.Link>
 						</Nav.Item>
@@ -304,34 +304,36 @@ export default function Coupons({ userId, companyInfo }) {
 				<Card.Body>
 					{couponI.discount ?
 						<Card.Text>
-							{"Desconto: " + (couponI.method === "dinheiro" ? "R$ " + couponI.discount : couponI.discount + "%")}
+							{`Desconto: ${couponI.method === "dinheiro" ? `R$ ${couponI.discount}` : `${couponI.discount}%`}`}
 						</Card.Text>
 						:
 						null
 					}
 					{couponI.minValue ?
 						<Card.Text>
-							{"Valor mínimo para o desconto: R$ " + couponI.minValue}
+							{`Valor mínimo para o desconto: R$ ${couponI.minValue}`}
 						</Card.Text>
 						:
 						null
 					}
 					{!couponI.private ?
 						<Card.Text>
-							{"Quantidade: " + (couponI.qty ?  couponI.qty : "Não atribuído")}
+							{`Quantidade: ${couponI.qty ? couponI.qty : "Não atribuído"}`}
 						</Card.Text>
 						:
 						null
 					}
 					<Card.Text>
-						{"Cupom: " + (couponI.private ? "privado" : "público")}
+						{`Cupom: ${couponI.private ? "privado" : "público"}`}
 					</Card.Text>
 					<div className="d-flex justify-content-around flex-wrap my-auto">
 						<Button
 							className="my-1"
 							variant="warning"
 							size="sm"
-							onClick ={() => { setCoupon(couponI); setModalCouponUpdate(true); } }
+							onClick ={() => {
+								setCoupon(couponI); setModalCouponUpdate(true);
+							} }
 						>
 							Modificar
 						</Button>
@@ -380,7 +382,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Nome</Form.Label>
 					<Form.Control
 						value={couponName}
-						onChange={e => setCouponName(e.target.value)}
+						onChange={(e) => setCouponName(e.target.value)}
 						type="text"
 						placeholder="Nome do cupom"
 						required
@@ -390,7 +392,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Tipo</Form.Label>
 					<Form.Control
 						value={couponType}
-						onChange={e =>  {
+						onChange={(e) => {
 							setCouponType(e.target.value);
 							setCouponMethod(e.target.value === "frete" ? "dinheiro" : couponMethod);
 							setCouponDiscount(e.target.value === "frete" ? companyInfo.freight : couponDiscount);
@@ -412,7 +414,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Método</Form.Label>
 					<Form.Control
 						value={couponType === "frete" ? "dinheiro" : couponMethod}
-						onChange={e => setCouponMethod(e.target.value)}
+						onChange={(e) => setCouponMethod(e.target.value)}
 						as="select"
 						placeholder="Método do cupom"
 						required
@@ -426,11 +428,11 @@ export default function Coupons({ userId, companyInfo }) {
 				</Form.Group>
 				<Form.Group as={Col} controlId="couponDiscount" sm>
 					<Form.Label>
-						{"Desconto " + (couponMethod === "porcentagem" ? "(em porcentagem %)" : "(em reais R$)")}
+						{`Desconto ${couponMethod === "porcentagem" ? "(em porcentagem %)" : "(em reais R$)"}`}
 					</Form.Label>
 					<Form.Control
 						value={couponType === "frete" ? companyInfo.freight : couponDiscount}
-						onChange={e => setCouponDiscount(e.target.value)}
+						onChange={(e) => setCouponDiscount(e.target.value)}
 						type="number"
 						placeholder="Desconto"
 						required
@@ -443,7 +445,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Quantidade</Form.Label>
 					<Form.Control
 						value={couponQty}
-						onChange={e => setCouponQty(e.target.value)}
+						onChange={(e) => setCouponQty(e.target.value)}
 						type="number"
 						placeholder="Quantidade"
 						required={!couponPrivate}
@@ -454,7 +456,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Valor mínimo (em reais R$)</Form.Label>
 					<Form.Control
 						value={couponMinValue}
-						onChange={e => setCouponMinValue(e.target.value)}
+						onChange={(e) => setCouponMinValue(e.target.value)}
 						type="number"
 						placeholder="Valor mínimo"
 						required={couponType === "valor"}
@@ -469,7 +471,7 @@ export default function Coupons({ userId, companyInfo }) {
 						type={"checkbox"}
 						checked={couponPrivate ? couponPrivate : false}
 						className="my-2"
-						onChange={e => setCouponPrivate(e.target.checked !== undefined ? e.target.checked : couponPrivate)}
+						onChange={(e) => setCouponPrivate(e.target.checked !== undefined ? e.target.checked : couponPrivate)}
 						label={couponPrivate ? "Privado" : "Público"}
 						disabled={couponType === "quantidade"}
 					/>
@@ -480,7 +482,7 @@ export default function Coupons({ userId, companyInfo }) {
 						type={"checkbox"}
 						checked={couponAvailable ? couponAvailable : false}
 						className="my-2"
-						onChange={e => setCouponAvailable(e.target.checked)}
+						onChange={(e) => setCouponAvailable(e.target.checked)}
 						label={couponAvailable ? "Disponibilizar" : "Não disponibilizar"}
 					/>
 				</Form.Group>
@@ -490,7 +492,7 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form.Label>Usuário que receberá o cupom</Form.Label>
 					<Form.Control
 						value={couponUserId}
-						onChange={e => setCouponUserId(e.target.value)}
+						onChange={(e) => setCouponUserId(e.target.value)}
 						as="select"
 						placeholder="Usuário que receberá o cupom"
 						required={couponPrivate}
@@ -533,7 +535,9 @@ export default function Coupons({ userId, companyInfo }) {
 
 			<Modal
 				show={modalCouponAdd}
-				onHide={() => { setCoupon(null); setModalCouponAdd(false); setToastShow(false);} }
+				onHide={() => {
+					setCoupon(null); setModalCouponAdd(false); setToastShow(false);
+				} }
 				size="lg"
 				centered
 			>
@@ -565,7 +569,9 @@ export default function Coupons({ userId, companyInfo }) {
 
 			<Modal
 				show={modalCouponUpdate}
-				onHide={() => { setCoupon(null); setModalCouponUpdate(false); setToastShow(false);} }
+				onHide={() => {
+					setCoupon(null); setModalCouponUpdate(false); setToastShow(false);
+				} }
 				size="lg"
 				centered
 			>
@@ -579,7 +585,9 @@ export default function Coupons({ userId, companyInfo }) {
 					<Form onSubmit={handleCouponUpdate}>
 						{couponFormBody}
 						<Modal.Footer>
-							<Button variant="danger" onClick={() => { setCoupon(null); setModalCouponUpdate(false); setToastShow(false);}}>
+							<Button variant="danger" onClick={() => {
+								setCoupon(null); setModalCouponUpdate(false); setToastShow(false);
+							}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -590,16 +598,20 @@ export default function Coupons({ userId, companyInfo }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={modalCouponDelete} onHide={() => { setModalCouponDelete(false); setToastShow(false); }}>
+			<Modal show={modalCouponDelete} onHide={() => {
+				setModalCouponDelete(false); setToastShow(false);
+			}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
-					<Modal.Title>{"Remover cupom " + couponName}</Modal.Title>
+					<Modal.Title>{`Remover cupom ${couponName}`}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					Você tem certeza que deseja remover este cupom?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => { setModalCouponDelete(false); setToastShow(false); }}>
+					<Button variant="warning" onClick={() => {
+						setModalCouponDelete(false); setToastShow(false);
+					}}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleCouponDelete}>
@@ -614,6 +626,6 @@ export default function Coupons({ userId, companyInfo }) {
 }
 
 Coupons.propTypes = {
-	userId : PropTypes.string,
-	companyInfo : PropTypes.object
+	userId: PropTypes.string,
+	companyInfo: PropTypes.object
 };

@@ -20,7 +20,7 @@ export default function ProductDeck({ bg, text, products }) {
 									className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
 									src={
 										product.product.thumbnail ?
-											process.env.REACT_APP_API_URL + "files/" + product.product.thumbnail
+											`${process.env.REACT_APP_API_URL}files/${product.product.thumbnail}`
 											:
 											camera
 									}
@@ -48,7 +48,7 @@ export default function ProductDeck({ bg, text, products }) {
 													index === product.product.ingredients.length-1 ?
 														ingredient
 														:
-														ingredient + ", "
+														`${ingredient}, `
 												))
 												:
 												null
@@ -73,9 +73,9 @@ export default function ProductDeck({ bg, text, products }) {
 									{product.additions.length ?
 										<Card.Text>
 											<Row>
-												{(product.additions).map(addition => (
+												{(product.additions).map((addition) => (
 													<Col key={(addition) ? addition._id : null } sm>
-														{addition.name + "\nPreço: R$" + addition.price}
+														{`${addition.name}\nPreço: R$${addition.price}`}
 													</Col>
 												))}
 											</Row>
@@ -89,7 +89,7 @@ export default function ProductDeck({ bg, text, products }) {
 						<Card.Footer>
 							<small>
 								{product.product ?
-									"Preço: R$" + product.product.prices[product.size]
+									`Preço: R$${product.product.prices[product.size]}`
 									:
 									null
 								}
@@ -103,7 +103,7 @@ export default function ProductDeck({ bg, text, products }) {
 }
 
 ProductDeck.propTypes = {
-	bg : PropTypes.string,
-	text : PropTypes.string,
-	products : PropTypes.array
+	bg: PropTypes.string,
+	text: PropTypes.string,
+	products: PropTypes.array
 };

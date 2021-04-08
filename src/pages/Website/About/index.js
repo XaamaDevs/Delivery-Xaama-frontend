@@ -12,9 +12,8 @@ import { RiWhatsappLine, RiPhoneLine, RiMailLine } from "react-icons/ri";
 export default function About({ companyInfo }) {
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
-	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	const element = document.getElementsByClassName("grecaptcha-badge")[0];
 	element && element.parentNode ? element.parentNode.removeChild(element) : null;
-
 
 	return (
 		<Container fluid>
@@ -27,7 +26,7 @@ export default function About({ companyInfo }) {
 						<Col className="my-3" sm>
 							<h5 className="text-center">
 								<a
-									href={"tel:" + companyInfo.phone}
+									href={`tel:${companyInfo.phone}`}
 									className="text-white"
 								>
 									<Row><Col><RiPhoneLine size="50"/></Col></Row>
@@ -38,7 +37,7 @@ export default function About({ companyInfo }) {
 						<Col className="my-3" sm>
 							<h5 className="text-center">
 								<a
-									href={"mailto:" + companyInfo.email}
+									href={`mailto:${companyInfo.email}`}
 									className="text-white"
 								>
 									<Row><Col><RiMailLine size="50"/></Col></Row>
@@ -49,7 +48,7 @@ export default function About({ companyInfo }) {
 						<Col className="my-3" sm>
 							<h5 className="text-center">
 								<a
-									href={"https://wa.me/55" + companyInfo.phone.split(/[()+-\s]+/).join("") + "?text=Olá!"}
+									href={`https://wa.me/55${companyInfo.phone.split(/[()+-\s]+/).join("")}?text=Olá!`}
 									className="text-white"
 									target="_blank"
 									rel="noreferrer"
@@ -71,7 +70,7 @@ export default function About({ companyInfo }) {
 								width="100%"
 								height="400"
 								id="gmap_canvas"
-								src={"https://maps.google.com/maps?q=" + companyInfo.address + "&t=&z=18&ie=UTF8&iwloc=&output=embed"}
+								src={`https://maps.google.com/maps?q=${companyInfo.address}&t=&z=18&ie=UTF8&iwloc=&output=embed`}
 								frameBorder="0"
 								scrolling="no"
 							></iframe>
@@ -84,5 +83,5 @@ export default function About({ companyInfo }) {
 }
 
 About.propTypes = {
-	companyInfo : PropTypes.object.isRequired
+	"companyInfo": PropTypes.object.isRequired
 };

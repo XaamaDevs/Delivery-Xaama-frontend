@@ -57,15 +57,15 @@ export default function AllOrders({ userId, companyInfo }) {
 	}
 
 	useEffect(() => {
-		subscribeToNewOrders(o => setOrders([o[0], ...orders]));
-		subscribeToUpdateOrders(o => setOrders(o));
-		subscribeToDeleteOrders(o => setOrders(o));
+		subscribeToNewOrders((o) => setOrders([o[0], ...orders]));
+		subscribeToUpdateOrders((o) => setOrders(o));
+		subscribeToDeleteOrders((o) => setOrders(o));
 	}, [orders]);
 
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("orderAll", {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -98,11 +98,11 @@ export default function AllOrders({ userId, companyInfo }) {
 	async function handleDeliver(event, order) {
 		event.preventDefault();
 
-		var orderOK = false;
+		let orderOK = false;
 
-		await api.put("/order/" + order._id, { status : true }, {
-			headers : {
-				"x-access-token": userId,
+		await api.put(`/order/${order._id}`, { status: true }, {
+			headers: {
+				"x-access-token": userId
 			}
 		}).then((response) => {
 			if(response.status === 200) {
@@ -123,9 +123,9 @@ export default function AllOrders({ userId, companyInfo }) {
 		});
 
 		if(orderOK) {
-			var data = [];
+			const data = [];
 
-			var myMapTypesProducts = new Map();
+			const myMapTypesProducts = new Map();
 
 			if(order && order.products) {
 				for(const p of order.products) {
@@ -135,7 +135,7 @@ export default function AllOrders({ userId, companyInfo }) {
 			}
 
 			for(const cards of companyInfo.cards) {
-				var cardsNewQtd = {
+				const cardsNewQtd = {
 					cardFidelity: cards.type,
 					qtdCurrent: myMapTypesProducts.get(cards.type) ? myMapTypesProducts.get(cards.type) : 0
 				};
@@ -143,8 +143,8 @@ export default function AllOrders({ userId, companyInfo }) {
 				data.push(cardsNewQtd);
 			}
 
-			await api.put("/userUpdateCard", { cardsNewQtd : data }, {
-				headers : {
+			await api.put("/userUpdateCard", { cardsNewQtd: data }, {
+				headers: {
 					"x-access-token": userId,
 					"order-user-id": order.user._id
 				}
@@ -182,7 +182,7 @@ export default function AllOrders({ userId, companyInfo }) {
 		event.preventDefault();
 
 		await api.delete("order", {
-			headers : {
+			headers: {
 				"x-access-token": userId,
 				password: userPasswordOnDelete
 			}
@@ -257,24 +257,24 @@ export default function AllOrders({ userId, companyInfo }) {
 											</Card.Header>
 											<Card.Body>
 												<Card.Text>
-													{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
+													{orderI.phone ? `Telefone para contato: ${orderI.phone}` : "Telefone não informado"}
 												</Card.Text>
 												<Card.Text>
 													{orderI.deliver ?
-														"Endereço de entrega: " + orderI.address.join(", ")
+														`Endereço de entrega: ${orderI.address.join(", ")}`
 														:
 														"Irá retirar no balcão!"
 													}
 												</Card.Text>
 												<Card.Text>
 													{orderI.deliver ?
-														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+														`Tempo para entrega: De ${companyInfo.timeDeliveryI} a ${companyInfo.timeDeliveryF} minutos`
 														:
-														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+														`Tempo para retirada: ${companyInfo.timeWithdrawal} minutos`
 													}
 												</Card.Text>
 												<Card.Text>
-													{"Total a pagar R$ " + orderI.total}
+													{`Total a pagar R$ ${orderI.total}`}
 												</Card.Text>
 												<Card.Text>
 													Método de pagamento:
@@ -289,7 +289,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														"Não precisa de troco"
 														:
 														((orderI.typePayment === 0) ?
-															"Pagará R$ " + orderI.change + ", troco de R$ " + (orderI.change - orderI.total)
+															`Pagará R$ ${orderI.change}, troco de R$ ${orderI.change - orderI.total}`
 															:
 															"Pagará na maquininha"
 														)
@@ -300,7 +300,9 @@ export default function AllOrders({ userId, companyInfo }) {
 														variant="light"
 														id="btn-custom-outline"
 														className="m-1 mx-auto"
-														onClick={() => { setOrder(orderI); setModalOrderListing(true); }}
+														onClick={() => {
+															setOrder(orderI); setModalOrderListing(true);
+														}}
 													>
 													Ver pedido
 													</Button>
@@ -308,7 +310,7 @@ export default function AllOrders({ userId, companyInfo }) {
 														<Button
 															variant="outline-warning"
 															className="m-1 mx-auto"
-															onClick={e => handleDeliver(e, orderI)}
+															onClick={(e) => handleDeliver(e, orderI)}
 														>
 														Entregar pedido
 														</Button>
@@ -381,7 +383,7 @@ export default function AllOrders({ userId, companyInfo }) {
 								placeholder="Senha"
 								type="password"
 								value={userPasswordOnDelete}
-								onChange={event => setUserPasswordOnDelete(event.target.value)}
+								onChange={(event) => setUserPasswordOnDelete(event.target.value)}
 								required
 							/>
 						</Form.Group>
@@ -406,6 +408,6 @@ export default function AllOrders({ userId, companyInfo }) {
 }
 
 AllOrders.propTypes = {
-	userId : PropTypes.string.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	userId: PropTypes.string.isRequired,
+	companyInfo: PropTypes.object.isRequired
 };

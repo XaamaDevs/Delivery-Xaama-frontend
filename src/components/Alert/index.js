@@ -47,14 +47,14 @@ const Alert = {
 export default Alert;
 
 Alert.Refresh.propTypes = {
-	modalAlert : PropTypes.bool.isRequired,
+	modalAlert: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	message: PropTypes.string.isRequired
 };
 
 Alert.Close.propTypes = {
-	modalAlert : PropTypes.bool.isRequired,
-	setModalAlert : PropTypes.func.isRequired,
+	modalAlert: PropTypes.bool.isRequired,
+	setModalAlert: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	message: PropTypes.string.isRequired
 };

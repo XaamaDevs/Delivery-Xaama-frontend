@@ -12,9 +12,8 @@ import { Jumbotron, Carousel, Image, Col } from "react-bootstrap";
 export default function Home({ companyInfo }) {
 	//  Deleting recaptcha
 	document.getElementById("recaptcha-key") ? 	document.getElementById("recaptcha-key").remove() : null;
-	var element = document.getElementsByClassName("grecaptcha-badge")[0];
+	const element = document.getElementsByClassName("grecaptcha-badge")[0];
 	element && element.parentNode ? element.parentNode.removeChild(element) : null;
-
 
 	return (
 		<div className="d-flex flex-row flex-wrap align-items-center my-auto">
@@ -38,7 +37,7 @@ export default function Home({ companyInfo }) {
 							<Image
 								className="w-100"
 								src={process.env.REACT_APP_API_URL + url}
-								alt={"Slide " + (index+1)}
+								alt={`Slide ${index+1}`}
 								fluid
 							/>
 						</Carousel.Item>
@@ -52,5 +51,5 @@ export default function Home({ companyInfo }) {
 }
 
 Home.propTypes = {
-	companyInfo : PropTypes.object.isRequired
+	"companyInfo": PropTypes.object.isRequired
 };

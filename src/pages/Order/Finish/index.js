@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -84,7 +84,7 @@ export default function FinishOrder({
 	const [message, setMessage] = useState("");
 
 	// Aux variables
-	const [orderType, setOrderType] = useState(new Map);
+	const [orderType, setOrderType] = useState(new Map());
 	const [couponDiscountText, setCouponDiscountText] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [userCoupons, setUserCoupons] = useState([]);
@@ -100,7 +100,7 @@ export default function FinishOrder({
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("user", {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -122,7 +122,7 @@ export default function FinishOrder({
 			});
 
 			await api.get("coupon", {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -147,12 +147,12 @@ export default function FinishOrder({
 
 			const prods = [];
 			for(const prod of order.products) {
-				const p = { size : prod.size, note : prod.note };
+				const p = { size: prod.size, note: prod.note };
 
-				await api.get("product/" + prod.product)
+				await api.get(`product/${prod.product}`)
 					.then((resProd) => {
 						if(resProd.status === 200) {
-							p["product"] = resProd.data;
+							p.product = resProd.data;
 						}
 					}).catch((error) => {
 						setTitle("Erro!");
@@ -172,7 +172,7 @@ export default function FinishOrder({
 
 				const adds = [];
 				for(const add of prod.additions) {
-					await api.get("addition/" + add)
+					await api.get(`addition/${add}`)
 						.then((response) => {
 							if(response.status === 200) {
 								adds.push(response.data);
@@ -194,7 +194,7 @@ export default function FinishOrder({
 						});
 				}
 
-				p["additions"] = adds;
+				p.additions = adds;
 				prods.push(p);
 			}
 
@@ -207,10 +207,10 @@ export default function FinishOrder({
 
 	//	Update order delivery state variables
 	useEffect(() => {
-		var cardsDiscount = 0.0;
+		let cardsDiscount = 0.0;
 
-		if(user && user.cards && companyInfo && companyInfo.cards){
-			user.cards.map((card,index) => {
+		if(user && user.cards && companyInfo && companyInfo.cards) {
+			user.cards.map((card, index) => {
 				card.completed && !card.status && orderType && orderType.get(card.cardFidelity) ?
 					cardsDiscount = parseInt(cardsDiscount) + parseInt((companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ?
 						companyInfo.cards[index].discount : orderType.get(card.cardFidelity)))
@@ -263,7 +263,7 @@ export default function FinishOrder({
 			const myMapTypesProducts = new Map();
 
 			//	Calculate order total price
-			if(orderDeliverProducts){
+			if(orderDeliverProducts) {
 				for(const x of orderDeliverProducts) {
 					if(x.size >= 0 && x.size < x.product.prices.length) {
 						myMapTypesProducts.set(x && x.product.type ? x.product.type : "",
@@ -294,7 +294,7 @@ export default function FinishOrder({
 
 		setIsLoading(true);
 
-		var orderOk = false;
+		let orderOk = false;
 
 		const address = [];
 		if(orderDeliver && orderDeliverAddress && orderDeliverAddress.length) {
@@ -306,7 +306,7 @@ export default function FinishOrder({
 			}
 		}
 
-		var data = {
+		let data = {
 			products: order.products,
 			deliver: orderDeliver,
 			address: orderDeliver && address.length ? address.join(", ") : "",
@@ -318,7 +318,7 @@ export default function FinishOrder({
 		};
 
 		await api.post("order", data, {
-			headers : {
+			headers: {
 				"x-access-token": userId
 			}
 		}).then((response) => {
@@ -340,7 +340,7 @@ export default function FinishOrder({
 		});
 
 		if(orderOk) {
-			var status = [];
+			const status = [];
 
 			user.cards.map((card, index) => (
 				card.completed && !card.status && orderType &&
@@ -353,11 +353,11 @@ export default function FinishOrder({
 				email: user.email,
 				phone: user.phone ? user.phone : orderDeliverPhone,
 				address: user.address ? user.address.join(", ") : (address.length ? address.join(", ") : ""),
-				status: status,
+				status
 			};
 
 			await api.put("user", data, {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -394,8 +394,8 @@ export default function FinishOrder({
 			setMessage("Nenhum cupom selecionado!");
 			setToastShow(true);
 		} else {
-			await api.put("couponUser/" + orderDeliverCoupon._id, null, {
-				headers : {
+			await api.put(`couponUser/${orderDeliverCoupon._id}`, null, {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -430,7 +430,7 @@ export default function FinishOrder({
 			setMessage("CEP inválido! Digite um CEP válido com 8 dígitos.");
 			setToastShow(true);
 		} else {
-			apicep.get(orderDeliverAddressCep + "/json")
+			apicep.get(`${orderDeliverAddressCep}/json`)
 				.then((response) => {
 					if(response.data.erro) {
 						setTitle("Erro!");
@@ -461,15 +461,15 @@ export default function FinishOrder({
 
 	// Delete an product of order
 	async function handleProductDelete() {
-		var newOrder = order;
-		var price = 0.0;
+		const newOrder = order;
+		let price = 0.0;
 
-		if (productIndex > -1) {
-			newOrder["products"].splice(productIndex, 1);
+		if(productIndex > -1) {
+			newOrder.products.splice(productIndex, 1);
 
 			//	Calculate product total price
 			if(orderDeliverProducts[productIndex] && orderDeliverProducts[productIndex].size >= 0 &&
-				orderDeliverProducts[productIndex].size < orderDeliverProducts[productIndex].product.prices.length ) {
+				orderDeliverProducts[productIndex].size < orderDeliverProducts[productIndex].product.prices.length) {
 				price += orderDeliverProducts[productIndex].product.prices[orderDeliverProducts[productIndex].size];
 			}
 
@@ -479,7 +479,7 @@ export default function FinishOrder({
 				}
 			}
 
-			newOrder["total"] -= price;
+			newOrder.total -= price;
 		}
 
 		setOrder(newOrder);
@@ -518,7 +518,7 @@ export default function FinishOrder({
 									<Form.Control
 										value={orderDeliverChange}
 										className="text-center"
-										onChange={e => setOrderDeliverChange(e.target.value)}
+										onChange={(e) => setOrderDeliverChange(e.target.value)}
 										type="tel"
 										min={orderDeliverChange}
 										required={!orderDeliverPaymentMethod}
@@ -551,7 +551,7 @@ export default function FinishOrder({
 									className={product.product.thumbnail ? "w-100 m-auto" : "w-75 m-auto"}
 									src={
 										product.product.thumbnail ?
-											process.env.REACT_APP_API_URL + "files/" + product.product.thumbnail
+											`${process.env.REACT_APP_API_URL}files/${product.product.thumbnail}`
 											:
 											camera
 									}
@@ -575,7 +575,8 @@ export default function FinishOrder({
 														setProductType(product.product.type);
 														setProductName(product.product.name);
 														setProductIndex(index);
-														setModalDeleteProduct(true);}} />
+														setModalDeleteProduct(true);
+													}} />
 											</Col>
 										</Row>
 
@@ -594,7 +595,7 @@ export default function FinishOrder({
 													index === product.product.ingredients.length-1 ?
 														ingredient
 														:
-														ingredient + ", "
+														`${ingredient}, `
 												))
 												:
 												null
@@ -621,7 +622,7 @@ export default function FinishOrder({
 											<Row>
 												{(product.additions).map((addition, index) => (
 													<Col key={index} sm>
-														{addition.name + "\nPreço: R$" + addition.price}
+														{`${addition.name}\nPreço: R$${addition.price}`}
 													</Col>
 												))}
 											</Row>
@@ -635,7 +636,7 @@ export default function FinishOrder({
 						<Card.Footer>
 							<small>
 								{product.product ?
-									"Preço: R$" + product.product.prices[product.size]
+									`Preço: R$${product.product.prices[product.size]}`
 									:
 									null
 								}
@@ -730,7 +731,7 @@ export default function FinishOrder({
 													<Form.Label>Telefone para contato:</Form.Label>
 													<Form.Control
 														value={orderDeliverPhone}
-														onChange={e => setOrderDeliverPhone(e.target.value)}
+														onChange={(e) => setOrderDeliverPhone(e.target.value)}
 														type="text"
 														pattern="^\(?[0-9]{2}\)?\s?[0-9]?\s?[0-9]{4}-?[0-9]{4}$"
 														placeholder="(__) _ ____-____"
@@ -742,9 +743,9 @@ export default function FinishOrder({
 													<Form.Label>Entregar pedido?</Form.Label>
 													<Form.Check
 														type="switch"
-														label={"+ R$" + companyInfo.freight + " de taxa de entrega"}
+														label={`+ R$${companyInfo.freight} de taxa de entrega`}
 														checked={orderDeliver}
-														onChange={e => setOrderDeliver(e.target.checked)}
+														onChange={(e) => setOrderDeliver(e.target.checked)}
 													/>
 												</Form.Group>
 											</Row>
@@ -755,7 +756,7 @@ export default function FinishOrder({
 															<Form.Label>CEP</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressCep}
-																onChange={e => setOrderDeliverAddressCep(e.target.value)}
+																onChange={(e) => setOrderDeliverAddressCep(e.target.value)}
 																type="tel"
 																min="0"
 																max="99999999"
@@ -783,7 +784,7 @@ export default function FinishOrder({
 															<Form.Label>Endereço</Form.Label>
 															<Form.Control
 																value={orderDeliverAddress}
-																onChange={e => setOrderDeliverAddress(e.target.value)}
+																onChange={(e) => setOrderDeliverAddress(e.target.value)}
 																type="text"
 																placeholder="Ex. Avenida Prudente de Moraes"
 																disabled={!orderDeliver}
@@ -794,7 +795,7 @@ export default function FinishOrder({
 															<Form.Label>Número da residência</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressNumber}
-																onChange={e => setOrderDeliverAddressNumber(e.target.value)}
+																onChange={(e) => setOrderDeliverAddressNumber(e.target.value)}
 																type="tel"
 																min="0"
 																placeholder="Ex. 45"
@@ -806,7 +807,7 @@ export default function FinishOrder({
 															<Form.Label>Bairro</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressNeighborhood}
-																onChange={e => setOrderDeliverAddressNeighborhood(e.target.value)}
+																onChange={(e) => setOrderDeliverAddressNeighborhood(e.target.value)}
 																type="text"
 																placeholder="Ex. Belvedere"
 																disabled={!orderDeliver}
@@ -817,7 +818,7 @@ export default function FinishOrder({
 															<Form.Label>Complemento</Form.Label>
 															<Form.Control
 																value={orderDeliverAddressComplement}
-																onChange={e => setOrderDeliverAddressComplement(e.target.value)}
+																onChange={(e) => setOrderDeliverAddressComplement(e.target.value)}
 																type="text"
 																placeholder="Complemento (opcional)"
 															/>
@@ -875,18 +876,17 @@ export default function FinishOrder({
 														>
 															<FormGroup as={Col} controlId="deliverCard" lg="6" md="12">
 																<Form.Label>Descontos por cartão fidelidade:</Form.Label>
-																{user.cards.map((card,index) => (
+																{user.cards.map((card, index) => (
 																	card.completed && !card.status &&
 																	orderType && orderType.get(card.cardFidelity) && companyInfo.cards[index].available ?
 																		<Row className="m-auto" key={index}>
 																			{`Completou o cartão de ${card.cardFidelity}`}
 																			<FormLabel className="ml-1" style={{color: "#c83a34"}} >
-																				{"-R$ " +
-																					(companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ?
+																				{`-R$ ${
+																					companyInfo.cards[index].discount < orderType.get(card.cardFidelity) ?
 																						companyInfo.cards[index].discount
 																						:
-																						orderType.get(card.cardFidelity)
-																					)
+																						orderType.get(card.cardFidelity)}`
 																				}
 																			</FormLabel>
 																		</Row>
@@ -920,14 +920,14 @@ export default function FinishOrder({
 													<Form.Label>Cupons:</Form.Label>
 													<Form.Control
 														value={null}
-														onChange={e => {
-															const cpn = userCoupons.find(c => c.name === e.target.value);
+														onChange={(e) => {
+															const cpn = userCoupons.find((c) => c.name === e.target.value);
 															setOrderDeliverCoupon(cpn ? cpn : null);
 															setCouponDiscountText(cpn && cpn.method === "dinheiro" ?
-																"R$ " + cpn.discount
+																`R$ ${cpn.discount}`
 																:
 																cpn && cpn.method === "porcentagem" ?
-																	cpn.discount + "%"
+																	`${cpn.discount}%`
 																	:
 																	null
 															);
@@ -999,7 +999,7 @@ export default function FinishOrder({
 															variant="warning"
 															type="submit"
 														>
-															{"Finalizar pedido +R$" + orderDeliverTotal}
+															{`Finalizar pedido +R$${orderDeliverTotal}`}
 														</Button>
 														:
 														<Button
@@ -1040,12 +1040,14 @@ export default function FinishOrder({
 				</Tab.Container>
 			</Container>
 
-			<Modal show={modalDeleteProduct} onHide={() => {setModalDeleteProduct(false); setToastShow(false);}}>
+			<Modal show={modalDeleteProduct} onHide={() => {
+				setModalDeleteProduct(false); setToastShow(false);
+			}}>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>
 						Remover { productName && productType ?
-							productType[0].toUpperCase() + productType.slice(1) + " " + productName
+							`${productType[0].toUpperCase() + productType.slice(1)} ${productName}`
 							:
 							null
 						}
@@ -1055,7 +1057,9 @@ export default function FinishOrder({
 					Você tem certeza que deseja remover este produto?
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="warning" onClick={() => {setModalDeleteProduct(false); setToastShow(false);}}>
+					<Button variant="warning" onClick={() => {
+						setModalDeleteProduct(false); setToastShow(false);
+					}}>
 						Voltar
 					</Button>
 					<Button variant="danger" onClick={handleProductDelete}>
@@ -1070,12 +1074,12 @@ export default function FinishOrder({
 }
 
 FinishOrder.propTypes = {
-	userId : PropTypes.string,
-	user : PropTypes.object.isRequired,
-	setUser : PropTypes.func.isRequired,
-	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.func.isRequired,
-	companyInfo : PropTypes.object.isRequired,
-	companySystemOpenByHour : PropTypes.bool,
-	noCards : PropTypes.bool.isRequired
+	userId: PropTypes.string,
+	user: PropTypes.object.isRequired,
+	setUser: PropTypes.func.isRequired,
+	order: PropTypes.object.isRequired,
+	setOrder: PropTypes.func.isRequired,
+	companyInfo: PropTypes.object.isRequired,
+	companySystemOpenByHour: PropTypes.bool,
+	noCards: PropTypes.bool.isRequired
 };

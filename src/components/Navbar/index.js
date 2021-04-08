@@ -1,5 +1,5 @@
 //	Importing React main module and its features
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 //	Importing React Router features
@@ -38,7 +38,7 @@ export default function WebsiteNavbar({
 	//  Current day of the week and time
 	const [systemTime, setSystemTime] = useState(
 		data && data.getHours() && data.getMinutes() ?
-			data.getHours() + ":" + data.getMinutes() : ""
+			`${data.getHours()}:${data.getMinutes()}` : ""
 	);
 
 	//	Defining history to jump through pages
@@ -55,25 +55,25 @@ export default function WebsiteNavbar({
 				data && companyInfo && companyInfo.timetable && companyInfo.timetable[data.getDay()].endHour ?
 					companyInfo.timetable[data.getDay()].endHour : "";
 
-			const current = new Date("2020-07-28 " + systemTime);
-			const open = new Date("2020-07-28 " + openHour);
-			const end = new Date("2020-07-28 " + endHour);
+			const current = new Date(`2020-07-28 ${systemTime}`);
+			const open = new Date(`2020-07-28 ${openHour}`);
+			const end = new Date(`2020-07-28 ${endHour}`);
 
 			if(end.getTime() < open.getTime()) {
-				if ((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
+				if((current.getTime() >= open.getTime()) || (current.getTime() <= end.getTime())) {
 					return true;
 				} else {
 					return false;
 				}
-			} else if ((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
+			} else if((current.getTime() >= open.getTime()) && (current.getTime() <= end.getTime())) {
 				return true;
 			} else {
 				return false;
 			}
 		}
 
-		setSystemTime(data ? data.getHours() + ":" + data.getMinutes() : "");
-		setCompanySystemOpenByHour(systemOpen() ? true : false);
+		setSystemTime(data ? `${data.getHours()}:${data.getMinutes()}` : "");
+		setCompanySystemOpenByHour(Boolean(systemOpen()));
 	}, [data, setSystemTime, setCompanySystemOpenByHour, companyInfo, systemTime]);
 
 	//	Function to handle user logout
@@ -89,7 +89,7 @@ export default function WebsiteNavbar({
 			setOrder({});
 
 			history.push("/");
-		} catch (error) {
+		} catch(error) {
 			alert(error);
 		}
 	}
@@ -335,16 +335,16 @@ export default function WebsiteNavbar({
 }
 
 WebsiteNavbar.propTypes = {
-	userId : PropTypes.string,
-	setUserId : PropTypes.func.isRequired,
-	user : PropTypes.object.isRequired,
-	setUser : PropTypes.func.isRequired,
-	order : PropTypes.object.isRequired,
-	setOrder : PropTypes.func.isRequired,
-	companyInfo : PropTypes.object.isRequired,
-	companySystemOpenByHour : PropTypes.bool,
-	setCompanySystemOpenByHour : PropTypes.func.isRequired,
-	setData : PropTypes.func.isRequired,
-	data : PropTypes.object.isRequired,
-	noCards : PropTypes.bool.isRequired
+	userId: PropTypes.string,
+	setUserId: PropTypes.func.isRequired,
+	user: PropTypes.object.isRequired,
+	setUser: PropTypes.func.isRequired,
+	order: PropTypes.object.isRequired,
+	setOrder: PropTypes.func.isRequired,
+	companyInfo: PropTypes.object.isRequired,
+	companySystemOpenByHour: PropTypes.bool,
+	setCompanySystemOpenByHour: PropTypes.func.isRequired,
+	setData: PropTypes.func.isRequired,
+	data: PropTypes.object.isRequired,
+	noCards: PropTypes.bool.isRequired
 };

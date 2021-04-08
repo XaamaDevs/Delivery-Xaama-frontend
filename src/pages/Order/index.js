@@ -65,35 +65,35 @@ export default function Orders({ userId, user, companyInfo }) {
 	const customIcons = {
 		1: {
 			icon: <SentimentVeryDissatisfiedIcon />,
-			label: "Very Dissatisfied",
+			label: "Very Dissatisfied"
 		},
 		2: {
 			icon: <SentimentDissatisfiedIcon />,
-			label: "Dissatisfied",
+			label: "Dissatisfied"
 		},
 		3: {
 			icon: <SentimentSatisfiedIcon />,
-			label: "Neutral",
+			label: "Neutral"
 		},
 		4: {
 			icon: <SentimentSatisfiedAltIcon />,
-			label: "Satisfied",
+			label: "Satisfied"
 		},
 		5: {
 			icon: <SentimentVerySatisfiedIcon />,
-			label: "Very Satisfied",
-		},
+			label: "Very Satisfied"
+		}
 	};
 
 	function IconContainer(props) {
 		const { value, ...other } = props;
+
 		return <span {...other}>{customIcons[value].icon}</span>;
 	}
 
 	IconContainer.propTypes = {
-		value: PropTypes.number.isRequired,
+		value: PropTypes.number.isRequired
 	};
-
 
 	function setupWebSocket() {
 		disconnect();
@@ -102,18 +102,19 @@ export default function Orders({ userId, user, companyInfo }) {
 
 	useEffect(() => {
 		function filterOrders(o) {
-			let resp = o.filter(f => ( f.user._id === user._id ));
+			const resp = o.filter((f) => (f.user._id === user._id));
+
 			return resp && resp.length ? resp : null;
 		}
 
-		subscribeToUpdateOrders(o => setOrders(filterOrders(o)));
-		subscribeToDeleteOrders(o => setOrders(filterOrders(o)));
+		subscribeToUpdateOrders((o) => setOrders(filterOrders(o)));
+		subscribeToDeleteOrders((o) => setOrders(filterOrders(o)));
 	}, [orders, userId]);
 
 	useEffect(() => {
 		async function fetchData() {
 			await api.get("order", {
-				headers : {
+				headers: {
 					"x-access-token": userId
 				}
 			}).then((response) => {
@@ -146,15 +147,15 @@ export default function Orders({ userId, user, companyInfo }) {
 	async function handleFeedback(event) {
 		event.preventDefault();
 
-		var data = {
-			orderId: orderId,
-			feedback: feedback,
+		const data = {
+			orderId,
+			feedback,
 			stars: value
 		};
 
 		await api.post("rating", data, {
 			headers: {
-				"x-access-token" : userId
+				"x-access-token": userId
 			}
 		}).then((response) => {
 			if(response.status === 201) {
@@ -201,7 +202,7 @@ export default function Orders({ userId, user, companyInfo }) {
 															style={{ borderRadius: "50%" }}
 															src={
 																orderI.user && orderI.user.thumbnail ?
-																	process.env.REACT_APP_API_URL + "files/" + orderI.user.thumbnail
+																	`${process.env.REACT_APP_API_URL}files/${orderI.user.thumbnail}`
 																	:
 																	camera
 															}
@@ -224,20 +225,20 @@ export default function Orders({ userId, user, companyInfo }) {
 											</Card.Header>
 											<Card.Body>
 												<Card.Text>
-													{orderI.phone ? "Telefone para contato: " + orderI.phone : "Telefone não informado"}
+													{orderI.phone ? `Telefone para contato: ${orderI.phone}` : "Telefone não informado"}
 												</Card.Text>
 												<Card.Text>
 													{orderI.deliver ?
-														"Endereço de entrega: " + orderI.address.join(", ")
+														`Endereço de entrega: ${orderI.address.join(", ")}`
 														:
 														"Irá retirar no balcão!"
 													}
 												</Card.Text>
 												<Card.Text>
 													{orderI.deliver ?
-														"Tempo para entrega: De " + companyInfo.timeDeliveryI + " a " + companyInfo.timeDeliveryF + " minutos"
+														`Tempo para entrega: De ${companyInfo.timeDeliveryI} a ${companyInfo.timeDeliveryF} minutos`
 														:
-														"Tempo para retirada: " + companyInfo.timeWithdrawal + " minutos"
+														`Tempo para retirada: ${companyInfo.timeWithdrawal} minutos`
 													}
 												</Card.Text>
 												<Card.Text>
@@ -256,7 +257,7 @@ export default function Orders({ userId, user, companyInfo }) {
 														"Não precisa de troco"
 														:
 														((orderI.typePayment === 0) ?
-															"Pagará R$" + orderI.change + ", troco de R$" + (orderI.change - orderI.total)
+															`Pagará R$${orderI.change}, troco de R$${orderI.change - orderI.total}`
 															:
 															"Pagará na maquininha"
 														)
@@ -268,7 +269,9 @@ export default function Orders({ userId, user, companyInfo }) {
 														variant="light"
 														id="btn-custom-outline"
 														className="m-1 mx-auto"
-														onClick={() => { setOrder(orderI); setOrderListingModal(true); }}
+														onClick={() => {
+															setOrder(orderI); setOrderListingModal(true);
+														}}
 													>
 														Ver pedido
 													</Button>
@@ -294,7 +297,9 @@ export default function Orders({ userId, user, companyInfo }) {
 																	<Button
 																		variant="outline-warning"
 																		className="m-1 mx-auto"
-																		onClick={() => { setOrderId(orderI._id); setFeedbackModal(true); }}
+																		onClick={() => {
+																			setOrderId(orderI._id); setFeedbackModal(true);
+																		}}
 																	>
 																		Recebeu seu pedido? Avalie!
 																	</Button>
@@ -325,7 +330,9 @@ export default function Orders({ userId, user, companyInfo }) {
 
 			<Modal
 				show={orderListingModal}
-				onHide={() => { setOrder({}); setOrderListingModal(false); }}
+				onHide={() => {
+					setOrder({}); setOrderListingModal(false);
+				}}
 				size="lg"
 				centered
 			>
@@ -342,7 +349,9 @@ export default function Orders({ userId, user, companyInfo }) {
 				</Modal.Body>
 			</Modal>
 
-			<Modal show={feedbackModal} onHide={() => {setFeedbackModal(false);setFeedback("");setValue(3);}} size="lg" centered>
+			<Modal show={feedbackModal} onHide={() => {
+				setFeedbackModal(false); setFeedback(""); setValue(3);
+			}} size="lg" centered>
 				<Push toastShow={toastShow} setToastShow={setToastShow} title={title} message={message} />
 				<Modal.Header closeButton>
 					<Modal.Title>Avaliar pedido</Modal.Title>
@@ -355,7 +364,7 @@ export default function Orders({ userId, user, companyInfo }) {
 									<Form.Label>Sua avaliação</Form.Label>
 									<Form.Control
 										value={feedback}
-										onChange={e => setFeedback(e.target.value)}
+										onChange={(e) => setFeedback(e.target.value)}
 										as="textarea"
 										rows="5"
 										placeholder="Avaliação sobre o pedido e atendimento"
@@ -380,7 +389,9 @@ export default function Orders({ userId, user, companyInfo }) {
 						<Modal.Footer>
 							<Button
 								variant="danger"
-								onClick={() => {setFeedbackModal(false); setFeedback(""); setValue(3);}}>
+								onClick={() => {
+									setFeedbackModal(false); setFeedback(""); setValue(3);
+								}}>
 								Fechar
 							</Button>
 							<Button variant="warning" type="submit">
@@ -397,7 +408,7 @@ export default function Orders({ userId, user, companyInfo }) {
 }
 
 Orders.propTypes = {
-	userId : PropTypes.string.isRequired,
-	user : PropTypes.object.isRequired,
-	companyInfo : PropTypes.object.isRequired
+	userId: PropTypes.string.isRequired,
+	user: PropTypes.object.isRequired,
+	companyInfo: PropTypes.object.isRequired
 };
