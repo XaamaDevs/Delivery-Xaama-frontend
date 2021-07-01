@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="letmeask" src="./.github/logo.png" />
+    <img alt="xaama" src="./.github/logo.png" />
     <br/>
     <img alt="Linguagens" src="https://img.shields.io/github/languages/count/XaamaDevs/Delivery-Xaama-frontend">
     <img alt="Linguagem principal" src="https://img.shields.io/github/languages/top/XaamaDevs/Delivery-Xaama-frontend">
