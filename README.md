@@ -1,68 +1,54 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+    <img alt="letmeask" src="./.github/logo.png" />
+    <br/>
+    <img alt="Linguagens" src="https://img.shields.io/github/languages/count/XaamaDevs/Delivery-Xaama-frontend">
+    <img alt="Linguagem principal" src="https://img.shields.io/github/languages/top/XaamaDevs/Delivery-Xaama-frontend">
+    <img alt="Tamanho do repositório" src="https://img.shields.io/github/repo-size/XaamaDevs/Delivery-Xaama-frontend">
+    <img alt="Última modificação" src="https://img.shields.io/github/last-commit/XaamaDevs/Delivery-Xaama-frontend">
+    <img alt="Licença" src="https://img.shields.io/badge/license-MIT-brightgreen">
+</div>
 
-## Available Scripts
+# :hamburger: Delivery Xaama v1.0
 
-In the project directory, you can run:
+O Delivery Xaama é a plataforma perfeita para quem deseja gerenciar todo o processo de pedidos e entregas de fast-food e trazer uma maior comodidade tanto para os clientes quanto para os colaboradores.
 
-### `yarn start`
+### :computer: Tecnologias
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Este projeto foi desenvolvido com as seguintes tecnologias:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+-  [React](https://pt-br.reactjs.org/)
+-  [Material-UI](https://material-ui.com/)
+-  [React Bootstrap](https://react-bootstrap.github.io/)
+-  [Axios](https://axios-http.com/docs/intro)
+-  [socket.io](https://socket.io/)
+-  [reCAPTCHA](https://www.google.com/recaptcha/about/)
+-  [VS Code](https://code.visualstudio.com/)
 
-### `yarn test`
+### :arrow_forward: Em Execução:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<p align="center">
+ <img alt="Demonstração delivery" src="./.github/xaama.gif">
+</p>
 
-### `yarn build`
+### :information_source: Como usar:
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Para clonar e executar esta aplicação, você precisará do Git instalado em seu computador. Na linha de comando:
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```bash
+# Clonar este repositório
+$ git clone https://github.com/XaamaDevs/Delivery-Xaama-frontend.git
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Vá para o repositório
+$ cd Delivery-Xaama-frontend
 
-### `yarn eject`
+# Instale as dependências
+$ sudo apt-get update && apt-get upgrade
+$ yarn install | npm install
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Execute o projeto
+$ yarn start | npm start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📝 License
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
